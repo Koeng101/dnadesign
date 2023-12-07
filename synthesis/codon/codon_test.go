@@ -6,11 +6,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/TimothyStiles/poly/io/genbank"
+	"github.com/TimothyStiles/poly/bio"
+	"github.com/TimothyStiles/poly/bio/genbank"
 	"github.com/google/go-cmp/cmp"
 	weightedRand "github.com/mroth/weightedrand"
 	"github.com/stretchr/testify/assert"
 )
+
+const puc19path = "../../bio/genbank/data/puc19.gbk"
 
 func TestTranslation(t *testing.T) {
 	gfpTranslation := "MASKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK*"
@@ -68,17 +71,20 @@ func TestTranslationLowerCase(t *testing.T) {
 func TestOptimize(t *testing.T) {
 	gfpTranslation := "MASKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK*"
 
-	sequence, _ := genbank.Read("../../data/puc19.gbk")
+	file, _ := os.Open("../../bio/genbank/data/puc19.gbk")
+	defer file.Close()
+	parser, _ := bio.NewGenbankParser(file)
+	sequence, _ := parser.Next()
 
 	table := NewTranslationTable(11)
-	err := table.UpdateWeightsWithSequence(sequence)
+	err := table.UpdateWeightsWithSequence(*sequence)
 	if err != nil {
 		t.Error(err)
 	}
 
 	codonTable := NewTranslationTable(11)
 
-	optimizedSequence, _ := table.OptimizeSequence(gfpTranslation)
+	optimizedSequence, _ := table.Optimize(gfpTranslation)
 	optimizedSequenceTranslation, _ := codonTable.Translate(optimizedSequence)
 
 	if optimizedSequenceTranslation != gfpTranslation {
@@ -88,20 +94,21 @@ func TestOptimize(t *testing.T) {
 
 func TestOptimizeSameSeed(t *testing.T) {
 	var gfpTranslation = "MASKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK*"
-	var sequence, _ = genbank.Read("../../data/puc19.gbk")
+	file, _ := os.Open(puc19path)
+	defer file.Close()
+	parser, _ := bio.NewGenbankParser(file)
+	sequence, _ := parser.Next()
+
 	optimizationTable := NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(sequence)
-	if err != nil {
-		t.Error(err)
-	}
+	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
 	if err != nil {
 		t.Error(err)
 	}
 
 	randomSeed := 10
 
-	optimizedSequence, _ := optimizationTable.OptimizeSequence(gfpTranslation, randomSeed)
-	otherOptimizedSequence, _ := optimizationTable.OptimizeSequence(gfpTranslation, randomSeed)
+	optimizedSequence, _ := optimizationTable.Optimize(gfpTranslation, randomSeed)
+	otherOptimizedSequence, _ := optimizationTable.Optimize(gfpTranslation, randomSeed)
 
 	if optimizedSequence != otherOptimizedSequence {
 		t.Error("Optimized sequence with the same random seed are not the same")
@@ -110,15 +117,19 @@ func TestOptimizeSameSeed(t *testing.T) {
 
 func TestOptimizeDifferentSeed(t *testing.T) {
 	var gfpTranslation = "MASKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK*"
-	var sequence, _ = genbank.Read("../../data/puc19.gbk")
+	file, _ := os.Open(puc19path)
+	defer file.Close()
+	parser, _ := bio.NewGenbankParser(file)
+	sequence, _ := parser.Next()
+
 	optimizationTable := NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(sequence)
+	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
 	if err != nil {
 		t.Error(err)
 	}
 
-	optimizedSequence, _ := optimizationTable.OptimizeSequence(gfpTranslation)
-	otherOptimizedSequence, _ := optimizationTable.OptimizeSequence(gfpTranslation)
+	optimizedSequence, _ := optimizationTable.Optimize(gfpTranslation)
+	otherOptimizedSequence, _ := optimizationTable.Optimize(gfpTranslation)
 
 	if optimizedSequence == otherOptimizedSequence {
 		t.Error("Optimized sequence with different random seed have the same result")
@@ -127,7 +138,7 @@ func TestOptimizeDifferentSeed(t *testing.T) {
 
 func TestOptimizeErrorsOnEmptyAminoAcidString(t *testing.T) {
 	nonEmptyCodonTable := NewTranslationTable(1)
-	_, err := nonEmptyCodonTable.OptimizeSequence("")
+	_, err := nonEmptyCodonTable.Optimize("")
 
 	if err != errEmptyAminoAcidString {
 		t.Error("Optimize should return an error if given an empty amino acid string")
@@ -137,7 +148,7 @@ func TestOptimizeErrorsOnInvalidAminoAcid(t *testing.T) {
 	aminoAcids := "TOP"
 	table := NewTranslationTable(1) // does not contain 'O'
 
-	_, optimizeErr := table.OptimizeSequence(aminoAcids)
+	_, optimizeErr := table.Optimize(aminoAcids)
 	assert.EqualError(t, optimizeErr, invalidAminoAcidError{'O'}.Error())
 }
 
@@ -192,12 +203,12 @@ JSON related tests begin here.
 ******************************************************************************/
 
 func TestWriteCodonJSON(t *testing.T) {
-	testCodonTable := ReadCodonJSON("../../data/bsub_codon_test.json")
-	WriteCodonJSON(testCodonTable, "../../data/codon_test1.json")
-	readTestCodonTable := ReadCodonJSON("../../data/codon_test1.json")
+	testCodonTable := ReadCodonJSON("../../../data/bsub_codon_test.json")
+	WriteCodonJSON(testCodonTable, "../../../data/codon_test1.json")
+	readTestCodonTable := ReadCodonJSON("../../../data/codon_test1.json")
 
 	// cleaning up test data
-	os.Remove("../../data/codon_test1.json")
+	os.Remove("../../../data/codon_test1.json")
 
 	if diff := cmp.Diff(testCodonTable, readTestCodonTable); diff != "" {
 		t.Errorf(" mismatch (-want +got):\n%s", diff)
@@ -212,19 +223,24 @@ Codon Compromise + Add related tests begin here.
 *****************************************************************************
 */
 func TestCompromiseCodonTable(t *testing.T) {
-	sequence, _ := genbank.Read("../../data/puc19.gbk")
+	file, _ := os.Open(puc19path)
+	defer file.Close()
+	parser, _ := bio.NewGenbankParser(file)
+	sequence, _ := parser.Next()
 
 	// weight our codon optimization table using the regions we collected from the genbank file above
-
 	optimizationTable := NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(sequence)
+	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
 	if err != nil {
 		t.Error(err)
 	}
 
-	sequence2, _ := genbank.Read("../../data/phix174.gb")
+	file2, _ := os.Open("../../data/phix174.gb")
+	defer file2.Close()
+	parser2, _ := bio.NewGenbankParser(file2)
+	sequence2, _ := parser2.Next()
 	optimizationTable2 := NewTranslationTable(11)
-	err = optimizationTable2.UpdateWeightsWithSequence(sequence2)
+	err = optimizationTable2.UpdateWeightsWithSequence(*sequence2)
 	if err != nil {
 		t.Error(err)
 	}
@@ -254,19 +270,25 @@ func TestCompromiseCodonTable(t *testing.T) {
 }
 
 func TestAddCodonTable(t *testing.T) {
-	sequence, _ := genbank.Read("../../data/puc19.gbk")
+	file, _ := os.Open(puc19path)
+	defer file.Close()
+	parser, _ := bio.NewGenbankParser(file)
+	sequence, _ := parser.Next()
 
 	// weight our codon optimization table using the regions we collected from the genbank file above
 
 	optimizationTable := NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(sequence)
+	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
 	if err != nil {
 		t.Error(err)
 	}
 
-	sequence2, _ := genbank.Read("../../data/phix174.gb")
+	file2, _ := os.Open("../../data/phix174.gb")
+	defer file2.Close()
+	parser2, _ := bio.NewGenbankParser(file2)
+	sequence2, _ := parser2.Next()
 	optimizationTable2 := NewTranslationTable(11)
-	err = optimizationTable2.UpdateWeightsWithSequence(sequence2)
+	err = optimizationTable2.UpdateWeightsWithSequence(*sequence2)
 	if err != nil {
 		t.Error(err)
 	}
@@ -290,15 +312,18 @@ func TestCapitalizationRegression(t *testing.T) {
 	// Tests to make sure that amino acids are capitalized
 	gfpTranslation := "MaSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK*"
 
-	sequence, _ := genbank.Read("../../data/puc19.gbk")
+	file, _ := os.Open(puc19path)
+	defer file.Close()
+	parser, _ := bio.NewGenbankParser(file)
+	sequence, _ := parser.Next()
 
 	optimizationTable := NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(sequence)
+	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
 	if err != nil {
 		t.Error(err)
 	}
 
-	optimizedSequence, _ := optimizationTable.OptimizeSequence(gfpTranslation, 1)
+	optimizedSequence, _ := optimizationTable.Optimize(gfpTranslation, 1)
 	optimizedSequenceTranslation, _ := optimizationTable.Translate(optimizedSequence)
 
 	if optimizedSequenceTranslation != strings.ToUpper(gfpTranslation) {
@@ -313,12 +338,11 @@ func TestOptimizeSequence(t *testing.T) {
 		gfpTranslation = "MASKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK*"
 		optimisedGFP   = "ATGGCAAGTAAGGGAGAAGAGCTTTTTACCGGCGTAGTACCAATTCTGGTAGAACTGGATGGTGATGTAAACGGTCACAAATTTAGTGTAAGCGGAGAAGGTGAGGGTGATGCTACCTATGGCAAACTGACCCTAAAGTTTATATGCACGACTGGAAAACTTCCGGTACCGTGGCCAACGTTAGTTACAACGTTTTCTTATGGAGTACAGTGCTTCAGCCGCTACCCAGATCATATGAAACGCCATGATTTCTTTAAGAGCGCCATGCCAGAGGGTTATGTTCAGGAGCGCACGATCTCGTTTAAGGATGATGGTAACTATAAGACTCGTGCTGAGGTGAAGTTCGAAGGCGATACCCTTGTAAATCGTATTGAATTGAAGGGTATAGACTTCAAGGAGGATGGAAATATTCTTGGACATAAGCTGGAATACAATTACAATTCACATAACGTTTATATAACTGCCGACAAGCAAAAAAACGGGATAAAAGCTAATTTTAAAATACGCCACAACATAGAGGACGGGTCGGTGCAACTAGCCGATCATTATCAACAAAACACACCAATCGGCGACGGACCAGTTCTGTTGCCCGATAATCATTACTTATCAACCCAAAGTGCCTTAAGTAAGGATCCGAACGAAAAGCGCGATCATATGGTACTTCTTGAGTTTGTTACCGCTGCAGGCATAACGCATGGCATGGACGAGCTATACAAATAA"
 		puc19          = func() genbank.Genbank {
-			seq, err := genbank.Read("../../data/puc19.gbk")
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			return seq
+			file, _ := os.Open("../../bio/genbank/data/puc19.gbk")
+			defer file.Close()
+			parser, _ := bio.NewGenbankParser(file)
+			sequence, _ := parser.Next()
+			return *sequence
 		}()
 	)
 
@@ -375,7 +399,7 @@ func TestOptimizeSequence(t *testing.T) {
 				t.Errorf("got %v, want %v", err, tt.wantUpdateWeightsErr)
 			}
 
-			got, err := optimizationTable.OptimizeSequence(tt.sequenceToOptimise, 1)
+			got, err := optimizationTable.Optimize(tt.sequenceToOptimise, 1)
 			if !errors.Is(err, tt.wantOptimiseErr) {
 				t.Errorf("got %v, want %v", err, tt.wantOptimiseErr)
 			}
