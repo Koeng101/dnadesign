@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `fastq` now handles optionals correctly [(#323)](https://github.com/TimothyStiles/poly/issues/323)
 - Adds functional test and fix for [(#313)](https://github.com/TimothyStiles/poly/issues/313).
 - In addition to expanding the set of genbank files which can be validly parsed, the parser is more vocal when it encounters unusual syntax in the "feature" section. This "fail fast" approach is better as there were cases where inputs triggered a codepath which would neither return a valid Genbank object nor an error, and should help with debugging.
+-  Fixed bug that produced wrong overhang in linear, non-directional, single cut reactions. #408
 
 ## [0.26.0] - 2023-07-22
 Oops, we weren't keeping a changelog before this tag!
