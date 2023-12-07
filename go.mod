@@ -9,14 +9,18 @@ require (
 	github.com/mroth/weightedrand v0.4.1
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/sergi/go-diff v1.2.0
+	github.com/spaolacci/murmur3 v1.1.0
 	golang.org/x/exp v0.0.0-20230310171629-522b1b587ee0
 	lukechampine.com/blake3 v1.1.5
 )
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/intel-go/cpuid v0.0.0-20181003105527-1a4a6f06a1c6 // indirect
+	github.com/koeng101/svb v0.0.0-20230815034912-d6737f9ed8b8 // indirect
 	github.com/mattn/go-sqlite3 v1.14.13 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+	golang.org/x/sync v0.3.0 // indirect
 )
 
 require (

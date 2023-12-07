@@ -7,7 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/TimothyStiles/poly/io/genbank"
+	"github.com/TimothyStiles/poly/bio"
+	"github.com/TimothyStiles/poly/bio/genbank"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 )
@@ -46,6 +47,13 @@ TTFN,
 Tim
 ******************************************************************************/
 
+// Ignore ParentSequence as that's a pointer which can't be serialized.
+func CmpOptions() []cmp.Option {
+	return []cmp.Option{
+		cmpopts.IgnoreFields(genbank.Feature{}, "ParentSequence"),
+	}
+}
+
 // if you're using VS-CODE you should see a DEBUG TEST button right below this
 // comment. Please set break points and use it early and often.
 func TestFileIOTutorial(t *testing.T) {
@@ -53,7 +61,10 @@ func TestFileIOTutorial(t *testing.T) {
 	// backbone puc19. Plasmids are super small rings of "Circular DNA" that are
 	// between 1 and 10 kilobases in length.
 
-	puc19, _ := genbank.Read("../data/puc19.gbk")
+	file, _ := os.Open("../bio/genbank/data/puc19.gbk")
+	defer file.Close()
+	parser, _ := bio.NewGenbankParser(file)
+	puc19, _ := parser.Next()
 
 	// A plasmid backbone is an empty template designed so that we
 	// can easily insert genes into it to be expressed in our organism of choice.
@@ -154,26 +165,30 @@ func TestFileIOTutorial(t *testing.T) {
 
 	// write the modified plasmid to a GenBank file
 	puc19Path := filepath.Join(tmpDataDir, "pUC19_modified.gb")
-	err = genbank.Write(puc19, puc19Path)
+	writeFile, _ := os.OpenFile(puc19Path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	defer writeFile.Close()
+	_, err = puc19.WriteTo(writeFile)
 	if err != nil {
 		t.Error(err)
 	}
 
 	// read the plasmid back in from the GenBank file and make sure it's the same as the original
-	puc19Copy, err := genbank.Read(puc19Path)
+	fileCopy, _ := os.Open(puc19Path)
+	defer fileCopy.Close()
+	parser2, _ := bio.NewGenbankParser(fileCopy)
+	puc19Copy, err := parser2.Next()
 	if err != nil {
 		t.Error(err)
 	}
 
 	// compare our read-in plasmid to the the one we wrote out.
-	// Ignore ParentSequence as that's a pointer which can't be serialized.
-	if diff := cmp.Diff(puc19, puc19Copy, []cmp.Option{cmpopts.IgnoreFields(genbank.Feature{}, "ParentSequence")}...); diff != "" {
+	if diff := cmp.Diff(puc19, puc19Copy, CmpOptions()...); diff != "" {
 		t.Errorf("Parsing the output of Build() does not produce the same output as parsing the original file, \"%s\", read with Read(). Got this diff:\n%s", filepath.Base(puc19Path), diff)
 	}
 
 	// write the modified plasmid to a JSON file
 	puc19JSONPath := filepath.Join(tmpDataDir, "pUC19_modified.json")
-	marshaledPuc19, err := json.MarshalIndent(puc19, "", " ")
+	marshaledPuc19, err := json.MarshalIndent(*puc19, "", " ")
 	if err != nil {
 		t.Error(err)
 	}
@@ -190,7 +205,7 @@ func TestFileIOTutorial(t *testing.T) {
 	if err := json.Unmarshal(jsonContent, &unmarshaledPuc19); err != nil {
 		t.Error(err)
 	}
-	if diff := cmp.Diff(puc19, unmarshaledPuc19, []cmp.Option{cmpopts.IgnoreFields(genbank.Feature{}, "ParentSequence")}...); diff != "" {
+	if diff := cmp.Diff(puc19, &unmarshaledPuc19, CmpOptions()...); diff != "" {
 		t.Errorf("Parsing the JSON does not produce the same output as parsing the original file, \"%s\", read with Read(). Got this diff:\n%s", filepath.Base(puc19Path), diff)
 	}
 
