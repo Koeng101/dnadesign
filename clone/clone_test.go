@@ -9,7 +9,7 @@ var popen = Part{"TAACTATCGTCTTGAGTCCAACCCGGTAAGACACGACTTATCGCCACTGGCAGCAGCCACTG
 
 func TestCutWithEnzymeByName(t *testing.T) {
 	enzymeManager := NewEnzymeManager(GetBaseRestrictionEnzymes())
-	_, err := enzymeManager.CutWithEnzymeByName(popen, true, "EcoFake")
+	_, err := enzymeManager.CutWithEnzymeByName(popen, true, "EcoFake", false)
 	if err == nil {
 		t.Errorf("CutWithEnzymeByName should have failed when looking for fake restriction enzyme EcoFake")
 	}
@@ -25,7 +25,7 @@ func TestCutWithEnzyme(t *testing.T) {
 	// Test case of `<-bsaiComplement bsai-> <-bsaiComplement bsai->` where bsaI cuts off of a linear sequence. This tests the line:
 	// if !sequence.Circular && (overhangSet[len(overhangSet)-1].Position+enzyme.EnzymeSkip+enzyme.EnzymeOverhangLen > len(sequence))
 	sequence = Part{"ATATATA" + bsaiComplement + bsai + "ATGCATCGATCGACTAGCATG" + bsaiComplement + bsai[:8], false}
-	fragment, err := enzymeManager.CutWithEnzymeByName(sequence, true, "BsaI")
+	fragment, err := enzymeManager.CutWithEnzymeByName(sequence, true, "BsaI", false)
 	if err != nil {
 		t.Errorf("CutWithEnzyme should not have failed on test(1). Got error: %s", err)
 	}
@@ -39,7 +39,7 @@ func TestCutWithEnzyme(t *testing.T) {
 	// test(2)
 	// Now if we take the same sequence and circularize it, we get a different result
 	sequence.Circular = true
-	fragment, err = enzymeManager.CutWithEnzymeByName(sequence, true, "BsaI")
+	fragment, err = enzymeManager.CutWithEnzymeByName(sequence, true, "BsaI", false)
 	if err != nil {
 		t.Errorf("CutWithEnzyme should not have failed on test(2). Got error: %s", err)
 	}
@@ -57,7 +57,7 @@ func TestCutWithEnzyme(t *testing.T) {
 	// directionality flag to false. This tests the line:
 	// if len(overhangs) == 1 && !directional && !sequence.Circular
 	sequence = Part{"ATATATATATATATAT" + bsai + "GCGCGCGCGCGCGCGCGCGC", false}
-	fragment, err = enzymeManager.CutWithEnzymeByName(sequence, false, "BsaI")
+	fragment, err = enzymeManager.CutWithEnzymeByName(sequence, false, "BsaI", false)
 	if err != nil {
 		t.Errorf("CutWithEnzyme should not have failed on test(3). Got error: %s", err)
 	}
@@ -73,7 +73,7 @@ func TestCutWithEnzyme(t *testing.T) {
 	// tests the line:
 	// if len(overhangs) == 2 && !directional && sequence.Circular
 	sequence.Circular = true
-	fragment, err = enzymeManager.CutWithEnzymeByName(sequence, false, "BsaI")
+	fragment, err = enzymeManager.CutWithEnzymeByName(sequence, false, "BsaI", false)
 	if err != nil {
 		t.Errorf("CutWithEnzyme should not have failed on test(4). Got error: %s", err)
 	}
@@ -87,7 +87,7 @@ func TestCutWithEnzyme(t *testing.T) {
 	// test(5)
 	// This tests if we have a fragment where we do not care about directionality
 	// but have more than 1 cut site in our fragment. We can use pOpen for this.
-	fragment, err = enzymeManager.CutWithEnzymeByName(popen, false, "BbsI")
+	fragment, err = enzymeManager.CutWithEnzymeByName(popen, false, "BbsI", false)
 	if err != nil {
 		t.Errorf("CutWithEnzyme should not have failed on test(5). Got error: %s", err)
 	}
@@ -183,7 +183,7 @@ func TestSignalKilledGoldenGate(t *testing.T) {
 		t.Errorf("Error when getting Enzyme. Got error: %s", err)
 	}
 
-	clones, loopingClones := GoldenGate(fragments, bbsI)
+	clones, loopingClones := GoldenGate(fragments, bbsI, false)
 	if len(clones) != 1 {
 		t.Errorf("There should be 1 output  Got: %d", len(clones))
 	}
@@ -210,7 +210,7 @@ func TestPanicGoldenGate(t *testing.T) {
 		t.Errorf("Error when getting Enzyme. Got error: %s", err)
 	}
 
-	_, _ = GoldenGate(fragments, bbsI)
+	_, _ = GoldenGate(fragments, bbsI, false)
 }
 
 func TestCircularCutRegression(t *testing.T) {
@@ -218,12 +218,29 @@ func TestCircularCutRegression(t *testing.T) {
 	// This used to error with 0 fragments since the BsaI cut site is on the other
 	// side of the origin from its recognition site.
 	plasmid1 := Part{"AAACTACAAGACCCGCGCCGAGGTGAAGTTCGAGGGCGACACCCTGGTGAACCGCATCGAGCTGAAGGGCATCGACTTCAAGGAGGACGGCAACATCCTGGGGCACAAGCTGGAGTACAACTACAACAGCCACAACGTCTATATCATGGCCGACAAGCAGAAGAACGGCATCAAGGTGAACTTCAAGATCCGCCACAACATCGAGGACGGCAGCCGAGaccaagtcgcggccgcgaggtgtcaatcgtcggagtagggataacagggtaatccgctgagcaataactagcataaccccttggggcctctaaacgggtcttgaggggttttttgcatggtcatagctgtttcctgttacgccccgccctgccactcgtcgcagtactgttgtaattcattaagcattctgccgacatggaagccatcacaaacggcatgatgaacctgaatcgccagcggcatcagcaccttgtcgccttgcgtataatatttgcccatggtgaaaacgggggcgaagaagttgtccatattggccacgtttaaatcaaaactggtgaaactcacccagggattggctgacacgaaaaacatattctcaataaaccctttagggaaataggccaggttttcaccgtaacacgccacatcttgcgaatatatgtgtagaaactgccggaaatcgtcgtggtattcactccagagggatgaaaacgtttcagtttgctcatggaaaacggtgtaacaagggtgaacactatcccatatcaccagctcaccatccttcattgccatacgaaattccggatgagcattcatcaggcgggcaagaatgtgaataaaggccggataaaacttgtgcttatttttctttacggtctttaaaaaggccgtaatatccagctgaacggtctggttataggtacattgagcaactgactgaaatgcctcaaaatgttctttacgatgccattgggatatatcaacggtggtatatccagtgatttttttctccattttagcttccttagctcctgaaaatctcgataactcaaaaaatacgcccggtagtgatcttatttcattatggtgaaagttggaacctcttacgtgccgatcatttccataggctccgcccccctgacgagcatcacaaaaatcgacgctcaagtcagaggtggcgaaacccgacaggactataaagataccaggcgtttccccctggaagctccctcgtgcgctctcctgttccgaccctgccgcttaccggatacctgtccgcctttctcccttcgggaagcgtggcgctttctcatagctcacgctgtaggtatctcagttcggtgtaggtcgttcgctccaagctgggctgtgtgcacgaaccccccgttcagcccgaccgctgcgccttatccggtaactatcgtcttgagtccaacccggtaagacacgacttatcgccactggcagcagccactggtaacaggattagcagagcgaggtatgtaggcggtgctacagagttcttgaagtggtggcctaactacggctacactagaaggacagtatttggtatctgcgctctgctgaagccagttaccttcggaaaaagagttggtagctcttgatccggcaaacaaaccaccgctggtagcggtggtttttttgtttgcaagcagcagattacgcgcagaaaaaaaggatctcaagtaaaacgacggccagtagtcaaaagcctccgaccggaggcttttgacttggttcaggtggagtggcggccgcgacttgGTCTC", true}
-	newFragments, err := enzymeManager.CutWithEnzymeByName(plasmid1, true, "BsaI")
+	newFragments, err := enzymeManager.CutWithEnzymeByName(plasmid1, true, "BsaI", false)
 	if err != nil {
 		t.Errorf("Failed to cut: %s", err)
 	}
 	if len(newFragments) != 1 {
 		t.Errorf("Expected 1 new fragment, got: %d", len(newFragments))
+	}
+}
+
+func TestMethylatedGoldenGate(t *testing.T) {
+	pOpenV3Methylated := Part{"AGGGTAATGGTCTCTCGAGACcAAGTCGTCATAGCTGTTTCCTGAGAGCTTGGCAGGTGATGACACACATTAACAAATTTCGTGAGGAGTCTCCAGAAGAATGCCATTAATTTCCATAGGCTCCGCCCCCCTGACGAGCATCACAAAAATCGACGCTCAAGTCAGAGGTGGCGAAACCCGACAGGACTATAAAGATACCAGGCGTTTCCCCCTGGAAGCTCCCTCGTGCGCTCTCCTGTTCCGACCCTGCCGCTTACCGGATACCTGTCCGCCTTTCTCCCTTCGGGAAGCGTGGCGCTTTCTCATAGCTCACGCTGTAGGTATCTCAGTTCGGTGTAGGTCGTTCGCTCCAAGCTGGGCTGTGTGCACGAACCCCCCGTTCAGCCCGACCGCTGCGCCTTATCCGGTAACTATCGTCTTGAGTCCAACCCGGTAAGACACGACTTATCGCCACTGGCAGCAGCCACTGGTAACAGGATTAGCAGAGCGAGGTATGTAGGCGGTGCTACAGAGTTCTTGAAGTGGTGGCCTAACTACGGCTACACTAGAAGAACAGTATTTGGTATCTGCGCTCTGCTGAAGCCAGTTACCTTCGGAAAAAGAGTTGGTAGCTCTTGATCCGGCAAACAAACCACCGCTGGTAGCGGTGGTTTTTTTGTTTGCAAGCAGCAGATTACGCGCAGAAAAAAAGGATCTCAAGAAGGCCTACTATTAGCAACAACGATCCTTTGATCTTTTCTACGGGGTCTGACGCTCAGTGGAACGAAAACTCACGTTAAGGGATTTTGGTCATGAGATTATCAAAAAGGATCTTCACCTAGATCCTTTTAAATTAAAAATGAAGTTTTAAATCAATCTAAAGTATATATGAGTAAACTTGGTCTGACAGTTACCAATGCTTAATCAGTGAGGCACCTATCTCAGCGATCTGTCTATTTCGTTCATCCATAGTTGCCTGACTCCCCGTCGTGTAGATAACTACGATACGGGAGGGCTTACCATCTGGCCCCAGTGCTGCAATGATACCGCGAGAACCACGCTCACCGGCTCCAGATTTATCAGCAATAAACCAGCCAGCCGGAAGGGCCGAGCGCAGAAGTGGTCCTGCAACTTTATCCGCCTCCATCCAGTCTATTAATTGTTGCCGGGAAGCTAGAGTAAGTAGTTCGCCAGTTAATAGTTTGCGCAACGTTGTTGCCATTGCTACAGGCATCGTGGTGTCACGCTCGTCGTTTGGTATGGCTTCATTCAGCTCCGGTTCCCAACGATCAAGGCGAGTTACATGATCCCCCATGTTGTGCAAAAAAGCGGTTAGCTCCTTCGGTCCTCCGATCGTTGTCAGAAGTAAGTTGGCCGCAGTGTTATCACTCATGGTTATGGCAGCACTGCATAATTCTCTTACTGTCATGCCATCCGTAAGATGCTTTTCTGTGACTGGTGAGTACTCAACCAAGTCATTCTGAGAATAGTGTATGCGGCGACCGAGTTGCTCTTGCCCGGCGTCAATACGGGATAATACCGCGCCACATAGCAGAACTTTAAAAGTGCTCATCATTGGAAAACGTTCTTCGGGGCGAAAACTCTCAAGGATCTTACCGCTGTTGAGATCCAGTTCGATGTAACCCACTCGTGCACCCAACTGATCTTCAGCATCTTTTACTTTCACCAGCGTTTCTGGGTGAGCAAAAACAGGAAGGCAAAATGCCGCAAAAAAGGGAATAAGGGCGACACGGAAATGTTGAATACTCATACTCTTCCTTTTTCAATATTATTGAAGCATTTATCAGGGTTATTGTCTCATGAGCGGATACATATTTGAATGTATTTAGAAAAATAAACAAATAGGGGTTCCGCGCACCTGCACCAGTCAGTAAAACGACGGCCAGTGACTTgGTCTCGAGACCTAGGGATA", false}
+	frag1 := Part{"AGTTGCAGTATCTAACCCGCGGTCTCTGTCTCATCTCACTTAATCTTCTGTACTCTGAAGAGGAGTGGGAAATACCAAGAAAAACATCAAACTCGAATGATTTTCCCAAACCCCTACCACAAGATATTCATCAGCTGCGAGATGAGACCATACTGTAAGAACCACGCGGT", false}
+	frag2 := Part{"AGTTGCAGTATCTAACCCGCGGTCTCTGAGATAGGCTGATCAGGAGCAAGCTCGTACGAGAAGAAACAAAATGACAAAAAAAATCCTATACTATATAGGTTACAAATAAAAAAGTATCAAAAATGAAGCTGAGACCATACTGTAAGAACCACGCGGTAAAAGACGCTACG", false}
+	frag3 := Part{"AGTTGCAGTATCTAACCCGCGGTCTCTAAGCCTGCATCTCTCAGGCAAATGGCATTCTGACATCCTCTTGATTACGAGTGAGACCATACTGTAAGAACCACGCGGCTGAACCTCCAGCGGACTCAGTCGCGAAAATACTTACCAAAGGACCGAATTCACCGATCGAACGG", false}
+
+	enzymeManager := NewEnzymeManager(GetBaseRestrictionEnzymes())
+	bsai, err := enzymeManager.GetEnzymeByName("BsaI")
+	if err != nil {
+		t.Errorf("Error when getting Enzyme. Got error: %s", err)
+	}
+	clones, _ := GoldenGate([]Part{pOpenV3Methylated, frag1, frag2, frag3}, bsai, true)
+	if len(clones) != 1 {
+		t.Errorf("Should have gotten a single clone")
 	}
 }
 
@@ -233,7 +250,7 @@ func benchmarkGoldenGate(b *testing.B, enzymeManager EnzymeManager, parts []Part
 		b.Errorf("Error when getting Enzyme. Got error: %s", err)
 	}
 	for n := 0; n < b.N; n++ {
-		_, _ = GoldenGate(parts, bbsI)
+		_, _ = GoldenGate(parts, bbsI, false)
 	}
 }
 

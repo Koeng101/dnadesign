@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Alternative start codons can now be used in the `synthesis/codon` DNA -> protein translation package (#305)
+- Added a parser and writer for the `pileup` sequence alignment format (#329)
+- Added statistics to the `synthesis/codon` package (keeping track of the observed start codon occurrences in a translation table) (#350)
+- Added option to fragmenter to fragment with only certain overhangs (#387)
+- GoldenGates with methylated sequences using lowercase letters (#391)
 - Generic parser is now implemented across all parsers for consistent interactions. [(#339)](https://github.com/TimothyStiles/poly/issues/339)
 - Alternative start codons can now be used in the `synthesis/codon` DNA -> protein translation package [(#305)](https://github.com/TimothyStiles/poly/issues/305)
 - Added a parser and writer for the `pileup` sequence alignment format [(#329)](https://github.com/TimothyStiles/poly/issues/329)

@@ -32,6 +32,11 @@ in a single tube and that is extraordinarily efficient (up to 50 parts) and is p
 for new modular DNA part toolkits. Users can easily simulate GoldenGate assembly reactions
 with just their input fragments + the enzyme name.
 
+Unlike many other GoldenGate simulators, we support simulating GoldenGate with
+methylated DNA sequences, which are represented as lowercased sequences in user
+inputted sequences. Normally, this can be turned off, but can be used in the
+special case of recursive GoldenGate reactions.
+
 Let's build some DNA!
 
 # Keoni
@@ -113,8 +118,9 @@ Base cloning functions begin here.
 
 // CutWithEnzymeByName cuts a given sequence with an enzyme represented by the
 // enzyme's name. It is a convenience wrapper around CutWithEnzyme that
-// allows us to specify the enzyme by name.
-func (enzymeManager EnzymeManager) CutWithEnzymeByName(part Part, directional bool, name string) ([]Fragment, error) {
+// allows us to specify the enzyme by name. Set methylated flag to true if
+// there is lowercase methylated DNA as part of the sequence.
+func (enzymeManager EnzymeManager) CutWithEnzymeByName(part Part, directional bool, name string, methylated bool) ([]Fragment, error) {
 	// Get the enzyme from the enzyme map
 	enzyme, err := enzymeManager.GetEnzymeByName(name)
 	if err != nil {
@@ -122,7 +128,7 @@ func (enzymeManager EnzymeManager) CutWithEnzymeByName(part Part, directional bo
 		return []Fragment{}, err
 	}
 	// Cut the sequence with the enzyme
-	return CutWithEnzyme(part, directional, enzyme), nil
+	return CutWithEnzyme(part, directional, enzyme, methylated), nil
 }
 
 // GetEnzymeByName gets the enzyme by it's name. If the enzyme manager does not
@@ -135,13 +141,21 @@ func (enzymeManager EnzymeManager) GetEnzymeByName(name string) (Enzyme, error) 
 }
 
 // CutWithEnzyme cuts a given sequence with an enzyme represented by an Enzyme struct.
-func CutWithEnzyme(part Part, directional bool, enzyme Enzyme) []Fragment {
+// If there is methylated parts of the target DNA, set the "methylated" flag to
+// true and lowercase ONLY methylated DNA.
+func CutWithEnzyme(part Part, directional bool, enzyme Enzyme, methylated bool) []Fragment {
 	var fragmentSequences []string
-	var sequence string
+
+	// Setup circular sequences
+	sequence := part.Sequence
 	if part.Circular {
-		sequence = strings.ToUpper(part.Sequence + part.Sequence)
-	} else {
-		sequence = strings.ToUpper(part.Sequence)
+		sequence = sequence + sequence
+	}
+
+	// If unmethylated, set everything to uppercase so that the enzyme regex
+	// works on all the sequence
+	if !methylated {
+		sequence = strings.ToUpper(sequence)
 	}
 
 	// Check for palindromes
@@ -343,11 +357,12 @@ Specific cloning functions begin here.
 ******************************************************************************/
 
 // GoldenGate simulates a GoldenGate cloning reaction. As of right now, we only
-// support BsaI, BbsI, BtgZI, and BsmBI.
-func GoldenGate(sequences []Part, cuttingEnzyme Enzyme) (openConstructs []string, infiniteLoops []string) {
+// support BsaI, BbsI, BtgZI, and BsmBI. Set methylated flag to true if there
+// is lowercase methylated DNA as part of the sequence.
+func GoldenGate(sequences []Part, cuttingEnzyme Enzyme, methylated bool) (openConstructs []string, infiniteLoops []string) {
 	var fragments []Fragment
 	for _, sequence := range sequences {
-		newFragments := CutWithEnzyme(sequence, true, cuttingEnzyme)
+		newFragments := CutWithEnzyme(sequence, true, cuttingEnzyme, methylated)
 		fragments = append(fragments, newFragments...)
 	}
 	openconstructs, infiniteloops := CircularLigate(fragments)
@@ -360,5 +375,7 @@ func GetBaseRestrictionEnzymes() []Enzyme {
 		{"BsaI", regexp.MustCompile("GGTCTC"), regexp.MustCompile("GAGACC"), 1, 4, "GGTCTC"},
 		{"BbsI", regexp.MustCompile("GAAGAC"), regexp.MustCompile("GTCTTC"), 2, 4, "GAAGAC"},
 		{"BtgZI", regexp.MustCompile("GCGATG"), regexp.MustCompile("CATCGC"), 10, 4, "GCGATG"},
+		{"PaqCI", regexp.MustCompile("CACCTGC"), regexp.MustCompile("GCAGGTG"), 4, 4, "CACCTGC"},
+		{"BsmBI", regexp.MustCompile("CGTCTC"), regexp.MustCompile("GAGACG"), 1, 4, "CGTCTC"},
 	}
 }
