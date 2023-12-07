@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Created copy methods for Feature and Location to address concerns raised by [(#342)](https://github.com/TimothyStiles/poly/issues/342)
 - Created new methods to convert polyjson -> genbank.
 - Created new `Feature.StoreSequence` method to enable [(#388)](https://github.com/TimothyStiles/poly/issues/388)
+- Added seqhash v2 (#398)
 
 ### Changed
 - **Breaking**: Genbank parser uses new custom multimap for `Feature.Attributes`, which allows for duplicate keys. This changes the type of Features.Attributes from `map[string]string` to `MultiMap[string, string]`, an alias for `map[string]string` defined in `multimap.go`. [(#383)](https://github.com/TimothyStiles/poly/issues/383)
@@ -30,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adds functional test and fix for [(#313)](https://github.com/TimothyStiles/poly/issues/313).
 - In addition to expanding the set of genbank files which can be validly parsed, the parser is more vocal when it encounters unusual syntax in the "feature" section. This "fail fast" approach is better as there were cases where inputs triggered a codepath which would neither return a valid Genbank object nor an error, and should help with debugging.
 -  Fixed bug that produced wrong overhang in linear, non-directional, single cut reactions. #408
+>>>>>>> main
 
 ## [0.26.0] - 2023-07-22
 Oops, we weren't keeping a changelog before this tag!

@@ -93,3 +93,37 @@ func TestLeastRotation(t *testing.T) {
 		}
 	}
 }
+
+func TestFlagEncoding(t *testing.T) {
+	version := 2
+	sequenceType := DNA
+	circularity := true
+	doubleStranded := true
+	flag := EncodeFlag(version, sequenceType, circularity, doubleStranded)
+	decodedVersion, decodedSequenceType, decodedCircularity, decodedDoubleStranded := DecodeFlag(flag)
+	if (decodedVersion != version) || (decodedSequenceType != sequenceType) || (decodedCircularity != circularity) || (decodedDoubleStranded != doubleStranded) {
+		t.Errorf("Got different decoded flag.")
+	}
+}
+
+func TestHashV2(t *testing.T) {
+	// Test TNA as sequenceType
+	_, err := HashV2("ATGGGCTAA", "TNA", true, true)
+	if err == nil {
+		t.Errorf("TestHashV2() has failed. TNA is not a valid sequenceType.")
+	}
+}
+
+func TestHashV2Fragment(t *testing.T) {
+	// Test X failure
+	_, err := HashV2Fragment("ATGGGCTAX", 4, 4)
+	if err == nil {
+		t.Errorf("TestHashV2Fragment() has failed. X is not a valid sequenceType.")
+	}
+	// Test actual hash
+	sqHash, _ := EncodeHashV2(HashV2Fragment("ATGGGCTAA", 4, 4))
+	expectedHash := "K_IwQEwsn8RN9yA1CCoVLpSw=="
+	if sqHash != expectedHash {
+		t.Errorf("Expected %s, Got: %s", expectedHash, sqHash)
+	}
+}
