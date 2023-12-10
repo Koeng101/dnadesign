@@ -2,7 +2,7 @@
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/koeng101/dnadesign/blob/main/LICENSE) 
 ![Tests](https://github.com/koeng101/dnadesign/workflows/Test/badge.svg)
-![Test Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/koeng101/e58f265655ac0acacdd1a38376ccd32a/raw/coverage.json)
+![Test Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/koeng101/e8462880f920d70b182d5df3617b30f5/raw/coverage.json)
 
 DnaDesign is a Go project creating tools for automated genetic design, spanning from the lowest levels of DNA sequence manipulation to higher level functionality.
 
