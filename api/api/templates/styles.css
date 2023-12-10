@@ -1,0 +1,120 @@
+/* Reset some basic elements */
+body, h1, h2, h3, h4, h5, h6, p, form, input, textarea, header {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: none;
+}
+
+/* Apply a dark theme to the body */
+body {
+    background-color: #121212;
+    font-family: 'Arial', sans-serif;
+    color: white;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; /* Add padding to prevent content from touching the edges */
+}
+
+/* Style the chat container */
+.chat-container {
+    width: 100%;
+    max-width: 800px; /* Adjust based on your preference */
+    height: 80vh; /* Adjust based on your preference */
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Style the header */
+header {
+    background: #333;
+    padding: 10px;
+    font-size: 1.2em;
+    text-align: left;
+    width: 100%;
+}
+
+/* Style the chat history */
+.chat-history {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background: #1a1a1a;
+}
+
+/* Style the chat box */
+.chat-box {
+    background: #121212; /* Match the background color */
+    padding: 10px;
+}
+
+/* Style the text input */
+.chat-box textarea {
+    width: calc(100% - 48px); /* Adjust width to leave space for the icon and button */
+    height: 50px; /* Adjust height based on your preference */
+    background: #121212; /* Match the background color */
+    color: white;
+    padding: 10px;
+    resize: none; /* Disable resizing */
+    border-radius: 4px;
+    margin-right: 10px;
+    line-height: 1.5;
+}
+
+/* Style the file upload */
+.chat-box input[type="file"] {
+    display: none;
+}
+
+/* Style the custom file upload label */
+.custom-file-upload {
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    margin-right: 10px;
+    background: #262626;
+    border-radius: 4px;
+}
+
+.custom-file-upload img {
+    height: 20px; /* Adjust size as necessary */
+    width: auto;
+    vertical-align: middle;
+}
+
+/* Style the send button */
+.chat-box button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+/* Add some space for the last message before the input box */
+.chat-history:after {
+    content: "";
+    display: block;
+    height: 10px;
+}
+
+/* Scrollbar styles */
+.chat-history::-webkit-scrollbar {
+    width: 10px;
+}
+
+.chat-history::-webkit-scrollbar-track {
+    background: #2f2f2f;
+}
+
+.chat-history::-webkit-scrollbar-thumb {
+    background: #555;
+}
+

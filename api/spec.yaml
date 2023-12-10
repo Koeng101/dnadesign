@@ -1,0 +1,450 @@
+openapi: 3.0.0
+info:
+  title: DNA design API
+  version: 0.0.1
+servers:
+  - url: https://dnadesign.bio/api
+  - url: http://localhost:8080/api
+components:
+  schemas:
+    Attachment:
+      type: object
+      properties:
+        name:
+          type: string
+        content:
+          type: string
+      required:
+        - name
+        - content
+    FastaRecord:
+      type: object
+      properties:
+        name:
+          type: string
+        sequence:
+          type: string
+      required:
+        - name
+        - sequence
+    Fragment:
+      type: object
+      properties:
+        Sequence:
+          type: string
+        ForwardOverhang:
+          type: string
+        ReverseOverhang:
+          type: string
+      required:
+        - Sequence
+    Organism:
+      type: string
+      enum:
+        - Escherichia coli
+        - Pichia pastoris
+    Enzyme:
+      type: string
+      enum:
+        - BsaI
+        - BbsI
+        - PaqCI
+        - BsmBI
+    Change:
+      type: object
+      properties:
+        Position:
+          type: integer
+        Step:
+          type: integer
+        From:
+          type: string
+        To:
+          type: string
+        Reason:
+          type: string
+      required:
+        - Position
+        - Step
+        - From
+        - To
+        - Reason
+paths:
+  /execute_lua:
+    post:
+      tags:
+        - lua
+      summary: Run a lua script
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                script:
+                  type: string
+                attachments:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Attachment'
+              required:
+                - script
+      responses:
+        '200':
+          description: Successful output
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  output:
+                    type: string
+                  log:
+                    type: string
+                required:
+                  - output
+                  - log
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /io/fasta/parse:
+    post:
+      tags:
+        - io
+      summary: Parse FASTA data
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Parsed FASTA records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FastaRecord'
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /design/cds/fix:
+    post:
+      tags:
+        - cds
+      summary: Fix CDS
+      description: Fixes common problems in CDSs in preparation for DNA synthesis.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sequence:
+                  type: string
+                organism:
+                  $ref: '#/components/schemas/Organism'
+                removeSequences:
+                  type: array
+                  items:
+                    type: string
+              required: 
+                - sequence
+                - organism
+                - removeSequences
+      responses:
+        '200':
+          description: Fixed CDS string with list of changes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sequence:
+                    type: string
+                  changes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Change'
+                required:
+                  - sequence
+                  - changes
+        '400':
+          description: User input error
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /design/cds/optimize:
+    post:
+      tags:
+        - cds
+      summary: Optimize CDS.
+      description:  RNG Seed defaults to 0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sequence:
+                  type: string
+                organism:
+                  $ref: '#/components/schemas/Organism'
+                seed:
+                  type: integer
+              required:
+                - sequence
+                - organism
+      responses:
+        '200':
+          description: The optimized sequence
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: User input error
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /design/cds/translate:
+    post:
+      tags:
+        - cds
+      summary: Translate CDS
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sequence:
+                  type: string
+                translation_table:
+                  type: integer
+                  default: 11
+              required: [translation_table, sequence]
+      responses:
+        '200':
+          description: Translated sequence string
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /simulate/fragment:
+    post:
+      tags:
+        - simulate
+      summary: Fragment CDS
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sequence:
+                  type: string
+                min_fragment_size:
+                  type: integer
+                  default: 200
+                max_fragment_size:
+                  type: integer
+                  default: 300
+                exclude_overhangs:
+                  type: array
+                  items:
+                    type: string
+              required: [sequence, min_fragment_size, max_fragment_size]
+      responses:
+        '200':
+          description: Array of fragments and a float
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fragments:
+                    type: array
+                    items:
+                      type: string
+                  efficiency:
+                    type: number
+                    default: 0.99
+                required:
+                  - fragments
+                  - efficiency
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /simulate/complex_pcr:
+    post:
+      tags:
+        - simulate
+      summary: Simulate PCR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                templates:
+                  type: array
+                  items:
+                    type: string
+                primers:
+                  type: array
+                  items:
+                    type: string
+                target_tm:
+                  type: number
+                  default: 60.0
+                circular:
+                  type: boolean
+              required: [templates, primers, target_tm]
+      responses:
+        '200':
+          description: PCR product strings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /simulate/pcr:
+    post:
+      tags:
+        - simulate
+      summary: Simulate a simple PCR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                template:
+                  type: string
+                forward_primer:
+                  type: string
+                reverse_primer:
+                  type: string
+                target_tm:
+                  type: number
+                  default: 60.0
+                circular:
+                  type: boolean
+              required: [template, forward_primer, reverse_primer, target_tm]
+      responses:
+        '200':
+          description: PCR product strings
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /simulate/ligate:
+    post:
+      tags:
+        - simulate
+      summary: Simulate ligation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Fragment'
+      responses:
+        '200':
+          description: Ligated product strings
+  /simulate/restriction_digest:
+    post:
+      tags:
+        - simulate
+      summary: Simulate restriction digest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sequence:
+                  type: string
+                enzyme:
+                  $ref: '#/components/schemas/Enzyme'
+      responses:
+        '200':
+          description: Array of fragments
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /simulate/goldengate:
+    post:
+      tags:
+        - simulate
+      summary: Simulate Golden Gate assembly
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sequences:
+                  type: array
+                  items:
+                    type: string
+                enzyme:
+                  $ref: '#/components/schemas/Enzyme'
+      responses:
+        '200':
+          description: Golden Gate assembly product strings
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+
