@@ -12,9 +12,9 @@ import (
 
 	"reflect"
 
-	"github.com/koeng101/dnadesign/transform"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/koeng101/dnadesign/transform"
 	"github.com/stretchr/testify/assert"
 )
 

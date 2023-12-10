@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Is something broken? Create a bug report to help us improve `poly`! No issue is too small :)
+about: Is something broken? Create a bug report to help us improve `dnadesign`! No issue is too small :)
 title: ''
 labels: ['needs-triage', 'bug']
 assignees: ''
@@ -33,4 +33,4 @@ limited capacity and will prioritize more severe bugs!*
 *This is very important, so please fill it out!*
  - OS: [e.g. `Fedora 36`, `Ubuntu 22.04`, `Windows 11`, etc.]
  - Golang version: [e.g. `1.21`]
- - `poly` version [e.g. `v0.23`]
+ - `dnadesign` version [e.g. `v0.23`]

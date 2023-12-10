@@ -5,7 +5,7 @@
 *Explain why these changes are necessary. Link to GitHub issues here with the format `fixes: #XXX` to indicate this PR resolves the issue.*
 
 ### Are any changes breaking? (IMPORTANT)
-*Will merging this PR change `poly`'s API in a non-backwards-compatible manner?*
+*Will merging this PR change `dnadesign`'s API in a non-backwards-compatible manner?*
 
 *Examples of breaking changes:*
 * *Removing a method from a struct.*
