@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Do you wish poly had a specific feature? Do you have ideas for improvements to the current API? Do you feel like documentation for a feature needs expansion? Big or small, we appreciate your feedback!
+about: Do you wish dnadesign had a specific feature? Do you have ideas for improvements to the current API? Do you feel like documentation for a feature needs expansion? Big or small, we appreciate your feedback!
 title: ''
 labels: ['needs-triage', 'enhancement']
 assignees: ''

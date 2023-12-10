@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/koeng101/dnadesign/bio"
 	"github.com/koeng101/dnadesign/bio/genbank"
-	"github.com/google/go-cmp/cmp"
 	weightedRand "github.com/mroth/weightedrand"
 	"github.com/stretchr/testify/assert"
 )

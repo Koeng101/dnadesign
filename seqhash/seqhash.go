@@ -33,7 +33,7 @@ be consistent).
 
 If the sequence is RNA, the sequence will be converted to DNA before hashing. While the full Seqhash
 will still be different between RNA and DNA (due to the metadata string), the hash afterwards will be the same.
-This makes it easy to cross reference DNA and RNA sequences. This fact is important for parts of Poly
+This makes it easy to cross reference DNA and RNA sequences. This fact is important for parts of DnaDesign
 store that relate to storing and searching large quantities of sequences - deduplication can easily
 be used on those Seqhashes to save a lot of space.
 
