@@ -1,4 +1,4 @@
-module github.com/TimothyStiles/poly
+module github.com/koeng101/dnadesign
 
 go 1.18
 

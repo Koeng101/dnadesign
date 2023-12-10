@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/TimothyStiles/poly/bio/fastq"
+	"github.com/koeng101/dnadesign/bio/fastq"
 )
 
 //go:embed data/nanosavseq.fastq

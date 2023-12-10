@@ -20,7 +20,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/TimothyStiles/poly/transform"
+	"github.com/koeng101/dnadesign/transform"
 	"github.com/lunny/log"
 	"github.com/mitchellh/go-wordwrap"
 )

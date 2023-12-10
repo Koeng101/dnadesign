@@ -6,8 +6,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/TimothyStiles/poly/synthesis/codon"
-	"github.com/TimothyStiles/poly/transform"
+	"github.com/koeng101/dnadesign/synthesis/codon"
+	"github.com/koeng101/dnadesign/transform"
 )
 
 /******************************************************************************

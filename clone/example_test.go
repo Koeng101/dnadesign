@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/TimothyStiles/poly/clone"
-	"github.com/TimothyStiles/poly/seqhash"
+	"github.com/koeng101/dnadesign/clone"
+	"github.com/koeng101/dnadesign/seqhash"
 )
 
 func ExampleGoldenGate() {

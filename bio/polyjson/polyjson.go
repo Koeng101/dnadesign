@@ -13,8 +13,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/TimothyStiles/poly/bio/genbank"
-	"github.com/TimothyStiles/poly/transform"
+	"github.com/koeng101/dnadesign/bio/genbank"
+	"github.com/koeng101/dnadesign/transform"
 )
 
 /******************************************************************************

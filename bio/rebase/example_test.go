@@ -3,7 +3,7 @@ package rebase_test
 import (
 	"fmt"
 
-	"github.com/TimothyStiles/poly/bio/rebase"
+	"github.com/koeng101/dnadesign/bio/rebase"
 )
 
 // This example reads rebase into an enzymeMap and returns the AarI recognition

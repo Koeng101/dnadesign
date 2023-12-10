@@ -6,7 +6,7 @@ package matrix
 import (
 	"fmt"
 
-	"github.com/TimothyStiles/poly/alphabet"
+	"github.com/koeng101/dnadesign/alphabet"
 )
 
 // SubstitutionMatrix is a struct that holds a substitution matrix and the two alphabets that the matrix is defined over.

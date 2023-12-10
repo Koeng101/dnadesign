@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/TimothyStiles/poly/alphabet"
+	"github.com/koeng101/dnadesign/alphabet"
 )
 
 func TestAlphabet(t *testing.T) {

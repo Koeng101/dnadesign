@@ -6,7 +6,7 @@ package checks
 import (
 	"strings"
 
-	"github.com/TimothyStiles/poly/transform"
+	"github.com/koeng101/dnadesign/transform"
 )
 
 // IsPalindromic accepts a sequence of even length and returns if it is

@@ -15,8 +15,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/TimothyStiles/poly/checks"
-	"github.com/TimothyStiles/poly/transform"
+	"github.com/koeng101/dnadesign/checks"
+	"github.com/koeng101/dnadesign/transform"
 )
 
 // SetEfficiency gets the estimated fidelity rate of a given set of

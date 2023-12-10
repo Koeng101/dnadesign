@@ -3,7 +3,7 @@ package pcr_test
 import (
 	"fmt"
 
-	"github.com/TimothyStiles/poly/primers/pcr"
+	"github.com/koeng101/dnadesign/primers/pcr"
 )
 
 // This example shows how to design a sequence.

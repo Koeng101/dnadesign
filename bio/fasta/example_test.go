@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/TimothyStiles/poly/bio/fasta"
+	"github.com/koeng101/dnadesign/bio/fasta"
 )
 
 // This example shows how to open a file with the fasta parser. The sequences

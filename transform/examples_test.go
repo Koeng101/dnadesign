@@ -3,7 +3,7 @@ package transform_test
 import (
 	"fmt"
 
-	"github.com/TimothyStiles/poly/transform"
+	"github.com/koeng101/dnadesign/transform"
 )
 
 func ExampleReverseComplement() {

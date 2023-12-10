@@ -29,6 +29,6 @@ Throw money at Tim's github sponsors page:
 https://github.com/sponsors/TimothyStiles
 
 Browse our subpackages to find the functionality and documentation you need:
-https://pkg.go.dev/github.com/TimothyStiles/poly#section-directories
+https://pkg.go.dev/github.com/koeng101/dnadesign#section-directories
 */
 package poly

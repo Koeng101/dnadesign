@@ -109,7 +109,7 @@ func TestCutWithEnzymeRegression(t *testing.T) {
 	}
 
 	// cut with BsaI
-	fragments := CutWithEnzyme(part, false, bsa1)
+	fragments := CutWithEnzyme(part, false, bsa1, false)
 
 	// check that the fragments are correct
 	if len(fragments) != 2 {

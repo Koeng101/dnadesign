@@ -3,7 +3,7 @@ package uniprot_test
 import (
 	"fmt"
 
-	"github.com/TimothyStiles/poly/bio/uniprot"
+	"github.com/koeng101/dnadesign/bio/uniprot"
 )
 
 // This example shows how to open a uniprot data dump file and read the results

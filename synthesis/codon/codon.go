@@ -26,7 +26,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TimothyStiles/poly/bio/genbank"
+	"github.com/koeng101/dnadesign/bio/genbank"
 	weightedRand "github.com/mroth/weightedrand"
 )
 

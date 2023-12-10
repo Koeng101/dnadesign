@@ -3,7 +3,7 @@ package checks_test
 import (
 	"testing"
 
-	"github.com/TimothyStiles/poly/checks"
+	"github.com/koeng101/dnadesign/checks"
 )
 
 // This also needs an example test.

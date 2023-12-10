@@ -4,9 +4,9 @@ package align_test
 import (
 	"fmt"
 
-	"github.com/TimothyStiles/poly/align"
-	"github.com/TimothyStiles/poly/align/matrix"
-	"github.com/TimothyStiles/poly/alphabet"
+	"github.com/koeng101/dnadesign/align"
+	"github.com/koeng101/dnadesign/align/matrix"
+	"github.com/koeng101/dnadesign/alphabet"
 )
 
 func ExampleNeedlemanWunsch() {

@@ -24,8 +24,8 @@ import (
 	"math"
 	"strings"
 
-	"github.com/TimothyStiles/poly/checks"
-	"github.com/TimothyStiles/poly/transform"
+	"github.com/koeng101/dnadesign/checks"
+	"github.com/koeng101/dnadesign/transform"
 )
 
 // For reference: https://www.sigmaaldrich.com/technical-documents/articles/biology/oligos-melting-temp.html

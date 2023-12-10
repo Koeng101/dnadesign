@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/TimothyStiles/poly/bio"
-	"github.com/TimothyStiles/poly/synthesis/codon"
+	"github.com/koeng101/dnadesign/bio"
+	"github.com/koeng101/dnadesign/synthesis/codon"
 )
 
 const puc19path = "../../bio/genbank/data/puc19.gbk"

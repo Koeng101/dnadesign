@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/TimothyStiles/poly/transform"
+	"github.com/koeng101/dnadesign/transform"
 	"github.com/stretchr/testify/assert"
 )
 

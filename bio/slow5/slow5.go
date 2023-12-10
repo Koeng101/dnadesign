@@ -328,7 +328,7 @@ func (parser *Parser) Next() (*Read, error) {
 			// For whatever reason, this is a string.
 			newRead.ChannelNumber = values[valueIndex]
 		default:
-			return nil, fmt.Errorf("Unknown field to parser '%s' found on line %d. Please report to github.com/TimothyStiles/poly", fieldValue, parser.line)
+			return nil, fmt.Errorf("Unknown field to parser '%s' found on line %d. Please report to github.com/koeng101/dnadesign", fieldValue, parser.line)
 		}
 	}
 	return &newRead, nil

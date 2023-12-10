@@ -52,9 +52,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/TimothyStiles/poly/checks"
-	"github.com/TimothyStiles/poly/seqhash"
-	"github.com/TimothyStiles/poly/transform"
+	"github.com/koeng101/dnadesign/checks"
+	"github.com/koeng101/dnadesign/seqhash"
+	"github.com/koeng101/dnadesign/transform"
 )
 
 // Part is a simple struct that can carry a circular or linear DNA sequence.

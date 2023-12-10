@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/TimothyStiles/poly/bio"
-	"github.com/TimothyStiles/poly/seqhash"
+	"github.com/koeng101/dnadesign/bio"
+	"github.com/koeng101/dnadesign/seqhash"
 )
 
 // This example shows how to seqhash a sequence.

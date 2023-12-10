@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/TimothyStiles/poly/bio"
+	"github.com/koeng101/dnadesign/bio"
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 

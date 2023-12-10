@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/TimothyStiles/poly/random"
+	"github.com/koeng101/dnadesign/random"
 )
 
 func TestReverse(t *testing.T) {

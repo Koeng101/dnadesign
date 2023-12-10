@@ -8,8 +8,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/TimothyStiles/poly/bio"
-	"github.com/TimothyStiles/poly/bio/fasta"
+	"github.com/koeng101/dnadesign/bio"
+	"github.com/koeng101/dnadesign/bio/fasta"
 )
 
 // Example_read shows an example of reading a file from disk.

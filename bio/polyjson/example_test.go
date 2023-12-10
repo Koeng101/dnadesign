@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/TimothyStiles/poly/bio/polyjson"
-	"github.com/TimothyStiles/poly/seqhash"
+	"github.com/koeng101/dnadesign/bio/polyjson"
+	"github.com/koeng101/dnadesign/seqhash"
 )
 
 func Example() {

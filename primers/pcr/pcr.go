@@ -27,8 +27,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/TimothyStiles/poly/primers"
-	"github.com/TimothyStiles/poly/transform"
+	"github.com/koeng101/dnadesign/primers"
+	"github.com/koeng101/dnadesign/transform"
 )
 
 // https://doi.org/10.1089/dna.1994.13.75

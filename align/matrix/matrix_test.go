@@ -3,8 +3,8 @@ package matrix_test
 import (
 	"testing"
 
-	"github.com/TimothyStiles/poly/align/matrix"
-	"github.com/TimothyStiles/poly/alphabet"
+	"github.com/koeng101/dnadesign/align/matrix"
+	"github.com/koeng101/dnadesign/alphabet"
 	"github.com/stretchr/testify/assert"
 )
 

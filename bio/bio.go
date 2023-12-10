@@ -16,11 +16,11 @@ import (
 	"io"
 	"math"
 
-	"github.com/TimothyStiles/poly/bio/fasta"
-	"github.com/TimothyStiles/poly/bio/fastq"
-	"github.com/TimothyStiles/poly/bio/genbank"
-	"github.com/TimothyStiles/poly/bio/pileup"
-	"github.com/TimothyStiles/poly/bio/slow5"
+	"github.com/koeng101/dnadesign/bio/fasta"
+	"github.com/koeng101/dnadesign/bio/fastq"
+	"github.com/koeng101/dnadesign/bio/genbank"
+	"github.com/koeng101/dnadesign/bio/pileup"
+	"github.com/koeng101/dnadesign/bio/slow5"
 	"golang.org/x/sync/errgroup"
 )
 
