@@ -20,13 +20,207 @@ components:
     FastaRecord:
       type: object
       properties:
-        name:
+        identifier:
           type: string
         sequence:
           type: string
       required:
-        - name
+        - identifier
         - sequence
+    GenbankRecord:
+      type: object
+      required:
+        - meta
+        - features
+        - sequence
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feature'
+        sequence:
+          type: string
+    Meta:
+      type: object
+      required:
+        - date
+        - definition
+        - accession
+        - version
+        - keywords
+        - organism
+        - source
+        - taxonomy
+        - origin
+        - locus
+        - references
+        - baseCount
+        - other
+        - name
+        - sequenceHash
+        - sequenceHashFunction
+      properties:
+        date:
+          type: string
+        definition:
+          type: string
+        accession:
+          type: string
+        version:
+          type: string
+        keywords:
+          type: string
+        organism:
+          type: string
+        source:
+          type: string
+        taxonomy:
+          type: array
+          items:
+            type: string
+        origin:
+          type: string
+        locus:
+          $ref: '#/components/schemas/Locus'
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
+        baseCount:
+          type: array
+          items:
+            $ref: '#/components/schemas/BaseCount'
+        other:
+          type: object
+          additionalProperties:
+            type: string
+        name:
+          type: string
+        sequenceHash:
+          type: string
+        sequenceHashFunction:
+          type: string
+    Feature:
+      type: object
+      required:
+        - type
+        - description
+        - attributes
+        - sequenceHash
+        - sequenceHashFunction
+        - sequence
+        - location
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        attributes:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        sequenceHash:
+          type: string
+        sequenceHashFunction:
+          type: string
+        sequence:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+    Reference:
+      type: object
+      required:
+        - authors
+        - title
+        - journal
+        - pubMed
+        - remark
+        - range
+        - consortium
+      properties:
+        authors:
+          type: string
+        title:
+          type: string
+        journal:
+          type: string
+        pubMed:
+          type: string
+        remark:
+          type: string
+        range:
+          type: string
+        consortium:
+          type: string
+    Locus:
+      type: object
+      required:
+        - name
+        - sequenceLength
+        - moleculeType
+        - genbankDivision
+        - modificationDate
+        - sequenceCoding
+        - circular
+      properties:
+        name:
+          type: string
+        sequenceLength:
+          type: string
+        moleculeType:
+          type: string
+        genbankDivision:
+          type: string
+        modificationDate:
+          type: string
+        sequenceCoding:
+          type: string
+        circular:
+          type: boolean
+    Location:
+      type: object
+      required:
+        - start
+        - end
+        - complement
+        - join
+        - fivePrimePartial
+        - threePrimePartial
+        - gbkLocationString
+        - subLocations
+      properties:
+        start:
+          type: integer
+        end:
+          type: integer
+        complement:
+          type: boolean
+        join:
+          type: boolean
+        fivePrimePartial:
+          type: boolean
+        threePrimePartial:
+          type: boolean
+        gbkLocationString:
+          type: string
+        subLocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location'
+    BaseCount:
+      type: object
+      required:
+        - base
+        - count
+      properties:
+        base:
+          type: string
+        count:
+          type: integer
     Fragment:
       type: object
       properties:
@@ -129,6 +323,31 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/FastaRecord'
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /io/genbank/parse:
+    post:
+      tags:
+        - io
+      summary: Parse Genbank data
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Parsed Genbank records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GenbankRecord'
         '500':
           description: Internal server error
           content:

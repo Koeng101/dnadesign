@@ -1,6 +1,7 @@
 package api
 
 import (
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"net/http/httptest"
@@ -11,9 +12,15 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
+//go:embed json/json.lua
+var luaJson string
+
 func (app *App) ExecuteLua(data string, attachments []gen.Attachment) (string, string, error) {
 	L := lua.NewState()
 	defer L.Close()
+	if err := L.DoString(luaJson); err != nil {
+		panic(err)
+	}
 
 	// Add attachments
 	luaAttachments := L.NewTable()
@@ -24,6 +31,7 @@ func (app *App) ExecuteLua(data string, attachments []gen.Attachment) (string, s
 
 	// Add IO functions
 	L.SetGlobal("fasta_parse", L.NewFunction(app.LuaIoFastaParse))
+	L.SetGlobal("genbank_parse", L.NewFunction(app.LuaIoGenbankParse))
 
 	// Add CDS design functions
 	L.SetGlobal("fix", L.NewFunction(app.LuaDesignCdsFix))
@@ -102,6 +110,12 @@ func luaStringArrayToGoSlice(L *lua.LState, index int) ([]string, error) {
 func (app *App) LuaIoFastaParse(L *lua.LState) int {
 	fastaData := L.ToString(1)
 	return app.luaResponse(L, "/api/io/fasta/parse", fastaData)
+}
+
+// LuaIoGenbankParse implements genbank_parse in lua.
+func (app *App) LuaIoGenbankParse(L *lua.LState) int {
+	genbankData := L.ToString(1)
+	return app.luaResponse(L, "/api/io/genbank/parse", genbankData)
 }
 
 // LuaDesignCdsFix implements fix in lua.

@@ -23,6 +23,12 @@ type Attachment struct {
 	Name    string `json:"name"`
 }
 
+// BaseCount defines model for BaseCount.
+type BaseCount struct {
+	Base  string `json:"base"`
+	Count int    `json:"count"`
+}
+
 // Change defines model for Change.
 type Change struct {
 	From     string `json:"From"`
@@ -37,8 +43,19 @@ type Enzyme string
 
 // FastaRecord defines model for FastaRecord.
 type FastaRecord struct {
-	Name     string `json:"name"`
-	Sequence string `json:"sequence"`
+	Identifier string `json:"identifier"`
+	Sequence   string `json:"sequence"`
+}
+
+// Feature defines model for Feature.
+type Feature struct {
+	Attributes           map[string][]string `json:"attributes"`
+	Description          string              `json:"description"`
+	Location             Location            `json:"location"`
+	Sequence             string              `json:"sequence"`
+	SequenceHash         string              `json:"sequenceHash"`
+	SequenceHashFunction string              `json:"sequenceHashFunction"`
+	Type                 string              `json:"type"`
 }
 
 // Fragment defines model for Fragment.
@@ -48,8 +65,69 @@ type Fragment struct {
 	Sequence        string  `json:"Sequence"`
 }
 
+// GenbankRecord defines model for GenbankRecord.
+type GenbankRecord struct {
+	Features []Feature `json:"features"`
+	Meta     Meta      `json:"meta"`
+	Sequence string    `json:"sequence"`
+}
+
+// Location defines model for Location.
+type Location struct {
+	Complement        bool       `json:"complement"`
+	End               int        `json:"end"`
+	FivePrimePartial  bool       `json:"fivePrimePartial"`
+	GbkLocationString string     `json:"gbkLocationString"`
+	Join              bool       `json:"join"`
+	Start             int        `json:"start"`
+	SubLocations      []Location `json:"subLocations"`
+	ThreePrimePartial bool       `json:"threePrimePartial"`
+}
+
+// Locus defines model for Locus.
+type Locus struct {
+	Circular         bool   `json:"circular"`
+	GenbankDivision  string `json:"genbankDivision"`
+	ModificationDate string `json:"modificationDate"`
+	MoleculeType     string `json:"moleculeType"`
+	Name             string `json:"name"`
+	SequenceCoding   string `json:"sequenceCoding"`
+	SequenceLength   string `json:"sequenceLength"`
+}
+
+// Meta defines model for Meta.
+type Meta struct {
+	Accession            string            `json:"accession"`
+	BaseCount            []BaseCount       `json:"baseCount"`
+	Date                 string            `json:"date"`
+	Definition           string            `json:"definition"`
+	Keywords             string            `json:"keywords"`
+	Locus                Locus             `json:"locus"`
+	Name                 string            `json:"name"`
+	Organism             string            `json:"organism"`
+	Origin               string            `json:"origin"`
+	Other                map[string]string `json:"other"`
+	References           []Reference       `json:"references"`
+	SequenceHash         string            `json:"sequenceHash"`
+	SequenceHashFunction string            `json:"sequenceHashFunction"`
+	Source               string            `json:"source"`
+	Taxonomy             []string          `json:"taxonomy"`
+	Version              string            `json:"version"`
+}
+
 // Organism defines model for Organism.
 type Organism string
+
+// Reference defines model for Reference.
+type Reference struct {
+	Authors    string `json:"authors"`
+	Consortium string `json:"consortium"`
+	Journal    string `json:"journal"`
+	PubMed     string `json:"pubMed"`
+	Range      string `json:"range"`
+	Remark     string `json:"remark"`
+	Title      string `json:"title"`
+}
 
 // PostDesignCdsFixJSONBody defines parameters for PostDesignCdsFix.
 type PostDesignCdsFixJSONBody struct {
@@ -79,6 +157,9 @@ type PostExecuteLuaJSONBody struct {
 
 // PostIoFastaParseTextBody defines parameters for PostIoFastaParse.
 type PostIoFastaParseTextBody = string
+
+// PostIoGenbankParseTextBody defines parameters for PostIoGenbankParse.
+type PostIoGenbankParseTextBody = string
 
 // PostSimulateComplexPcrJSONBody defines parameters for PostSimulateComplexPcr.
 type PostSimulateComplexPcrJSONBody struct {
@@ -134,6 +215,9 @@ type PostExecuteLuaJSONRequestBody PostExecuteLuaJSONBody
 
 // PostIoFastaParseTextRequestBody defines body for PostIoFastaParse for text/plain ContentType.
 type PostIoFastaParseTextRequestBody = PostIoFastaParseTextBody
+
+// PostIoGenbankParseTextRequestBody defines body for PostIoGenbankParse for text/plain ContentType.
+type PostIoGenbankParseTextRequestBody = PostIoGenbankParseTextBody
 
 // PostSimulateComplexPcrJSONRequestBody defines body for PostSimulateComplexPcr for application/json ContentType.
 type PostSimulateComplexPcrJSONRequestBody PostSimulateComplexPcrJSONBody

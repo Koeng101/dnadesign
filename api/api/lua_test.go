@@ -10,7 +10,7 @@ func TestApp_LuaIoFastaParse(t *testing.T) {
 	luaScript := `
 parsed_fasta = fasta_parse(attachments["input.fasta"])
 
-output = parsed_fasta[1].name
+output = parsed_fasta[1].identifier
 `
 	inputFasta := `>AAD44166.1
 LCLYTHIGRNIYYGSYLYSETWNTGIMLLLITMATAFMGYVLPWGQMSFWGATVITNLFSAIPYIGTNLV
@@ -30,6 +30,71 @@ IENY
 		t.Errorf("No error should be found. Got err: %s", err)
 	}
 	expectedOutput := "AAD44166.1"
+	if output != expectedOutput {
+		t.Errorf("Unexpected response. Expected: " + expectedOutput + "\nGot: " + output)
+	}
+}
+
+func TestApp_LuaIoGenbankParse(t *testing.T) {
+	luaScript := `
+parsed_genbank = genbank_parse(attachments["input.gb"])
+
+output = parsed_genbank[1].features[3].attributes.translation[1]
+`
+	inputGenbank := `LOCUS       pUC19_lacZ         336 bp DNA     linear   UNA 12-SEP-2023
+DEFINITION  natural linear DNA
+ACCESSION   .
+VERSION     .
+KEYWORDS    .
+SOURCE      natural DNA sequence
+  ORGANISM  unspecified
+REFERENCE   1  (bases 1 to 336)
+  AUTHORS   Keoni Gandall
+  TITLE     Direct Submission
+  JOURNAL   Exported Sep 12, 2023 from SnapGene 6.2.2
+            https://www.snapgene.com
+FEATURES             Location/Qualifiers
+     source          1..336
+                     /mol_type="genomic DNA"
+                     /organism="unspecified"
+     primer_bind     1..17
+                     /label=M13 rev
+                     /note="common sequencing primer, one of multiple similar
+                     variants"
+     CDS             13..336
+                     /codon_start=1
+                     /gene="lacZ"
+                     /product="LacZ-alpha fragment of beta-galactosidase"
+                     /label=lacZ-alpha
+                     /translation="MTMITPSLHACRSTLEDPRVPSSNSLAVVLQRRDWENPGVTQLNR
+                     LAAHPPFASWRNSEEARTDRPSQQLRSLNGEWRLMRYFLLTHLCGISHRIWCTLSTICS
+                     DAA"
+     misc_feature    30..86
+                     /label=MCS
+                     /note="pUC19 multiple cloning site"
+     primer_bind     complement(87..103)
+                     /label=M13 fwd
+                     /note="common sequencing primer, one of multiple similar
+                     variants"
+ORIGIN
+        1 caggaaacag ctatgaccat gattacgcca agcttgcatg cctgcaggtc gactctagag
+       61 gatccccggg taccgagctc gaattcactg gccgtcgttt tacaacgtcg tgactgggaa
+      121 aaccctggcg ttacccaact taatcgcctt gcagcacatc cccctttcgc cagctggcgt
+      181 aatagcgaag aggcccgcac cgatcgccct tcccaacagt tgcgcagcct gaatggcgaa
+      241 tggcgcctga tgcggtattt tctccttacg catctgtgcg gtatttcaca ccgcatatgg
+      301 tgcactctca gtacaatctg ctctgatgcc gcatag
+//
+`
+	genbankAttachment := gen.Attachment{
+		Name:    "input.gb",
+		Content: inputGenbank,
+	}
+
+	_, output, err := app.ExecuteLua(luaScript, []gen.Attachment{genbankAttachment})
+	if err != nil {
+		t.Errorf("No error should be found. Got err: %s", err)
+	}
+	expectedOutput := "MTMITPSLHACRSTLEDPRVPSSNSLAVVLQRRDWENPGVTQLNRLAAHPPFASWRNSEEARTDRPSQQLRSLNGEWRLMRYFLLTHLCGISHRIWCTLSTICSDAA"
 	if output != expectedOutput {
 		t.Errorf("Unexpected response. Expected: " + expectedOutput + "\nGot: " + output)
 	}

@@ -16,6 +16,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+
+	"github.com/koeng101/dnadesign/api/gen"
 )
 
 /******************************************************************************
@@ -51,10 +53,13 @@ Keoni
 ******************************************************************************/
 
 // Record is a struct representing a single Record file element with a Identifier and its corresponding Sequence.
-type Record struct {
-	Identifier string `json:"identifier"`
-	Sequence   string `json:"sequence"`
-}
+type Record gen.FastaRecord
+
+// gen.FastaRecord
+//type FastaRecord struct {
+//    Identifier string `json:"identifier"`
+//    Sequence   string `json:"sequence"`
+//}
 
 // Header is a blank struct, needed for compatibility with bio parsers. It contains nothing.
 type Header struct{}

@@ -20,6 +20,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/koeng101/dnadesign/api/gen"
 	"github.com/koeng101/dnadesign/transform"
 	"github.com/lunny/log"
 	"github.com/mitchellh/go-wordwrap"
@@ -37,84 +38,93 @@ var (
 	parseReferencesFn = parseReferences
 )
 
-// Genbank is the main struct for the Genbank file format.
-type Genbank struct {
-	Meta     Meta
-	Features []Feature
-	Sequence string // will be changed and include reader, writer, and byte slice.
-}
+type Genbank gen.GenbankRecord
+type Meta gen.Meta
+type Feature gen.Feature
+type Reference gen.Reference
+type Locus gen.Locus
+type Location gen.Location
+type BaseCount gen.BaseCount
 
-// Meta holds the meta data for Genbank and other annotated sequence files.
-type Meta struct {
-	Date                 string            `json:"date"`
-	Definition           string            `json:"definition"`
-	Accession            string            `json:"accession"`
-	Version              string            `json:"version"`
-	Keywords             string            `json:"keywords"`
-	Organism             string            `json:"organism"`
-	Source               string            `json:"source"`
-	Taxonomy             []string          `json:"taxonomy"`
-	Origin               string            `json:"origin"`
-	Locus                Locus             `json:"locus"`
-	References           []Reference       `json:"references"`
-	BaseCount            []BaseCount       `json:"base_count"`
-	Other                map[string]string `json:"other"`
-	Name                 string            `json:"name"`
-	SequenceHash         string            `json:"sequence_hash"`
-	SequenceHashFunction string            `json:"hash_function"`
-}
-
-// Feature holds the information for a feature in a Genbank file and other annotated sequence files.
-type Feature struct {
-	Type                 string              `json:"type"`
-	Description          string              `json:"description"`
-	Attributes           map[string][]string `json:"attributes"`
-	SequenceHash         string              `json:"sequence_hash"`
-	SequenceHashFunction string              `json:"hash_function"`
-	Sequence             string              `json:"sequence"`
-	Location             Location            `json:"location"`
-	ParentSequence       *Genbank            `json:"-"`
-}
-
-// Reference holds information for one reference in a Meta struct.
-type Reference struct {
-	Authors    string `json:"authors"`
-	Title      string `json:"title"`
-	Journal    string `json:"journal"`
-	PubMed     string `json:"pub_med"`
-	Remark     string `json:"remark"`
-	Range      string `json:"range"`
-	Consortium string `json:"consortium"`
-}
-
-// Locus holds Locus information in a Meta struct.
-type Locus struct {
-	Name             string `json:"name"`
-	SequenceLength   string `json:"sequence_length"`
-	MoleculeType     string `json:"molecule_type"`
-	GenbankDivision  string `json:"genbank_division"`
-	ModificationDate string `json:"modification_date"`
-	SequenceCoding   string `json:"sequence_coding"`
-	Circular         bool   `json:"circular"`
-}
-
-// Location is a struct that holds the location of a feature.
-type Location struct {
-	Start             int        `json:"start"`
-	End               int        `json:"end"`
-	Complement        bool       `json:"complement"`
-	Join              bool       `json:"join"`
-	FivePrimePartial  bool       `json:"five_prime_partial"`
-	ThreePrimePartial bool       `json:"three_prime_partial"`
-	GbkLocationString string     `json:"gbk_location_string"`
-	SubLocations      []Location `json:"sub_locations"`
-}
-
-// BaseCount is a struct that holds the base counts for a sequence.
-type BaseCount struct {
-	Base  string
-	Count int
-}
+//
+//// Genbank is the main struct for the Genbank file format.
+//type Genbank struct {
+//	Meta     Meta
+//	Features []Feature
+//	Sequence string // will be changed and include reader, writer, and byte slice.
+//}
+//
+//// Meta holds the meta data for Genbank and other annotated sequence files.
+//type Meta struct {
+//	Date                 string            `json:"date"`
+//	Definition           string            `json:"definition"`
+//	Accession            string            `json:"accession"`
+//	Version              string            `json:"version"`
+//	Keywords             string            `json:"keywords"`
+//	Organism             string            `json:"organism"`
+//	Source               string            `json:"source"`
+//	Taxonomy             []string          `json:"taxonomy"`
+//	Origin               string            `json:"origin"`
+//	Locus                Locus             `json:"locus"`
+//	References           []Reference       `json:"references"`
+//	BaseCount            []BaseCount       `json:"base_count"`
+//	Other                map[string]string `json:"other"`
+//	Name                 string            `json:"name"`
+//	SequenceHash         string            `json:"sequence_hash"`
+//	SequenceHashFunction string            `json:"hash_function"`
+//}
+//
+//// Feature holds the information for a feature in a Genbank file and other annotated sequence files.
+//type Feature struct {
+//	Type                 string              `json:"type"`
+//	Description          string              `json:"description"`
+//	Attributes           map[string][]string `json:"attributes"`
+//	SequenceHash         string              `json:"sequence_hash"`
+//	SequenceHashFunction string              `json:"hash_function"`
+//	Sequence             string              `json:"sequence"`
+//	Location             Location            `json:"location"`
+//	ParentSequence       *Genbank            `json:"-"`
+//}
+//
+//// Reference holds information for one reference in a Meta struct.
+//type Reference struct {
+//	Authors    string `json:"authors"`
+//	Title      string `json:"title"`
+//	Journal    string `json:"journal"`
+//	PubMed     string `json:"pub_med"`
+//	Remark     string `json:"remark"`
+//	Range      string `json:"range"`
+//	Consortium string `json:"consortium"`
+//}
+//
+//// Locus holds Locus information in a Meta struct.
+//type Locus struct {
+//	Name             string `json:"name"`
+//	SequenceLength   string `json:"sequence_length"`
+//	MoleculeType     string `json:"molecule_type"`
+//	GenbankDivision  string `json:"genbank_division"`
+//	ModificationDate string `json:"modification_date"`
+//	SequenceCoding   string `json:"sequence_coding"`
+//	Circular         bool   `json:"circular"`
+//}
+//
+//// Location is a struct that holds the location of a feature.
+//type Location struct {
+//	Start             int        `json:"start"`
+//	End               int        `json:"end"`
+//	Complement        bool       `json:"complement"`
+//	Join              bool       `json:"join"`
+//	FivePrimePartial  bool       `json:"five_prime_partial"`
+//	ThreePrimePartial bool       `json:"three_prime_partial"`
+//	GbkLocationString string     `json:"gbk_location_string"`
+//	SubLocations      []Location `json:"sub_locations"`
+//}
+//
+//// BaseCount is a struct that holds the base counts for a sequence.
+//type BaseCount struct {
+//	Base  string
+//	Count int
+//}
 
 // Precompiled regular expressions:
 var (
@@ -130,7 +140,7 @@ var (
 // Useful when exporting for downstream analysis, such as with json.Marshal.
 func (sequence *Genbank) StoreFeatureSequences() error {
 	for i := range sequence.Features {
-		_, err := sequence.Features[i].StoreSequence()
+		_, err := StoreSequence(sequence, &sequence.Features[i])
 		if err != nil {
 			return err
 		}
@@ -145,23 +155,22 @@ func (sequence *Genbank) StoreFeatureSequences() error {
 // to modify in either location, it is recommended you first call feature.Copy()
 // before passing as input to save yourself trouble.
 func (sequence *Genbank) AddFeature(feature *Feature) error {
-	feature.ParentSequence = sequence
-	sequence.Features = append(sequence.Features, *feature)
+	sequence.Features = append(sequence.Features, gen.Feature(*feature))
 	return nil
 }
 
 // GetSequence returns the sequence of a feature.
-func (feature Feature) GetSequence() (string, error) {
-	return getFeatureSequence(feature, feature.Location)
+func GetSequence(parentSequence *Genbank, feature gen.Feature) (string, error) {
+	return getFeatureSequence(parentSequence, Feature(feature), feature.Location)
 }
 
 // StoreSequence infers and assigns the value of feature.Sequence
 // if currently an empty string.
-func (feature *Feature) StoreSequence() (string, error) {
+func StoreSequence(parentSequence *Genbank, feature *gen.Feature) (string, error) {
 	if feature.Sequence != "" {
 		return feature.Sequence, nil
 	}
-	seq, err := getFeatureSequence(*feature, feature.Location)
+	seq, err := getFeatureSequence(parentSequence, Feature(*feature), feature.Location)
 	if err == nil {
 		feature.Sequence = seq
 	}
@@ -180,21 +189,21 @@ func (feature *Feature) Copy() Feature {
 }
 
 // CopyLocation creates deep copy of Location, which supports safe duplication
-func CopyLocation(location Location) Location {
+func CopyLocation(location gen.Location) gen.Location {
 	location.SubLocations = MapSlice(location.SubLocations, CopyLocation)
 	return location
 }
 
 // getFeatureSequence takes a feature and location object and returns a sequence string.
-func getFeatureSequence(feature Feature, location Location) (string, error) {
+func getFeatureSequence(parentGenbank *Genbank, feature Feature, location gen.Location) (string, error) {
 	var sequenceBuffer bytes.Buffer
-	parentSequence := feature.ParentSequence.Sequence
+	parentSequence := parentGenbank.Sequence
 
 	if len(location.SubLocations) == 0 {
 		sequenceBuffer.WriteString(parentSequence[location.Start:location.End])
 	} else {
 		for _, subLocation := range location.SubLocations {
-			sequence, err := getFeatureSequence(feature, subLocation)
+			sequence, err := getFeatureSequence(parentGenbank, feature, subLocation)
 			if err != nil {
 				return "", err
 			}
@@ -641,7 +650,7 @@ func (parser *Parser) Next() (*Genbank, error) {
 					if err != nil {
 						return &Genbank{}, &ParseError{line: line, lineNo: lineNum, before: true, wraps: err, info: "failed in parsing reference"}
 					}
-					parser.parameters.genbank.Meta.References = append(parser.parameters.genbank.Meta.References, reference)
+					parser.parameters.genbank.Meta.References = append(parser.parameters.genbank.Meta.References, gen.Reference(reference))
 
 				case "FEATURES":
 					parser.parameters.parseStep = "features"
@@ -674,7 +683,7 @@ func (parser *Parser) Next() (*Genbank, error) {
 						return &Genbank{}, &ParseError{line: line, lineNo: lineNum, wraps: err, info: "invalid base count"}
 					}
 
-					baseCount := BaseCount{
+					baseCount := gen.BaseCount{
 						Base:  fields[countIndex+1],
 						Count: count,
 					}
@@ -908,8 +917,8 @@ var genbankDivisions = []string{
 
 // TODO rewrite with proper error handling.
 // parses locus from provided string.
-func parseLocus(locusString string) Locus {
-	locus := Locus{}
+func parseLocus(locusString string) gen.Locus {
+	locus := gen.Locus{}
 
 	locusSplit := strings.Split(strings.TrimSpace(locusString), " ")
 
@@ -993,28 +1002,28 @@ func getSourceOrganism(metadataData []string) (string, string, []string) {
 	return source, organism, taxonomy
 }
 
-func parseLocation(locationString string) (Location, error) {
-	var location Location
+func parseLocation(locationString string) (gen.Location, error) {
+	var location gen.Location
 	location.GbkLocationString = locationString
 	if !strings.ContainsAny(locationString, "(") { // Case checks for simple expression of x..x
 		if !strings.ContainsAny(locationString, ".") { //Case checks for simple expression x
 			position, err := strconv.Atoi(partialRegex.ReplaceAllString(locationString, ""))
 			if err != nil {
-				return Location{}, err
+				return gen.Location{}, err
 			}
-			location = Location{Start: position, End: position}
+			location = gen.Location{Start: position, End: position}
 		} else {
 			// to remove FivePrimePartial and ThreePrimePartial indicators from start and end before converting to int.
 			startEndSplit := strings.Split(locationString, "..")
 			start, err := strconv.Atoi(partialRegex.ReplaceAllString(startEndSplit[0], ""))
 			if err != nil {
-				return Location{}, err
+				return gen.Location{}, err
 			}
 			end, err := strconv.Atoi(partialRegex.ReplaceAllString(startEndSplit[1], ""))
 			if err != nil {
-				return Location{}, err
+				return gen.Location{}, err
 			}
-			location = Location{Start: start - 1, End: end}
+			location = gen.Location{Start: start - 1, End: end}
 		}
 	} else {
 		firstOuterParentheses := strings.Index(locationString, "(")
@@ -1037,7 +1046,7 @@ func parseLocation(locationString string) (Location, error) {
 						if ParenthesesCount == 0 {
 							parsedSubLocation, err := parseLocation(expression[prevSubLocationStart:i])
 							if err != nil {
-								return Location{}, err
+								return gen.Location{}, err
 							}
 							parsedSubLocation.GbkLocationString = locationString
 							location.SubLocations = append(location.SubLocations, parsedSubLocation)
@@ -1046,11 +1055,11 @@ func parseLocation(locationString string) (Location, error) {
 					}
 				}
 				if ParenthesesCount != 0 {
-					return Location{}, fmt.Errorf("Unbalanced parentheses")
+					return gen.Location{}, fmt.Errorf("Unbalanced parentheses")
 				}
 				parsedSubLocation, err := parseLocation(expression[prevSubLocationStart:])
 				if err != nil {
-					return Location{}, err
+					return gen.Location{}, err
 				}
 				parsedSubLocation.GbkLocationString = locationString
 				location.SubLocations = append(location.SubLocations, parsedSubLocation)
@@ -1058,7 +1067,7 @@ func parseLocation(locationString string) (Location, error) {
 				for _, numberRange := range strings.Split(expression, ",") {
 					joinLocation, err := parseLocation(numberRange)
 					if err != nil {
-						return Location{}, err
+						return gen.Location{}, err
 					}
 					location.SubLocations = append(location.SubLocations, joinLocation)
 				}
@@ -1068,7 +1077,7 @@ func parseLocation(locationString string) (Location, error) {
 			// location.Complement = true
 			subLocation, err := parseLocation(expression)
 			if err != nil {
-				return Location{}, err
+				return gen.Location{}, err
 			}
 			subLocation.Complement = true
 			subLocation.GbkLocationString = locationString
@@ -1115,7 +1124,7 @@ func buildMetaString(name string, data string) string {
 }
 
 // BuildLocationString is a recursive function that takes a location object and creates a gbk location string for Build()
-func BuildLocationString(location Location) string {
+func BuildLocationString(location gen.Location) string {
 	var locationString string
 
 	if location.Complement {
@@ -1141,7 +1150,7 @@ func BuildLocationString(location Location) string {
 }
 
 // BuildFeatureString is a helper function to build gbk feature strings for Build()
-func BuildFeatureString(feature Feature) string {
+func BuildFeatureString(feature gen.Feature) string {
 	whiteSpaceTrailLength := 16 - len(feature.Type) // I wish I was kidding.
 	whiteSpaceTrail := generateWhiteSpace(whiteSpaceTrailLength)
 	var location string

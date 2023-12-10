@@ -285,7 +285,7 @@ func extractCodingRegion(data genbank.Genbank) ([]string, error) {
 	// iterate through the features of the genbank file and if the feature is a coding region, append the sequence to the string builder
 	for _, feature := range data.Features {
 		if feature.Type == "CDS" {
-			sequence, err := feature.GetSequence()
+			sequence, err := genbank.GetSequence(&data, feature)
 			if err != nil {
 				return nil, err
 			}

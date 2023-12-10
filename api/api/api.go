@@ -93,6 +93,7 @@ func InitializeApp() App {
 
 	// IO handlers.
 	app.Router.HandleFunc("/api/io/fasta/parse", appImpl.PostIoFastaParse)
+	app.Router.HandleFunc("/api/io/genbank/parse", appImpl.PostIoGenbankParse)
 
 	// CDS design handlers.
 	app.Router.HandleFunc("/api/design/cds/fix", appImpl.PostDesignCdsFix)
@@ -145,9 +146,30 @@ func (app *App) PostIoFastaParse(ctx context.Context, request gen.PostIoFastaPar
 	}
 	data := make([]gen.FastaRecord, len(fastas))
 	for i, fastaRecord := range fastas {
-		data[i] = gen.FastaRecord{Name: fastaRecord.Identifier, Sequence: fastaRecord.Sequence}
+		data[i] = gen.FastaRecord(*fastaRecord)
 	}
 	return gen.PostIoFastaParse200JSONResponse(data), nil
+}
+
+func (app *App) PostIoGenbankParse(ctx context.Context, request gen.PostIoGenbankParseRequestObject) (gen.PostIoGenbankParseResponseObject, error) {
+	genbankString := *request.Body
+	parser, err := bio.NewGenbankParser(strings.NewReader(genbankString + "\n"))
+	if err != nil {
+		return gen.PostIoGenbankParse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
+	}
+	genbanks, err := parser.Parse()
+	if err != nil {
+		return gen.PostIoGenbankParse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
+	}
+	data := make([]gen.GenbankRecord, len(genbanks))
+	for i, genbankRecord := range genbanks {
+		err := genbankRecord.StoreFeatureSequences()
+		if err != nil {
+			return gen.PostIoGenbankParse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
+		}
+		data[i] = gen.GenbankRecord(*genbankRecord)
+	}
+	return gen.PostIoGenbankParse200JSONResponse(data), nil
 }
 
 /*

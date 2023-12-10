@@ -38,6 +38,9 @@ type ServerInterface interface {
 	// Parse FASTA data
 	// (POST /io/fasta/parse)
 	PostIoFastaParse(w http.ResponseWriter, r *http.Request)
+	// Parse Genbank data
+	// (POST /io/genbank/parse)
+	PostIoGenbankParse(w http.ResponseWriter, r *http.Request)
 	// Simulate PCR
 	// (POST /simulate/complex_pcr)
 	PostSimulateComplexPcr(w http.ResponseWriter, r *http.Request)
@@ -89,6 +92,12 @@ func (_ Unimplemented) PostExecuteLua(w http.ResponseWriter, r *http.Request) {
 // Parse FASTA data
 // (POST /io/fasta/parse)
 func (_ Unimplemented) PostIoFastaParse(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Parse Genbank data
+// (POST /io/genbank/parse)
+func (_ Unimplemented) PostIoGenbankParse(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -203,6 +212,21 @@ func (siw *ServerInterfaceWrapper) PostIoFastaParse(w http.ResponseWriter, r *ht
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostIoFastaParse(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostIoGenbankParse operation middleware
+func (siw *ServerInterfaceWrapper) PostIoGenbankParse(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostIoGenbankParse(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -431,6 +455,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/io/fasta/parse", wrapper.PostIoFastaParse)
 	})
 	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/io/genbank/parse", wrapper.PostIoGenbankParse)
+	})
+	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/simulate/complex_pcr", wrapper.PostSimulateComplexPcr)
 	})
 	r.Group(func(r chi.Router) {
@@ -613,6 +640,33 @@ func (response PostIoFastaParse500TextResponse) VisitPostIoFastaParseResponse(w 
 	return err
 }
 
+type PostIoGenbankParseRequestObject struct {
+	Body *PostIoGenbankParseTextRequestBody
+}
+
+type PostIoGenbankParseResponseObject interface {
+	VisitPostIoGenbankParseResponse(w http.ResponseWriter) error
+}
+
+type PostIoGenbankParse200JSONResponse []GenbankRecord
+
+func (response PostIoGenbankParse200JSONResponse) VisitPostIoGenbankParseResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostIoGenbankParse500TextResponse string
+
+func (response PostIoGenbankParse500TextResponse) VisitPostIoGenbankParseResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(500)
+
+	_, err := w.Write([]byte(response))
+	return err
+}
+
 type PostSimulateComplexPcrRequestObject struct {
 	Body *PostSimulateComplexPcrJSONRequestBody
 }
@@ -782,6 +836,9 @@ type StrictServerInterface interface {
 	// Parse FASTA data
 	// (POST /io/fasta/parse)
 	PostIoFastaParse(ctx context.Context, request PostIoFastaParseRequestObject) (PostIoFastaParseResponseObject, error)
+	// Parse Genbank data
+	// (POST /io/genbank/parse)
+	PostIoGenbankParse(ctx context.Context, request PostIoGenbankParseRequestObject) (PostIoGenbankParseResponseObject, error)
 	// Simulate PCR
 	// (POST /simulate/complex_pcr)
 	PostSimulateComplexPcr(ctx context.Context, request PostSimulateComplexPcrRequestObject) (PostSimulateComplexPcrResponseObject, error)
@@ -987,6 +1044,38 @@ func (sh *strictHandler) PostIoFastaParse(w http.ResponseWriter, r *http.Request
 	}
 }
 
+// PostIoGenbankParse operation middleware
+func (sh *strictHandler) PostIoGenbankParse(w http.ResponseWriter, r *http.Request) {
+	var request PostIoGenbankParseRequestObject
+
+	data, err := io.ReadAll(r.Body)
+	if err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't read body: %w", err))
+		return
+	}
+	body := PostIoGenbankParseTextRequestBody(data)
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostIoGenbankParse(ctx, request.(PostIoGenbankParseRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostIoGenbankParse")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostIoGenbankParseResponseObject); ok {
+		if err := validResponse.VisitPostIoGenbankParseResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // PostSimulateComplexPcr operation middleware
 func (sh *strictHandler) PostSimulateComplexPcr(w http.ResponseWriter, r *http.Request) {
 	var request PostSimulateComplexPcrRequestObject
@@ -1176,29 +1265,38 @@ func (sh *strictHandler) PostSimulateRestrictionDigest(w http.ResponseWriter, r 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
