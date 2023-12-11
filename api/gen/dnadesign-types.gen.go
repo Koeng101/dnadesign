@@ -49,13 +49,11 @@ type FastaRecord struct {
 
 // Feature defines model for Feature.
 type Feature struct {
-	Attributes           map[string][]string `json:"attributes"`
-	Description          string              `json:"description"`
-	Location             Location            `json:"location"`
-	Sequence             string              `json:"sequence"`
-	SequenceHash         string              `json:"sequenceHash"`
-	SequenceHashFunction string              `json:"sequenceHashFunction"`
-	Type                 string              `json:"type"`
+	Attributes  map[string][]string `json:"attributes"`
+	Description string              `json:"description"`
+	Location    Location            `json:"location"`
+	Sequence    string              `json:"sequence"`
+	Type        string              `json:"type"`
 }
 
 // Fragment defines model for Fragment.
@@ -97,22 +95,20 @@ type Locus struct {
 
 // Meta defines model for Meta.
 type Meta struct {
-	Accession            string            `json:"accession"`
-	BaseCount            []BaseCount       `json:"baseCount"`
-	Date                 string            `json:"date"`
-	Definition           string            `json:"definition"`
-	Keywords             string            `json:"keywords"`
-	Locus                Locus             `json:"locus"`
-	Name                 string            `json:"name"`
-	Organism             string            `json:"organism"`
-	Origin               string            `json:"origin"`
-	Other                map[string]string `json:"other"`
-	References           []Reference       `json:"references"`
-	SequenceHash         string            `json:"sequenceHash"`
-	SequenceHashFunction string            `json:"sequenceHashFunction"`
-	Source               string            `json:"source"`
-	Taxonomy             []string          `json:"taxonomy"`
-	Version              string            `json:"version"`
+	Accession  string            `json:"accession"`
+	BaseCount  []BaseCount       `json:"baseCount"`
+	Date       string            `json:"date"`
+	Definition string            `json:"definition"`
+	Keywords   string            `json:"keywords"`
+	Locus      Locus             `json:"locus"`
+	Name       string            `json:"name"`
+	Organism   string            `json:"organism"`
+	Origin     string            `json:"origin"`
+	Other      map[string]string `json:"other"`
+	References []Reference       `json:"references"`
+	Source     string            `json:"source"`
+	Taxonomy   []string          `json:"taxonomy"`
+	Version    string            `json:"version"`
 }
 
 // Organism defines model for Organism.

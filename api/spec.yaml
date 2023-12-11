@@ -59,8 +59,6 @@ components:
         - baseCount
         - other
         - name
-        - sequenceHash
-        - sequenceHashFunction
       properties:
         date:
           type: string
@@ -98,18 +96,12 @@ components:
             type: string
         name:
           type: string
-        sequenceHash:
-          type: string
-        sequenceHashFunction:
-          type: string
     Feature:
       type: object
       required:
         - type
         - description
         - attributes
-        - sequenceHash
-        - sequenceHashFunction
         - sequence
         - location
       properties:
@@ -123,10 +115,6 @@ components:
             type: array
             items:
               type: string
-        sequenceHash:
-          type: string
-        sequenceHashFunction:
-          type: string
         sequence:
           type: string
         location:

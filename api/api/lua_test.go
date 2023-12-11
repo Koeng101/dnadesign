@@ -39,7 +39,7 @@ func TestApp_LuaIoGenbankParse(t *testing.T) {
 	luaScript := `
 parsed_genbank = genbank_parse(attachments["input.gb"])
 
-output = parsed_genbank[1].features[3].attributes.translation[1]
+output = parsed_genbank[1].features[3].attributes["translation"][1]
 `
 	inputGenbank := `LOCUS       pUC19_lacZ         336 bp DNA     linear   UNA 12-SEP-2023
 DEFINITION  natural linear DNA
