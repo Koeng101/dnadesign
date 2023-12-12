@@ -49,7 +49,7 @@ func TestRead(t *testing.T) {
 }
 
 func TestHeader(t *testing.T) {
-	var writer io.Writer = ioutil.Discard
+	var writer = ioutil.Discard
 	header := uniprot.Header{}
 	_, err := header.WriteTo(writer)
 	if err != nil {
@@ -58,7 +58,7 @@ func TestHeader(t *testing.T) {
 }
 
 func TestEntry(t *testing.T) {
-	var writer io.Writer = ioutil.Discard
+	var writer = ioutil.Discard
 	entry := uniprot.Entry{}
 	_, err := entry.WriteTo(writer)
 	if err != nil {
