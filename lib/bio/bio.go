@@ -21,6 +21,7 @@ import (
 	"github.com/koeng101/dnadesign/lib/bio/genbank"
 	"github.com/koeng101/dnadesign/lib/bio/pileup"
 	"github.com/koeng101/dnadesign/lib/bio/slow5"
+	"github.com/koeng101/dnadesign/lib/bio/uniprot"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -141,6 +142,16 @@ func NewPileupParser(r io.Reader) (*Parser[*pileup.Line, *pileup.Header], error)
 // io.Reader and a user-given maxLineLength.
 func NewPileupParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[*pileup.Line, *pileup.Header], error) {
 	return &Parser[*pileup.Line, *pileup.Header]{parserInterface: pileup.NewParser(r, maxLineLength)}, nil
+}
+
+// NewUniprotParser initiates a new Uniprot parser from an io.Reader. No
+// maxLineLength is necessary. The parser should be reading a gzipped xml file.
+func NewUniprotParser(r io.Reader) (*Parser[*uniprot.Entry, *uniprot.Header], error) {
+	parser, err := uniprot.NewParser(r)
+	if err != nil {
+		return &Parser[*uniprot.Entry, *uniprot.Header]{}, err
+	}
+	return &Parser[*uniprot.Entry, *uniprot.Header]{parserInterface: parser}, nil
 }
 
 /******************************************************************************
