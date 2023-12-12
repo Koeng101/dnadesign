@@ -45,7 +45,6 @@ func TestRead(t *testing.T) {
 			}
 		}
 	}
-
 }
 
 func TestHeader(t *testing.T) {
