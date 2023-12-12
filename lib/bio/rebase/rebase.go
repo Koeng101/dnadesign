@@ -15,6 +15,9 @@ http://rebase.neb.com/rebase/rebase.f31.html
 The actual data dump itself is linked here and updated once a month:
 http://rebase.neb.com/rebase/link_withrefm
 
+The data dump withrefm.312 on Nov 27 2023 is embedded and accessible with the
+function "Rebase".
+
 The header of this file gives a wonderful explanation of its structure. Here is the
 header with the commercial suppliers format and an example enzyme.
 
@@ -143,11 +146,16 @@ REBASE codes for commercial sources of enzymes
 package rebase
 
 import (
+	"bytes"
+	_ "embed"
 	"encoding/json"
 	"io"
 	"os"
 	"strings"
 )
+
+//go:embed data/rebase.txt
+var rebase31 []byte
 
 var (
 	readAllFn  = io.ReadAll
@@ -280,4 +288,14 @@ func Export(enzymeMap map[string]Enzyme) ([]byte, error) {
 		return []byte{}, err
 	}
 	return jsonRebase, nil
+}
+
+// Rebase returns the rebase database as of Nov 27 2023.
+func Rebase() map[string]Enzyme {
+	r := bytes.NewReader(rebase31)
+	enzymes, err := Parse(r)
+	if err != nil {
+		panic(err)
+	}
+	return enzymes
 }

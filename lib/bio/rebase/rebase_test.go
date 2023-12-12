@@ -65,3 +65,7 @@ func TestExport_error(t *testing.T) {
 	_, err := Export(map[string]Enzyme{})
 	assert.EqualError(t, err, exportErr.Error())
 }
+
+func TestRebase(t *testing.T) {
+	_ = Rebase()
+}
