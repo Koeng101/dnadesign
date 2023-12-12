@@ -2,6 +2,7 @@ run:
   timeout: 1m
   skip-dirs:
     - data
+    - api/gen
 linters:
   enable:
     - bodyclose
