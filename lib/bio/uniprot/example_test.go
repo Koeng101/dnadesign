@@ -2,6 +2,7 @@ package uniprot_test
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/koeng101/dnadesign/lib/bio/uniprot"
 )
@@ -10,12 +11,11 @@ import (
 // into a list. Directly using the channel without converting to an array
 // should be used for the Trembl data dump
 func Example_basic() {
-	entries, _, _ := uniprot.Read("data/uniprot_sprot_mini.xml.gz")
+	uniprotFile, _ := os.Open("data/uniprot_sprot_mini.xml.gz")
+	defer uniprotFile.Close()
+	parser, _ := uniprot.NewParser(uniprotFile)
+	entry, _ := parser.Next()
 
-	var entry uniprot.Entry
-	for singleEntry := range entries {
-		entry = singleEntry
-	}
 	fmt.Println(entry.Accession[0])
-	// Output: O55723
+	// Output: P0C9F0
 }

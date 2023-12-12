@@ -10,6 +10,7 @@ import (
 
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/bio/fasta"
+	"github.com/koeng101/dnadesign/lib/bio/uniprot"
 )
 
 // Example_read shows an example of reading a file from disk.
@@ -287,4 +288,109 @@ seq1 	279 	C 	23 	A..T,,.,.,...,,,.,..... 	75&<<<<<<<<<=<<<9<<:<<<`)
 
 	fmt.Println(lines[1].Quality)
 	// Output: <<<;<<<<<<<<<3<=<<<;<<+
+}
+
+func ExampleNewUniprotParser() {
+	// The following is a real entry in Swiss-Prot. We're going to gzip it and
+	// put the gzipped text as an io.Reader to mock a file. You can edit the
+	// text here to see how the parser works.
+	uniprotEntryText := `<entry dataset="Swiss-Prot" created="2009-05-05" modified="2020-08-12" version="9" xmlns="http://uniprot.org/uniprot">
+  <accession>P0C9F0</accession>
+  <name>1001R_ASFK5</name>
+  <protein>
+    <recommendedName>
+      <fullName>Protein MGF 100-1R</fullName>
+    </recommendedName>
+  </protein>
+  <gene>
+    <name type="ordered locus">Ken-018</name>
+  </gene>
+  <organism>
+    <name type="scientific">African swine fever virus (isolate Pig/Kenya/KEN-50/1950)</name>
+    <name type="common">ASFV</name>
+    <dbReference type="NCBI Taxonomy" id="561445"/>
+    <lineage>
+      <taxon>Viruses</taxon>
+      <taxon>Varidnaviria</taxon>
+      <taxon>Bamfordvirae</taxon>
+      <taxon>Nucleocytoviricota</taxon>
+      <taxon>Pokkesviricetes</taxon>
+      <taxon>Asfuvirales</taxon>
+      <taxon>Asfarviridae</taxon>
+      <taxon>Asfivirus</taxon>
+    </lineage>
+  </organism>
+  <organismHost>
+    <name type="scientific">Ornithodoros</name>
+    <name type="common">relapsing fever ticks</name>
+    <dbReference type="NCBI Taxonomy" id="6937"/>
+  </organismHost>
+  <organismHost>
+    <name type="scientific">Phacochoerus aethiopicus</name>
+    <name type="common">Warthog</name>
+    <dbReference type="NCBI Taxonomy" id="85517"/>
+  </organismHost>
+  <organismHost>
+    <name type="scientific">Phacochoerus africanus</name>
+    <name type="common">Warthog</name>
+    <dbReference type="NCBI Taxonomy" id="41426"/>
+  </organismHost>
+  <organismHost>
+    <name type="scientific">Potamochoerus larvatus</name>
+    <name type="common">Bushpig</name>
+    <dbReference type="NCBI Taxonomy" id="273792"/>
+  </organismHost>
+  <organismHost>
+    <name type="scientific">Sus scrofa</name>
+    <name type="common">Pig</name>
+    <dbReference type="NCBI Taxonomy" id="9823"/>
+  </organismHost>
+  <reference key="1">
+    <citation type="submission" date="2003-03" db="EMBL/GenBank/DDBJ databases">
+      <title>African swine fever virus genomes.</title>
+      <authorList>
+        <person name="Kutish G.F."/>
+        <person name="Rock D.L."/>
+      </authorList>
+    </citation>
+    <scope>NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA]</scope>
+  </reference>
+  <comment type="function">
+    <text evidence="1">Plays a role in virus cell tropism, and may be required for efficient virus replication in macrophages.</text>
+  </comment>
+  <comment type="similarity">
+    <text evidence="2">Belongs to the asfivirus MGF 100 family.</text>
+  </comment>
+  <dbReference type="EMBL" id="AY261360">
+    <property type="status" value="NOT_ANNOTATED_CDS"/>
+    <property type="molecule type" value="Genomic_DNA"/>
+  </dbReference>
+  <dbReference type="Proteomes" id="UP000000861">
+    <property type="component" value="Genome"/>
+  </dbReference>
+  <proteinExistence type="inferred from homology"/>
+  <feature type="chain" id="PRO_0000373170" description="Protein MGF 100-1R">
+    <location>
+      <begin position="1"/>
+      <end position="122"/>
+    </location>
+  </feature>
+  <evidence type="ECO:0000250" key="1"/>
+  <evidence type="ECO:0000305" key="2"/>
+  <sequence length="122" mass="14969" checksum="C5E63C34B941711C" modified="2009-05-05" version="1">MVRLFYNPIKYLFYRRSCKKRLRKALKKLNFYHPPKECCQIYRLLENAPGGTYFITENMTNELIMIAKDPVDKKIKSVKLYLTGNYIKINQHYYINIYMYLMRYNQIYKYPLICFSKYSKIL</sequence>
+</entry>`
+	// Encode the string into an gzip io.Reader
+	var buf bytes.Buffer
+	gz := gzip.NewWriter(&buf)
+	_, _ = gz.Write([]byte(uniprotEntryText))
+	_ = gz.Close()
+
+	r := bytes.NewReader(buf.Bytes())
+
+	// Now we load the parser, and get the first entry out.
+	parser, _ := uniprot.NewParser(r)
+	entry, _ := parser.Next()
+
+	fmt.Println(entry.Accession[0])
+	// Output: P0C9F0
 }
