@@ -188,7 +188,7 @@ func NaiveProteinFragmentationAndOptimization(proteins []string, overhangLength 
 	}
 	// However, we can't natively just synthesize these sequences quite yet.
 	// We need to apply the prefix / suffix to the first / last fragment,
-	// respectively, and then apply each overhang to the fragment preceeding.
+	// respectively, and then apply each overhang to the fragment preceding.
 	var sequences [][]string
 	for _, fragmentedProtein := range allOptimizedSequences {
 		var overhangsApplied []string
