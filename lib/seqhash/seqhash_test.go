@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/koeng101/dnadesign/lib/bio"
-	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
 func TestHash(t *testing.T) {
@@ -85,10 +84,7 @@ func TestLeastRotation(t *testing.T) {
 		} else {
 			newRotatedSequence := RotateSequence(sequenceBuffer.String())
 			if rotatedSequence != newRotatedSequence {
-				dmp := diffmatchpatch.New()
-				diffs := dmp.DiffMain(rotatedSequence, newRotatedSequence, false)
 				t.Errorf("TestLeastRotation() has failed. rotationSequence mutated.")
-				fmt.Println(dmp.DiffPrettyText(diffs))
 			}
 		}
 	}
