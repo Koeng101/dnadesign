@@ -560,11 +560,8 @@ func TestUpdateWeights(t *testing.T) {
 	}
 }
 
-//go:embed default_tables/freqB.json
-var ecoliCodonTable []byte
-
 func TestCodonJSONRegression(t *testing.T) {
-	ct := ParseCodonJSON(ecoliCodonTable)
+	ct := ParseCodonJSON(EcoliCodonTable)
 	gfp := "MASKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK"
 	seed := 0
 	sequence, err := ct.Optimize(gfp, seed)

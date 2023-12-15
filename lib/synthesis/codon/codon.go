@@ -18,6 +18,7 @@ Tim
 package codon
 
 import (
+	_ "embed"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -52,6 +53,9 @@ File is structured as so:
 
 		TranslationTable.Stats - a set of statistics we maintain throughout the translation table's lifetime. For example we track the start codons observed when we update the codon table's weights with other DNA sequences
 ******************************************************************************/
+
+//go:embed default_tables/freqB.json
+var EcoliCodonTable []byte
 
 var (
 	errNoCodingRegions      = errors.New("no coding regions found")
