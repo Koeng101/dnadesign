@@ -34,7 +34,7 @@ func ExampleHash() {
 func ExampleRotateSequence() {
 	file, _ := os.Open("../data/puc19.gbk")
 	defer file.Close()
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 
 	sequenceLength := len(sequence.Sequence)

@@ -69,7 +69,7 @@ func TestHash(t *testing.T) {
 func TestLeastRotation(t *testing.T) {
 	file, _ := os.Open("../data/puc19.gbk")
 	defer file.Close()
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 	var sequenceBuffer bytes.Buffer
 

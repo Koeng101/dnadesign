@@ -17,7 +17,7 @@ import (
 func Example_read() {
 	// Read lets you read files from disk into a parser.
 	file, _ := os.Open("fasta/data/base.fasta")
-	parser, _ := bio.NewFastaParser(file)
+	parser := bio.NewFastaParser(file)
 
 	records, _ := parser.Parse()
 
@@ -29,7 +29,7 @@ func Example_read() {
 func Example_readGz() {
 	fileGz, _ := os.Open("fasta/data/base.fasta.gz")
 	file, _ := gzip.NewReader(fileGz)
-	parser, _ := bio.NewFastaParser(file)
+	parser := bio.NewFastaParser(file)
 	records, _ := parser.Parse()
 
 	fmt.Println(records[1].Sequence)
@@ -55,7 +55,7 @@ DIDGDGQVNYEEFVQMMTAK*`))
 	zipWriter.Close()
 
 	fileDecompressed, _ := gzip.NewReader(&file) // Decompress the file
-	parser, _ := bio.NewFastaParser(fileDecompressed)
+	parser := bio.NewFastaParser(fileDecompressed)
 	records, _ := parser.Parse() // Parse all data records from file
 
 	fmt.Println(records[1].Sequence)
@@ -93,7 +93,7 @@ IENY
 ADQLTEEQIAEFKEAFSLFDKDGDGTITTKELGTVMRSLGQNPTEAELQDMINEVDADGNGTID
 FPEFLTMMARKMKDTDSEEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREA
 DIDGDGQVNYEEFVQMMTAK*`)
-	parser, _ := bio.NewFastaParser(file)
+	parser := bio.NewFastaParser(file)
 
 	channel := make(chan *fasta.Record)
 	ctx := context.Background()
@@ -120,8 +120,8 @@ IENY
 ADQLTEEQIAEFKEAFSLFDKDGDGTITTKELGTVMRSLGQNPTEAELQDMINEVDADGNGTID
 FPEFLTMMARKMKDTDSEEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREA
 DIDGDGQVNYEEFVQMMTAK*`)
-	parser1, _ := bio.NewFastaParser(file1)
-	parser2, _ := bio.NewFastaParser(file2)
+	parser1 := bio.NewFastaParser(file1)
+	parser2 := bio.NewFastaParser(file2)
 
 	channel := make(chan *fasta.Record)
 	ctx := context.Background()
@@ -182,7 +182,7 @@ IENY
 ADQLTEEQIAEFKEAFSLFDKDGDGTITTKELGTVMRSLGQNPTEAELQDMINEVDADGNGTID
 FPEFLTMMARKMKDTDSEEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREA
 DIDGDGQVNYEEFVQMMTAK*`)
-	parser, _ := bio.NewFastaParser(file)
+	parser := bio.NewFastaParser(file)
 	records, _ := parser.Parse() // Parse all data records from file
 
 	fmt.Println(records[1].Sequence)
@@ -196,7 +196,7 @@ func ExampleNewFastqParser() {
 GATGTGCGCCGTTCCAGTTGCGACGTACTATAATCCCCGGCAACACGGTGCTGATTCTCTTCCTGTTCCAGAAAGCATAAACAGATGCAAGTCTGGTGTGATTAACTTCACCAAAGGGCTGGTTGTAATATTAGGAAATCTAACAATAGATTCTGTTGGTTGGACTCTAAAATTAGAAATTTGATAGATTCCTTTTCCCAAATGAAAGTTTAACGTACACTTTGTTTCTAAAGGAAGGTCAAATTACAGTCTACAGCATCGTAATGGTTCATTTTCATTTATATTTTAATACTAGAAAAGTCCTAGGTTGAAGATAACCACATAATAAGCTGCAACTTCAGCTGTCCCAACCTGAAGAAGAATCGCAGGAGTCGAAATAACTTCTGTAAAGCAAGTAGTTTGAACCTATTGATGTTTCAACATGAGCAATACGTAACT
 +
 $$&%&%#$)*59;/767C378411,***,('11<;:,0039/0&()&'2(/*((4.1.09751).601+'#&&&,-**/0-+3558,/)+&)'&&%&$$'%'%'&*/5978<9;**'3*'&&A?99:;:97:278?=9B?CLJHGG=9<@AC@@=>?=>D>=3<>=>3362$%/((+/%&+//.-,%-4:+..000,&$#%$$%+*)&*0%.//*?<<;>DE>.8942&&//074&$033)*&&&%**)%)962133-%'&*99><<=1144??6.027639.011/-)($#$(/422*4;:=122>?@6964:.5'8:52)*675=:4@;323&&##'.-57*4597)+0&:7<7-550REGB21/0+*79/&/6538())+)+23665+(''$$$'-2(&&*-.-#$&%%$$,-)&$$#$'&,);;<C<@454)#'`) // This is a real sequencing output, btw
-	parser, _ := bio.NewFastqParser(file)
+	parser := bio.NewFastqParser(file)
 	records, _ := parser.Parse() // Parse all data records from file
 
 	fmt.Println(records[0].Sequence)
@@ -250,7 +250,7 @@ ORIGIN
       301 tgcactctca gtacaatctg ctctgatgcc gcatag
 //
 `)
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	records, _ := parser.Parse()
 
 	fmt.Println(records[0].Features[2].Attributes["translation"])
@@ -283,7 +283,7 @@ seq1 	276 	G 	22 	...T,,.,.,...,,,.,.... 	33;+<<7=7<<7<&<<1;<<6<
 seq1 	277 	T 	22 	....,,.,.,.C.,,,.,..G. 	+7<;<<<<<<<&<=<<:;<<&<
 seq1 	278 	G 	23 	....,,.,.,...,,,.,....^k. 	%38*<<;<7<<7<=<<<;<<<<<
 seq1 	279 	C 	23 	A..T,,.,.,...,,,.,..... 	75&<<<<<<<<<=<<<9<<:<<<`)
-	parser, _ := bio.NewPileupParser(file)
+	parser := bio.NewPileupParser(file)
 	lines, _ := parser.Parse() // Parse all lines from file
 
 	fmt.Println(lines[1].Quality)
