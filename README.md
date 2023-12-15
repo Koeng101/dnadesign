@@ -1,50 +1,31 @@
-# (Poly)merase <img align="right" src="https://cdn.discordapp.com/attachments/766785755305213953/777596834734145546/ProfileFrameArtboard_1.png" width="100">
+# DnaDesign
 
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/TimothyStiles/poly)](https://pkg.go.dev/github.com/TimothyStiles/poly)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/TimothyStiles/poly/blob/main/LICENSE) 
-![Tests](https://github.com/TimothyStiles/poly/workflows/Test/badge.svg)
-![Test Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/TimothyStiles/e58f265655ac0acacdd1a38376ccd32a/raw/coverage.json)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/koeng101/dnadesign/blob/main/LICENSE) 
+![Tests](https://github.com/koeng101/dnadesign/workflows/Test/badge.svg)
+![Test Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/koeng101/e8462880f920d70b182d5df3617b30f5/raw/coverage.json)
 
-Poly is a Go package for engineering organisms.
+DnaDesign is a Go project creating tools for automated genetic design, spanning from the lowest levels of DNA sequence manipulation to higher level functionality.
 
-* **Fast:** Poly is fast and scalable.
+* **Practical:** DnaDesign tooling is meant to be used by practitioners of synthetic biology. Let's make something actually useful!
 
-* **Modern:** Poly tackles issues that other libraries and utilities just don't. From general codon optimization and primer design to circular sequence hashing. All written in a language that was designed to be fast, scalable, and easy to develop in and maintain. Did we say it was fast?
+* **Modern:** DnaDesign is at the bleeding edge of technology. We are happy to adopt the newest advancements in synthetic biology, wasm, LLMs, and more to get our tools in the hands of people who need it.
 
-* **Reproducible:** Poly is well tested and designed to be used in industrial, academic, and hobbyist settings. No more copy and pasting strings into random websites to process the data you need.
-
-* **Ambitious:** Poly's goal is to be the most complete, open, and well used collection of computational synthetic biology tools ever assembled. If you like our dream and want to support us please star this repo, request a feature, open a pull request, or [sponsor the project](https://github.com/sponsors/TimothyStiles).
-
-
-## Install
-
-`go get github.com/TimothyStiles/poly@latest`
+* **Ambitious:** DnaDesign's goal is to be the most complete, open, and well used collection of computational synthetic biology tools ever assembled. If you like our dream and want to support us please star this repo, request a feature, or open a pull request.
 
 ## Documentation
 
-
-* **[Library](https://pkg.go.dev/github.com/TimothyStiles/poly#pkg-examples)**
-
-* **[Tutorials](https://github.com/TimothyStiles/poly/tree/main/tutorials): ([live](https://gitpod.io/#tutorial=true/https://github.com/TimothyStiles/poly) | [github](https://github.com/TimothyStiles/poly/tree/main/tutorials))**
-
-* **[Learning Synbio](https://github.com/TimothyStiles/how-to-synbio)**
-
-## Community
-
-* **[Discord](https://discord.gg/Hc8Ncwt):** Chat about Poly and join us for game nights on our discord server!
+* **[Library](https://pkg.go.dev/github.com/koeng101/dnadesign)**
 
 ## Contributing
 
-* **[Code of conduct](CODE_OF_CONDUCT.md):** Please read the full text so you can understand what we're all about and remember to be excellent to each other!
-
-* **[Contributor's guide](CONTRIBUTING.md):** Please read through it before you start hacking away and pushing contributions to this fine codebase.
-
-## Sponsor
-
-* **[Sponsor](https://github.com/sponsors/TimothyStiles):** 🤘 Thanks for your support 🤘
+Write good, useful code. Open a pull request, and we'll see if it fits!
 
 ## License
 
 * [MIT](LICENSE)
 
-* Copyright (c) 2023 Timothy Stiles
+* Copyright (c) 2023 Keoni Gandall
+
+### Other
+
+DnaDesign is a fork of [Poly](https://github.com/TimothyStiles/poly) at commit f76bf05 with a different mission focus. 
