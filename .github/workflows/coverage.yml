@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Generate coverage report
-        run: go test -v  -coverprofile=profile.cov ./...
+        run: go test -v  -coverprofile=profile.cov ./lib/...
       - name: Parse overall coverage
         run: coverage=$(go tool cover -func profile.cov | tail -1 | rev | cut -f 1 | rev) && echo "COVERAGE=$coverage" >> $GITHUB_ENV 
       - name: Create the Badge
