@@ -34,7 +34,6 @@ var data = []struct {
 
 func TestRefStrings(t *testing.T) {
 	for _, elem := range data {
-
 		h32 := New32WithSeed(elem.seed)
 		h32.Write([]byte(elem.s))
 		if v := h32.Sum32(); v != elem.h32 {

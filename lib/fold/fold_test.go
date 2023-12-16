@@ -208,7 +208,6 @@ func TestFold(t *testing.T) {
 		if hairpinDg < 4.5-0.2 || hairpinDg > 4.5+0.2 {
 			t.Errorf("hairpinDg = %v, want %v +/- %v", hairpinDg, 4.5, 0.2)
 		}
-
 	})
 	t.Run("internalLoop", func(t *testing.T) {
 		seq := "ACCCCCTCCTTCCTTGGATCAAGGGGCTCAA"
@@ -283,5 +282,4 @@ func TestFold(t *testing.T) {
 			t.Errorf("struc.energy = %v, want %v +/- %v", struc.energy, -4.2, 0.2)
 		}
 	})
-
 }

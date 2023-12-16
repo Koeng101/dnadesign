@@ -38,19 +38,17 @@ func wrapString(s string, lim uint) string {
 		if char == '\n' {
 			if wordBuf.Len() == 0 {
 				if current+spaceBufLen > lim {
-					current = 0
+
 				} else {
-					current += spaceBufLen
-					spaceBuf.WriteTo(buf)
+					_, _ = spaceBuf.WriteTo(buf)
 				}
 				spaceBuf.Reset()
 				spaceBufLen = 0
 			} else {
-				current += spaceBufLen + wordBufLen
-				spaceBuf.WriteTo(buf)
+				_, _ = spaceBuf.WriteTo(buf)
 				spaceBuf.Reset()
 				spaceBufLen = 0
-				wordBuf.WriteTo(buf)
+				_, _ = wordBuf.WriteTo(buf)
 				wordBuf.Reset()
 				wordBufLen = 0
 			}
@@ -59,10 +57,10 @@ func wrapString(s string, lim uint) string {
 		} else if unicode.IsSpace(char) && char != nbsp {
 			if spaceBuf.Len() == 0 || wordBuf.Len() > 0 {
 				current += spaceBufLen + wordBufLen
-				spaceBuf.WriteTo(buf)
+				_, _ = spaceBuf.WriteTo(buf)
 				spaceBuf.Reset()
 				spaceBufLen = 0
-				wordBuf.WriteTo(buf)
+				_, _ = wordBuf.WriteTo(buf)
 				wordBuf.Reset()
 				wordBufLen = 0
 			}
@@ -84,11 +82,11 @@ func wrapString(s string, lim uint) string {
 
 	if wordBuf.Len() == 0 {
 		if current+spaceBufLen <= lim {
-			spaceBuf.WriteTo(buf)
+			_, _ = spaceBuf.WriteTo(buf)
 		}
 	} else {
-		spaceBuf.WriteTo(buf)
-		wordBuf.WriteTo(buf)
+		_, _ = spaceBuf.WriteTo(buf)
+		_, _ = wordBuf.WriteTo(buf)
 	}
 
 	return buf.String()
