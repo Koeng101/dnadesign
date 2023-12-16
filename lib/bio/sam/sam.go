@@ -81,15 +81,20 @@ func (alignment *Alignment) WriteTo(w io.Writer) (int64, error) {
 // Parser is a sam file parser that provide sample control over reading sam
 // alignments. It should be initialized with NewParser.
 type Parser struct {
-	reader     bufio.Reader
-	line       uint
-	FileHeader Header
-	firstLine  string
+	reader        bufio.Reader
+	line          uint
+	FileHeader    Header
+	firstLine     string
+	readFirstLine bool
 }
 
 // Header returns the parsed sam header.
 func (p *Parser) Header() (*Header, error) {
 	return &p.FileHeader, nil
+}
+
+func checkIfValidSamLine(lineBytes []byte) bool {
+	return len(strings.Split(strings.TrimSpace(string(lineBytes)), "\t")) >= 11
 }
 
 // NewParser creates a parser from an io.Reader for sam data. For larger
@@ -111,10 +116,20 @@ func NewParser(r io.Reader, maxLineSize int) (*Parser, Header, error) {
 	// user for analyzing alignments.
 	for {
 		lineBytes, err := parser.reader.ReadSlice('\n')
+		line := strings.TrimSpace(string(lineBytes))
 		if err != nil {
+			// Check if we have an EOF, if we have a validSamLine, and we are
+			// not parsing a header. We do not check EOF + header line without
+			// any validSamLine because that is useless.
+			//
+			// This, on the other hand, will catch if we have a single line sam
+			// file with an EOF at the end, like we often have in tests.
+			if err == io.EOF && checkIfValidSamLine(lineBytes) && line[0] != '@' {
+				parser.firstLine = line
+				break
+			}
 			return parser, Header{}, err
 		}
-		line := strings.TrimSpace(string(lineBytes))
 		parser.line++
 		if len(line) == 0 {
 			return parser, Header{}, fmt.Errorf("Line %d is empty. Empty lines are not allowed in headers.", parser.line)
@@ -177,12 +192,31 @@ func NewParser(r io.Reader, maxLineSize int) (*Parser, Header, error) {
 // Next parsers the next read from a parser. Returns an `io.EOF` upon EOF.
 func (p *Parser) Next() (*Alignment, error) {
 	var alignment Alignment
-	lineBytes, err := p.reader.ReadSlice('\n')
-	if err != nil {
-		return nil, err
+	var finalLine bool
+	var line string
+
+	if !p.readFirstLine {
+		line = p.firstLine
+		p.readFirstLine = true
+	} else {
+		lineBytes, err := p.reader.ReadSlice('\n')
+		if err != nil {
+			if err == io.EOF {
+				// This checks if the EOF is at the end of a line. If there is a
+				// final SAM line, skip the EOF till the next Next()
+				if len(strings.Split(strings.TrimSpace(string(lineBytes)), "\t")) >= 11 {
+					finalLine = true
+				}
+			}
+		}
+		if !finalLine {
+			if err != nil {
+				return nil, err
+			}
+		}
+		line = strings.TrimSpace(string(lineBytes))
 	}
 	p.line++
-	line := strings.TrimSpace(string(lineBytes))
 	values := strings.Split(line, "\t")
 	if len(values) < 11 {
 		return nil, fmt.Errorf("Line %d had error: must have at least 11 tab-delimited values. Had %d", p.line, len(values))
