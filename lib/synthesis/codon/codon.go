@@ -104,7 +104,7 @@ func GetStochasticCodon(aa AminoAcid, seed int64) string {
 // Table is an interface encompassing what a potentially codon optimized Translation table can do
 type Table interface {
 	GetWeightedAminoAcids() []AminoAcid
-	Optimize(aminoAcids string, randomState ...int) (string, error)
+	Optimize(aminoAcids string, randomState int64) (string, error)
 	Translate(dnaSeq string) (string, error)
 }
 
