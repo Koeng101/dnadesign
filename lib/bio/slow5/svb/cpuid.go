@@ -1,6 +1,6 @@
 package svb
 
-import "github.com/intel-go/cpuid"
+import "github.com/koeng101/dnadesign/lib/bio/slow5/svb/cpuid"
 
 func HasZmm() bool {
 	return cpuid.EnabledAVX512 && cpuid.HasExtendedFeature(cpuid.AVX512F)

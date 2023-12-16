@@ -3,7 +3,7 @@ package perf
 import (
 	"testing"
 
-	"svb"
+	"github.com/koeng101/dnadesign/lib/bio/slow5/svb"
 )
 
 func BenchmarkUint32Decode128(b *testing.B) {

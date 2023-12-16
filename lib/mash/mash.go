@@ -45,7 +45,7 @@ package mash
 import (
 	"sort"
 
-	"github.com/spaolacci/murmur3"
+	"github.com/koeng101/dnadesign/lib/mash/murmur3"
 ) // murmur3 is a fast non-cryptographic hash algorithm that was also used in the original papers-> https://github.com/shenwei356/go-hashing-kmer-bench
 
 // Mash is a collection of hashes of kmers from a given sequence.

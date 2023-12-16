@@ -42,22 +42,11 @@ only ACDEFGHIKLMNPQRSTVWYUO*BXZ characters are allowed in sequences. Selenocyste
 (Pyl; O) are included in the protein character set - usually U and O don't occur within protein sequences,
 but for certain organisms they do, and it is certainly a relevant amino acid for those particular proteins.
 
-# Seqhash version 1
-
-A version 1 seqhash is separated into 3 different elements divided by underscores. It looks like the following:
-
-v1_DCD_4b0616d1b3fc632e42d78521deb38b44fba95cca9fde159e01cd567fa996ceb9
-
-The first element is the version tag (v1 for version 1). If there is ever a Seqhash version 2, this tag
-will differentiate seqhashes. The second element is the metadata tag, which has 3 letters. The first letter
-codes for the sequenceType (D for DNA, R for RNA, and P for Protein). The second letter codes for whether or
-not the sequence is circular (C for Circular, L for Linear). The final letter codes for whether or not the
-sequence is double stranded (D for Double stranded, S for Single stranded). The final element is the blake3
-hash of the sequence (once rotated and complemented, as stated above).
-
 # Seqhash version 2
 
-Version 1 seqhashes are rather long, and version 2 seqhashes are built to be
+Version 1 seqhashes are depreciated.
+
+Version 1 seqhashes were rather long, and version 2 seqhashes are built to be
 much shorter. The intended use case are for handling sequences with LLM systems
 since these system's context window is a value resource, and smaller references
 allows the system to be more focused. Seqhash version 2 are approximately 3x
@@ -86,14 +75,13 @@ identify genetic parts irregardless of their context.
 package seqhash
 
 import (
+	"crypto/sha256"
 	"encoding/base64"
-	"encoding/hex"
 	"errors"
 	"sort"
 	"strings"
 
 	"github.com/koeng101/dnadesign/lib/transform"
-	"lukechampine.com/blake3"
 )
 
 // Seqhash is a struct that contains the Seqhash algorithm sequence types.
@@ -169,103 +157,6 @@ func RotateSequence(sequence string) string {
 	return sequence
 }
 
-// prepareDeterministicSequence prepares input data to be hashed by first running
-// all of the checks for sequence typing, then by applying sequence
-// manipulations to make a consistent hash for circular and double stranded
-// sequences.
-func prepareDeterministicSequence(sequence string, sequenceType SequenceType, circular bool, doubleStranded bool) (string, error) {
-	// By definition, Seqhashes are of uppercase sequences
-	sequence = strings.ToUpper(sequence)
-	// If RNA, convert to a DNA sequence. The hash itself between a DNA and RNA sequence will not
-	// be different, but their Seqhash will have a different metadata string (R vs D)
-	if sequenceType == SequenceType("RNA") {
-		sequence = strings.ReplaceAll(sequence, "U", "T")
-	}
-
-	// Run checks on the input
-	if sequenceType != DNA && sequenceType != RNA && sequenceType != PROTEIN {
-		return "", errors.New("Only sequenceTypes of DNA, RNA, or PROTEIN allowed. Got sequenceType: " + string(sequenceType))
-	}
-	if sequenceType == DNA || sequenceType == RNA {
-		for _, char := range sequence {
-			if !strings.Contains("ATUGCYRSWKMBDHVNZ", string(char)) {
-				return "", errors.New("Only letters ATUGCYRSWKMBDHVNZ are allowed for DNA/RNA. Got letter: " + string(char))
-			}
-		}
-	}
-	if sequenceType == PROTEIN {
-		for _, char := range sequence {
-			// Selenocysteine (Sec; U) and pyrrolysine (Pyl; O) are added
-			// in accordance with https://www.uniprot.org/help/sequences
-			// The release notes https://web.expasy.org/docs/relnotes/relstat.html
-			// also state there are Asx (B), Glx (Z), and Xaa (X) amino acids, so
-			// these are added in as well.
-			if !strings.Contains("ACDEFGHIKLMNPQRSTVWYUO*BXZ", string(char)) {
-				return "", errors.New("Only letters ACDEFGHIKLMNPQRSTVWYUO*BXZ are allowed for Proteins. Got letter: " + string(char))
-			}
-		}
-	}
-	// There is no check for circular proteins since proteins can be circular
-	if sequenceType == PROTEIN && doubleStranded {
-		return "", errors.New("Proteins cannot be double stranded")
-	}
-	// Gets Deterministic sequence based off of metadata + sequence
-	var deterministicSequence string
-	switch {
-	case circular && doubleStranded:
-		potentialSequences := []string{RotateSequence(sequence), RotateSequence(transform.ReverseComplement(sequence))}
-		sort.Strings(potentialSequences)
-		deterministicSequence = potentialSequences[0]
-	case circular && !doubleStranded:
-		deterministicSequence = RotateSequence(sequence)
-	case !circular && doubleStranded:
-		potentialSequences := []string{sequence, transform.ReverseComplement(sequence)}
-		sort.Strings(potentialSequences)
-		deterministicSequence = potentialSequences[0]
-	case !circular && !doubleStranded:
-		deterministicSequence = sequence
-	}
-	return deterministicSequence, nil
-}
-
-// Hash creates a version 1 seqhash.
-func Hash(sequence string, sequenceType SequenceType, circular bool, doubleStranded bool) (string, error) {
-	deterministicSequence, err := prepareDeterministicSequence(sequence, sequenceType, circular, doubleStranded)
-	if err != nil {
-		return "", err
-	}
-
-	// Build 3 letter metadata
-	var sequenceTypeLetter string
-	var circularLetter string
-	var doubleStrandedLetter string
-	// Get first letter. D for DNA, R for RNA, and P for Protein
-	switch sequenceType {
-	case DNA:
-		sequenceTypeLetter = "D"
-	case RNA:
-		sequenceTypeLetter = "R"
-	case PROTEIN:
-		sequenceTypeLetter = "P"
-	}
-	// Get 2nd letter. C for circular, L for Linear
-	if circular {
-		circularLetter = "C"
-	} else {
-		circularLetter = "L"
-	}
-	// Get 3rd letter. D for Double stranded, S for Single stranded
-	if doubleStranded {
-		doubleStrandedLetter = "D"
-	} else {
-		doubleStrandedLetter = "S"
-	}
-
-	newhash := blake3.Sum256([]byte(deterministicSequence))
-	seqhash := "v1" + "_" + sequenceTypeLetter + circularLetter + doubleStrandedLetter + "_" + hex.EncodeToString(newhash[:])
-	return seqhash, nil
-}
-
 // The following consts are for seqhash version 2
 const (
 	// Define bit masks for each part of the flag
@@ -335,14 +226,62 @@ func DecodeFlag(flag byte) (int, SequenceType, bool, bool) {
 	return version, sequenceType, circularity, doubleStranded
 }
 
-// HashV2 creates a version 2 seqhash.
-func HashV2(sequence string, sequenceType SequenceType, circular bool, doubleStranded bool) ([16]byte, error) {
+// Hash2 creates a version 2 seqhash.
+func Hash2(sequence string, sequenceType SequenceType, circular bool, doubleStranded bool) ([16]byte, error) {
 	var result [16]byte
 
 	// First, get the determistic sequence of the hash
-	deterministicSequence, err := prepareDeterministicSequence(sequence, sequenceType, circular, doubleStranded)
-	if err != nil {
-		return result, err
+
+	// By definition, Seqhashes are of uppercase sequences
+	sequence = strings.ToUpper(sequence)
+	// If RNA, convert to a DNA sequence. The hash itself between a DNA and RNA sequence will not
+	// be different, but their Seqhash will have a different metadata string (R vs D)
+	if sequenceType == SequenceType("RNA") {
+		sequence = strings.ReplaceAll(sequence, "U", "T")
+	}
+
+	// Run checks on the input
+	if sequenceType != DNA && sequenceType != RNA && sequenceType != PROTEIN {
+		return result, errors.New("Only sequenceTypes of DNA, RNA, or PROTEIN allowed. Got sequenceType: " + string(sequenceType))
+	}
+	if sequenceType == DNA || sequenceType == RNA {
+		for _, char := range sequence {
+			if !strings.Contains("ATUGCYRSWKMBDHVNZ", string(char)) {
+				return result, errors.New("Only letters ATUGCYRSWKMBDHVNZ are allowed for DNA/RNA. Got letter: " + string(char))
+			}
+		}
+	}
+	if sequenceType == PROTEIN {
+		for _, char := range sequence {
+			// Selenocysteine (Sec; U) and pyrrolysine (Pyl; O) are added
+			// in accordance with https://www.uniprot.org/help/sequences
+			// The release notes https://web.expasy.org/docs/relnotes/relstat.html
+			// also state there are Asx (B), Glx (Z), and Xaa (X) amino acids, so
+			// these are added in as well.
+			if !strings.Contains("ACDEFGHIKLMNPQRSTVWYUO*BXZ", string(char)) {
+				return result, errors.New("Only letters ACDEFGHIKLMNPQRSTVWYUO*BXZ are allowed for Proteins. Got letter: " + string(char))
+			}
+		}
+	}
+	// There is no check for circular proteins since proteins can be circular
+	if sequenceType == PROTEIN && doubleStranded {
+		return result, errors.New("Proteins cannot be double stranded")
+	}
+	// Gets Deterministic sequence based off of metadata + sequence
+	var deterministicSequence string
+	switch {
+	case circular && doubleStranded:
+		potentialSequences := []string{RotateSequence(sequence), RotateSequence(transform.ReverseComplement(sequence))}
+		sort.Strings(potentialSequences)
+		deterministicSequence = potentialSequences[0]
+	case circular && !doubleStranded:
+		deterministicSequence = RotateSequence(sequence)
+	case !circular && doubleStranded:
+		potentialSequences := []string{sequence, transform.ReverseComplement(sequence)}
+		sort.Strings(potentialSequences)
+		deterministicSequence = potentialSequences[0]
+	case !circular && !doubleStranded:
+		deterministicSequence = sequence
 	}
 
 	// Build our byte flag
@@ -350,13 +289,13 @@ func HashV2(sequence string, sequenceType SequenceType, circular bool, doubleStr
 	result[0] = flag
 
 	// Compute BLAKE3, then copy those to the remaining 15 bytes
-	newhash := blake3.Sum256([]byte(deterministicSequence))
+	newhash := sha256.Sum256([]byte(deterministicSequence))
 	copy(result[1:], newhash[:15])
 
 	return result, nil
 }
 
-// HashV2Fragment creates a version 2 fragment seqhash. Fragment seqhashes are
+// Hash2Fragment creates a version 2 fragment seqhash. Fragment seqhashes are
 // a special kind of seqhash that are used to identify fragments, usually
 // released by restriction enzyme digestion, rather than complete DNA
 // sequences. This is very useful for tracking genetic parts in a database: as
@@ -389,7 +328,7 @@ func HashV2(sequence string, sequenceType SequenceType, circular bool, doubleStr
 // This means if the input sequence is not less than its reverse complement (for
 // example, GTT is greater than AAC), then the output hash will have the forward
 // and reverse overhang lengths of the reverse complement, not the input strand.
-func HashV2Fragment(sequence string, fwdOverhangLength int8, revOverhangLength int8) ([16]byte, error) {
+func Hash2Fragment(sequence string, fwdOverhangLength int8, revOverhangLength int8) ([16]byte, error) {
 	var result [16]byte
 
 	// First, run checks and get the determistic sequence of the hash
@@ -420,21 +359,21 @@ func HashV2Fragment(sequence string, fwdOverhangLength int8, revOverhangLength i
 	result[2] = byte(reverse)
 
 	// Compute BLAKE3, then copy those to the remaining 13 bytes
-	newhash := blake3.Sum256([]byte(deterministicSequence))
+	newhash := sha256.Sum256([]byte(deterministicSequence))
 	copy(result[3:], newhash[:13])
 
 	return result, nil
 }
 
-// HashV2MetadataKey is a key for a seqhash v2 single letter metadata tag.
-type HashV2MetadataKey struct {
+// Hash2MetadataKey is a key for a seqhash v2 single letter metadata tag.
+type Hash2MetadataKey struct {
 	SequenceType   SequenceType
 	Circular       bool
 	DoubleStranded bool
 }
 
-// HashV2Metadata contains the seqhash v2 single letter metadata tags.
-var HashV2Metadata = map[HashV2MetadataKey]rune{
+// Hash2Metadata contains the seqhash v2 single letter metadata tags.
+var Hash2Metadata = map[Hash2MetadataKey]rune{
 	{DNA, true, true}:        'A',
 	{DNA, true, false}:       'B',
 	{DNA, false, true}:       'C',
@@ -451,12 +390,12 @@ var HashV2Metadata = map[HashV2MetadataKey]rune{
 	{FRAGMENT, true, true}:   'N',
 }
 
-// EncodeHashV2 encodes HashV2 as a base64 string. It also adds a single
+// EncodeHash2 encodes Hash2 as a base64 string. It also adds a single
 // letter metadata tag that can be used as an easy heuristic for an LLM to
 // identify misbehaving code.
-func EncodeHashV2(hash [16]byte, err error) (string, error) {
+func EncodeHash2(hash [16]byte, err error) (string, error) {
 	_, sequenceType, circularity, doubleStranded := DecodeFlag(hash[0])
 	encoded := base64.StdEncoding.EncodeToString(hash[:])
 
-	return string(HashV2Metadata[HashV2MetadataKey{sequenceType, circularity, doubleStranded}]) + "_" + encoded, err
+	return string(Hash2Metadata[Hash2MetadataKey{sequenceType, circularity, doubleStranded}]) + "_" + encoded, err
 }

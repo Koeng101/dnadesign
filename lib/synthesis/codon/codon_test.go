@@ -11,7 +11,6 @@ import (
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/bio/genbank"
 	weightedRand "github.com/mroth/weightedrand"
-	"github.com/stretchr/testify/assert"
 )
 
 const puc19path = "../../bio/genbank/data/puc19.gbk"
@@ -150,7 +149,10 @@ func TestOptimizeErrorsOnInvalidAminoAcid(t *testing.T) {
 	table := NewTranslationTable(1) // does not contain 'O'
 
 	_, optimizeErr := table.Optimize(aminoAcids)
-	assert.EqualError(t, optimizeErr, invalidAminoAcidError{'O'}.Error())
+	expectedErr := invalidAminoAcidError{'O'}
+	if optimizeErr.Error() != expectedErr.Error() {
+		t.Errorf("Should fail to optimize a O")
+	}
 }
 
 func TestGetCodonFrequency(t *testing.T) {
