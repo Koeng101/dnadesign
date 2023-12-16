@@ -20,7 +20,7 @@ jobs:
           version: latest
 
           # Optional: working directory, useful for monorepos
-          # working-directory: somedir
+          working-directory: lib
 
           # Optional: golangci-lint command line arguments.
           # args: --issues-exit-code=0
