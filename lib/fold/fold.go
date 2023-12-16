@@ -283,7 +283,15 @@ func pairedMinimumFreeEnergyV(start, end int, foldContext context) (nucleicAcidS
 //
 // Returns the increment in free energy from the bulge
 func Bulge(start, rightOfStart, end, leftOfEnd int, foldContext context) (float64, error) {
-	loopLength := max(rightOfStart-start-1, end-leftOfEnd-1)
+	var loopLength int
+	rightCheck := rightOfStart - start - 1
+	leftCheck := end - leftOfEnd - 1
+	if rightCheck > leftCheck {
+		loopLength = rightCheck
+	} else {
+		loopLength = leftCheck
+	}
+
 	if loopLength <= 0 {
 		return 0, fmt.Errorf("bulge: the length of the bulge at (%d, %d) is %d", start, end, loopLength)
 	}

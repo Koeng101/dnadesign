@@ -19,7 +19,7 @@ func ProteinSequence(length int, seed int64) (string, error) {
 
 	// https://en.wikipedia.org/wiki/Amino_acid#Table_of_standard_amino_acid_abbreviations_and_properties
 	var aminoAcidsAlphabet = []rune("ACDEFGHIJLMNPQRSTVWY")
-	rand.Seed(seed)
+	seededRand := rand.New(rand.NewSource(seed))
 
 	randomSequence := make([]rune, length)
 
@@ -31,7 +31,7 @@ func ProteinSequence(length int, seed int64) (string, error) {
 			//* is the standard abbreviation for the stop codon. That's a signal for the ribosome to stop the translation and because of that a protein sequence is finished with *
 			randomSequence[peptide] = '*'
 		} else {
-			randomIndex := rand.Intn(len(aminoAcidsAlphabet))
+			randomIndex := seededRand.Intn(len(aminoAcidsAlphabet))
 			randomSequence[peptide] = aminoAcidsAlphabet[randomIndex]
 		}
 	}
@@ -51,11 +51,11 @@ func RNASequence(length int, seed int64) (string, error) {
 
 func randomNucelotideSequence(length int, seed int64, alphabet []rune) string {
 	alphabetLength := len(alphabet)
-	rand.Seed(seed)
+	seededRand := rand.New(rand.NewSource(seed))
 
 	randomSequence := make([]rune, length)
 	for basepair := range randomSequence {
-		randomIndex := rand.Intn(alphabetLength)
+		randomIndex := seededRand.Intn(alphabetLength)
 		randomSequence[basepair] = alphabet[randomIndex]
 	}
 

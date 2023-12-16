@@ -15,7 +15,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/koeng101/dnadesign/lib/transform"
-	"github.com/stretchr/testify/assert"
 )
 
 /******************************************************************************
@@ -673,7 +672,9 @@ func TestRead_error(t *testing.T) {
 		readFileFn = oldreadFileFn
 	}()
 	_, err := read("/tmp/file")
-	assert.EqualError(t, err, readErr.Error())
+	if err.Error() != readErr.Error() {
+		t.Errorf("err should equal readErr")
+	}
 }
 
 func TestBuildFeatureString(t *testing.T) {
@@ -685,7 +686,9 @@ func TestBuildFeatureString(t *testing.T) {
 		},
 	}
 	str := BuildFeatureString(feature)
-	assert.Equal(t, str, "     test type       gbk location\n")
+	if str != "     test type       gbk location\n" {
+		t.Errorf("BuildFeatureString did not produce proper string")
+	}
 }
 
 func TestParse_error(t *testing.T) {
@@ -698,10 +701,14 @@ func TestParse_error(t *testing.T) {
 		parseMultiNthFn = oldParseMultiNthFn
 	}()
 	_, err := parse(strings.NewReader(""))
-	assert.Equal(t, err, parseMultiErr.wraps)
+	if err != parseMultiErr.wraps {
+		t.Errorf("err should equal parseMultiErr.wraps")
+	}
 
 	_, err = parseMultiNth(strings.NewReader(""), 10000)
-	assert.Equal(t, err, parseMultiErr)
+	if err.Error() != parseMultiErr.Error() {
+		t.Errorf("err should equal parseMultiErr")
+	}
 }
 
 func TestParseReferences_error(t *testing.T) {
@@ -714,7 +721,9 @@ func TestParseReferences_error(t *testing.T) {
 	}()
 	file, _ := os.Open("data/puc19.gbk")
 	_, err := parseMultiNthFn(file, 1)
-	assert.Equal(t, err.info, "failed in parsing reference")
+	if err.info != "failed in parsing reference" {
+		t.Errorf("err.info should have failed to parse reference")
+	}
 }
 
 func TestIssue303Regression(t *testing.T) {

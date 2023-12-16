@@ -6,12 +6,11 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/bio/genbank"
-	weightedRand "github.com/mroth/weightedrand"
-	"github.com/stretchr/testify/assert"
 )
 
 const puc19path = "../../bio/genbank/data/puc19.gbk"
@@ -85,7 +84,8 @@ func TestOptimize(t *testing.T) {
 
 	codonTable := NewTranslationTable(11)
 
-	optimizedSequence, _ := table.Optimize(gfpTranslation)
+	seed := time.Now().UTC().UnixNano()
+	optimizedSequence, _ := table.Optimize(gfpTranslation, seed)
 	optimizedSequenceTranslation, _ := codonTable.Translate(optimizedSequence)
 
 	if optimizedSequenceTranslation != gfpTranslation {
@@ -106,7 +106,7 @@ func TestOptimizeSameSeed(t *testing.T) {
 		t.Error(err)
 	}
 
-	randomSeed := 10
+	var randomSeed int64 = 10
 
 	optimizedSequence, _ := optimizationTable.Optimize(gfpTranslation, randomSeed)
 	otherOptimizedSequence, _ := optimizationTable.Optimize(gfpTranslation, randomSeed)
@@ -129,8 +129,8 @@ func TestOptimizeDifferentSeed(t *testing.T) {
 		t.Error(err)
 	}
 
-	optimizedSequence, _ := optimizationTable.Optimize(gfpTranslation)
-	otherOptimizedSequence, _ := optimizationTable.Optimize(gfpTranslation)
+	optimizedSequence, _ := optimizationTable.Optimize(gfpTranslation, 0)
+	otherOptimizedSequence, _ := optimizationTable.Optimize(gfpTranslation, 1)
 
 	if optimizedSequence == otherOptimizedSequence {
 		t.Error("Optimized sequence with different random seed have the same result")
@@ -139,7 +139,7 @@ func TestOptimizeDifferentSeed(t *testing.T) {
 
 func TestOptimizeErrorsOnEmptyAminoAcidString(t *testing.T) {
 	nonEmptyCodonTable := NewTranslationTable(1)
-	_, err := nonEmptyCodonTable.Optimize("")
+	_, err := nonEmptyCodonTable.Optimize("", 0)
 
 	if err != errEmptyAminoAcidString {
 		t.Error("Optimize should return an error if given an empty amino acid string")
@@ -149,8 +149,11 @@ func TestOptimizeErrorsOnInvalidAminoAcid(t *testing.T) {
 	aminoAcids := "TOP"
 	table := NewTranslationTable(1) // does not contain 'O'
 
-	_, optimizeErr := table.Optimize(aminoAcids)
-	assert.EqualError(t, optimizeErr, invalidAminoAcidError{'O'}.Error())
+	_, optimizeErr := table.Optimize(aminoAcids, 0)
+	expectedErr := invalidAminoAcidError{'O'}
+	if optimizeErr.Error() != expectedErr.Error() {
+		t.Errorf("Should fail to optimize a O")
+	}
 }
 
 func TestGetCodonFrequency(t *testing.T) {
@@ -254,20 +257,6 @@ func TestCompromiseCodonTable(t *testing.T) {
 	if err == nil {
 		t.Errorf("Compromise table should fail on 10.0")
 	}
-
-	// replace chooser fn with test one
-	newChooserFn = func(choices ...weightedRand.Choice) (*weightedRand.Chooser, error) {
-		return nil, errors.New("new chooser rigged to fail")
-	}
-
-	defer func() {
-		newChooserFn = weightedRand.NewChooser
-	}()
-
-	_, err = CompromiseCodonTable(optimizationTable, optimizationTable2, 0.1)
-	if err == nil {
-		t.Errorf("Compromise table should fail when new chooser func rigged")
-	}
 }
 
 func TestAddCodonTable(t *testing.T) {
@@ -294,19 +283,19 @@ func TestAddCodonTable(t *testing.T) {
 		t.Error(err)
 	}
 
-	// replace chooser fn with test one
-	newChooserFn = func(choices ...weightedRand.Choice) (*weightedRand.Chooser, error) {
-		return nil, errors.New("new chooser rigged to fail")
-	}
+	//// replace chooser fn with test one
+	//newChooserFn = func(choices ...weightedRand.Choice) (*weightedRand.Chooser, error) {
+	//	return nil, errors.New("new chooser rigged to fail")
+	//}
 
-	defer func() {
-		newChooserFn = weightedRand.NewChooser
-	}()
+	//defer func() {
+	//	newChooserFn = weightedRand.NewChooser
+	//}()
 
-	_, err = AddCodonTable(optimizationTable, optimizationTable2)
-	if err == nil {
-		t.Errorf("Compromise table should fail when new chooser func rigged")
-	}
+	//_, err = AddCodonTable(optimizationTable, optimizationTable2)
+	//if err == nil {
+	//	t.Errorf("Compromise table should fail when new chooser func rigged")
+	//}
 }
 
 func TestCapitalizationRegression(t *testing.T) {
@@ -337,7 +326,7 @@ func TestOptimizeSequence(t *testing.T) {
 
 	var (
 		gfpTranslation = "MASKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK*"
-		optimisedGFP   = "ATGGCAAGTAAGGGAGAAGAGCTTTTTACCGGCGTAGTACCAATTCTGGTAGAACTGGATGGTGATGTAAACGGTCACAAATTTAGTGTAAGCGGAGAAGGTGAGGGTGATGCTACCTATGGCAAACTGACCCTAAAGTTTATATGCACGACTGGAAAACTTCCGGTACCGTGGCCAACGTTAGTTACAACGTTTTCTTATGGAGTACAGTGCTTCAGCCGCTACCCAGATCATATGAAACGCCATGATTTCTTTAAGAGCGCCATGCCAGAGGGTTATGTTCAGGAGCGCACGATCTCGTTTAAGGATGATGGTAACTATAAGACTCGTGCTGAGGTGAAGTTCGAAGGCGATACCCTTGTAAATCGTATTGAATTGAAGGGTATAGACTTCAAGGAGGATGGAAATATTCTTGGACATAAGCTGGAATACAATTACAATTCACATAACGTTTATATAACTGCCGACAAGCAAAAAAACGGGATAAAAGCTAATTTTAAAATACGCCACAACATAGAGGACGGGTCGGTGCAACTAGCCGATCATTATCAACAAAACACACCAATCGGCGACGGACCAGTTCTGTTGCCCGATAATCATTACTTATCAACCCAAAGTGCCTTAAGTAAGGATCCGAACGAAAAGCGCGATCATATGGTACTTCTTGAGTTTGTTACCGCTGCAGGCATAACGCATGGCATGGACGAGCTATACAAATAA"
+		optimisedGFP   = "ATGGCTTCGAAAGGAGAAGAATTGTTTACCGGAGTTGTTCCGATTTTGGTTGAATTGGATGGAGATGTTAACGGACATAAATTTTCGGTTTCGGGAGAAGGAGAAGGAGATGCTACCTATGGAAAATTGACCTTGAAATTTATTTGCACCACCGGAAAATTGCCGGTTCCGTGGCCGACCTTGGTTACCACCTTTTCGTATGGAGTTCAGTGCTTTTCGCGGTATCCGGATCATATGAAACGGCATGATTTTTTTAAATCGGCTATGCCGGAAGGATATGTTCAGGAACGGACCATTTCGTTTAAAGATGATGGAAACTATAAAACCCGGGCTGAAGTTAAATTTGAAGGAGATACCTTGGTTAACCGGATTGAATTGAAAGGAATTGATTTTAAAGAAGATGGAAACATTTTGGGACATAAATTGGAATATAACTATAACTCGCATAACGTTTATATTACCGCTGATAAACAGAAAAACGGAATTAAAGCTAACTTTAAAATTCGGCATAACATTGAAGATGGATCGGTTCAGTTGGCTGATCATTATCAGCAGAACACCCCGATTGGAGATGGACCGGTTTTGTTGCCGGATAACCATTATTTGTCGACCCAGTCGGCTTTGTCGAAAGATCCGAACGAAAAACGGGATCATATGGTTTTGTTGGAATTTGTTACCGCTGCTGGAATTACCCATGGAATGGATGAATTGTATAAATAG"
 		puc19          = func() genbank.Genbank {
 			file, _ := os.Open("../../bio/genbank/data/puc19.gbk")
 			defer file.Close()
@@ -412,153 +401,153 @@ func TestOptimizeSequence(t *testing.T) {
 	}
 }
 
-func TestNewAminoAcidChooser(t *testing.T) {
-	var (
-		mockError = errors.New("new chooser rigged to fail")
-	)
+//func TestNewAminoAcidChooser(t *testing.T) {
+//	var (
+//		mockError = errors.New("new chooser rigged to fail")
+//	)
+//
+//	tests := []struct {
+//		name string
+//
+//		aminoAcids []AminoAcid
+//
+//		chooserFn func(choices ...weightedRand.Choice) (*weightedRand.Chooser, error)
+//
+//		wantErr error
+//	}{
+//		{
+//			name: "ok",
+//
+//			aminoAcids: []AminoAcid{
+//				{
+//					Letter: "R",
+//					Codons: []Codon{
+//						{
+//							Triplet: "CGU",
+//							Weight:  1,
+//						},
+//					},
+//				},
+//			},
+//
+//			chooserFn: weightedRand.NewChooser,
+//
+//			wantErr: nil,
+//		},
+//		{
+//			name: "chooser fn constructor error",
+//
+//			aminoAcids: []AminoAcid{
+//				{
+//					Letter: "R",
+//					Codons: []Codon{
+//						{
+//							Triplet: "CGU",
+//							Weight:  1,
+//						},
+//					},
+//				},
+//			},
+//
+//			chooserFn: func(choices ...weightedRand.Choice) (*weightedRand.Chooser, error) {
+//				return nil, mockError
+//			},
+//
+//			wantErr: mockError,
+//		},
+//	}
+//
+//	for _, tt := range tests {
+//		t.Run(tt.name, func(t *testing.T) {
+//			// replace chooser fn with test one
+//			//newChooserFn = tt.chooserFn
+//
+//			//defer func() {
+//			//	newChooserFn = weightedRand.NewChooser
+//			//}()
+//
+//			//_, err := newAminoAcidChoosers(tt.aminoAcids)
+//			//if !errors.Is(err, tt.wantErr) {
+//			//	t.Errorf("got %v, want %v", err, tt.wantErr)
+//			//}
+//		})
+//	}
+//}
 
-	tests := []struct {
-		name string
-
-		aminoAcids []AminoAcid
-
-		chooserFn func(choices ...weightedRand.Choice) (*weightedRand.Chooser, error)
-
-		wantErr error
-	}{
-		{
-			name: "ok",
-
-			aminoAcids: []AminoAcid{
-				{
-					Letter: "R",
-					Codons: []Codon{
-						{
-							Triplet: "CGU",
-							Weight:  1,
-						},
-					},
-				},
-			},
-
-			chooserFn: weightedRand.NewChooser,
-
-			wantErr: nil,
-		},
-		{
-			name: "chooser fn constructor error",
-
-			aminoAcids: []AminoAcid{
-				{
-					Letter: "R",
-					Codons: []Codon{
-						{
-							Triplet: "CGU",
-							Weight:  1,
-						},
-					},
-				},
-			},
-
-			chooserFn: func(choices ...weightedRand.Choice) (*weightedRand.Chooser, error) {
-				return nil, mockError
-			},
-
-			wantErr: mockError,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// replace chooser fn with test one
-			newChooserFn = tt.chooserFn
-
-			defer func() {
-				newChooserFn = weightedRand.NewChooser
-			}()
-
-			_, err := newAminoAcidChoosers(tt.aminoAcids)
-			if !errors.Is(err, tt.wantErr) {
-				t.Errorf("got %v, want %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func TestUpdateWeights(t *testing.T) {
-	var (
-		mockError = errors.New("new chooser rigged to fail")
-	)
-
-	tests := []struct {
-		name string
-
-		aminoAcids []AminoAcid
-
-		chooserFn func(choices ...weightedRand.Choice) (*weightedRand.Chooser, error)
-
-		wantErr error
-	}{
-		{
-			name: "ok",
-
-			aminoAcids: []AminoAcid{
-				{
-					Letter: "R",
-					Codons: []Codon{
-						{
-							Triplet: "CGU",
-							Weight:  1,
-						},
-					},
-				},
-			},
-
-			chooserFn: weightedRand.NewChooser,
-
-			wantErr: nil,
-		},
-		{
-			name: "chooser fn constructor error",
-
-			aminoAcids: []AminoAcid{
-				{
-					Letter: "R",
-					Codons: []Codon{
-						{
-							Triplet: "CGU",
-							Weight:  1,
-						},
-					},
-				},
-			},
-
-			chooserFn: func(choices ...weightedRand.Choice) (*weightedRand.Chooser, error) {
-				return nil, mockError
-			},
-
-			wantErr: mockError,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// replace chooser fn with test one
-			newChooserFn = tt.chooserFn
-
-			defer func() {
-				newChooserFn = weightedRand.NewChooser
-			}()
-
-			optimizationTable := NewTranslationTable(11)
-
-			err := optimizationTable.UpdateWeights(tt.aminoAcids)
-			if !errors.Is(err, tt.wantErr) {
-				t.Errorf("got %v, want %v", err, tt.wantErr)
-			}
-		})
-	}
-}
+//func TestUpdateWeights(t *testing.T) {
+//	var (
+//		mockError = errors.New("new chooser rigged to fail")
+//	)
+//
+//	tests := []struct {
+//		name string
+//
+//		aminoAcids []AminoAcid
+//
+//		chooserFn func(choices ...weightedRand.Choice) (*weightedRand.Chooser, error)
+//
+//		wantErr error
+//	}{
+//		{
+//			name: "ok",
+//
+//			aminoAcids: []AminoAcid{
+//				{
+//					Letter: "R",
+//					Codons: []Codon{
+//						{
+//							Triplet: "CGU",
+//							Weight:  1,
+//						},
+//					},
+//				},
+//			},
+//
+//			chooserFn: weightedRand.NewChooser,
+//
+//			wantErr: nil,
+//		},
+//		{
+//			name: "chooser fn constructor error",
+//
+//			aminoAcids: []AminoAcid{
+//				{
+//					Letter: "R",
+//					Codons: []Codon{
+//						{
+//							Triplet: "CGU",
+//							Weight:  1,
+//						},
+//					},
+//				},
+//			},
+//
+//			chooserFn: func(choices ...weightedRand.Choice) (*weightedRand.Chooser, error) {
+//				return nil, mockError
+//			},
+//
+//			wantErr: mockError,
+//		},
+//	}
+//
+//	for _, tt := range tests {
+//		t.Run(tt.name, func(t *testing.T) {
+//			// replace chooser fn with test one
+//			//newChooserFn = tt.chooserFn
+//
+//			//defer func() {
+//			//	newChooserFn = weightedRand.NewChooser
+//			//}()
+//
+//			//optimizationTable := NewTranslationTable(11)
+//
+//			//err := optimizationTable.UpdateWeights(tt.aminoAcids)
+//			//if !errors.Is(err, tt.wantErr) {
+//			//	t.Errorf("got %v, want %v", err, tt.wantErr)
+//			//}
+//		})
+//	}
+//}
 
 //go:embed default_tables/freqB.json
 var ecoliCodonTable []byte
@@ -566,13 +555,13 @@ var ecoliCodonTable []byte
 func TestCodonJSONRegression(t *testing.T) {
 	ct := ParseCodonJSON(ecoliCodonTable)
 	gfp := "MASKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK"
-	seed := 0
+	var seed int64 = 0
 	sequence, err := ct.Optimize(gfp, seed)
 	if err != nil {
 		t.Errorf("Failed to optimize with premade table. Got error: %s", err)
 	}
-	expectedSequence := `ATGGCATCCAAGGGCGAGGAGTTGTTCACCGGTGTTGTGCCGATCCTGGTGGAGCTGGACGGTGACGTGAACGGTCACAAATTTAGCGTGTCCGGTGAGGGTGAGGGTGATGCTACCTATGGCAAGCTGACCCTGAAATTCATTTGTACCACGGGTAAACTGCCGGTCCCGTGGCCGACGCTGGTGACCACCTTCAGCTATGGTGTGCAGTGTTTCAGCCGCTACCCGGACCACATGAAGCGCCACGACTTTTTCAAGAGCGCGATGCCGGAGGGTTATGTGCAAGAACGTACCATCAGCTTTAAAGATGATGGTAACTATAAGACCCGCGCGGAAGTCAAGTTTGAGGGTGACACGCTGGTGAATCGTATTGAGTTGAAGGGTATTGACTTTAAGGAGGATGGTAATATTTTGGGCCACAAACTGGAGTACAATTACAATAGCCACAATGTTTACATCACGGCAGATAAACAGAAGAACGGTATCAAGGCGAACTTCAAAATTCGTCACAACATTGAGGACGGTTCTGTTCAACTGGCGGACCATTACCAACAGAATACCCCGATCGGTGACGGCCCGGTTCTGCTGCCGGACAACCATTATTTGAGCACCCAGTCCGCCCTGAGCAAGGACCCGAATGAGAAGCGTGATCATATGGTTCTGCTGGAGTTTGTGACCGCGGCGGGCATCACCCACGGCATGGACGAGCTGTACAAG`
+	expectedSequence := `ATGGCATCGAAGGGTGAGGAGCTGTTCACGGGTGTGGTGCCGATCCTGGTGGAGCTGGACGGTGACGTGAACGGTCACAAGTTCTCGGTGTCGGGTGAGGGTGAGGGTGACGCAACGTACGGTAAGCTGACGCTGAAGTTCATCTGCACGACGGGTAAGCTGCCGGTGCCGTGGCCGACGCTGGTGACGACGTTCTCGTACGGTGTGCAGTGCTTCTCGCGCTACCCGGACCACATGAAGCGCCACGACTTCTTCAAGTCGGCAATGCCGGAGGGTTACGTGCAGGAGCGCACGATCTCGTTCAAGGACGACGGTAACTACAAGACGCGCGCAGAGGTGAAGTTCGAGGGTGACACGCTGGTGAACCGCATCGAGCTGAAGGGTATCGACTTCAAGGAGGACGGTAACATCCTGGGTCACAAGCTGGAGTACAACTACAACTCGCACAACGTGTACATCACGGCAGACAAGCAGAAGAACGGTATCAAGGCAAACTTCAAGATCCGCCACAACATCGAGGACGGTTCGGTGCAGCTGGCAGACCACTACCAGCAGAACACGCCGATCGGTGACGGTCCGGTGCTGCTGCCGGACAACCACTACCTGTCGACGCAGTCGGCACTGTCGAAGGACCCGAACGAGAAGCGCGACCACATGGTGCTGCTGGAGTTCGTGACGGCAGCAGGTATCACGCACGGTATGGACGAGCTGTACAAG`
 	if sequence != expectedSequence {
-		t.Errorf("Failed to output expected sequence.")
+		t.Errorf("Failed to output expected sequence. Expected: %s\nGot: %s", expectedSequence, sequence)
 	}
 }

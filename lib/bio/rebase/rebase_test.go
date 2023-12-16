@@ -5,8 +5,6 @@ import (
 	"io"
 	"strings"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestRead(t *testing.T) {
@@ -26,7 +24,9 @@ func TestParse_error(t *testing.T) {
 		readAllFn = oldReadAllFn
 	}()
 	_, err := Parse(strings.NewReader(""))
-	assert.EqualError(t, err, parseErr.Error())
+	if err != parseErr {
+		t.Errorf("err should equal parseErr")
+	}
 }
 
 func TestRead_error(t *testing.T) {
@@ -39,7 +39,9 @@ func TestRead_error(t *testing.T) {
 		parseFn = oldParseFn
 	}()
 	_, err := Read("data/rebase_test.txt")
-	assert.EqualError(t, err, readErr.Error())
+	if err != readErr {
+		t.Errorf("err should equal readErr")
+	}
 }
 
 func TestRead_multipleRefs(t *testing.T) {
@@ -48,9 +50,9 @@ func TestRead_multipleRefs(t *testing.T) {
 		t.Error("Failed to read test file")
 	}
 
-	assert.Equal(t,
-		"Calleja, F., de Waard, A., Unpublished observations.\nHughes, S.G., Bruce, T., Murray, K., Unpublished observations.",
-		enzymeMap["AcaI"].References)
+	if enzymeMap["AcaI"].References != "Calleja, F., de Waard, A., Unpublished observations.\nHughes, S.G., Bruce, T., Murray, K., Unpublished observations." {
+		t.Errorf("Failed to read references properly")
+	}
 }
 
 func TestExport_error(t *testing.T) {
@@ -63,7 +65,9 @@ func TestExport_error(t *testing.T) {
 		marshallFn = oldMarshallFn
 	}()
 	_, err := Export(map[string]Enzyme{})
-	assert.EqualError(t, err, exportErr.Error())
+	if err != exportErr {
+		t.Errorf("err should equal exportErr")
+	}
 }
 
 func TestRebase(t *testing.T) {
