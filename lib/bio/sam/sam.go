@@ -1,8 +1,24 @@
 /*
 Package sam implements a SAM file parser and writer.
 
+SAM is a tab-delimited text format for storing DNA/RNA sequence alignment data.
+It is the most widely used alignment format, complementing its binary
+equivalent, BAM, which stores the same data in a compressed format.
+
+DNA sequencing works in the following way:
+
+  - DNA is read in with some raw signal format from the sequencer machine.
+  - Raw signal is converted to fastq reads using basecalling software.
+  - Fastq reads are aligned to target template, producing SAM files.
+  - SAM files are used to answer bioinformatic queries.
+
+This parser allows parsing and writing of SAM files in Go. Unlike other SAM
+parsers in Golang, we aim to be as close to underlying data types as possible,
+with a goal of being as simple as possible, and no simpler.
+
 Paper: https://doi.org/10.1093%2Fbioinformatics%2Fbtp352
-Update to do date: http://samtools.github.io/hts-specs/SAMv1.pdf
+Spec: http://samtools.github.io/hts-specs/SAMv1.pdf
+Spec(locally): `dnadesign/lib/bio/sam/SAMv1.pdf`
 */
 package sam
 
@@ -195,6 +211,7 @@ func (p *Parser) Next() (*Alignment, error) {
 	var finalLine bool
 	var line string
 
+	// We need to handle the firstLine after the header, as well as EOF checks.
 	if !p.readFirstLine {
 		line = p.firstLine
 		p.readFirstLine = true
