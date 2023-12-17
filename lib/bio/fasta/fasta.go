@@ -56,6 +56,12 @@ type Record struct {
 	Sequence   string `json:"sequence"`
 }
 
+// gen.FastaRecord
+//type FastaRecord struct {
+//    Identifier string `json:"identifier"`
+//    Sequence   string `json:"sequence"`
+//}
+
 // Header is a blank struct, needed for compatibility with bio parsers. It contains nothing.
 type Header struct{}
 

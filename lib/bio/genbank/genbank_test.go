@@ -167,7 +167,7 @@ func TestSubLocationStringParseRegression(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to parse location string. Got err: %s", err)
 	}
-	jsonFile, err := os.Open("../../data/parseLocationRegressionTest.json")
+	jsonFile, err := os.Open("data/parseLocationRegressionTest.json")
 	// if we os.Open returns an error then handle it
 	if err != nil {
 		fmt.Println(err)
@@ -182,6 +182,8 @@ func TestSubLocationStringParseRegression(t *testing.T) {
 	}
 
 	if diff := cmp.Diff(parsedLocation, testParsedLocation); diff != "" {
+		fmt.Println(parsedLocation)
+		fmt.Println(testParsedLocation)
 		t.Errorf("Failed to parse sublocation string. Got this diff:\n%s", diff)
 	}
 }
