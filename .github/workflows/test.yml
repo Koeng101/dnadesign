@@ -36,9 +36,9 @@ jobs:
           go install golang.org/x/tools/cmd/goimports@latest
     - name: Upgrade go version to 1.21
       run: |
-        ftp https://dl.google.com/go/go1.21.5.openbsd-amd64.tar.gz
-        doas rm -rf /usr/local/go
-        doas tar -C /usr/local -xzf go1.21.5.openbsd-amd64.tar.gz
+        curl -L https://dl.google.com/go/go1.21.5.openbsd-amd64.tar.gz -o go1.21.5.openbsd-amd64.tar.gz
+        rm -rf /usr/local/go
+        tar -C /usr/local -xzf go1.21.5.openbsd-amd64.tar.gz
         go version
     - name: Run tests in OpenBSD
       run: go test -v ./lib/...
