@@ -1,6 +1,7 @@
 go 1.21.5
 
 use (
-    ./lib
-    ./api/v1
+  ./lib
+	./deployment
+  ./api/v1
 )
