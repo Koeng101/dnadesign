@@ -32,14 +32,11 @@ jobs:
       uses: vmactions/openbsd-vm@v1
       with:
         prepare: |
-          pkg_add go
+          curl -L https://dl.google.com/go/go1.21.5.openbsd-amd64.tar.gz -o go1.21.5.openbsd-amd64.tar.gz
+          doas tar -C /usr/local -xzf go1.21.5.openbsd-amd64.tar.gz
+          export PATH=$PATH:/usr/local/go/bin
+          go version
           go install golang.org/x/tools/cmd/goimports@latest
-    - name: Upgrade go version to 1.21
-      run: |
-        curl -L https://dl.google.com/go/go1.21.5.openbsd-amd64.tar.gz -o go1.21.5.openbsd-amd64.tar.gz
-        doas rm -rf /usr/local/go
-        doas tar -C /usr/local -xzf go1.21.5.openbsd-amd64.tar.gz
-        go version
     - name: Run tests in OpenBSD
-      run: go test -v ./lib/...
+      run: export PATH=$PATH:/usr/local/go/bin && go test -v ./lib/...
 
