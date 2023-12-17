@@ -34,6 +34,8 @@ jobs:
         prepare: |
           pkg_add go
           go install golang.org/x/tools/cmd/goimports@latest
+    - name: Check go version
+      run: go version
     - name: Run tests in OpenBSD
       run: go test -v ./lib/...
 
