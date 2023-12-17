@@ -38,5 +38,7 @@ jobs:
           export PATH=$PATH:/usr/local/go/bin
           go version
           go install golang.org/x/tools/cmd/goimports@latest
+        run: |
+          export PATH=$PATH:/usr/local/go/bin
           ls -a
           go test -v ./lib/...
