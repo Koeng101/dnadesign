@@ -39,5 +39,8 @@ jobs:
           go version
           go install golang.org/x/tools/cmd/goimports@latest
     - name: Run tests in OpenBSD
-      run: export PATH=$PATH:/usr/local/go/bin && go test -v ./lib/...
+      run: | 
+        export PATH=$PATH:/usr/local/go/bin
+        go version
+        go test -v ./lib/...
 
