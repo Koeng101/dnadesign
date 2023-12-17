@@ -24,11 +24,12 @@ jobs:
       run: go test -v ./lib/...
   openbsd-test:
     runs-on: ubuntu-latest
+    name: Tests on OpenBSD
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Setup OpenBSD VM
-      uses: vmactions/openbsd-vm@v0.1.0
+      uses: vmactions/openbsd-vm@v1
       with:
         prepare: |
           pkg_add go
