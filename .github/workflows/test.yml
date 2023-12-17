@@ -24,22 +24,19 @@ jobs:
       run: go test -v ./lib/...
   openbsd-test:
     runs-on: ubuntu-latest
-    name: Tests on OpenBSD
+    name: 1.21.5 openbsd
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Setup OpenBSD VM
+    - name: Run OpenBSD tests
       uses: vmactions/openbsd-vm@v1
       with:
         prepare: |
-          pkg_add go
+          pkg_add curl
+          curl -L https://dl.google.com/go/go1.21.5.openbsd-amd64.tar.gz -o go1.21.5.openbsd-amd64.tar.gz
+          tar -C /usr/local -xzf go1.21.5.openbsd-amd64.tar.gz
+          export PATH=$PATH:/usr/local/go/bin
           go install golang.org/x/tools/cmd/goimports@latest
-    - name: Upgrade go version to 1.21
-      run: |
-        ftp https://dl.google.com/go/go1.21.5.openbsd-amd64.tar.gz
-        doas rm -rf /usr/local/go
-        doas tar -C /usr/local -xzf go1.21.5.openbsd-amd64.tar.gz
-        go version
-    - name: Run tests in OpenBSD
-      run: go test -v ./lib/...
-
+        run: |
+          export PATH=$PATH:/usr/local/go/bin
+          go test -v ./lib/...
