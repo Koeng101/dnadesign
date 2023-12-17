@@ -22,3 +22,17 @@ jobs:
       uses: actions/checkout@v2
     - name: Test
       run: go test -v ./lib/...
+  openbsd-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Setup OpenBSD VM
+      uses: vmactions/openbsd-vm@v0.1.0
+      with:
+        prepare: |
+          pkg_add go
+          go install golang.org/x/tools/cmd/goimports@latest
+    - name: Run tests in OpenBSD
+      run: go test -v ./lib/...
+
