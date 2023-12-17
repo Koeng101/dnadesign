@@ -32,8 +32,9 @@ jobs:
       uses: vmactions/openbsd-vm@v1
       with:
         prepare: |
+          pkg_add curl
           curl -L https://dl.google.com/go/go1.21.5.openbsd-amd64.tar.gz -o go1.21.5.openbsd-amd64.tar.gz
-          doas tar -C /usr/local -xzf go1.21.5.openbsd-amd64.tar.gz
+          tar -C /usr/local -xzf go1.21.5.openbsd-amd64.tar.gz
           export PATH=$PATH:/usr/local/go/bin
           go version
           go install golang.org/x/tools/cmd/goimports@latest
