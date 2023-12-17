@@ -1,4 +1,0 @@
-package: gen
-generate:
-  models: true
-output: dnadesign-types.gen.go
