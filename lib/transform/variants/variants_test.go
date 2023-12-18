@@ -5,28 +5,36 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestIUPAC(t *testing.T) {
 	testSeq := "ATN"
 	testVariants := []string{"ATG", "ATA", "ATT", "ATC"}
 	testVariantsIUPAC, err := AllVariantsIUPAC(testSeq)
-	assert.Nil(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	sort.Strings(testVariants)
 	sort.Strings(testVariantsIUPAC)
 
 	for index := range testVariants {
-		assert.Equal(t, testVariants[index], testVariantsIUPAC[index], "IUPAC variant has changed")
+		if testVariants[index] != testVariantsIUPAC[index] {
+			t.Errorf("IUPAC variant has changed")
+		}
 	}
 }
 
 func TestIUPAC_errors(t *testing.T) {
 	testSeq := "ATX"
 	seqVariants, err := AllVariantsIUPAC(testSeq)
-	assert.NotNil(t, err, "expected error for unsupported IUPAC character, got nil")
-	assert.Equal(t, seqVariants, []string{})
+	if err == nil {
+		t.Errorf("expected error for unsupported IUPAC character, got nil")
+	}
+	if !cmp.Equal(seqVariants, []string{}) {
+		t.Errorf("Expected seqVariants to be empty")
+	}
 }
 
 func ExampleAllVariantsIUPAC() {
@@ -90,6 +98,8 @@ func Test_cartRunes(t *testing.T) {
 		},
 	} {
 		runes := cartRune(tc.in...)
-		assert.Equal(t, runes, tc.out)
+		if !cmp.Equal(runes, tc.out) {
+			t.Errorf("Expected equal runes and tc.out")
+		}
 	}
 }

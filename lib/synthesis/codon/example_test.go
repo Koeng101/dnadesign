@@ -3,6 +3,7 @@ package codon_test
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/synthesis/codon"
@@ -44,7 +45,8 @@ func ExampleTranslationTable_Optimize() {
 		fmt.Println("Stop codons don't equal number of genes!")
 	}
 
-	optimizedSequence, _ := codonTable.Optimize(gfpTranslation)
+	seed := time.Now().UTC().UnixNano()
+	optimizedSequence, _ := codonTable.Optimize(gfpTranslation, seed)
 	optimizedSequenceTranslation, _ := codonTable.Translate(optimizedSequence)
 
 	fmt.Println(optimizedSequenceTranslation == gfpTranslation)

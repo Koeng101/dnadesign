@@ -2,7 +2,6 @@ package uniprot_test
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -48,7 +47,7 @@ func TestRead(t *testing.T) {
 }
 
 func TestHeader(t *testing.T) {
-	var writer = ioutil.Discard
+	var writer = io.Discard
 	header := uniprot.Header{}
 	_, err := header.WriteTo(writer)
 	if err != nil {
@@ -57,7 +56,7 @@ func TestHeader(t *testing.T) {
 }
 
 func TestEntry(t *testing.T) {
-	var writer = ioutil.Discard
+	var writer = io.Discard
 	entry := uniprot.Entry{}
 	_, err := entry.WriteTo(writer)
 	if err != nil {

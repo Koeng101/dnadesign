@@ -286,7 +286,7 @@ func recurseLigate(seedFragment Fragment, fragmentList []Fragment, usedFragments
 	// If the seed ligates to itself, we can call it done with a successful circularization!
 	if seedFragment.ForwardOverhang == seedFragment.ReverseOverhang {
 		construct := seedFragment.ForwardOverhang + seedFragment.Sequence
-		seqhash, _ := seqhash.Hash(construct, "DNA", true, true)
+		seqhash, _ := seqhash.EncodeHash2(seqhash.Hash2(construct, "DNA", true, true))
 		if _, ok := existingSeqhashes[seqhash]; ok {
 			return nil, nil
 		}
@@ -316,7 +316,7 @@ func recurseLigate(seedFragment Fragment, fragmentList []Fragment, usedFragments
 			for _, usedFragment := range usedFragments {
 				if usedFragment.Sequence == newFragment.Sequence {
 					infiniteConstruct := usedFragment.ForwardOverhang + usedFragment.Sequence + usedFragment.ReverseOverhang
-					seqhash, _ := seqhash.Hash(infiniteConstruct, "DNA", false, true)
+					seqhash, _ := seqhash.EncodeHash2(seqhash.Hash2(infiniteConstruct, "DNA", false, true))
 					if _, ok := existingSeqhashes[seqhash]; ok {
 						return nil, nil
 					}

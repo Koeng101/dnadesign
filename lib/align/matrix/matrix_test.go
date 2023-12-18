@@ -5,7 +5,6 @@ import (
 
 	"github.com/koeng101/dnadesign/lib/align/matrix"
 	"github.com/koeng101/dnadesign/lib/alphabet"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestSubstitutionMatrix(t *testing.T) {
@@ -21,7 +20,9 @@ func TestSubstitutionMatrix(t *testing.T) {
 	}
 	subMat, err := matrix.NewSubstitutionMatrix(alpha1, alpha2, NUC_4)
 
-	assert.Nil(t, err)
+	if err != nil {
+		t.Error(err)
+	}
 
 	testCases := []struct {
 		symbol1 string
@@ -39,8 +40,12 @@ func TestSubstitutionMatrix(t *testing.T) {
 		sym2, _ := alpha2.Encode(tc.symbol2)
 		score, err := subMat.Score(tc.symbol1, tc.symbol2)
 
-		assert.Nil(t, err)
-		assert.Equal(t, NUC_4[sym1][sym2], score)
+		if err != nil {
+			t.Error(err)
+		}
+		if NUC_4[sym1][sym2] != score {
+			t.Errorf("NUC_4[sym1][sym2] and score should be equivalent, but are not.")
+		}
 
 		if score != tc.score {
 			t.Errorf("Expected score %d for symbols %s and %s, but got %d", tc.score, tc.symbol1, tc.symbol2, score)

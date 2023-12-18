@@ -25,10 +25,8 @@ import (
 	"math/rand"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/koeng101/dnadesign/lib/bio/genbank"
-	weightedRand "github.com/mroth/weightedrand"
 )
 
 /******************************************************************************
@@ -61,7 +59,6 @@ var (
 	errNoCodingRegions      = errors.New("no coding regions found")
 	errEmptyAminoAcidString = errors.New("empty amino acid string")
 	errEmptySequenceString  = errors.New("empty sequence string")
-	newChooserFn            = weightedRand.NewChooser
 )
 
 // invalidAminoAcidError is returned when an input protein sequence contains an invalid amino acid.
@@ -85,10 +82,33 @@ type AminoAcid struct {
 	Codons []Codon `json:"codons"`
 }
 
+func GetStochasticCodon(aa AminoAcid, seed int64) string {
+	var totalWeight int
+	cumulativeWeights := make([]int, len(aa.Codons))
+
+	// Calculate cumulative weights
+	for i, codon := range aa.Codons {
+		totalWeight += codon.Weight
+		cumulativeWeights[i] = totalWeight
+	}
+
+	// Generate a random number in the range of totalWeight
+	seededRand := rand.New(rand.NewSource(seed))
+	r := seededRand.Intn(totalWeight)
+
+	// Find the first element where r is less than or equal to its cumulative weight
+	for i, codon := range aa.Codons {
+		if r < cumulativeWeights[i] {
+			return codon.Triplet
+		}
+	}
+	return ""
+}
+
 // Table is an interface encompassing what a potentially codon optimized Translation table can do
 type Table interface {
 	GetWeightedAminoAcids() []AminoAcid
-	Optimize(aminoAcids string, randomState ...int) (string, error)
+	Optimize(aminoAcids string, randomState int64) (string, error)
 	Translate(dnaSeq string) (string, error)
 }
 
@@ -115,7 +135,6 @@ type TranslationTable struct {
 
 	TranslationMap  map[string]string
 	StartCodonTable map[string]string
-	Choosers        map[string]weightedRand.Chooser
 
 	Stats *Stats
 }
@@ -130,7 +149,6 @@ func (table *TranslationTable) Copy() *TranslationTable {
 
 		StartCodonTable: table.StartCodonTable,
 		TranslationMap:  table.TranslationMap,
-		Choosers:        table.Choosers,
 
 		Stats: table.Stats,
 	}
@@ -143,7 +161,7 @@ func (table *TranslationTable) GetWeightedAminoAcids() []AminoAcid {
 
 // Optimize will return a set of codons which can be used to encode the given amino acid sequence. The codons
 // picked are weighted according to the computed translation table's weights
-func (table *TranslationTable) Optimize(aminoAcids string, randomState ...int) (string, error) {
+func (table *TranslationTable) Optimize(aminoAcids string, randomState int64) (string, error) {
 	// Finding any given aminoAcid is dependent upon it being capitalized, so
 	// we do that here.
 	aminoAcids = strings.ToUpper(aminoAcids)
@@ -152,54 +170,22 @@ func (table *TranslationTable) Optimize(aminoAcids string, randomState ...int) (
 		return "", errEmptyAminoAcidString
 	}
 
-	// weightedRand library insisted setting seed like this. Not sure what environmental side effects exist.
-	if len(randomState) > 0 {
-		rand.Seed(int64(randomState[0]))
-	} else {
-		rand.Seed(time.Now().UTC().UnixNano())
-	}
-
 	var codons strings.Builder
-	codonChooser, err := newAminoAcidChoosers(table.AminoAcids)
-	if err != nil {
-		return "", err
-	}
-
 	for _, aminoAcid := range aminoAcids {
-		chooser, ok := codonChooser[string(aminoAcid)]
-		if !ok {
+		found := false
+		for _, aminoAcidWithWeights := range table.AminoAcids {
+			if string(aminoAcid) == aminoAcidWithWeights.Letter {
+				codons.WriteString(GetStochasticCodon(aminoAcidWithWeights, randomState))
+				found = true
+				break
+			}
+		}
+		if !found {
 			return "", invalidAminoAcidError{aminoAcid}
 		}
-
-		codons.WriteString(chooser.Pick().(string))
 	}
 
 	return codons.String(), nil
-}
-
-// UpdateWeights will update the translation table's codon pickers with the given amino acid codon weights
-func (table *TranslationTable) UpdateWeights(aminoAcids []AminoAcid) error {
-	// regenerate a map of codons -> amino acid
-
-	var updatedTranslationMap = make(map[string]string)
-	for _, aminoAcid := range table.AminoAcids {
-		for _, codon := range aminoAcid.Codons {
-			updatedTranslationMap[codon.Triplet] = aminoAcid.Letter
-		}
-	}
-
-	table.TranslationMap = updatedTranslationMap
-
-	// Update Chooser
-	updatedChoosers, err := newAminoAcidChoosers(table.AminoAcids)
-	if err != nil {
-		return err
-	}
-
-	table.Choosers = updatedChoosers
-	table.AminoAcids = aminoAcids
-
-	return nil
 }
 
 // UpdateWeightsWithSequence will look at the coding regions in the given genbank data, and use those to generate new
@@ -225,8 +211,9 @@ func (table *TranslationTable) UpdateWeightsWithSequence(data genbank.Genbank) e
 
 	// weight our codon optimization table using the regions we collected from the genbank file above
 	newWeights := weightAminoAcids(strings.Join(codingRegions, ""), table.AminoAcids)
+	table.AminoAcids = newWeights
 
-	return table.UpdateWeights(newWeights)
+	return nil
 }
 
 // Translate will return an amino acid sequence which the given DNA will yield
@@ -335,43 +322,6 @@ func getCodonFrequency(sequence string) map[string]int {
 	return codonFrequencyHashMap
 }
 
-// newAminoAcidChoosers is a codonTable method to convert a codon table to a chooser
-func newAminoAcidChoosers(aminoAcids []AminoAcid) (map[string]weightedRand.Chooser, error) {
-	// This maps codon tables structure to weightRand.NewChooser structure
-	codonChooser := make(map[string]weightedRand.Chooser)
-
-	// iterate over every amino acid in the codonTable
-	for _, aminoAcid := range aminoAcids {
-		// create a list of codon choices for this specific amino acid
-		codonChoices := make([]weightedRand.Choice, len(aminoAcid.Codons))
-
-		// Get sum of codon occurrences for particular amino acid
-		codonOccurrenceSum := 0
-		for _, codon := range aminoAcid.Codons {
-			codonOccurrenceSum += codon.Weight
-		}
-
-		// Threshold codons that occur less than 10% for coding a particular amino acid
-		for _, codon := range aminoAcid.Codons {
-			codonPercentage := float64(codon.Weight) / float64(codonOccurrenceSum)
-
-			if codonPercentage > 0.10 {
-				// for every codon related to current amino acid append its Triplet and Weight to codonChoices after thresholding
-				codonChoices = append(codonChoices, weightedRand.Choice{Item: codon.Triplet, Weight: uint(codon.Weight)})
-			}
-		}
-
-		// add this chooser set to the codonChooser map under the name of the aminoAcid it represents.
-		chooser, err := newChooserFn(codonChoices...)
-		if err != nil {
-			return nil, fmt.Errorf("weightedRand.NewChooser() error: %w", err)
-		}
-
-		codonChooser[aminoAcid.Letter] = *chooser
-	}
-	return codonChooser, nil
-}
-
 /******************************************************************************
 Oct, 15, 2020
 
@@ -444,19 +394,12 @@ func generateCodonTable(aminoAcids, starts string) *TranslationTable {
 		startCodonsMap[codon] = "M"
 	}
 
-	// This function is run at buildtime and failure here means we have an invalid codon table.
-	chooser, err := newAminoAcidChoosers(aminoAcidSlice)
-	if err != nil {
-		panic(fmt.Errorf("tried to generate an invalid codon table %w", err))
-	}
-
 	return &TranslationTable{
 		StartCodons:     startCodons,
 		StopCodons:      stopCodons,
 		AminoAcids:      aminoAcidSlice,
 		TranslationMap:  translationMap,
 		StartCodonTable: startCodonsMap,
-		Choosers:        chooser,
 		Stats:           NewStats(),
 	}
 }
@@ -676,11 +619,7 @@ func CompromiseCodonTable(firstCodonTable, secondCodonTable *TranslationTable, c
 		// Append list of Codons to finalAminoAcids
 		finalAminoAcids = append(finalAminoAcids, AminoAcid{firstAa.Letter, finalCodons})
 	}
-
-	err := mergedTable.UpdateWeights(finalAminoAcids)
-	if err != nil {
-		return nil, err
-	}
+	mergedTable.AminoAcids = finalAminoAcids
 
 	return mergedTable, nil
 }
@@ -705,11 +644,7 @@ func AddCodonTable(firstCodonTable, secondCodonTable *TranslationTable) (*Transl
 	}
 
 	mergedTable := firstCodonTable.Copy()
-
-	err := mergedTable.UpdateWeights(finalAminoAcids)
-	if err != nil {
-		return nil, err
-	}
+	mergedTable.AminoAcids = finalAminoAcids
 
 	return mergedTable, nil
 }
