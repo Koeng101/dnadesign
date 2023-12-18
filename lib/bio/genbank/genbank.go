@@ -21,8 +21,6 @@ import (
 	"strings"
 
 	"github.com/koeng101/dnadesign/lib/transform"
-	"github.com/lunny/log"
-	"github.com/mitchellh/go-wordwrap"
 )
 
 /******************************************************************************
@@ -787,8 +785,7 @@ func (parser *Parser) Next() (*Genbank, error) {
 				parser.parameters.sequenceBuilder.WriteString(sequenceRegex.ReplaceAllString(line, ""))
 			}
 		default:
-			log.Warnf("Unknown parse step: %s", parser.parameters.parseStep)
-			parser.parameters.genbankStarted = false
+			return &Genbank{}, fmt.Errorf("Unknown parse step: %s", parser.parameters.parseStep)
 		}
 	}
 	return &Genbank{}, io.EOF
@@ -1100,7 +1097,8 @@ func buildMetaString(name string, data string) string {
 		keyWhitespaceTrail += " "
 	}
 	name += keyWhitespaceTrail
-	wrappedData := wordwrap.WrapString(data, 68)
+
+	wrappedData := wrapString(data, 68)
 	splitData := strings.Split(wrappedData, "\n")
 	var returnData string
 	for index, datum := range splitData {

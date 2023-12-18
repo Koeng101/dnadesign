@@ -26,7 +26,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/koeng101/svb"
+	"github.com/koeng101/dnadesign/lib/bio/slow5/svb"
 )
 
 /******************************************************************************
