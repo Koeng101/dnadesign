@@ -10,7 +10,6 @@ import (
 
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/bio/fasta"
-	"github.com/koeng101/dnadesign/lib/bio/uniprot"
 )
 
 // Example_read shows an example of reading a file from disk.
@@ -294,7 +293,7 @@ func ExampleNewUniprotParser() {
 	// The following is a real entry in Swiss-Prot. We're going to gzip it and
 	// put the gzipped text as an io.Reader to mock a file. You can edit the
 	// text here to see how the parser works.
-	uniprotEntryText := `<entry dataset="Swiss-Prot" created="2009-05-05" modified="2020-08-12" version="9" xmlns="http://uniprot.org/uniprot">
+	uniprotEntryText := strings.NewReader(`<entry dataset="Swiss-Prot" created="2009-05-05" modified="2020-08-12" version="9" xmlns="http://uniprot.org/uniprot">
   <accession>P0C9F0</accession>
   <name>1001R_ASFK5</name>
   <protein>
@@ -378,17 +377,9 @@ func ExampleNewUniprotParser() {
   <evidence type="ECO:0000250" key="1"/>
   <evidence type="ECO:0000305" key="2"/>
   <sequence length="122" mass="14969" checksum="C5E63C34B941711C" modified="2009-05-05" version="1">MVRLFYNPIKYLFYRRSCKKRLRKALKKLNFYHPPKECCQIYRLLENAPGGTYFITENMTNELIMIAKDPVDKKIKSVKLYLTGNYIKINQHYYINIYMYLMRYNQIYKYPLICFSKYSKIL</sequence>
-</entry>`
-	// Encode the string into an gzip io.Reader
-	var buf bytes.Buffer
-	gz := gzip.NewWriter(&buf)
-	_, _ = gz.Write([]byte(uniprotEntryText))
-	_ = gz.Close()
-
-	r := bytes.NewReader(buf.Bytes())
-
+</entry>`)
 	// Now we load the parser, and get the first entry out.
-	parser, _ := uniprot.NewParser(r)
+	parser := bio.NewUniprotParser(uniprotEntryText)
 	entry, _ := parser.Next()
 
 	fmt.Println(entry.Accession[0])

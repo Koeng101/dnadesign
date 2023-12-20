@@ -145,13 +145,9 @@ func NewPileupParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[*
 }
 
 // NewUniprotParser initiates a new Uniprot parser from an io.Reader. No
-// maxLineLength is necessary. The parser should be reading a gzipped xml file.
-func NewUniprotParser(r io.Reader) (*Parser[*uniprot.Entry, *uniprot.Header], error) {
-	parser, err := uniprot.NewParser(r)
-	if err != nil {
-		return &Parser[*uniprot.Entry, *uniprot.Header]{}, err
-	}
-	return &Parser[*uniprot.Entry, *uniprot.Header]{parserInterface: parser}, nil
+// maxLineLength is necessary.
+func NewUniprotParser(r io.Reader) *Parser[*uniprot.Entry, *uniprot.Header] {
+	return &Parser[*uniprot.Entry, *uniprot.Header]{parserInterface: uniprot.NewParser(r)}
 }
 
 /******************************************************************************
