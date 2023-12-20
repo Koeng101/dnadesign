@@ -21,6 +21,7 @@ Each protein in Uniprot is known as an "Entry" (as defined in xml.go).
 package uniprot
 
 import (
+	"context"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
@@ -98,17 +99,26 @@ func (p *Parser) Next() (*Entry, error) {
 // BaseURL encodes the base URL for the Uniprot REST API.
 var BaseURL string = "https://rest.uniprot.org/uniprotkb/"
 
-// Get gets a uniprot from its accession id.
-func Get(accessionId string) (*Entry, error) {
+// Get gets a uniprot from its accessionID
+func Get(ctx context.Context, accessionID string) (*Entry, error) {
 	var entry Entry
 
 	// Parse the base URL
-	baseURL, _ := url.Parse(BaseURL)
+	baseURL, err := url.Parse(BaseURL)
+	if err != nil {
+		return &entry, err
+	}
 
 	// Resolve the full URL
-	fullURL := baseURL.ResolveReference(&url.URL{Path: accessionId + ".xml"})
+	fullURL := baseURL.ResolveReference(&url.URL{Path: accessionID + ".xml"})
 
-	resp, err := http.Get(fullURL.String())
+	// Create NewRequestWithContext. Note: since url.Parse catches errors in
+	// the URL, no err is checked here.
+	req, _ := http.NewRequestWithContext(ctx, "GET", fullURL.String(), nil)
+
+	// Create a new HTTP client and send the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return &entry, err
 	}

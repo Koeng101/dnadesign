@@ -2,12 +2,14 @@ package uniprot_test
 
 import (
 	"compress/gzip"
+	"context"
 	_ "embed"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/koeng101/dnadesign/lib/bio/uniprot"
 )
@@ -55,15 +57,16 @@ func TestEntry(t *testing.T) {
 }
 
 //go:embed data/P42212.xml
-var gfpXml []byte
+var gfpXML []byte
 
 func TestGet(t *testing.T) {
+	ctx := context.Background()
 	// First, a successful get
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/P42212.xml":
 			w.WriteHeader(http.StatusOK)
-			w.Write(gfpXml)
+			_, _ = w.Write(gfpXML)
 		case "/asdf.xml":
 			w.WriteHeader(404)
 		}
@@ -71,7 +74,7 @@ func TestGet(t *testing.T) {
 	defer server.Close()
 
 	uniprot.BaseURL = server.URL
-	entry, err := uniprot.Get("P42212")
+	entry, err := uniprot.Get(ctx, "P42212")
 	if err != nil {
 		t.Error(err)
 	}
@@ -79,17 +82,32 @@ func TestGet(t *testing.T) {
 		t.Errorf("Expected 'P42212', got %s", entry.Accession[0])
 	}
 
-	// Next, a bad base url
-	uniprot.BaseURL = "//example.com#fragment"
-	_, err = uniprot.Get("P42212")
+	// Next, with an expired context
+	badCtx, cancel := context.WithDeadline(context.Background(), time.Now().Add(-time.Minute))
+	defer cancel()
+	// Call your Get function with the expired context
+	_, err = uniprot.Get(badCtx, "P42212")
 	if err == nil {
-		t.Errorf("Should fail with bad BaseURL")
+		t.Errorf("Should fail with bad context")
 	}
 
 	// Next, with a bad accession number
 	uniprot.BaseURL = server.URL
-	_, err = uniprot.Get("asdf")
+	_, err = uniprot.Get(ctx, "asdf")
 	if err == nil {
 		t.Errorf("Should fail with bad accession number")
+	}
+
+	// Finally, with an invalid URL
+	invalidURL := "http://\x7f\x00\x00\x01" // An intentionally invalid URL
+
+	// Temporarily override the BaseURL with the invalid URL
+	originalBaseURL := uniprot.BaseURL
+	uniprot.BaseURL = invalidURL
+	defer func() { uniprot.BaseURL = originalBaseURL }()
+
+	_, err = uniprot.Get(ctx, "P42212")
+	if err == nil {
+		t.Errorf("Expected an error for invalid URL, but got none")
 	}
 }
