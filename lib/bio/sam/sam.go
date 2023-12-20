@@ -70,7 +70,6 @@ func headerWriteHelper(sb strings.Builder, headerString string, headerMap map[st
 		_, _ = sb.WriteString(fmt.Sprintf("\t%s:%s", key, value))
 	}
 	_, _ = sb.WriteString("\n")
-	return
 }
 
 // WriteTo writes a SAM header to an io.Writer.
