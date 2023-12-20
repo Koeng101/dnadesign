@@ -1,0 +1,4466 @@
+<?xml version="1.0" encoding="UTF-8"  standalone="no" ?>
+<uniprot xmlns="http://uniprot.org/uniprot" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://uniprot.org/uniprot http://www.uniprot.org/docs/uniprot.xsd">
+<entry dataset="Swiss-Prot" created="1995-11-01" modified="2023-11-08" version="183" xmlns="http://uniprot.org/uniprot">
+  <accession>P42212</accession>
+  <accession>Q17104</accession>
+  <accession>Q27903</accession>
+  <accession>Q93125</accession>
+  <name>GFP_AEQVI</name>
+  <protein>
+    <recommendedName>
+      <fullName>Green fluorescent protein</fullName>
+    </recommendedName>
+  </protein>
+  <gene>
+    <name type="primary">GFP</name>
+  </gene>
+  <organism>
+    <name type="scientific">Aequorea victoria</name>
+    <name type="common">Water jellyfish</name>
+    <name type="synonym">Mesonema victoria</name>
+    <dbReference type="NCBI Taxonomy" id="6100"/>
+    <lineage>
+      <taxon>Eukaryota</taxon>
+      <taxon>Metazoa</taxon>
+      <taxon>Cnidaria</taxon>
+      <taxon>Hydrozoa</taxon>
+      <taxon>Hydroidolina</taxon>
+      <taxon>Leptothecata</taxon>
+      <taxon>Aequoreidae</taxon>
+      <taxon>Aequorea</taxon>
+    </lineage>
+  </organism>
+  <reference key="1">
+    <citation type="journal article" date="1992" name="Gene" volume="111" first="229" last="233">
+      <title>Primary structure of the Aequorea victoria green-fluorescent protein.</title>
+      <authorList>
+        <person name="Prasher D.C."/>
+        <person name="Eckenrode V.K."/>
+        <person name="Ward W.W."/>
+        <person name="Prendergast F.G."/>
+        <person name="Cormier M.J."/>
+      </authorList>
+      <dbReference type="PubMed" id="1347277"/>
+      <dbReference type="DOI" id="10.1016/0378-1119(92)90691-h"/>
+    </citation>
+    <scope>NUCLEOTIDE SEQUENCE [MRNA]</scope>
+    <scope>PARTIAL PROTEIN SEQUENCE</scope>
+    <scope>VARIANTS TYR-100; SER-108; MET-141 AND ILE-219</scope>
+  </reference>
+  <reference key="2">
+    <citation type="journal article" date="1994" name="FEBS Lett." volume="341" first="277" last="280">
+      <title>Aequorea green fluorescent protein. Expression of the gene and fluorescence characteristics of the recombinant protein.</title>
+      <authorList>
+        <person name="Inouye S."/>
+        <person name="Tsuji F.I."/>
+      </authorList>
+      <dbReference type="PubMed" id="8137953"/>
+      <dbReference type="DOI" id="10.1016/0014-5793(94)80472-9"/>
+    </citation>
+    <scope>NUCLEOTIDE SEQUENCE [MRNA]</scope>
+    <scope>BIOPHYSICOCHEMICAL PROPERTIES</scope>
+  </reference>
+  <reference key="3">
+    <citation type="journal article" date="1997" name="Plant Mol. Biol." volume="33" first="989" last="999">
+      <title>Enhanced expression in tobacco of the gene encoding green fluorescent protein by modification of its codon usage.</title>
+      <authorList>
+        <person name="Rouwendal G.J.A."/>
+        <person name="Mendes O."/>
+        <person name="Wolbert E.J.H."/>
+        <person name="de Boer A.D."/>
+      </authorList>
+      <dbReference type="PubMed" id="9154981"/>
+      <dbReference type="DOI" id="10.1023/a:1005740823703"/>
+    </citation>
+    <scope>NUCLEOTIDE SEQUENCE [MRNA]</scope>
+    <scope>BIOPHYSICOCHEMICAL PROPERTIES</scope>
+    <scope>BIOTECHNOLOGY</scope>
+  </reference>
+  <reference key="4">
+    <citation type="journal article" date="1996" name="Gene" volume="173" first="33" last="38">
+      <title>FACS-optimized mutants of the green fluorescent protein (GFP).</title>
+      <authorList>
+        <person name="Cormack B.P."/>
+        <person name="Valdivia R.H."/>
+        <person name="Falkow S."/>
+      </authorList>
+      <dbReference type="PubMed" id="8707053"/>
+      <dbReference type="DOI" id="10.1016/0378-1119(95)00685-0"/>
+    </citation>
+    <scope>NUCLEOTIDE SEQUENCE [GENOMIC DNA]</scope>
+    <scope>BIOTECHNOLOGY</scope>
+    <scope>MUTAGENESIS OF PHE-64; SER-65; VAL-68 AND SER-72</scope>
+  </reference>
+  <reference key="5">
+    <citation type="journal article" date="1993" name="Biochemistry" volume="32" first="1212" last="1218">
+      <title>Chemical structure of the hexapeptide chromophore of the Aequorea green-fluorescent protein.</title>
+      <authorList>
+        <person name="Cody C.W."/>
+        <person name="Prasher D.C."/>
+        <person name="Westler W.M."/>
+        <person name="Prendergast F.G."/>
+        <person name="Ward W.W."/>
+      </authorList>
+      <dbReference type="PubMed" id="8448132"/>
+      <dbReference type="DOI" id="10.1021/bi00056a003"/>
+    </citation>
+    <scope>CHROMOPHORE</scope>
+    <scope>DEHYDROGENATION AT TYR-66</scope>
+  </reference>
+  <reference key="6">
+    <citation type="journal article" date="1994" name="Proc. Natl. Acad. Sci. U.S.A." volume="91" first="12501" last="12504">
+      <title>Wavelength mutations and posttranslational autoxidation of green fluorescent protein.</title>
+      <authorList>
+        <person name="Heim R."/>
+        <person name="Prasher D.C."/>
+        <person name="Tsien R.Y."/>
+      </authorList>
+      <dbReference type="PubMed" id="7809066"/>
+      <dbReference type="DOI" id="10.1073/pnas.91.26.12501"/>
+    </citation>
+    <scope>MUTAGENESIS OF TYR-66; ILE-167; SER-202 AND THR-203</scope>
+  </reference>
+  <reference key="7">
+    <citation type="journal article" date="1995" name="Biotechnology (N.Y.)" volume="13" first="151" last="154">
+      <title>Red-shifted excitation mutants of the green fluorescent protein.</title>
+      <authorList>
+        <person name="Delagrave S."/>
+        <person name="Hawtin R.E."/>
+        <person name="Silva C.M."/>
+        <person name="Yang M.M."/>
+        <person name="Youvan D.C."/>
+      </authorList>
+      <dbReference type="PubMed" id="9634755"/>
+      <dbReference type="DOI" id="10.1038/nbt0295-151"/>
+    </citation>
+    <scope>MUTAGENESIS OF PHE-64; SER-65 AND GLN-69</scope>
+  </reference>
+  <reference key="8">
+    <citation type="journal article" date="1995" name="FEBS Lett." volume="367" first="163" last="166">
+      <title>Green-fluorescent protein mutants with altered fluorescence excitation spectra.</title>
+      <authorList>
+        <person name="Ehrig T."/>
+        <person name="O'Kane D.J."/>
+        <person name="Prendergast F.G."/>
+      </authorList>
+      <dbReference type="PubMed" id="7796912"/>
+      <dbReference type="DOI" id="10.1016/0014-5793(95)00557-p"/>
+    </citation>
+    <scope>MUTAGENESIS OF THR-203 AND GLU-222</scope>
+  </reference>
+  <reference key="9">
+    <citation type="journal article" date="1995" name="Trends Biochem. Sci." volume="20" first="448" last="455">
+      <title>Understanding, improving and using green fluorescent proteins.</title>
+      <authorList>
+        <person name="Cubitt A.B."/>
+        <person name="Heim R."/>
+        <person name="Adams S.R."/>
+        <person name="Boyd A.E."/>
+        <person name="Gross L.A."/>
+        <person name="Tsien R.Y."/>
+      </authorList>
+      <dbReference type="PubMed" id="8578587"/>
+      <dbReference type="DOI" id="10.1016/s0968-0004(00)89099-4"/>
+    </citation>
+    <scope>MUTAGENESIS OF TYR-66</scope>
+    <scope>BIOTECHNOLOGY</scope>
+  </reference>
+  <reference key="10">
+    <citation type="journal article" date="1996" name="Curr. Biol." volume="6" first="1653" last="1663">
+      <title>Mutations that suppress the thermosensitivity of green fluorescent protein.</title>
+      <authorList>
+        <person name="Siemering K.R."/>
+        <person name="Golbik R."/>
+        <person name="Sever R."/>
+        <person name="Haseloff J."/>
+      </authorList>
+      <dbReference type="PubMed" id="8994830"/>
+      <dbReference type="DOI" id="10.1016/s0960-9822(02)70789-6"/>
+    </citation>
+    <scope>MUTAGENESIS OF VAL-163 AND SER-175</scope>
+  </reference>
+  <reference key="11">
+    <citation type="journal article" date="1996" name="Nat. Biotechnol." volume="14" first="315" last="319">
+      <title>Improved green fluorescent protein by molecular evolution using DNA shuffling.</title>
+      <authorList>
+        <person name="Crameri A."/>
+        <person name="Whitehorn E.A."/>
+        <person name="Tate E."/>
+        <person name="Stemmer W.P."/>
+      </authorList>
+      <dbReference type="PubMed" id="9630892"/>
+      <dbReference type="DOI" id="10.1038/nbt0396-315"/>
+    </citation>
+    <scope>MUTAGENESIS OF PHE-99; MET-153 AND VAL-163</scope>
+  </reference>
+  <reference key="12">
+    <citation type="journal article" date="1996" name="Nat. Biotechnol." volume="14" first="1252" last="1256">
+      <title>Spatial dynamics of GFP-tagged proteins investigated by local fluorescence enhancement.</title>
+      <authorList>
+        <person name="Yokoe H."/>
+        <person name="Meyer T."/>
+      </authorList>
+      <dbReference type="PubMed" id="9631088"/>
+      <dbReference type="DOI" id="10.1038/nbt1096-1252"/>
+    </citation>
+    <scope>MUTAGENESIS OF PHE-99; MET-153 AND VAL-163</scope>
+  </reference>
+  <reference key="13">
+    <citation type="journal article" date="1997" name="Biochem. Biophys. Res. Commun." volume="232" first="69" last="73">
+      <title>A novel mutation which enhances the fluorescence of green fluorescent protein at high temperatures.</title>
+      <authorList>
+        <person name="Kimata Y."/>
+        <person name="Iwaki M."/>
+        <person name="Lim C.R."/>
+        <person name="Kohno K."/>
+      </authorList>
+      <dbReference type="PubMed" id="9125154"/>
+      <dbReference type="DOI" id="10.1006/bbrc.1997.6235"/>
+    </citation>
+    <scope>MUTAGENESIS OF SER-147</scope>
+  </reference>
+  <reference key="14">
+    <citation type="journal article" date="1997" name="Biophys. J." volume="73" first="2782" last="2790">
+      <title>Use of the green fluorescent protein and its mutants in quantitative fluorescence microscopy.</title>
+      <authorList>
+        <person name="Patterson G.H."/>
+        <person name="Knobel S.M."/>
+        <person name="Sharif W.D."/>
+        <person name="Kain S.R."/>
+        <person name="Piston D.W."/>
+      </authorList>
+      <dbReference type="PubMed" id="9370472"/>
+      <dbReference type="DOI" id="10.1016/s0006-3495(97)78307-3"/>
+    </citation>
+    <scope>MUTAGENESIS OF PHE-64; SER-65; TYR-66; PHE-99; MET-153 AND VAL-163</scope>
+  </reference>
+  <reference key="15">
+    <citation type="journal article" date="1998" name="Annu. Rev. Biochem." volume="67" first="509" last="544">
+      <title>The green fluorescent protein.</title>
+      <authorList>
+        <person name="Tsien R.Y."/>
+      </authorList>
+      <dbReference type="PubMed" id="9759496"/>
+      <dbReference type="DOI" id="10.1146/annurev.biochem.67.1.509"/>
+    </citation>
+    <scope>REVIEW ON MUTAGENESIS</scope>
+    <scope>BIOTECHNOLOGY</scope>
+  </reference>
+  <reference key="16">
+    <citation type="journal article" date="2001" name="BMC Dev. Biol." volume="1" first="4" last="4">
+      <title>Cre reporter strains produced by targeted insertion of EYFP and ECFP into the ROSA26 locus.</title>
+      <authorList>
+        <person name="Srinivas S."/>
+        <person name="Watanabe T."/>
+        <person name="Lin C.S."/>
+        <person name="William C.M."/>
+        <person name="Tanabe Y."/>
+        <person name="Jessell T.M."/>
+        <person name="Costantini F."/>
+      </authorList>
+      <dbReference type="PubMed" id="11299042"/>
+      <dbReference type="DOI" id="10.1186/1471-213x-1-4"/>
+    </citation>
+    <scope>MUTAGENESIS OF SER-65; VAL-68; SER-72; ASN-146; MET-153; VAL-163 AND THR-203</scope>
+  </reference>
+  <reference key="17">
+    <citation type="journal article" date="2001" name="Phys. Med." volume="17" first="210" last="214">
+      <title>Enhanced green fluorescent protein (EGFP) for space radiation research using mammalian cells in the International Space Station.</title>
+      <authorList>
+        <person name="Baumstark-Khan C."/>
+        <person name="Hellweg C.E."/>
+        <person name="Palm M."/>
+        <person name="Horneck G."/>
+      </authorList>
+      <dbReference type="PubMed" id="11776264"/>
+    </citation>
+    <scope>MUTAGENESIS OF PHE-64 AND SER-65</scope>
+  </reference>
+  <reference key="18">
+    <citation type="journal article" date="2003" name="BMC Biotechnol." volume="3" first="5" last="5">
+      <title>Efficiently folding and circularly permuted variants of the Sapphire mutant of GFP.</title>
+      <authorList>
+        <person name="Zapata-Hommer O."/>
+        <person name="Griesbeck O."/>
+      </authorList>
+      <dbReference type="PubMed" id="12769828"/>
+      <dbReference type="DOI" id="10.1186/1472-6750-3-5"/>
+    </citation>
+    <scope>MUTAGENESIS OF SER-72; TYR-145 AND THR-203</scope>
+  </reference>
+  <reference key="19">
+    <citation type="journal article" date="2004" name="J. Biomed. Opt." volume="9" first="395" last="403">
+      <title>Fluorescence correlation spectroscopy investigation of a GFP mutant-enhanced cyan fluorescent protein and its tubulin fusion in living cells with two-photon excitation.</title>
+      <authorList>
+        <person name="Wang Z."/>
+        <person name="Shah J.V."/>
+        <person name="Chen Z."/>
+        <person name="Sun C.H."/>
+        <person name="Berns M.W."/>
+      </authorList>
+      <dbReference type="PubMed" id="15065907"/>
+      <dbReference type="DOI" id="10.1117/1.1646416"/>
+    </citation>
+    <scope>MUTAGENESIS OF PHE-64; SER-65; TYR-66; ASN-146; MET-153 AND VAL-163</scope>
+  </reference>
+  <reference key="20">
+    <citation type="journal article" date="2004" name="Nat. Biotechnol." volume="22" first="445" last="449">
+      <title>An improved cyan fluorescent protein variant useful for FRET.</title>
+      <authorList>
+        <person name="Rizzo M.A."/>
+        <person name="Springer G.H."/>
+        <person name="Granada B."/>
+        <person name="Piston D.W."/>
+      </authorList>
+      <dbReference type="PubMed" id="14990965"/>
+      <dbReference type="DOI" id="10.1038/nbt945"/>
+    </citation>
+    <scope>MUTAGENESIS OF PHE-64; SER-65; TYR-66; SER-72; TYR-145; ASN-146; HIS-148; MET-153 AND VAL-163</scope>
+  </reference>
+  <reference key="21">
+    <citation type="journal article" date="2005" name="Biochemistry" volume="44" first="13377" last="13384">
+      <title>Development and characterization of green fluorescent protein mutants with altered lifetimes.</title>
+      <authorList>
+        <person name="Scruggs A.W."/>
+        <person name="Flores C.L."/>
+        <person name="Wachter R."/>
+        <person name="Woodbury N.W."/>
+      </authorList>
+      <dbReference type="PubMed" id="16201762"/>
+      <dbReference type="DOI" id="10.1021/bi050550f"/>
+    </citation>
+    <scope>MUTAGENESIS OF SER-30; PHE-46; GLN-69; ASP-103; TYR-145; VAL-176; VAL-193 AND ASN-198</scope>
+  </reference>
+  <reference key="22">
+    <citation type="journal article" date="2006" name="ChemPhysChem" volume="7" first="1442" last="1454">
+      <title>Monitoring protein interactions in the living cell through the fluorescence decays of the cyan fluorescent protein.</title>
+      <authorList>
+        <person name="Grailhe R."/>
+        <person name="Merola F."/>
+        <person name="Ridard J."/>
+        <person name="Couvignou S."/>
+        <person name="Le Poupon C."/>
+        <person name="Changeux J.P."/>
+        <person name="Laguitton-Pasquier H."/>
+      </authorList>
+      <dbReference type="PubMed" id="16739159"/>
+      <dbReference type="DOI" id="10.1002/cphc.200600057"/>
+    </citation>
+    <scope>MUTAGENESIS OF ALA-206</scope>
+  </reference>
+  <reference key="23">
+    <citation type="journal article" date="2007" name="Biochim. Biophys. Acta" volume="1770" first="1360" last="1368">
+      <title>Investigations of combinations of mutations in the jellyfish green fluorescent protein (GFP) that afford brighter fluorescence, and use of a version (VisGreen) in plant, bacterial, and animal cells.</title>
+      <authorList>
+        <person name="Teerawanichpan P."/>
+        <person name="Hoffman T."/>
+        <person name="Ashe P."/>
+        <person name="Datla R."/>
+        <person name="Selvaraj G."/>
+      </authorList>
+      <dbReference type="PubMed" id="17658219"/>
+      <dbReference type="DOI" id="10.1016/j.bbagen.2007.06.005"/>
+    </citation>
+    <scope>MUTAGENESIS OF PHE-64; SER-65; SER-72; ASN-149; MET-153 AND ILE-167</scope>
+  </reference>
+  <reference key="24">
+    <citation type="journal article" date="2007" name="J. Am. Chem. Soc." volume="129" first="10302" last="10303">
+      <title>A molecular thermometer based on fluorescent protein blinking.</title>
+      <authorList>
+        <person name="Wong F.H."/>
+        <person name="Banks D.S."/>
+        <person name="Abu-Arish A."/>
+        <person name="Fradin C."/>
+      </authorList>
+      <dbReference type="PubMed" id="17685514"/>
+      <dbReference type="DOI" id="10.1021/ja0715905"/>
+    </citation>
+    <scope>BIOTECHNOLOGY</scope>
+  </reference>
+  <reference key="25">
+    <citation type="journal article" date="2008" name="Biochemistry" volume="47" first="4666" last="4673">
+      <title>The first mutant of the Aequorea victoria green fluorescent protein that forms a red chromophore.</title>
+      <authorList>
+        <person name="Mishin A.S."/>
+        <person name="Subach F.V."/>
+        <person name="Yampolsky I.V."/>
+        <person name="King W."/>
+        <person name="Lukyanov K.A."/>
+        <person name="Verkhusha V.V."/>
+      </authorList>
+      <dbReference type="PubMed" id="18366185"/>
+      <dbReference type="DOI" id="10.1021/bi702130s"/>
+    </citation>
+    <scope>MUTAGENESIS OF PHE-46; PHE-64; VAL-68; LYS-162; VAL-163; ILE-167 AND ILE-171</scope>
+  </reference>
+  <reference key="26">
+    <citation type="journal article" date="2012" name="J. Phys. Chem. B" volume="116" first="11137" last="11147">
+      <title>Interpolated mechanics-molecular mechanics study of internal rotation dynamics of the chromophore unit in blue fluorescent protein and its variants.</title>
+      <authorList>
+        <person name="Park J.W."/>
+        <person name="Rhee Y.M."/>
+      </authorList>
+      <dbReference type="PubMed" id="22891786"/>
+      <dbReference type="DOI" id="10.1021/jp306257t"/>
+    </citation>
+    <scope>MUTAGENESIS OF SER-30; TYR-39; TYR-66; SER-72; GLN-80; ASN-105; ILE-128; TYR-145; VAL-150; ASP-155; ILE-171; ASN-198; ALA-206 AND VAL-224</scope>
+  </reference>
+  <reference key="27">
+    <citation type="journal article" date="1996" name="Nat. Biotechnol." volume="14" first="1246" last="1251">
+      <title>The molecular structure of green fluorescent protein.</title>
+      <authorList>
+        <person name="Yang F."/>
+        <person name="Moss L.G."/>
+        <person name="Phillips G.N. Jr."/>
+      </authorList>
+      <dbReference type="PubMed" id="9631087"/>
+      <dbReference type="DOI" id="10.1038/nbt1096-1246"/>
+    </citation>
+    <scope>X-RAY CRYSTALLOGRAPHY (1.9 ANGSTROMS)</scope>
+  </reference>
+  <reference evidence="33" key="28">
+    <citation type="journal article" date="1996" name="Science" volume="273" first="1392" last="1395">
+      <title>Crystal structure of the Aequorea victoria green fluorescent protein.</title>
+      <authorList>
+        <person name="Ormo M."/>
+        <person name="Cubitt A.B."/>
+        <person name="Kallio K."/>
+        <person name="Gross L.A."/>
+        <person name="Tsien R.Y."/>
+        <person name="Remington S.J."/>
+      </authorList>
+      <dbReference type="PubMed" id="8703075"/>
+      <dbReference type="DOI" id="10.1126/science.273.5280.1392"/>
+    </citation>
+    <scope>X-RAY CRYSTALLOGRAPHY (1.90 ANGSTROMS)</scope>
+    <scope>MUTAGENESIS OF SER-65 AND THR-203</scope>
+  </reference>
+  <reference evidence="34 35 36 37 38 39 43 44 45" key="29">
+    <citation type="journal article" date="1997" name="Nat. Struct. Biol." volume="4" first="361" last="365">
+      <title>The structural basis for spectral variations in green fluorescent protein.</title>
+      <authorList>
+        <person name="Palm G.J."/>
+        <person name="Zdanov A."/>
+        <person name="Gaitanaris G.A."/>
+        <person name="Stauber R."/>
+        <person name="Pavlakis G.N."/>
+        <person name="Wlodawer A."/>
+      </authorList>
+      <dbReference type="PubMed" id="9145105"/>
+      <dbReference type="DOI" id="10.1038/nsb0597-361"/>
+    </citation>
+    <scope>X-RAY CRYSTALLOGRAPHY (2.00 ANGSTROMS)</scope>
+    <scope>MUTAGENESIS OF PHE-64; TYR-66; SER-72; ASN-149; MET-153 AND ILE-167</scope>
+    <scope>BIOPHYSICOCHEMICAL PROPERTIES</scope>
+    <scope>BIOTECHNOLOGY</scope>
+  </reference>
+  <reference evidence="42 47" key="30">
+    <citation type="journal article" date="1998" name="Structure" volume="6" first="1267" last="1277">
+      <title>Structural basis of spectral shifts in the yellow-emission variants of green fluorescent protein.</title>
+      <authorList>
+        <person name="Wachter R.M."/>
+        <person name="Elsliger M.-A."/>
+        <person name="Kallio K."/>
+        <person name="Hanson G.T."/>
+        <person name="Remington S.J."/>
+      </authorList>
+      <dbReference type="PubMed" id="9782051"/>
+      <dbReference type="DOI" id="10.1016/s0969-2126(98)00127-0"/>
+    </citation>
+    <scope>X-RAY CRYSTALLOGRAPHY (2.5 ANGSTROMS) OF YELLOW EMISSION MUTANT TYR-203/GLY-65/LEU-68/ALA-72</scope>
+    <scope>MUTAGENESIS OF SER-65; VAL-68; SER-72 AND THR-203</scope>
+    <scope>BIOPHYSICOCHEMICAL PROPERTIES</scope>
+    <scope>BIOTECHNOLOGY</scope>
+    <scope>SUBUNIT</scope>
+  </reference>
+  <reference key="31">
+    <citation type="journal article" date="1999" name="Biochemistry" volume="38" first="5296" last="5301">
+      <title>Structural and spectral response of green fluorescent protein variants to changes in pH.</title>
+      <authorList>
+        <person name="Elsliger M.-A."/>
+        <person name="Wachter R.M."/>
+        <person name="Hanson G.T."/>
+        <person name="Kallio K."/>
+        <person name="Remington S.J."/>
+      </authorList>
+      <dbReference type="PubMed" id="10220315"/>
+      <dbReference type="DOI" id="10.1021/bi9902182"/>
+    </citation>
+    <scope>X-RAY CRYSTALLOGRAPHY (2.0 ANGSTROMS)</scope>
+    <scope>BIOPHYSICOCHEMICAL PROPERTIES</scope>
+  </reference>
+  <reference evidence="40" key="32">
+    <citation type="journal article" date="2001" name="J. Biol. Chem." volume="276" first="29188" last="29194">
+      <title>Reducing the environmental sensitivity of yellow fluorescent protein. Mechanism and applications.</title>
+      <authorList>
+        <person name="Griesbeck O."/>
+        <person name="Baird G.S."/>
+        <person name="Campbell R.E."/>
+        <person name="Zacharias D.A."/>
+        <person name="Tsien R.Y."/>
+      </authorList>
+      <dbReference type="PubMed" id="11387331"/>
+      <dbReference type="DOI" id="10.1074/jbc.m102815200"/>
+    </citation>
+    <scope>X-RAY CRYSTALLOGRAPHY (2.20 ANGSTROMS) OF 2-238 OF MUTANT CITRININE</scope>
+    <scope>MUTAGENESIS OF VAL-68; GLN-69; SER-72 AND THR-203</scope>
+  </reference>
+  <reference evidence="41" key="33">
+    <citation type="journal article" date="2002" name="J. Biol. Chem." volume="277" first="50573" last="50578">
+      <title>Crystal structure of venus, a yellow fluorescent protein with improved maturation and reduced environmental sensitivity.</title>
+      <authorList>
+        <person name="Rekas A."/>
+        <person name="Alattia J.R."/>
+        <person name="Nagai T."/>
+        <person name="Miyawaki A."/>
+        <person name="Ikura M."/>
+      </authorList>
+      <dbReference type="PubMed" id="12370172"/>
+      <dbReference type="DOI" id="10.1074/jbc.m209524200"/>
+    </citation>
+    <scope>X-RAY CRYSTALLOGRAPHY (2.20 ANGSTROMS) OF 2-238 OF VENUS</scope>
+    <scope>MUTAGENESIS OF PHE-46; PHE-64; SER-65; VAL-68; SER-72; MET-153; VAL-163; SER-175 AND THR-203</scope>
+  </reference>
+  <reference evidence="46" key="34">
+    <citation type="journal article" date="2007" name="Biochemistry" volume="46" first="9865" last="9873">
+      <title>X-ray structure of Cerulean GFP: a tryptophan-based chromophore useful for fluorescence lifetime imaging.</title>
+      <authorList>
+        <person name="Malo G.D."/>
+        <person name="Pouwels L.J."/>
+        <person name="Wang M."/>
+        <person name="Weichsel A."/>
+        <person name="Montfort W.R."/>
+        <person name="Rizzo M.A."/>
+        <person name="Piston D.W."/>
+        <person name="Wachter R.M."/>
+      </authorList>
+      <dbReference type="PubMed" id="17685554"/>
+      <dbReference type="DOI" id="10.1021/bi602664c"/>
+    </citation>
+    <scope>X-RAY CRYSTALLOGRAPHY (2.00 ANGSTROMS)</scope>
+    <scope>MUTAGENESIS OF 65-SER-TYR-66</scope>
+    <scope>BIOPHYSICOCHEMICAL PROPERTIES</scope>
+    <scope>BIOTECHNOLOGY</scope>
+  </reference>
+  <comment type="function">
+    <text>Energy-transfer acceptor. Its role is to transduce the blue chemiluminescence of the protein aequorin into green fluorescent light by energy transfer. Fluoresces in vivo upon receiving energy from the Ca(2+)-activated photoprotein aequorin.</text>
+  </comment>
+  <comment type="biophysicochemical properties">
+    <absorption>
+      <max>395 nm</max>
+      <text evidence="59 13 60 24 25 31">Exhibits a smaller absorbance peak at 470 nm. The fluorescence emission spectrum peaks at 507-510 nm with a shoulder at 545 nm (PubMed:8137953, PubMed:9154981). The exact value of the emission maximum depends on the environment of the chromophore (PubMed:10220315). As a consequence, mutant versions have been designed that have substantially shifted emission spectra, including yellow-emission variants (YFP), blue and cerulean fluorescing proteins (PubMed:9145105, PubMed:9782051, PubMed:17685554).</text>
+    </absorption>
+  </comment>
+  <comment type="subunit">
+    <text evidence="31">Monomer.</text>
+  </comment>
+  <comment type="tissue specificity">
+    <text>Photocytes.</text>
+  </comment>
+  <comment type="PTM">
+    <text evidence="18">Contains a chromophore consisting of modified amino acid residues. The chromophore is formed by autocatalytic backbone condensation between Ser-65 and Gly-67, and oxidation of Tyr-66 to didehydrotyrosine. Maturation of the chromophore requires nothing other than molecular oxygen.</text>
+  </comment>
+  <comment type="biotechnology">
+    <text evidence="12 13 19 21 24 25 30 31">Green fluorescent protein has been engineered to produce a vast number of variously colored mutants, fusion proteins, and biosensors. Green fluorescent protein can be mutated to emit at different wavelengths such as blue for BFP (when Tyr-66 is replaced by His), cyan for CFP (when Tyr-66 is replaced by Trp), and yellow for YFP (when Thr-203 is replaced by Tyr). Further generation of mutants led to more stable proteins (at 37 degrees Celsius for example) with brighter fluorescence and longer fluorescence lifetimes. Fluorescent proteins and their mutated allelic forms have become a useful and ubiquitous tool for making chimeric proteins, where they function as a fluorescent protein tag. Typically they tolerate N- and C-terminal fusion to a broad variety of proteins. They have been expressed in most known cell types and are used as a noninvasive fluorescent marker in living cells and organisms. They enable a wide range of applications where they have functioned as a cell lineage tracer, reporter of gene expression, or as a measure of protein-protein interactions (PubMed:17685514, PubMed:17685554, PubMed:8578587, PubMed:8707053, PubMed:9145105, PubMed:9154981, PubMed:9759496, PubMed:9782051). Can also be used as a molecular thermometer, allowing accurate temperature measurements in fluids. The measurement process relies on the detection of the blinking of GFP using fluorescence correlation spectroscopy (PubMed:17685514).</text>
+  </comment>
+  <comment type="similarity">
+    <text evidence="32">Belongs to the GFP family.</text>
+  </comment>
+  <comment type="online information" name="Protein Spotlight">
+    <link uri="https://web.expasy.org/spotlight/back_issues/011"/>
+    <text>The greenest of us all - Issue 11 of June 2001</text>
+  </comment>
+  <comment type="online information" name="Protein Spotlight">
+    <link uri="https://web.expasy.org/spotlight/back_issues/108"/>
+    <text>Paint my thoughts - Issue 108 of August 2009</text>
+  </comment>
+  <comment type="online information" name="Wikipedia">
+    <link uri="https://en.wikipedia.org/wiki/Green_fluorescent_protein"/>
+    <text>Green fluorescent protein entry</text>
+  </comment>
+  <dbReference type="EMBL" id="M62654">
+    <property type="protein sequence ID" value="AAA27722.1"/>
+    <property type="molecule type" value="mRNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="M62653">
+    <property type="protein sequence ID" value="AAA27721.1"/>
+    <property type="molecule type" value="mRNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="L29345">
+    <property type="protein sequence ID" value="AAA58246.1"/>
+    <property type="molecule type" value="mRNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="X96418">
+    <property type="protein sequence ID" value="CAA65278.1"/>
+    <property type="molecule type" value="mRNA"/>
+  </dbReference>
+  <dbReference type="EMBL" id="U73901">
+    <property type="protein sequence ID" value="AAB18957.1"/>
+    <property type="molecule type" value="Genomic_DNA"/>
+  </dbReference>
+  <dbReference type="PIR" id="JS0692">
+    <property type="entry name" value="JQ1514"/>
+  </dbReference>
+  <dbReference type="PDB" id="1B9C">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.40 A"/>
+    <property type="chains" value="A/B/C/D=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1BFP">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.10 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1C4F">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.25 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1CV7">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.50 A"/>
+    <property type="chains" value="A=1-228"/>
+  </dbReference>
+  <dbReference type="PDB" id="1EMA">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1EMB">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.13 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1EMC">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.30 A"/>
+    <property type="chains" value="A/B/C/D=2-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="1EME">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.50 A"/>
+    <property type="chains" value="A=2-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="1EMF">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.40 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1EMG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=1-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="1EMK">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.10 A"/>
+    <property type="chains" value="A=2-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="1EML">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.30 A"/>
+    <property type="chains" value="A=2-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="1EMM">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.30 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1F09">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.14 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1F0B">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.10 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1GFL">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1H6R">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A/B/C=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1HCJ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A/B/C/D=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1HUY">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.20 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1JBY">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1JBZ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1JC0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A/B/C=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1JC1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A/B/C=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1KP5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.60 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1KYP">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.35 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1KYR">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1KYS">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.44 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1MYW">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.20 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1Q4A">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.45 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1Q4B">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.48 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1Q4C">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.55 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1Q4D">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.58 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1Q4E">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.38 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1Q73">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1QXT">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=2-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="1QY3">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=1-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="1QYF">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=1-227"/>
+  </dbReference>
+  <dbReference type="PDB" id="1QYO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1QYQ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1RM9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.90 A"/>
+    <property type="chains" value="A=2-236"/>
+  </dbReference>
+  <dbReference type="PDB" id="1RMM">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A=2-227"/>
+  </dbReference>
+  <dbReference type="PDB" id="1RMO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A=2-236"/>
+  </dbReference>
+  <dbReference type="PDB" id="1RMP">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.00 A"/>
+    <property type="chains" value="A=2-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="1RRX">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.10 A"/>
+    <property type="chains" value="A=2-227"/>
+  </dbReference>
+  <dbReference type="PDB" id="1S6Z">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1W7S">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.85 A"/>
+    <property type="chains" value="A/B/C/D=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1W7T">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.85 A"/>
+    <property type="chains" value="A/B/C/D=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1W7U">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.85 A"/>
+    <property type="chains" value="A/B/C/D=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1YFP">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.50 A"/>
+    <property type="chains" value="A/B=3-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="1YHG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.50 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1YHH">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1YHI">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1YJ2">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1YJF">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.35 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1Z1P">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="1Z1Q">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2AH8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.24 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2AHA">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.98 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2AWJ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=2-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="2AWK">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.15 A"/>
+    <property type="chains" value="A=1-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="2AWL">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.85 A"/>
+    <property type="chains" value="A=1-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="2AWM">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=1-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="2B3P">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2B3Q">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.30 A"/>
+    <property type="chains" value="A/B/C/D=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2DUE">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.24 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2DUF">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2DUG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2DUH">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.20 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2DUI">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.36 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2EMD">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2EMN">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.30 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2EMO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.60 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2FWQ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2FZU">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.25 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2G16">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=2-64, B=67-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2G2S">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.20 A"/>
+    <property type="chains" value="A=2-63, B=66-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2G3D">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.35 A"/>
+    <property type="chains" value="A=2-63, B=66-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2G5Z">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A=2-65, B=66-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2G6E">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.30 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2H6V">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.47 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2H9W">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.82 A"/>
+    <property type="chains" value="A=2-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="2HCG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.35 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2HFC">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.20 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2HGD">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2HGY">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.05 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2HJO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.25 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2HQZ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.20 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2HRS">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2JAD">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.70 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2O24">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.45 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2O29">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2O2B">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.94 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2OKW">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A/B/C/D/E/F=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2OKY">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.40 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2Q57">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2Q6P">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.10 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2QRF">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="2QT2">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.31 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2QU1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2QZ0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.20 A"/>
+    <property type="chains" value="A=2-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="2WSN">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.37 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2WSO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.15 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2WUR">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="0.90 A"/>
+    <property type="chains" value="A=1-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="2Y0G">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2YDZ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.59 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2YE0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.47 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2YE1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="2YFP">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.60 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3AI4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="3AI5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="A=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="3CB9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.31 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3CBE">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.49 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3CD1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.31 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3CD9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DPW">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.59 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DPX">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DPZ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQ1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQ2">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQ3">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQ4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.47 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQ5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQ6">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQ7">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.23 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQ8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.51 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQ9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQA">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.44 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQC">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.49 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQD">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQE">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.43 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQF">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.46 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQH">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.45 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQI">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.42 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQJ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.51 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQK">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQL">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.47 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQM">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.44 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQN">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.44 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3DQU">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.42 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3ED8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.70 A"/>
+    <property type="chains" value="A/B/C/D/E=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3EK4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.65 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3EK7">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.85 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3EK8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.80 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3EKH">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3EKJ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.80 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3EVP">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.45 A"/>
+    <property type="chains" value="A=2-144"/>
+  </dbReference>
+  <dbReference type="PDB" id="3EVR">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=2-144"/>
+  </dbReference>
+  <dbReference type="PDB" id="3EVU">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.75 A"/>
+    <property type="chains" value="A=2-144"/>
+  </dbReference>
+  <dbReference type="PDB" id="3EVV">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.60 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3G9A">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.61 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3GEX">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3GJ1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A/B/C/D=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="3GJ2">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A/B/C/D=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="3I19">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.36 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3K1K">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.15 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3LA1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.29 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3O77">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.35 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3O78">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.60 A"/>
+    <property type="chains" value="A/B=2-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="3OGO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.80 A"/>
+    <property type="chains" value="A/B/C/D=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3OSQ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3OSR">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3P28">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A=3-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SG2">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SG3">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.10 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SG4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.40 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SG5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SG6">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SG7">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SRY">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.16 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SS0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.49 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SSH">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.28 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SSK">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.36 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SSL">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.45 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SSP">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SST">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SSV">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.86 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SSY">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.77 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3ST0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.19 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SV5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.53 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SVB">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.30 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SVC">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.31 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SVD">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.78 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3SVE">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.49 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3U8P">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.75 A"/>
+    <property type="chains" value="A/B/C=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3UFZ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.85 A"/>
+    <property type="chains" value="A=2-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="3UG0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.09 A"/>
+    <property type="chains" value="A=2-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="3V3D">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.95 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3VHT">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.40 A"/>
+    <property type="chains" value="A=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="3W1C">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.30 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3W1D">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3WLC">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.49 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="3WLD">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.70 A"/>
+    <property type="chains" value="A=2-144"/>
+  </dbReference>
+  <dbReference type="PDB" id="3ZTF">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.31 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4ANJ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.60 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4AR7">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.23 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4AS8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.02 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4B5Y">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.45 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4BDU">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.00 A"/>
+    <property type="chains" value="A/B/C/D=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="4EN1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.62 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4EUL">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.35 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4GES">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.23 A"/>
+    <property type="chains" value="B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4GF6">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.10 A"/>
+    <property type="chains" value="B=1-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="4H47">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4H48">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.45 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4IK1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=2-144"/>
+  </dbReference>
+  <dbReference type="PDB" id="4IK3">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.01 A"/>
+    <property type="chains" value="A=149-238, A=2-142"/>
+  </dbReference>
+  <dbReference type="PDB" id="4IK4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.01 A"/>
+    <property type="chains" value="A=2-142, A=149-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4IK5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.50 A"/>
+    <property type="chains" value="A=2-142, A=149-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4IK8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.55 A"/>
+    <property type="chains" value="A=2-144, A=149-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4IK9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A=2-144"/>
+  </dbReference>
+  <dbReference type="PDB" id="4J88">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.08 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4J89">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.10 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4J8A">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.26 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4JFG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.00 A"/>
+    <property type="chains" value="A/B/C/D/E/F/G/H=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4JRB">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.41 A"/>
+    <property type="chains" value="A=1-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="4KA9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.58 A"/>
+    <property type="chains" value="A=5-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4KAG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.12 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4KEX">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4KF5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.60 A"/>
+    <property type="chains" value="A/B=1-196"/>
+  </dbReference>
+  <dbReference type="PDB" id="4KW4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.75 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4KW8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.46 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4KW9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4L12">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.78 A"/>
+    <property type="chains" value="A=2-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="4L13">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.66 A"/>
+    <property type="chains" value="A=2-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="4L1I">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.20 A"/>
+    <property type="chains" value="A=2-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="4LQT">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.10 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4LQU">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A/B/C/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4LW5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.55 A"/>
+    <property type="chains" value="A/B/C/D/E=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4N3D">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.34 A"/>
+    <property type="chains" value="A/B=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="4NDJ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.85 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4NDK">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.30 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4OGS">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.21 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4ORN">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.71 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4P1Q">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=3-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="4P7H">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.20 A"/>
+    <property type="chains" value="A/B=5-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4PA0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.25 A"/>
+    <property type="chains" value="A/B=5-234"/>
+  </dbReference>
+  <dbReference type="PDB" id="4PFE">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.60 A"/>
+    <property type="chains" value="A/B=2-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="4U2V">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.30 A"/>
+    <property type="chains" value="A/B/C/D=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="4XBI">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.01 A"/>
+    <property type="chains" value="A/B=2-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="4XGY">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.49 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4XL5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4XOV">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.20 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4XOW">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.25 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4XVP">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.40 A"/>
+    <property type="chains" value="A/B/C=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="4Z4K">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.80 A"/>
+    <property type="chains" value="A/B=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="4Z4M">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.15 A"/>
+    <property type="chains" value="A/B=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="4ZF3">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A/B=51-236"/>
+  </dbReference>
+  <dbReference type="PDB" id="4ZF4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.82 A"/>
+    <property type="chains" value="A/B=4-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="4ZF5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A/B=4-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="5AQB">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.37 A"/>
+    <property type="chains" value="B=2-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="5B61">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.12 A"/>
+    <property type="chains" value="A/B/C/D/E/F=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5BKF">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.60 A"/>
+    <property type="chains" value="E=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5BKG">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.80 A"/>
+    <property type="chains" value="E=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DPG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.85 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DPH">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.42 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DPI">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.54 A"/>
+    <property type="chains" value="A/B/C/D/E/F=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DPJ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.50 A"/>
+    <property type="chains" value="A/B/C/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DQB">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.25 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DQM">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.30 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DRF">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.14 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DRG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.14 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DTX">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.45 A"/>
+    <property type="chains" value="A=1-63, A=65-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DTY">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=1-63, A=65-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DTZ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A/B/C/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5DU0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.35 A"/>
+    <property type="chains" value="A/B/C/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5EHU">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.45 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5F9G">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.77 A"/>
+    <property type="chains" value="A=2-144"/>
+  </dbReference>
+  <dbReference type="PDB" id="5FGU">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A=1-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="5HBD">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.65 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5HGE">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.86 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5HW9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.00 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5HZO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.49 A"/>
+    <property type="chains" value="A/B=1-235"/>
+  </dbReference>
+  <dbReference type="PDB" id="5J2O">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5J3N">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.45 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5JZK">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A/B=3-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5JZL">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A/B=3-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5KTG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.80 A"/>
+    <property type="chains" value="A/B=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="5LEL">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.10 A"/>
+    <property type="chains" value="C/F/I=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5LEM">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.98 A"/>
+    <property type="chains" value="C=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5MA3">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5MA4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5MA5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.85 A"/>
+    <property type="chains" value="B/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5MA6">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.30 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5MA8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.35 A"/>
+    <property type="chains" value="B/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5MA9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.57 A"/>
+    <property type="chains" value="B/D/F/H=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5MAD">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.53 A"/>
+    <property type="chains" value="B/D/F/H=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5MAK">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.50 A"/>
+    <property type="chains" value="B/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5MSE">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.66 A"/>
+    <property type="chains" value="A/B/C/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5N9O">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.53 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5NHN">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.96 A"/>
+    <property type="chains" value="A/B=3-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="5NI3">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.28 A"/>
+    <property type="chains" value="A=3-229, B/C/D=3-233"/>
+  </dbReference>
+  <dbReference type="PDB" id="5O89">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5O8B">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5O8C">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5OX8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.29 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5OX9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.56 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5OXA">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.16 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5OXB">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.38 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5OXC">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.02 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5T3I">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5WJ2">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.41 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5WJ3">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.35 A"/>
+    <property type="chains" value="A/B=3-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5WJ4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A/B=3-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="5Z6Y">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.87 A"/>
+    <property type="chains" value="A=3-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="6AA2">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.30 A"/>
+    <property type="chains" value="A/B/C=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6AA6">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.39 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6AS9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.75 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6B7R">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.73 A"/>
+    <property type="chains" value="A/B=2-214"/>
+  </dbReference>
+  <dbReference type="PDB" id="6B7T">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.91 A"/>
+    <property type="chains" value="A/B=3-194, A/B=214-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6B9C">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=3-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6DQ0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.05 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6DQ1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6EFR">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.40 A"/>
+    <property type="chains" value="A=1-145"/>
+  </dbReference>
+  <dbReference type="PDB" id="6FLL">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.79 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6FWW">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.13 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6GEL">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.51 A"/>
+    <property type="chains" value="A/B=2-227"/>
+  </dbReference>
+  <dbReference type="PDB" id="6GEZ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.47 A"/>
+    <property type="chains" value="A/B=2-227"/>
+  </dbReference>
+  <dbReference type="PDB" id="6GO8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.65 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6GO9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.67 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6GQG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.79 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6GQH">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.40 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6GRM">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.30 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6HR1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A/B=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6HUT">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.29 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6IR6">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.64 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6IR7">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.28 A"/>
+    <property type="chains" value="A=2-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6ITC">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.45 A"/>
+    <property type="chains" value="G=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6JGH">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="0.94 A"/>
+    <property type="chains" value="A=2-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6JGI">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="0.85 A"/>
+    <property type="chains" value="A=2-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6JGJ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="0.78 A"/>
+    <property type="chains" value="A=2-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6KKZ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="0.90 A"/>
+    <property type="chains" value="A=2-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6KL0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="0.80 A"/>
+    <property type="chains" value="A=2-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6KL1">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="0.85 A"/>
+    <property type="chains" value="A=2-232"/>
+  </dbReference>
+  <dbReference type="PDB" id="6KRG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="A=1-236"/>
+  </dbReference>
+  <dbReference type="PDB" id="6L27">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="0.77 A"/>
+    <property type="chains" value="A=4-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6LNP">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.99 A"/>
+    <property type="chains" value="B/D=1-111, B/D=150-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6LR7">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.67 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6M63">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.25 A"/>
+    <property type="chains" value="A/B=3-144"/>
+  </dbReference>
+  <dbReference type="PDB" id="6MB2">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="5.00 A"/>
+    <property type="chains" value="a/b/c/d/e/f/g/h/i/j/k/l/m/n/o=2-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="6MDR">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.47 A"/>
+    <property type="chains" value="b/d/f/h/j/l/n/p=1-232"/>
+  </dbReference>
+  <dbReference type="PDB" id="6MKS">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.40 A"/>
+    <property type="chains" value="A/B/C/D/E/F/G/H/I/J/K/L/M/N/O/P/Q/R/S/T/U/V/W/X/Y/Z/a/b/c/d=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="6MWQ">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.00 A"/>
+    <property type="chains" value="G/H/I/J=2-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="6OA8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.37 A"/>
+    <property type="chains" value="A=3-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6OFK">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.15 A"/>
+    <property type="chains" value="A/B=49-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6OFL">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.25 A"/>
+    <property type="chains" value="A/B=49-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6OFM">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.48 A"/>
+    <property type="chains" value="A/B=49-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6OFN">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.65 A"/>
+    <property type="chains" value="A/B=49-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6OFO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.60 A"/>
+    <property type="chains" value="A/B=2-194"/>
+  </dbReference>
+  <dbReference type="PDB" id="6OG8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A/B=49-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6OG9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A/B=49-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6OGA">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A/B=49-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6OGB">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.65 A"/>
+    <property type="chains" value="A/B=49-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6OGC">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.18 A"/>
+    <property type="chains" value="A/B=49-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6PFR">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.51 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6PFS">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.76 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6PFT">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.45 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6PFU">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.62 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6QQ8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.46 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6QQ9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.82 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6QQA">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.66 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6QQB">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.45 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6QUH">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A/C=4-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="6QUI">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.94 A"/>
+    <property type="chains" value="A/D=2-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="6QUJ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.68 A"/>
+    <property type="chains" value="A/D=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="6SM0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.91 A"/>
+    <property type="chains" value="A=2-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="6T39">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6T3A">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.85 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6T90">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.05 A"/>
+    <property type="chains" value="K=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UHJ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UHK">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UHL">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.91 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UHM">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.10 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UHN">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.92 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UHO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.95 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UHP">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.90 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UHQ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.85 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UHR">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.00 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UN4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UN5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.36 A"/>
+    <property type="chains" value="A/B=51-63, A/B=145-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UN6">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A/B=51-63, A/B=145-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UN7">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.50 A"/>
+    <property type="chains" value="A/B=51-63, A/B=145-237"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UZ0">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.24 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6UZ3">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.50 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6VAL">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.87 A"/>
+    <property type="chains" value="A/B/C/D/E/F/G/H/I/J/K=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6VAM">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.63 A"/>
+    <property type="chains" value="A/B/C/D/E/F/G/H=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6VIO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.60 A"/>
+    <property type="chains" value="A/B/C/D/E/F/G/H=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WRF">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.14 A"/>
+    <property type="chains" value="S=3-229"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WSG">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.16 A"/>
+    <property type="chains" value="S=3-232"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WV3">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.20 A"/>
+    <property type="chains" value="A=1-63, A=146-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WV4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.01 A"/>
+    <property type="chains" value="A=1-63, A=146-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WV5">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.80 A"/>
+    <property type="chains" value="A=1-63, A=146-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WV6">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.70 A"/>
+    <property type="chains" value="A=1-63, A=146-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WV7">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.48 A"/>
+    <property type="chains" value="A/B=1-63, A/B=146-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WV8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.01 A"/>
+    <property type="chains" value="A=1-63, A=146-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WV9">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.35 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WVA">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="3.35 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WVB">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.87 A"/>
+    <property type="chains" value="A=1-63, A=146-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WVD">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.25 A"/>
+    <property type="chains" value="A=1-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WVE">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.43 A"/>
+    <property type="chains" value="A=1-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WVF">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.90 A"/>
+    <property type="chains" value="A=1-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WVG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.90 A"/>
+    <property type="chains" value="A/B=1-230"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WVH">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.99 A"/>
+    <property type="chains" value="A/B=1-63, A/B=146-231"/>
+  </dbReference>
+  <dbReference type="PDB" id="6WVI">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.40 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6XZF">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6YOV">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.42 A"/>
+    <property type="chains" value="K=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="6ZUI">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.20 A"/>
+    <property type="chains" value="A=2-144"/>
+  </dbReference>
+  <dbReference type="PDB" id="7A7K">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.55 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7A7L">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.30 A"/>
+    <property type="chains" value="A=3-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7AA5">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="4.18 A"/>
+    <property type="chains" value="A/B/C/D=3-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7AMB">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A/B/C/D=2-232"/>
+  </dbReference>
+  <dbReference type="PDB" id="7AMF">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A/B/C/D=2-232"/>
+  </dbReference>
+  <dbReference type="PDB" id="7AMU">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.64 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7BWN">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.40 A"/>
+    <property type="chains" value="A/C/E/F/H/J/M/O=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7BYL">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="2.50 A"/>
+    <property type="chains" value="A/C/E/G=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7BYM">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.10 A"/>
+    <property type="chains" value="A/C/E/G=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7BYN">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.30 A"/>
+    <property type="chains" value="A/C/E/G=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7CD7">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="B/D=3-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7CD8">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="B=3-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7EDJ">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.30 A"/>
+    <property type="chains" value="I/J/K=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7FHK">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.30 A"/>
+    <property type="chains" value="A/C=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7FHL">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.10 A"/>
+    <property type="chains" value="A/C=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7FHN">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.30 A"/>
+    <property type="chains" value="A/C=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7FHO">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="2.80 A"/>
+    <property type="chains" value="A/C=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7K18">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.30 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7KM4">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.65 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7KS0">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="5.30 A"/>
+    <property type="chains" value="A/C=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7KS3">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="5.80 A"/>
+    <property type="chains" value="A/C=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7KUY">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.60 A"/>
+    <property type="chains" value="E=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7L31">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.80 A"/>
+    <property type="chains" value="E=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7O7C">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.55 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7O7D">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.40 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7O7E">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.80 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7O7H">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7O7U">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7O7V">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.90 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7O7W">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.10 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7O7X">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.95 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7PCA">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.05 A"/>
+    <property type="chains" value="A=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7PCZ">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.35 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7PD0">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.00 A"/>
+    <property type="chains" value="A/B/C/D=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7PHR">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.08 A"/>
+    <property type="chains" value="D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7PNN">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.43 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7SAH">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.60 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7SAI">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.23 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7SQY">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.40 A"/>
+    <property type="chains" value="A/B/C=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7SSV">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.39 A"/>
+    <property type="chains" value="A/B/C/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7SSX">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="2.89 A"/>
+    <property type="chains" value="A/B/C/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7SSY">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="2.89 A"/>
+    <property type="chains" value="A/B/C/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7SSZ">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.25 A"/>
+    <property type="chains" value="A/B/C/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7SUN">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.60 A"/>
+    <property type="chains" value="A/B=1-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="7X5V">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="2.83 A"/>
+    <property type="chains" value="A/B/C/D=2-235"/>
+  </dbReference>
+  <dbReference type="PDB" id="7YDQ">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="4.04 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8A6G">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8A6N">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8A6O">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8A6P">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8A6Q">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8A6R">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8A6S">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.63 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8A7V">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.46 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8A83">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.81 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8AHA">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.38 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8AHB">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.79 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8BVG">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.38 A"/>
+    <property type="chains" value="A/B/C/D/E/F=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8DFL">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.25 A"/>
+    <property type="chains" value="A/B/C/D=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8DPD">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.51 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8DTA">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.81 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8ET3">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.70 A"/>
+    <property type="chains" value="S=3-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8F6P">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.20 A"/>
+    <property type="chains" value="A=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8FCK">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="6.88 A"/>
+    <property type="chains" value="E=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8FED">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="2.76 A"/>
+    <property type="chains" value="G/H=33-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8FEE">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="2.90 A"/>
+    <property type="chains" value="G/H=33-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8FEF">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="2.71 A"/>
+    <property type="chains" value="G/H=33-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8OTS">
+    <property type="method" value="EM"/>
+    <property type="resolution" value="3.30 A"/>
+    <property type="chains" value="K=2-238"/>
+  </dbReference>
+  <dbReference type="PDB" id="8OVN">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="2.60 A"/>
+    <property type="chains" value="A=1-162"/>
+  </dbReference>
+  <dbReference type="PDB" id="8OVO">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A/B=1-162"/>
+  </dbReference>
+  <dbReference type="PDB" id="8OVP">
+    <property type="method" value="X-ray"/>
+    <property type="resolution" value="1.70 A"/>
+    <property type="chains" value="A/B=1-162"/>
+  </dbReference>
+  <dbReference type="PDBsum" id="1B9C"/>
+  <dbReference type="PDBsum" id="1BFP"/>
+  <dbReference type="PDBsum" id="1C4F"/>
+  <dbReference type="PDBsum" id="1CV7"/>
+  <dbReference type="PDBsum" id="1EMA"/>
+  <dbReference type="PDBsum" id="1EMB"/>
+  <dbReference type="PDBsum" id="1EMC"/>
+  <dbReference type="PDBsum" id="1EME"/>
+  <dbReference type="PDBsum" id="1EMF"/>
+  <dbReference type="PDBsum" id="1EMG"/>
+  <dbReference type="PDBsum" id="1EMK"/>
+  <dbReference type="PDBsum" id="1EML"/>
+  <dbReference type="PDBsum" id="1EMM"/>
+  <dbReference type="PDBsum" id="1F09"/>
+  <dbReference type="PDBsum" id="1F0B"/>
+  <dbReference type="PDBsum" id="1GFL"/>
+  <dbReference type="PDBsum" id="1H6R"/>
+  <dbReference type="PDBsum" id="1HCJ"/>
+  <dbReference type="PDBsum" id="1HUY"/>
+  <dbReference type="PDBsum" id="1JBY"/>
+  <dbReference type="PDBsum" id="1JBZ"/>
+  <dbReference type="PDBsum" id="1JC0"/>
+  <dbReference type="PDBsum" id="1JC1"/>
+  <dbReference type="PDBsum" id="1KP5"/>
+  <dbReference type="PDBsum" id="1KYP"/>
+  <dbReference type="PDBsum" id="1KYR"/>
+  <dbReference type="PDBsum" id="1KYS"/>
+  <dbReference type="PDBsum" id="1MYW"/>
+  <dbReference type="PDBsum" id="1Q4A"/>
+  <dbReference type="PDBsum" id="1Q4B"/>
+  <dbReference type="PDBsum" id="1Q4C"/>
+  <dbReference type="PDBsum" id="1Q4D"/>
+  <dbReference type="PDBsum" id="1Q4E"/>
+  <dbReference type="PDBsum" id="1Q73"/>
+  <dbReference type="PDBsum" id="1QXT"/>
+  <dbReference type="PDBsum" id="1QY3"/>
+  <dbReference type="PDBsum" id="1QYF"/>
+  <dbReference type="PDBsum" id="1QYO"/>
+  <dbReference type="PDBsum" id="1QYQ"/>
+  <dbReference type="PDBsum" id="1RM9"/>
+  <dbReference type="PDBsum" id="1RMM"/>
+  <dbReference type="PDBsum" id="1RMO"/>
+  <dbReference type="PDBsum" id="1RMP"/>
+  <dbReference type="PDBsum" id="1RRX"/>
+  <dbReference type="PDBsum" id="1S6Z"/>
+  <dbReference type="PDBsum" id="1W7S"/>
+  <dbReference type="PDBsum" id="1W7T"/>
+  <dbReference type="PDBsum" id="1W7U"/>
+  <dbReference type="PDBsum" id="1YFP"/>
+  <dbReference type="PDBsum" id="1YHG"/>
+  <dbReference type="PDBsum" id="1YHH"/>
+  <dbReference type="PDBsum" id="1YHI"/>
+  <dbReference type="PDBsum" id="1YJ2"/>
+  <dbReference type="PDBsum" id="1YJF"/>
+  <dbReference type="PDBsum" id="1Z1P"/>
+  <dbReference type="PDBsum" id="1Z1Q"/>
+  <dbReference type="PDBsum" id="2AH8"/>
+  <dbReference type="PDBsum" id="2AHA"/>
+  <dbReference type="PDBsum" id="2AWJ"/>
+  <dbReference type="PDBsum" id="2AWK"/>
+  <dbReference type="PDBsum" id="2AWL"/>
+  <dbReference type="PDBsum" id="2AWM"/>
+  <dbReference type="PDBsum" id="2B3P"/>
+  <dbReference type="PDBsum" id="2B3Q"/>
+  <dbReference type="PDBsum" id="2DUE"/>
+  <dbReference type="PDBsum" id="2DUF"/>
+  <dbReference type="PDBsum" id="2DUG"/>
+  <dbReference type="PDBsum" id="2DUH"/>
+  <dbReference type="PDBsum" id="2DUI"/>
+  <dbReference type="PDBsum" id="2EMD"/>
+  <dbReference type="PDBsum" id="2EMN"/>
+  <dbReference type="PDBsum" id="2EMO"/>
+  <dbReference type="PDBsum" id="2FWQ"/>
+  <dbReference type="PDBsum" id="2FZU"/>
+  <dbReference type="PDBsum" id="2G16"/>
+  <dbReference type="PDBsum" id="2G2S"/>
+  <dbReference type="PDBsum" id="2G3D"/>
+  <dbReference type="PDBsum" id="2G5Z"/>
+  <dbReference type="PDBsum" id="2G6E"/>
+  <dbReference type="PDBsum" id="2H6V"/>
+  <dbReference type="PDBsum" id="2H9W"/>
+  <dbReference type="PDBsum" id="2HCG"/>
+  <dbReference type="PDBsum" id="2HFC"/>
+  <dbReference type="PDBsum" id="2HGD"/>
+  <dbReference type="PDBsum" id="2HGY"/>
+  <dbReference type="PDBsum" id="2HJO"/>
+  <dbReference type="PDBsum" id="2HQZ"/>
+  <dbReference type="PDBsum" id="2HRS"/>
+  <dbReference type="PDBsum" id="2JAD"/>
+  <dbReference type="PDBsum" id="2O24"/>
+  <dbReference type="PDBsum" id="2O29"/>
+  <dbReference type="PDBsum" id="2O2B"/>
+  <dbReference type="PDBsum" id="2OKW"/>
+  <dbReference type="PDBsum" id="2OKY"/>
+  <dbReference type="PDBsum" id="2Q57"/>
+  <dbReference type="PDBsum" id="2Q6P"/>
+  <dbReference type="PDBsum" id="2QRF"/>
+  <dbReference type="PDBsum" id="2QT2"/>
+  <dbReference type="PDBsum" id="2QU1"/>
+  <dbReference type="PDBsum" id="2QZ0"/>
+  <dbReference type="PDBsum" id="2WSN"/>
+  <dbReference type="PDBsum" id="2WSO"/>
+  <dbReference type="PDBsum" id="2WUR"/>
+  <dbReference type="PDBsum" id="2Y0G"/>
+  <dbReference type="PDBsum" id="2YDZ"/>
+  <dbReference type="PDBsum" id="2YE0"/>
+  <dbReference type="PDBsum" id="2YE1"/>
+  <dbReference type="PDBsum" id="2YFP"/>
+  <dbReference type="PDBsum" id="3AI4"/>
+  <dbReference type="PDBsum" id="3AI5"/>
+  <dbReference type="PDBsum" id="3CB9"/>
+  <dbReference type="PDBsum" id="3CBE"/>
+  <dbReference type="PDBsum" id="3CD1"/>
+  <dbReference type="PDBsum" id="3CD9"/>
+  <dbReference type="PDBsum" id="3DPW"/>
+  <dbReference type="PDBsum" id="3DPX"/>
+  <dbReference type="PDBsum" id="3DPZ"/>
+  <dbReference type="PDBsum" id="3DQ1"/>
+  <dbReference type="PDBsum" id="3DQ2"/>
+  <dbReference type="PDBsum" id="3DQ3"/>
+  <dbReference type="PDBsum" id="3DQ4"/>
+  <dbReference type="PDBsum" id="3DQ5"/>
+  <dbReference type="PDBsum" id="3DQ6"/>
+  <dbReference type="PDBsum" id="3DQ7"/>
+  <dbReference type="PDBsum" id="3DQ8"/>
+  <dbReference type="PDBsum" id="3DQ9"/>
+  <dbReference type="PDBsum" id="3DQA"/>
+  <dbReference type="PDBsum" id="3DQC"/>
+  <dbReference type="PDBsum" id="3DQD"/>
+  <dbReference type="PDBsum" id="3DQE"/>
+  <dbReference type="PDBsum" id="3DQF"/>
+  <dbReference type="PDBsum" id="3DQH"/>
+  <dbReference type="PDBsum" id="3DQI"/>
+  <dbReference type="PDBsum" id="3DQJ"/>
+  <dbReference type="PDBsum" id="3DQK"/>
+  <dbReference type="PDBsum" id="3DQL"/>
+  <dbReference type="PDBsum" id="3DQM"/>
+  <dbReference type="PDBsum" id="3DQN"/>
+  <dbReference type="PDBsum" id="3DQO"/>
+  <dbReference type="PDBsum" id="3DQU"/>
+  <dbReference type="PDBsum" id="3ED8"/>
+  <dbReference type="PDBsum" id="3EK4"/>
+  <dbReference type="PDBsum" id="3EK7"/>
+  <dbReference type="PDBsum" id="3EK8"/>
+  <dbReference type="PDBsum" id="3EKH"/>
+  <dbReference type="PDBsum" id="3EKJ"/>
+  <dbReference type="PDBsum" id="3EVP"/>
+  <dbReference type="PDBsum" id="3EVR"/>
+  <dbReference type="PDBsum" id="3EVU"/>
+  <dbReference type="PDBsum" id="3EVV"/>
+  <dbReference type="PDBsum" id="3G9A"/>
+  <dbReference type="PDBsum" id="3GEX"/>
+  <dbReference type="PDBsum" id="3GJ1"/>
+  <dbReference type="PDBsum" id="3GJ2"/>
+  <dbReference type="PDBsum" id="3I19"/>
+  <dbReference type="PDBsum" id="3K1K"/>
+  <dbReference type="PDBsum" id="3LA1"/>
+  <dbReference type="PDBsum" id="3O77"/>
+  <dbReference type="PDBsum" id="3O78"/>
+  <dbReference type="PDBsum" id="3OGO"/>
+  <dbReference type="PDBsum" id="3OSQ"/>
+  <dbReference type="PDBsum" id="3OSR"/>
+  <dbReference type="PDBsum" id="3P28"/>
+  <dbReference type="PDBsum" id="3SG2"/>
+  <dbReference type="PDBsum" id="3SG3"/>
+  <dbReference type="PDBsum" id="3SG4"/>
+  <dbReference type="PDBsum" id="3SG5"/>
+  <dbReference type="PDBsum" id="3SG6"/>
+  <dbReference type="PDBsum" id="3SG7"/>
+  <dbReference type="PDBsum" id="3SRY"/>
+  <dbReference type="PDBsum" id="3SS0"/>
+  <dbReference type="PDBsum" id="3SSH"/>
+  <dbReference type="PDBsum" id="3SSK"/>
+  <dbReference type="PDBsum" id="3SSL"/>
+  <dbReference type="PDBsum" id="3SSP"/>
+  <dbReference type="PDBsum" id="3SST"/>
+  <dbReference type="PDBsum" id="3SSV"/>
+  <dbReference type="PDBsum" id="3SSY"/>
+  <dbReference type="PDBsum" id="3ST0"/>
+  <dbReference type="PDBsum" id="3SV5"/>
+  <dbReference type="PDBsum" id="3SVB"/>
+  <dbReference type="PDBsum" id="3SVC"/>
+  <dbReference type="PDBsum" id="3SVD"/>
+  <dbReference type="PDBsum" id="3SVE"/>
+  <dbReference type="PDBsum" id="3U8P"/>
+  <dbReference type="PDBsum" id="3UFZ"/>
+  <dbReference type="PDBsum" id="3UG0"/>
+  <dbReference type="PDBsum" id="3V3D"/>
+  <dbReference type="PDBsum" id="3VHT"/>
+  <dbReference type="PDBsum" id="3W1C"/>
+  <dbReference type="PDBsum" id="3W1D"/>
+  <dbReference type="PDBsum" id="3WLC"/>
+  <dbReference type="PDBsum" id="3WLD"/>
+  <dbReference type="PDBsum" id="3ZTF"/>
+  <dbReference type="PDBsum" id="4ANJ"/>
+  <dbReference type="PDBsum" id="4AR7"/>
+  <dbReference type="PDBsum" id="4AS8"/>
+  <dbReference type="PDBsum" id="4B5Y"/>
+  <dbReference type="PDBsum" id="4BDU"/>
+  <dbReference type="PDBsum" id="4EN1"/>
+  <dbReference type="PDBsum" id="4EUL"/>
+  <dbReference type="PDBsum" id="4GES"/>
+  <dbReference type="PDBsum" id="4GF6"/>
+  <dbReference type="PDBsum" id="4H47"/>
+  <dbReference type="PDBsum" id="4H48"/>
+  <dbReference type="PDBsum" id="4IK1"/>
+  <dbReference type="PDBsum" id="4IK3"/>
+  <dbReference type="PDBsum" id="4IK4"/>
+  <dbReference type="PDBsum" id="4IK5"/>
+  <dbReference type="PDBsum" id="4IK8"/>
+  <dbReference type="PDBsum" id="4IK9"/>
+  <dbReference type="PDBsum" id="4J88"/>
+  <dbReference type="PDBsum" id="4J89"/>
+  <dbReference type="PDBsum" id="4J8A"/>
+  <dbReference type="PDBsum" id="4JFG"/>
+  <dbReference type="PDBsum" id="4JRB"/>
+  <dbReference type="PDBsum" id="4KA9"/>
+  <dbReference type="PDBsum" id="4KAG"/>
+  <dbReference type="PDBsum" id="4KEX"/>
+  <dbReference type="PDBsum" id="4KF5"/>
+  <dbReference type="PDBsum" id="4KW4"/>
+  <dbReference type="PDBsum" id="4KW8"/>
+  <dbReference type="PDBsum" id="4KW9"/>
+  <dbReference type="PDBsum" id="4L12"/>
+  <dbReference type="PDBsum" id="4L13"/>
+  <dbReference type="PDBsum" id="4L1I"/>
+  <dbReference type="PDBsum" id="4LQT"/>
+  <dbReference type="PDBsum" id="4LQU"/>
+  <dbReference type="PDBsum" id="4LW5"/>
+  <dbReference type="PDBsum" id="4N3D"/>
+  <dbReference type="PDBsum" id="4NDJ"/>
+  <dbReference type="PDBsum" id="4NDK"/>
+  <dbReference type="PDBsum" id="4OGS"/>
+  <dbReference type="PDBsum" id="4ORN"/>
+  <dbReference type="PDBsum" id="4P1Q"/>
+  <dbReference type="PDBsum" id="4P7H"/>
+  <dbReference type="PDBsum" id="4PA0"/>
+  <dbReference type="PDBsum" id="4PFE"/>
+  <dbReference type="PDBsum" id="4U2V"/>
+  <dbReference type="PDBsum" id="4XBI"/>
+  <dbReference type="PDBsum" id="4XGY"/>
+  <dbReference type="PDBsum" id="4XL5"/>
+  <dbReference type="PDBsum" id="4XOV"/>
+  <dbReference type="PDBsum" id="4XOW"/>
+  <dbReference type="PDBsum" id="4XVP"/>
+  <dbReference type="PDBsum" id="4Z4K"/>
+  <dbReference type="PDBsum" id="4Z4M"/>
+  <dbReference type="PDBsum" id="4ZF3"/>
+  <dbReference type="PDBsum" id="4ZF4"/>
+  <dbReference type="PDBsum" id="4ZF5"/>
+  <dbReference type="PDBsum" id="5AQB"/>
+  <dbReference type="PDBsum" id="5B61"/>
+  <dbReference type="PDBsum" id="5BKF"/>
+  <dbReference type="PDBsum" id="5BKG"/>
+  <dbReference type="PDBsum" id="5DPG"/>
+  <dbReference type="PDBsum" id="5DPH"/>
+  <dbReference type="PDBsum" id="5DPI"/>
+  <dbReference type="PDBsum" id="5DPJ"/>
+  <dbReference type="PDBsum" id="5DQB"/>
+  <dbReference type="PDBsum" id="5DQM"/>
+  <dbReference type="PDBsum" id="5DRF"/>
+  <dbReference type="PDBsum" id="5DRG"/>
+  <dbReference type="PDBsum" id="5DTX"/>
+  <dbReference type="PDBsum" id="5DTY"/>
+  <dbReference type="PDBsum" id="5DTZ"/>
+  <dbReference type="PDBsum" id="5DU0"/>
+  <dbReference type="PDBsum" id="5EHU"/>
+  <dbReference type="PDBsum" id="5F9G"/>
+  <dbReference type="PDBsum" id="5FGU"/>
+  <dbReference type="PDBsum" id="5HBD"/>
+  <dbReference type="PDBsum" id="5HGE"/>
+  <dbReference type="PDBsum" id="5HW9"/>
+  <dbReference type="PDBsum" id="5HZO"/>
+  <dbReference type="PDBsum" id="5J2O"/>
+  <dbReference type="PDBsum" id="5J3N"/>
+  <dbReference type="PDBsum" id="5JZK"/>
+  <dbReference type="PDBsum" id="5JZL"/>
+  <dbReference type="PDBsum" id="5KTG"/>
+  <dbReference type="PDBsum" id="5LEL"/>
+  <dbReference type="PDBsum" id="5LEM"/>
+  <dbReference type="PDBsum" id="5MA3"/>
+  <dbReference type="PDBsum" id="5MA4"/>
+  <dbReference type="PDBsum" id="5MA5"/>
+  <dbReference type="PDBsum" id="5MA6"/>
+  <dbReference type="PDBsum" id="5MA8"/>
+  <dbReference type="PDBsum" id="5MA9"/>
+  <dbReference type="PDBsum" id="5MAD"/>
+  <dbReference type="PDBsum" id="5MAK"/>
+  <dbReference type="PDBsum" id="5MSE"/>
+  <dbReference type="PDBsum" id="5N9O"/>
+  <dbReference type="PDBsum" id="5NHN"/>
+  <dbReference type="PDBsum" id="5NI3"/>
+  <dbReference type="PDBsum" id="5O89"/>
+  <dbReference type="PDBsum" id="5O8B"/>
+  <dbReference type="PDBsum" id="5O8C"/>
+  <dbReference type="PDBsum" id="5OX8"/>
+  <dbReference type="PDBsum" id="5OX9"/>
+  <dbReference type="PDBsum" id="5OXA"/>
+  <dbReference type="PDBsum" id="5OXB"/>
+  <dbReference type="PDBsum" id="5OXC"/>
+  <dbReference type="PDBsum" id="5T3I"/>
+  <dbReference type="PDBsum" id="5WJ2"/>
+  <dbReference type="PDBsum" id="5WJ3"/>
+  <dbReference type="PDBsum" id="5WJ4"/>
+  <dbReference type="PDBsum" id="5Z6Y"/>
+  <dbReference type="PDBsum" id="6AA2"/>
+  <dbReference type="PDBsum" id="6AA6"/>
+  <dbReference type="PDBsum" id="6AS9"/>
+  <dbReference type="PDBsum" id="6B7R"/>
+  <dbReference type="PDBsum" id="6B7T"/>
+  <dbReference type="PDBsum" id="6B9C"/>
+  <dbReference type="PDBsum" id="6DQ0"/>
+  <dbReference type="PDBsum" id="6DQ1"/>
+  <dbReference type="PDBsum" id="6EFR"/>
+  <dbReference type="PDBsum" id="6FLL"/>
+  <dbReference type="PDBsum" id="6FWW"/>
+  <dbReference type="PDBsum" id="6GEL"/>
+  <dbReference type="PDBsum" id="6GEZ"/>
+  <dbReference type="PDBsum" id="6GO8"/>
+  <dbReference type="PDBsum" id="6GO9"/>
+  <dbReference type="PDBsum" id="6GQG"/>
+  <dbReference type="PDBsum" id="6GQH"/>
+  <dbReference type="PDBsum" id="6GRM"/>
+  <dbReference type="PDBsum" id="6HR1"/>
+  <dbReference type="PDBsum" id="6HUT"/>
+  <dbReference type="PDBsum" id="6IR6"/>
+  <dbReference type="PDBsum" id="6IR7"/>
+  <dbReference type="PDBsum" id="6ITC"/>
+  <dbReference type="PDBsum" id="6JGH"/>
+  <dbReference type="PDBsum" id="6JGI"/>
+  <dbReference type="PDBsum" id="6JGJ"/>
+  <dbReference type="PDBsum" id="6KKZ"/>
+  <dbReference type="PDBsum" id="6KL0"/>
+  <dbReference type="PDBsum" id="6KL1"/>
+  <dbReference type="PDBsum" id="6KRG"/>
+  <dbReference type="PDBsum" id="6L27"/>
+  <dbReference type="PDBsum" id="6LNP"/>
+  <dbReference type="PDBsum" id="6LR7"/>
+  <dbReference type="PDBsum" id="6M63"/>
+  <dbReference type="PDBsum" id="6MB2"/>
+  <dbReference type="PDBsum" id="6MDR"/>
+  <dbReference type="PDBsum" id="6MKS"/>
+  <dbReference type="PDBsum" id="6MWQ"/>
+  <dbReference type="PDBsum" id="6OA8"/>
+  <dbReference type="PDBsum" id="6OFK"/>
+  <dbReference type="PDBsum" id="6OFL"/>
+  <dbReference type="PDBsum" id="6OFM"/>
+  <dbReference type="PDBsum" id="6OFN"/>
+  <dbReference type="PDBsum" id="6OFO"/>
+  <dbReference type="PDBsum" id="6OG8"/>
+  <dbReference type="PDBsum" id="6OG9"/>
+  <dbReference type="PDBsum" id="6OGA"/>
+  <dbReference type="PDBsum" id="6OGB"/>
+  <dbReference type="PDBsum" id="6OGC"/>
+  <dbReference type="PDBsum" id="6PFR"/>
+  <dbReference type="PDBsum" id="6PFS"/>
+  <dbReference type="PDBsum" id="6PFT"/>
+  <dbReference type="PDBsum" id="6PFU"/>
+  <dbReference type="PDBsum" id="6QQ8"/>
+  <dbReference type="PDBsum" id="6QQ9"/>
+  <dbReference type="PDBsum" id="6QQA"/>
+  <dbReference type="PDBsum" id="6QQB"/>
+  <dbReference type="PDBsum" id="6QUH"/>
+  <dbReference type="PDBsum" id="6QUI"/>
+  <dbReference type="PDBsum" id="6QUJ"/>
+  <dbReference type="PDBsum" id="6SM0"/>
+  <dbReference type="PDBsum" id="6T39"/>
+  <dbReference type="PDBsum" id="6T3A"/>
+  <dbReference type="PDBsum" id="6T90"/>
+  <dbReference type="PDBsum" id="6UHJ"/>
+  <dbReference type="PDBsum" id="6UHK"/>
+  <dbReference type="PDBsum" id="6UHL"/>
+  <dbReference type="PDBsum" id="6UHM"/>
+  <dbReference type="PDBsum" id="6UHN"/>
+  <dbReference type="PDBsum" id="6UHO"/>
+  <dbReference type="PDBsum" id="6UHP"/>
+  <dbReference type="PDBsum" id="6UHQ"/>
+  <dbReference type="PDBsum" id="6UHR"/>
+  <dbReference type="PDBsum" id="6UN4"/>
+  <dbReference type="PDBsum" id="6UN5"/>
+  <dbReference type="PDBsum" id="6UN6"/>
+  <dbReference type="PDBsum" id="6UN7"/>
+  <dbReference type="PDBsum" id="6UZ0"/>
+  <dbReference type="PDBsum" id="6UZ3"/>
+  <dbReference type="PDBsum" id="6VAL"/>
+  <dbReference type="PDBsum" id="6VAM"/>
+  <dbReference type="PDBsum" id="6VIO"/>
+  <dbReference type="PDBsum" id="6WRF"/>
+  <dbReference type="PDBsum" id="6WSG"/>
+  <dbReference type="PDBsum" id="6WV3"/>
+  <dbReference type="PDBsum" id="6WV4"/>
+  <dbReference type="PDBsum" id="6WV5"/>
+  <dbReference type="PDBsum" id="6WV6"/>
+  <dbReference type="PDBsum" id="6WV7"/>
+  <dbReference type="PDBsum" id="6WV8"/>
+  <dbReference type="PDBsum" id="6WV9"/>
+  <dbReference type="PDBsum" id="6WVA"/>
+  <dbReference type="PDBsum" id="6WVB"/>
+  <dbReference type="PDBsum" id="6WVD"/>
+  <dbReference type="PDBsum" id="6WVE"/>
+  <dbReference type="PDBsum" id="6WVF"/>
+  <dbReference type="PDBsum" id="6WVG"/>
+  <dbReference type="PDBsum" id="6WVH"/>
+  <dbReference type="PDBsum" id="6WVI"/>
+  <dbReference type="PDBsum" id="6XZF"/>
+  <dbReference type="PDBsum" id="6YOV"/>
+  <dbReference type="PDBsum" id="6ZUI"/>
+  <dbReference type="PDBsum" id="7A7K"/>
+  <dbReference type="PDBsum" id="7A7L"/>
+  <dbReference type="PDBsum" id="7AA5"/>
+  <dbReference type="PDBsum" id="7AMB"/>
+  <dbReference type="PDBsum" id="7AMF"/>
+  <dbReference type="PDBsum" id="7AMU"/>
+  <dbReference type="PDBsum" id="7BWN"/>
+  <dbReference type="PDBsum" id="7BYL"/>
+  <dbReference type="PDBsum" id="7BYM"/>
+  <dbReference type="PDBsum" id="7BYN"/>
+  <dbReference type="PDBsum" id="7CD7"/>
+  <dbReference type="PDBsum" id="7CD8"/>
+  <dbReference type="PDBsum" id="7EDJ"/>
+  <dbReference type="PDBsum" id="7FHK"/>
+  <dbReference type="PDBsum" id="7FHL"/>
+  <dbReference type="PDBsum" id="7FHN"/>
+  <dbReference type="PDBsum" id="7FHO"/>
+  <dbReference type="PDBsum" id="7K18"/>
+  <dbReference type="PDBsum" id="7KM4"/>
+  <dbReference type="PDBsum" id="7KS0"/>
+  <dbReference type="PDBsum" id="7KS3"/>
+  <dbReference type="PDBsum" id="7KUY"/>
+  <dbReference type="PDBsum" id="7L31"/>
+  <dbReference type="PDBsum" id="7O7C"/>
+  <dbReference type="PDBsum" id="7O7D"/>
+  <dbReference type="PDBsum" id="7O7E"/>
+  <dbReference type="PDBsum" id="7O7H"/>
+  <dbReference type="PDBsum" id="7O7U"/>
+  <dbReference type="PDBsum" id="7O7V"/>
+  <dbReference type="PDBsum" id="7O7W"/>
+  <dbReference type="PDBsum" id="7O7X"/>
+  <dbReference type="PDBsum" id="7PCA"/>
+  <dbReference type="PDBsum" id="7PCZ"/>
+  <dbReference type="PDBsum" id="7PD0"/>
+  <dbReference type="PDBsum" id="7PHR"/>
+  <dbReference type="PDBsum" id="7PNN"/>
+  <dbReference type="PDBsum" id="7SAH"/>
+  <dbReference type="PDBsum" id="7SAI"/>
+  <dbReference type="PDBsum" id="7SQY"/>
+  <dbReference type="PDBsum" id="7SSV"/>
+  <dbReference type="PDBsum" id="7SSX"/>
+  <dbReference type="PDBsum" id="7SSY"/>
+  <dbReference type="PDBsum" id="7SSZ"/>
+  <dbReference type="PDBsum" id="7SUN"/>
+  <dbReference type="PDBsum" id="7X5V"/>
+  <dbReference type="PDBsum" id="7YDQ"/>
+  <dbReference type="PDBsum" id="8A6G"/>
+  <dbReference type="PDBsum" id="8A6N"/>
+  <dbReference type="PDBsum" id="8A6O"/>
+  <dbReference type="PDBsum" id="8A6P"/>
+  <dbReference type="PDBsum" id="8A6Q"/>
+  <dbReference type="PDBsum" id="8A6R"/>
+  <dbReference type="PDBsum" id="8A6S"/>
+  <dbReference type="PDBsum" id="8A7V"/>
+  <dbReference type="PDBsum" id="8A83"/>
+  <dbReference type="PDBsum" id="8AHA"/>
+  <dbReference type="PDBsum" id="8AHB"/>
+  <dbReference type="PDBsum" id="8BVG"/>
+  <dbReference type="PDBsum" id="8DFL"/>
+  <dbReference type="PDBsum" id="8DPD"/>
+  <dbReference type="PDBsum" id="8DTA"/>
+  <dbReference type="PDBsum" id="8ET3"/>
+  <dbReference type="PDBsum" id="8F6P"/>
+  <dbReference type="PDBsum" id="8FCK"/>
+  <dbReference type="PDBsum" id="8FED"/>
+  <dbReference type="PDBsum" id="8FEE"/>
+  <dbReference type="PDBsum" id="8FEF"/>
+  <dbReference type="PDBsum" id="8OTS"/>
+  <dbReference type="PDBsum" id="8OVN"/>
+  <dbReference type="PDBsum" id="8OVO"/>
+  <dbReference type="PDBsum" id="8OVP"/>
+  <dbReference type="AlphaFoldDB" id="P42212"/>
+  <dbReference type="BMRB" id="P42212"/>
+  <dbReference type="SMR" id="P42212"/>
+  <dbReference type="IntAct" id="P42212">
+    <property type="interactions" value="1"/>
+  </dbReference>
+  <dbReference type="ABCD" id="P42212">
+    <property type="antibodies" value="70 sequenced antibodies"/>
+  </dbReference>
+  <dbReference type="BioCyc" id="MetaCyc:MONOMER-20291"/>
+  <dbReference type="EvolutionaryTrace" id="P42212"/>
+  <dbReference type="GO" id="GO:0008218">
+    <property type="term" value="P:bioluminescence"/>
+    <property type="evidence" value="ECO:0000304"/>
+    <property type="project" value="UniProtKB"/>
+  </dbReference>
+  <dbReference type="GO" id="GO:0006091">
+    <property type="term" value="P:generation of precursor metabolites and energy"/>
+    <property type="evidence" value="ECO:0000304"/>
+    <property type="project" value="UniProtKB"/>
+  </dbReference>
+  <dbReference type="Gene3D" id="2.40.155.10">
+    <property type="entry name" value="Green fluorescent protein"/>
+    <property type="match status" value="2"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR009017">
+    <property type="entry name" value="GFP"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR011584">
+    <property type="entry name" value="GFP-related"/>
+  </dbReference>
+  <dbReference type="InterPro" id="IPR000786">
+    <property type="entry name" value="Green_fluorescent_prot"/>
+  </dbReference>
+  <dbReference type="Pfam" id="PF01353">
+    <property type="entry name" value="GFP"/>
+    <property type="match status" value="1"/>
+  </dbReference>
+  <dbReference type="PRINTS" id="PR01229">
+    <property type="entry name" value="GFLUORESCENT"/>
+  </dbReference>
+  <dbReference type="SUPFAM" id="SSF54511">
+    <property type="entry name" value="GFP-like"/>
+    <property type="match status" value="1"/>
+  </dbReference>
+  <proteinExistence type="evidence at protein level"/>
+  <keyword id="KW-0002">3D-structure</keyword>
+  <keyword id="KW-0157">Chromophore</keyword>
+  <keyword id="KW-0903">Direct protein sequencing</keyword>
+  <keyword id="KW-0455">Luminescence</keyword>
+  <keyword id="KW-0599">Photoprotein</keyword>
+  <feature type="chain" id="PRO_0000192576" description="Green fluorescent protein">
+    <location>
+      <begin position="1"/>
+      <end position="238"/>
+    </location>
+  </feature>
+  <feature type="modified residue" description="(Z)-2,3-didehydrotyrosine" evidence="18">
+    <location>
+      <position position="66"/>
+    </location>
+  </feature>
+  <feature type="cross-link" description="5-imidazolinone (Ser-Gly)" evidence="18">
+    <location>
+      <begin position="65"/>
+      <end position="67"/>
+    </location>
+  </feature>
+  <feature type="sequence variant" evidence="6">
+    <original>F</original>
+    <variation>Y</variation>
+    <location>
+      <position position="100"/>
+    </location>
+  </feature>
+  <feature type="sequence variant" evidence="6">
+    <original>T</original>
+    <variation>S</variation>
+    <location>
+      <position position="108"/>
+    </location>
+  </feature>
+  <feature type="sequence variant" evidence="6">
+    <original>L</original>
+    <variation>M</variation>
+    <location>
+      <position position="141"/>
+    </location>
+  </feature>
+  <feature type="sequence variant" evidence="6">
+    <original>V</original>
+    <variation>I</variation>
+    <location>
+      <position position="219"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In mut1.28; shifts fluorescence lifetime from 3.03 to 2.76 ns; when associated with H-145. In mut2.2; shifts fluorescence lifetime from 3.03 to 1.94 ns; when associated with H-69 and H-145. In mut3.3; shifts fluorescence lifetime from 3.03 to 1.88 ns; when associated with L-46; H-69 and H-145. In EBFP1.2; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with N-39; H-66; A-72; T-105; F-145; V-171; S-198 and V-206. In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with N-39; H-66; A-72; T-105; V-128; F-145; I-150; V-155; V-171; S-198; V-206 and V-224." evidence="9 15">
+    <original>S</original>
+    <variation>R</variation>
+    <location>
+      <position position="30"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In EBFP1.2; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; H-66; A-72; T-105; F-145; V-171; S-198 and V-206. In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; H-66; A-72; T-105; V-128; F-145; I-150; V-155; V-171; S-198; V-206 and V-224." evidence="15">
+    <original>Y</original>
+    <variation>N</variation>
+    <location>
+      <position position="39"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In mut3.3; shifts fluorescence lifetime from 3.03 to 1.88 ns; when associated with R-30; H-69 and H-145. In R10-3; matures to the red-emitting state with excitation and emission maxima at 555 and 585 nm, respectively; when associated with L-64; N-68; Q-162; A-163; V-167 and L-171. In Venus; leads to yellow fluorescence, improved maturation and reduced environmental sensitivity; when associated with L-64; G-65; L-68; A-72; T-153; A-163; G-175 and Y-203." evidence="4 9 14">
+    <original>F</original>
+    <variation>L</variation>
+    <location>
+      <position position="46"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In EGFP; increases fluorescence at warmer temperatures such as 37 degrees Celsius; when associated with T-65. In EBFP; gives rise to variants with blue fluorescence; when associated with T-65 and H-66. In ECFP; leads to cyan fluorescence, folds faster and more efficiently at 37 degrees Celsius and has superior solubility and brightness; when associated with T-65; W-66; I-146; T-153 and A-163. In Cerulean; leads to improved quantum yield, a higher extinction coefficient and is 2.5-fold brighterH than ECFP; when associated with T-65; W-66; A-72; A-145; I-146; D-148; T-153 and A-163. In R10-3; matures to the red-emitting state with excitation and emission maxima at 555 and 585 nm, respectively; when associated with L-46; N-68; Q-162; A-163; V-167 and L-171. In GFPmut 1; red-shifts by about 100 nm the excitation maxima, permitting efficient excitation at 488 nm and increases fluorescence; when associated with T-65. In VisGreen; leads to brighter fluorescence; when associated with T-65; A-72; K-149 and T-167. In Venus; leads to yellow fluorescence, improved maturation and reduced environmental sensitivity; when associated with L-46; G-65; L-68; A-72; T-153; A-163; G-175 and Y-203." evidence="1 3 4 7 8 11 14 21 24 26">
+    <original>F</original>
+    <variation>L</variation>
+    <location>
+      <position position="64"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In RSGFP4; increases fluorescence and shifts the major exitation peak to 489-490 nm; when associated with G-65 and L-69." evidence="29">
+    <original>F</original>
+    <variation>M</variation>
+    <location>
+      <position position="64"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Gives rise to variants with cerulean fluorsecence." evidence="13">
+    <original>SY</original>
+    <variation>TW</variation>
+    <location>
+      <begin position="65"/>
+      <end position="66"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In GFPmut 2; red-shifts by about 100 nm the excitation maxima, permitting efficient excitation at 488 nm and increases fluorescence; when associated with L-68 and A-72." evidence="21">
+    <original>S</original>
+    <variation>A</variation>
+    <location>
+      <position position="65"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In EYFP; leads to yellow fluorescence, folds faster and more efficiently at 37 degrees Celsius and has superior solubility and brightness; when associated with L-68; A-72 and Y-203. In GFPmut 3; highly fluorescent mutant when excited at 488 nm; when associated with A-72. Highly fluorescent; when associated with Y-203; L-68 and A-72. In RSGFP4; increases fluorescence and shifts the major exitation peak to 489-490 nm; when associated with M-64 and L-69. In YFP 10C; shifts the major emission and exitation peak up to 20 nm; when associated with L-68; A-72 and Y-203. In Topaz; shifts the major emission and exitation peak up to 20 nm; when associated with A-72; R-79 and Y-203. In Venus; leads to yellow fluorescence, improved maturation and reduced environmental sensitivity; when associated with L-46; L-64; L-68; A-72; T-153; A-163; G-175 and Y-203." evidence="1 4 21 29 30 31">
+    <original>S</original>
+    <variation>G</variation>
+    <location>
+      <position position="65"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Increases fluorescence, photostability and shifts the major exitation peak to 488 nm. In EGFP; increases fluorescence at warmer temperatures such as 37 degrees Celsius; when associated with L-64. In EBFP; gives rise to variants with blue fluorescence; when associated with L-64 and H-66. In GFPmut 1; red-shifts by about 100 nm the excitation maxima, permitting efficient excitation at 488 nm and increases fluorescence; when associated with T-65. In ECFP; leads to cyan fluorescence, folds faster and more efficiently at 37 degrees Celsius and has superior solubility and brightness; when associated with L-64; W-66; I-146; T-153 and A-163. In Cerulean; leads to improved quantum yield, a higher extinction coefficient and is 2.5-fold brighter than ECFP; when associated with L-64; W-66; A-72; A-145; I-146; D-148; T-153 and A-163. In Esmerald; leads to brighter fluorescence; when associated with A-72; K-149; T-153 and T-167. In VisGreen; leads to brighter fluorescence; when associated with L-64; A-72; K-149 and T-167." evidence="1 3 7 8 11 20 21 26">
+    <original>S</original>
+    <variation>T</variation>
+    <location>
+      <position position="65"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In BFP; shifts the excitation and emission spectra to shorter wavelengths. In EBFP; gives rise to variants with blue fluorescence; when associated with L-64 and T-65. In Azurite; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-80; F-145; I-150 and R-224. In EBFP1.2; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; A-72; T-105; F-145; V-171; S-198 and V-206. In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; A-72; T-105; V-128; F-145; I-150; V-155; V-171; S-198; V-206 and V-224." evidence="15 19 24 26">
+    <original>Y</original>
+    <variation>H</variation>
+    <location>
+      <position position="66"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Shifts the excitation and emission spectra to shorter wavelengths." evidence="19">
+    <original>Y</original>
+    <variation>T</variation>
+    <variation>F</variation>
+    <location>
+      <position position="66"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In W; leads to excitation and emission wavelengths intermediate between tyrosine and histidine but is only weakly fluorescent. In ECFP; leads to cyan fluorescence, folds faster and more efficiently at 37 degrees Celsius and has superior solubility and brightness; when associated with L-64; T-65; I-146; T-153 and A-163. In Cerulean; leads to improved quantum yield, a higher extinction coefficient and is 2.5-fold brighter than ECFP; when associated with L-64; T-65; A-72; A-145; I-146; D-148; T-153 and A-163." evidence="1 7 8 17">
+    <original>Y</original>
+    <variation>W</variation>
+    <location>
+      <position position="66"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In EYFP; leads to yellow fluorescence, folds faster and more efficiently at 37 degrees Celsius and has superior solubility and brightness; when associated with G-65; A-72 and Y-203. In GFPmut 2; red-shifts by about 100 nm the excitation maxima, permitting efficient excitation at 488 nm and increases fluorescence; when associated with A-65 and A-72. In Citrinine; leads to excitation and emission peaks of 516 and 529 nm, respectively; when associated with M-69; A-72 and Y-203. In YFP 10C; shifts the major emission and exitation peak up to 20 nm; when associated with G-65; A-72 and Y-203. In Venus; leads to yellow fluorescence, improved maturation and reduced environmental sensitivity; when associated with L-46; L-64; G-65; A-72; T-153; A-163; G-175 and Y-203." evidence="1 2 4 21 30 31">
+    <original>V</original>
+    <variation>L</variation>
+    <location>
+      <position position="68"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In R10-3; matures to the red-emitting state with excitation and emission maxima at 555 and 585 nm, respectively; when associated with L-46; L-64; Q-162; A-163; V-167 and L-171." evidence="14">
+    <original>V</original>
+    <variation>N</variation>
+    <location>
+      <position position="68"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In P4; leads to no detectable fluorescence. In mut2.2; shifts fluorescence lifetime from 3.03 to 1.94 ns; when associated with R-30 and H-145. In mut3.3; shifts fluorescence lifetime from 3.03 to 1.88 ns; when associated with R-30; L-46 and H-145." evidence="9 17">
+    <original>Q</original>
+    <variation>H</variation>
+    <location>
+      <position position="69"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In RSGFP4; increases fluorescence and shifts the major exitation peak to 489-490 nm; when associated with M-64 and G-65." evidence="29">
+    <original>Q</original>
+    <variation>L</variation>
+    <location>
+      <position position="69"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In Citrinine; leads to excitation and emission peaks of 516 and 529 nm, respectively; when associated with L-68; A-72 and Y-203." evidence="2">
+    <original>Q</original>
+    <variation>M</variation>
+    <location>
+      <position position="69"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Increases fluorescence at warmer temperatures such as 37 degrees Celsius. In GFPmut 3; highly fluorescent mutant when excited at 488 nm; when associated with G-65. In EYFP; leads to yellow fluorescence, folds faster and more efficiently at 37 degrees Celsius and has superior solubility and brightness; when associated with G-65; L-68 and Y-203. In GFPmut 2; red-shifts by about 100 nm the excitation maxima, permitting efficient excitation at 488 nm and increases fluorescence; when associated with A-65 and L-68. In Citrinine; leads to excitation and emission peaks of 516 and 529 nm, respectively; when associated with L-68; M-69 and Y-203. In YFP 10C; shifts the major emission and exitation peak up to 20 nm; when associated with G-65; L-68; and Y-203. In Topaz; shifts the major emission and exitation peak up to 20 nm; when associated with G-65; R-79 and Y-203. In Cerulean; leads to improved quantum yield, a higher extinction coefficient and is 2.5-fold brighter than ECFP; when associated with L-64; T-65; W-66; A-145; I-146; D-148; T-153 and A-163. In Sapphire/H9-40; exhibits a huge Stoke's shift, with an excitation peak at 399 nm and an emission peak at 511 nm; when associated with F-145 and I-203. In EBFP1.2; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; T-105; F-145; V-171; S-198 and V-206. In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; T-105; V-128; F-145; I-150; V-155; V-171; S-198; V-206 and V-224. In Esmerald; leads to brighter fluorescence; when associated with T-65; K-149; T-153 and T-167. In VisGreen; leads to brighter fluorescence; when associated with L-64; T-65; K-149 and T-167. In Venus; leads to yellow fluorescence, improved maturation and reduced environmental sensitivity; when associated with L-46; L-64; G-65; L-68; T-153; A-163; G-175 and Y-203." evidence="1 2 4 5 7 11 15 21 24 30 31">
+    <original>S</original>
+    <variation>A</variation>
+    <location>
+      <position position="72"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In Topaz; shifts the major emission and exitation peak up to 20 nm; when associated with G-65; A-72 and Y-203." evidence="30">
+    <original>K</original>
+    <variation>R</variation>
+    <location>
+      <position position="79"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In Azurite; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with H-66; F-145; I-150 and R-224." evidence="15">
+    <original>Q</original>
+    <variation>R</variation>
+    <location>
+      <position position="80"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In alphaGFP/cycle 3 GFP; improves folding at 37 degrees Celsius, reduces aggregation at high concentrations, and increases the diffusibility of the protein inside cells; when associated with T-153 and A-163." evidence="26 27 28">
+    <original>F</original>
+    <variation>S</variation>
+    <location>
+      <position position="99"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In mut1.27; shifts fluorescence lifetime from 3.03 to 2.85 ns; when associated with H-145." evidence="9">
+    <original>D</original>
+    <variation>E</variation>
+    <location>
+      <position position="103"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In EBFP1.2; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; F-145; V-171; S-198 and V-206. In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; V-128; F-145; I-150; V-155; V-171; S-198; V-206 and V-224." evidence="15">
+    <original>N</original>
+    <variation>T</variation>
+    <location>
+      <position position="105"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; F-145; I-150; V-155; V-171; S-198; V-206 and V-224." evidence="15">
+    <original>I</original>
+    <variation>V</variation>
+    <location>
+      <position position="128"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In Cerulean; leads to improved quantum yield, a higher extinction coefficient and is 2.5-fold brighter than ECFP; when associated with L-64; T-65; W-66; A-72; I-146; D-148; T-153 and A-163." evidence="7">
+    <original>Y</original>
+    <variation>A</variation>
+    <location>
+      <position position="145"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In mut1.9; shifts fluorescence lifetime from 3.03 to 2.74 ns." evidence="9">
+    <original>Y</original>
+    <variation>C</variation>
+    <location>
+      <position position="145"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In Sapphire/H9-40; exhibits a huge Stoke's shift, with an excitation peak at 399 nm and an emission peak at 511 nm; when associated with A-72 and I-203. In Azurite; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with H-66; R-80; I-150 and R-224. In EBFP1.2; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; V-171; S-198 and V-206. In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; V-128; I-150; V-155; V-171; S-198; V-206 and V-224." evidence="5 15">
+    <original>Y</original>
+    <variation>F</variation>
+    <location>
+      <position position="145"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In mut1.3; shifts fluorescence lifetime from 3.03 to 2.78 ns. In mut1.5; shifts fluorescence lifetime from 3.03 to 2.72 ns; when associated with A-193. In mut1.27; shifts fluorescence lifetime from 3.03 to 2.85 ns; when associated with E-103. In mut1.28; shifts fluorescence lifetime from 3.03 to 2.76 ns; when associated with R-30. In mut2.1; shifts fluorescence lifetime from 3.03 to 2.50 ns; when associated with A-176 and I-198. In mut2.2; shifts fluorescence lifetime from 3.03 to 1.94 ns; when associated with R-30 and H-69. In mut3.3; shifts fluorescence lifetime from 3.03 to 1.88 ns; when associated with R-30; L-46 and H-69." evidence="9">
+    <original>Y</original>
+    <variation>H</variation>
+    <location>
+      <position position="145"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In ECFP; leads to cyan fluorescence, folds faster and more efficiently at 37 degrees Celsius and has superior solubility and brightness; when associated with L-64; T-65; W-66; T-153 and A-163. In Cerulean; leads to improved quantum yield, a higher extinction coefficient and is 2.5-fold brighter than ECFP; when associated with L-64; T-65; W-66; A-72; A-145; D-148; T-153 and A-163." evidence="1 7 8">
+    <original>N</original>
+    <variation>I</variation>
+    <location>
+      <position position="146"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Increases fluorescence at warmer temperatures such as 37 degrees Celsius." evidence="23">
+    <original>S</original>
+    <variation>P</variation>
+    <location>
+      <position position="147"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In Cerulean; leads to improved quantum yield, a higher extinction coefficient and is 2.5-fold brighter than ECFP; when associated with L-64; T-65; W-66; A-72; A-145; I-146; T-153 and A-163." evidence="7">
+    <original>H</original>
+    <variation>D</variation>
+    <location>
+      <position position="148"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Increases fluorescence at warmer temperatures such as 37 degrees Celsius. In Esmerald; leads to brighter fluorescence; when associated with T-65; A-72; T-153 and T-167. In VisGreen; leads to brighter fluorescence; when associated with L-64; T-65; A-72 and T-167." evidence="11 24">
+    <original>N</original>
+    <variation>K</variation>
+    <location>
+      <position position="149"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In Azurite; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with H-66; R-80; F-145 and R-224. In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; V-128; F-145; V-155; V-171; S-198; V-206 and V-224." evidence="15">
+    <original>V</original>
+    <variation>I</variation>
+    <location>
+      <position position="150"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Increases fluorescence at warmer temperatures such as 37 degrees Celsius. In alphaGFP/cycle 3 GFP; improves folding at 37 degrees Celsius, reduces aggregation at high concentrations, and increases the diffusibility of the protein inside cells; when associated with S-99 and A-163. In ECFP; leads to cyan fluorescence, folds faster and more efficiently at 37 degrees Celsius and has superior solubility and brightness; when associated with L-64; T-65; W-66; I-146 and A-163. In Cerulean; leads to improved quantum yield, a higher extinction coefficient and is 2.5-fold brighter than ECFP; when associated with L-64; T-65; W-66; A-72; A-145; I-146; D-148 and A-163. In Esmerald; leads to brighter fluorescence; when associated with T-65; A-72; K-149 and T-167. In Venus; leads to yellow fluorescence, improved maturation and reduced environmental sensitivity; when associated with L-46; L-64; G-65; L-68; A-72; A-163; G-175 and Y-203." evidence="1 4 7 8 11 24 26 27 28">
+    <original>M</original>
+    <variation>T</variation>
+    <location>
+      <position position="153"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; V-128; F-145; I-150; V-171; S-198; V-206 and V-224." evidence="15">
+    <original>D</original>
+    <variation>V</variation>
+    <location>
+      <position position="155"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In R10-3; matures to the red-emitting state with excitation and emission maxima at 555 and 585 nm, respectively; when associated with L-46; L-64; N-68; A-163; V-167 and L-171." evidence="14">
+    <original>K</original>
+    <variation>Q</variation>
+    <location>
+      <position position="162"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In GFPB; leads to enhanced fluorescence at 37 degrees Celsius. In GFPA; leads to even higher fluorescence at 37 degrees Celsius than GFPA; whenassociated with G-175. In alphaGFP/cycle 3 GFP; improves folding at 37 degrees Celsius, reduces aggregation at high concentrations, and increases the diffusibility of the protein inside cells; when associated with S-99 and T-153. In R10-3; matures to the red-emitting state with excitation and emission maxima at 555 and 585 nm, respectively; when associated with L-46; L-64; N-68; Q-162; V-167 and L-171. In ECFP; leads to cyan fluorescence, folds faster and more efficiently at 37 degrees Celsius and has superior solubility and brightness; when associated with L-64; T-65; W-66; I-146 and T-153. In Cerulean; leads to improved quantum yield, a higher extinction coefficient and is 2.5-fold brighter than ECFP; when associated with L-64; T-65; W-66; A-72; A-145; I-146; D-148 and T-153. In Venus; leads to yellow fluorescence, improved maturation and reduced environmental sensitivity; when associated with L-46; L-64; G-65; L-68; A-72; T-153; G-175 and Y-203." evidence="1 4 7 8 14 22 26 27 28">
+    <original>V</original>
+    <variation>A</variation>
+    <location>
+      <position position="163"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In P11; increases fluorescence at 475 nm excitation and at warmer temperatures such as 37 degrees Celsius. In Esmerald; leads to brighter fluorescence; when associated with T-65; A-72; K-149 and T-153. In VisGreen; leads to brighter fluorescence; when associated with L-64; T-65; A-72 and K-149." evidence="11 17 24">
+    <original>I</original>
+    <variation>T</variation>
+    <location>
+      <position position="167"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In P9; increases fluorescence at 475 nm excitation. In R10-3; matures to the red-emitting state with excitation and emission maxima at 555 and 585 nm, respectively; when associated with L-46; L-64; N-68; Q-162; A-163 and L-171." evidence="14 17">
+    <original>I</original>
+    <variation>V</variation>
+    <location>
+      <position position="167"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In R10-3; matures to the red-emitting state with excitation and emission maxima at 555 and 585 nm, respectively; when associated with L-46; L-64; N-68; Q-162; A-163 and V-167." evidence="14">
+    <original>I</original>
+    <variation>L</variation>
+    <location>
+      <position position="171"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In EBFP1.2; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; F-145; S-198 and V-206. In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; V-128; F-145; I-150; V-155; S-198; V-206 and V-224." evidence="15">
+    <original>I</original>
+    <variation>V</variation>
+    <location>
+      <position position="171"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In GFPA; leads to enhanced fluorescence at 37 degrees Celsius; when associated with A-163. In Venus; leads to yellow fluorescence, improved maturation and reduced environmental sensitivity; when associated with L-46; L-64; G-65; L-68; A-72; T-153; A-163 and Y-203." evidence="4 22">
+    <original>S</original>
+    <variation>G</variation>
+    <location>
+      <position position="175"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In mut2.1; shifts fluorescence lifetime from 3.03 to 2.50 ns; when associated with H-145 and I-198." evidence="9">
+    <original>V</original>
+    <variation>A</variation>
+    <location>
+      <position position="176"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In mut1.5; shifts fluorescence lifetime from 3.03 to 2.72 ns; when associated with H-145." evidence="9">
+    <original>V</original>
+    <variation>A</variation>
+    <location>
+      <position position="193"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In mut2.1; shifts fluorescence lifetime from 3.03 to 2.50 ns; when associated with H-145 and A-176." evidence="9">
+    <original>N</original>
+    <variation>I</variation>
+    <location>
+      <position position="198"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In EBFP1.2; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; F-145; V-171 and V-206. In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; V-128; F-145; I-150; V-155; V-171; S-198 and V-224." evidence="15">
+    <original>N</original>
+    <variation>S</variation>
+    <location>
+      <position position="198"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In H9; increases fluorescence at 395 nm excitation; when associated with I-203." evidence="17">
+    <original>S</original>
+    <variation>F</variation>
+    <location>
+      <position position="202"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Results in significantly red-shifted excitation and emission maxima." evidence="20">
+    <original>T</original>
+    <variation>H</variation>
+    <variation>W</variation>
+    <variation>F</variation>
+    <location>
+      <position position="203"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Suppresses the 475 nm excitation peak, leaving only the shorter wavelength peak at 399 nm. In H9; increases fluorescence at 395 nm excitation; when associated with I-203. In Sapphire/H9-40; exhibits a huge Stoke's shift, with an excitation peak at 399 nm and an emission peak at 511 nm; when associated with A-72 and F-145." evidence="5 16 17">
+    <original>T</original>
+    <variation>I</variation>
+    <location>
+      <position position="203"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Gives rise to yellow-emission variants. In EYFP; leads to yellow fluorescence, folds faster and more efficiently at 37 degrees Celsius and has superior solubility and brightness; when associated with G-65; L-68 and A-72. In Citrinine; leads to excitation and emission peaks of 516 and 529 nm, respectively; when associated with L-68; M-69 and A-72. In YFP 10C; shifts the major emission and exitation peak up to 20 nm; when associated with G-65; L-68 and A-72. In Topaz; shifts the major emission and exitation peak up to 20 nm; when associated with G-65; A-72 and R-79. In Venus; leads to yellow fluorescence, improved maturation and reduced environmental sensitivity; when associated with L-46; L-64; G-65; L-68; A-72; T-153; A-163 and G-175." evidence="1 2 4 30 31">
+    <original>T</original>
+    <variation>Y</variation>
+    <location>
+      <position position="203"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Abolishes the tendency to dimerize and leads to monomeric fluorescent proteins." evidence="10">
+    <original>A</original>
+    <variation>K</variation>
+    <location>
+      <position position="206"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In EBFP1.2; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; F-145; V-171 and S-198. In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; V-128; F-145; I-150; V-155; V-171; S-198 and V-206.">
+    <original>A</original>
+    <variation>V</variation>
+    <location>
+      <position position="206"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="Suppresses the 399 nm excitation peak, leaving only the longer wavelength peak at 475 nm." evidence="16">
+    <original>E</original>
+    <variation>G</variation>
+    <location>
+      <position position="222"/>
+    </location>
+  </feature>
+  <feature type="mutagenesis site" description="In Azurite; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with H-66; R-80; F-145 and I-150. In EBFP2.0; shifts the excitation and emission spectra to shorter wavelengths and increases quantum yields compared to BFP; when associated with R-30; N-39; H-66; A-72; T-105; V-128; F-145; I-150; V-155; V-171; S-198 and V-206." evidence="15">
+    <original>V</original>
+    <variation>R</variation>
+    <location>
+      <position position="224"/>
+    </location>
+  </feature>
+  <feature type="sequence conflict" description="In Ref. 3; CAA65278." evidence="32" ref="3">
+    <original>S</original>
+    <variation>G</variation>
+    <location>
+      <position position="2"/>
+    </location>
+  </feature>
+  <feature type="sequence conflict" description="In Ref. 3; CAA65278." evidence="32" ref="3">
+    <original>H</original>
+    <variation>Q</variation>
+    <location>
+      <position position="25"/>
+    </location>
+  </feature>
+  <feature type="sequence conflict" description="In Ref. 3; CAA65278." evidence="32" ref="3">
+    <original>Q</original>
+    <variation>R</variation>
+    <location>
+      <position position="80"/>
+    </location>
+  </feature>
+  <feature type="sequence conflict" description="In Ref. 2; AAA58246." evidence="32" ref="2">
+    <original>Q</original>
+    <variation>P</variation>
+    <location>
+      <position position="157"/>
+    </location>
+  </feature>
+  <feature type="sequence conflict" description="In Ref. 2; AAA58246." evidence="32" ref="2">
+    <original>E</original>
+    <variation>K</variation>
+    <location>
+      <position position="172"/>
+    </location>
+  </feature>
+  <feature type="turn" evidence="58">
+    <location>
+      <begin position="1"/>
+      <end position="3"/>
+    </location>
+  </feature>
+  <feature type="helix" evidence="55">
+    <location>
+      <begin position="5"/>
+      <end position="8"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="55">
+    <location>
+      <begin position="12"/>
+      <end position="22"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="55">
+    <location>
+      <begin position="25"/>
+      <end position="36"/>
+    </location>
+  </feature>
+  <feature type="helix" evidence="55">
+    <location>
+      <begin position="37"/>
+      <end position="39"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="55">
+    <location>
+      <begin position="41"/>
+      <end position="48"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="54">
+    <location>
+      <begin position="50"/>
+      <end position="52"/>
+    </location>
+  </feature>
+  <feature type="helix" evidence="55">
+    <location>
+      <begin position="57"/>
+      <end position="60"/>
+    </location>
+  </feature>
+  <feature type="helix" evidence="55">
+    <location>
+      <begin position="61"/>
+      <end position="64"/>
+    </location>
+  </feature>
+  <feature type="turn" evidence="49">
+    <location>
+      <begin position="65"/>
+      <end position="67"/>
+    </location>
+  </feature>
+  <feature type="helix" evidence="55">
+    <location>
+      <begin position="69"/>
+      <end position="71"/>
+    </location>
+  </feature>
+  <feature type="helix" evidence="57">
+    <location>
+      <begin position="72"/>
+      <end position="74"/>
+    </location>
+  </feature>
+  <feature type="helix" evidence="55">
+    <location>
+      <begin position="76"/>
+      <end position="81"/>
+    </location>
+  </feature>
+  <feature type="helix" evidence="55">
+    <location>
+      <begin position="83"/>
+      <end position="86"/>
+    </location>
+  </feature>
+  <feature type="turn" evidence="55">
+    <location>
+      <begin position="87"/>
+      <end position="90"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="55">
+    <location>
+      <begin position="92"/>
+      <end position="100"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="56">
+    <location>
+      <begin position="101"/>
+      <end position="103"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="55">
+    <location>
+      <begin position="105"/>
+      <end position="115"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="55">
+    <location>
+      <begin position="118"/>
+      <end position="129"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="48">
+    <location>
+      <begin position="132"/>
+      <end position="134"/>
+    </location>
+  </feature>
+  <feature type="turn" evidence="55">
+    <location>
+      <begin position="135"/>
+      <end position="139"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="53">
+    <location>
+      <begin position="141"/>
+      <end position="147"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="55">
+    <location>
+      <begin position="148"/>
+      <end position="154"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="55">
+    <location>
+      <begin position="158"/>
+      <end position="171"/>
+    </location>
+  </feature>
+  <feature type="turn" evidence="52">
+    <location>
+      <begin position="172"/>
+      <end position="174"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="55">
+    <location>
+      <begin position="176"/>
+      <end position="191"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="55">
+    <location>
+      <begin position="198"/>
+      <end position="208"/>
+    </location>
+  </feature>
+  <feature type="helix" evidence="51">
+    <location>
+      <begin position="209"/>
+      <end position="213"/>
+    </location>
+  </feature>
+  <feature type="strand" evidence="55">
+    <location>
+      <begin position="215"/>
+      <end position="228"/>
+    </location>
+  </feature>
+  <feature type="helix" evidence="50">
+    <location>
+      <begin position="233"/>
+      <end position="236"/>
+    </location>
+  </feature>
+  <evidence type="ECO:0000269" key="1">
+    <source>
+      <dbReference type="PubMed" id="11299042"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="2">
+    <source>
+      <dbReference type="PubMed" id="11387331"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="3">
+    <source>
+      <dbReference type="PubMed" id="11776264"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="4">
+    <source>
+      <dbReference type="PubMed" id="12370172"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="5">
+    <source>
+      <dbReference type="PubMed" id="12769828"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="6">
+    <source>
+      <dbReference type="PubMed" id="1347277"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="7">
+    <source>
+      <dbReference type="PubMed" id="14990965"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="8">
+    <source>
+      <dbReference type="PubMed" id="15065907"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="9">
+    <source>
+      <dbReference type="PubMed" id="16201762"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="10">
+    <source>
+      <dbReference type="PubMed" id="16739159"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="11">
+    <source>
+      <dbReference type="PubMed" id="17658219"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="12">
+    <source>
+      <dbReference type="PubMed" id="17685514"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="13">
+    <source>
+      <dbReference type="PubMed" id="17685554"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="14">
+    <source>
+      <dbReference type="PubMed" id="18366185"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="15">
+    <source>
+      <dbReference type="PubMed" id="22891786"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="16">
+    <source>
+      <dbReference type="PubMed" id="7796912"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="17">
+    <source>
+      <dbReference type="PubMed" id="7809066"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="18">
+    <source>
+      <dbReference type="PubMed" id="8448132"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="19">
+    <source>
+      <dbReference type="PubMed" id="8578587"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="20">
+    <source>
+      <dbReference type="PubMed" id="8703075"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="21">
+    <source>
+      <dbReference type="PubMed" id="8707053"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="22">
+    <source>
+      <dbReference type="PubMed" id="8994830"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="23">
+    <source>
+      <dbReference type="PubMed" id="9125154"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="24">
+    <source>
+      <dbReference type="PubMed" id="9145105"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="25">
+    <source>
+      <dbReference type="PubMed" id="9154981"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="26">
+    <source>
+      <dbReference type="PubMed" id="9370472"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="27">
+    <source>
+      <dbReference type="PubMed" id="9630892"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="28">
+    <source>
+      <dbReference type="PubMed" id="9631088"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="29">
+    <source>
+      <dbReference type="PubMed" id="9634755"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="30">
+    <source>
+      <dbReference type="PubMed" id="9759496"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="31">
+    <source>
+      <dbReference type="PubMed" id="9782051"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000305" key="32"/>
+  <evidence type="ECO:0007744" key="33">
+    <source>
+      <dbReference type="PDB" id="1EMA"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="34">
+    <source>
+      <dbReference type="PDB" id="1EMC"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="35">
+    <source>
+      <dbReference type="PDB" id="1EME"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="36">
+    <source>
+      <dbReference type="PDB" id="1EMF"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="37">
+    <source>
+      <dbReference type="PDB" id="1EMK"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="38">
+    <source>
+      <dbReference type="PDB" id="1EML"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="39">
+    <source>
+      <dbReference type="PDB" id="1EMM"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="40">
+    <source>
+      <dbReference type="PDB" id="1HUY"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="41">
+    <source>
+      <dbReference type="PDB" id="1MYW"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="42">
+    <source>
+      <dbReference type="PDB" id="1YFP"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="43">
+    <source>
+      <dbReference type="PDB" id="2EMD"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="44">
+    <source>
+      <dbReference type="PDB" id="2EMN"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="45">
+    <source>
+      <dbReference type="PDB" id="2EMO"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="46">
+    <source>
+      <dbReference type="PDB" id="2Q57"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007744" key="47">
+    <source>
+      <dbReference type="PDB" id="2YFP"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007829" key="48">
+    <source>
+      <dbReference type="PDB" id="1EMK"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007829" key="49">
+    <source>
+      <dbReference type="PDB" id="1QYO"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007829" key="50">
+    <source>
+      <dbReference type="PDB" id="4GF6"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007829" key="51">
+    <source>
+      <dbReference type="PDB" id="4IK8"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007829" key="52">
+    <source>
+      <dbReference type="PDB" id="4OGS"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007829" key="53">
+    <source>
+      <dbReference type="PDB" id="4ZF5"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007829" key="54">
+    <source>
+      <dbReference type="PDB" id="5LEM"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007829" key="55">
+    <source>
+      <dbReference type="PDB" id="6L27"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007829" key="56">
+    <source>
+      <dbReference type="PDB" id="6MWQ"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007829" key="57">
+    <source>
+      <dbReference type="PDB" id="6OA8"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0007829" key="58">
+    <source>
+      <dbReference type="PDB" id="6UHQ"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="59">
+    <source>
+      <dbReference type="PubMed" id="10220315"/>
+    </source>
+  </evidence>
+  <evidence type="ECO:0000269" key="60">
+    <source>
+      <dbReference type="PubMed" id="8137953"/>
+    </source>
+  </evidence>
+  <sequence length="238" mass="26886" checksum="EA5A6F21FBFB6E05" modified="1995-11-01" version="1">MSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKQHDFFKSAMPEGYVQERTIFFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYIMADKQKNGIKVNFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK</sequence>
+</entry>
+<copyright>
+Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms Distributed under the Creative Commons Attribution (CC BY 4.0) License
+</copyright>
+</uniprot>

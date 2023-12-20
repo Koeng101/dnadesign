@@ -1,6 +1,7 @@
 package uniprot_test
 
 import (
+	"compress/gzip"
 	"fmt"
 	"os"
 
@@ -13,7 +14,8 @@ import (
 func Example_basic() {
 	uniprotFile, _ := os.Open("data/uniprot_sprot_mini.xml.gz")
 	defer uniprotFile.Close()
-	parser, _ := uniprot.NewParser(uniprotFile)
+	unzippedFile, _ := gzip.NewReader(uniprotFile)
+	parser := uniprot.NewParser(unzippedFile)
 	entry, _ := parser.Next()
 
 	fmt.Println(entry.Accession[0])
