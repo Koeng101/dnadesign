@@ -1,16 +1,17 @@
 package mash_test
 
 import (
+	"hash/crc32"
 	"testing"
 
 	"github.com/koeng101/dnadesign/lib/mash"
 )
 
 func TestMash(t *testing.T) {
-	fingerprint1 := mash.New(17, 10)
+	fingerprint1 := mash.New(17, 10, crc32.NewIEEE())
 	fingerprint1.Sketch("ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGA")
 
-	fingerprint2 := mash.New(17, 9)
+	fingerprint2 := mash.New(17, 9, crc32.NewIEEE())
 	fingerprint2.Sketch("ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGA")
 
 	distance := fingerprint1.Distance(fingerprint2)
@@ -23,7 +24,7 @@ func TestMash(t *testing.T) {
 		t.Errorf("Expected distance to be 0, got %f", distance)
 	}
 
-	spoofedFingerprint := mash.New(17, 10)
+	spoofedFingerprint := mash.New(17, 10, crc32.NewIEEE())
 	spoofedFingerprint.Sketches[0] = 0
 
 	distance = fingerprint1.Distance(spoofedFingerprint)
@@ -31,17 +32,17 @@ func TestMash(t *testing.T) {
 		t.Errorf("Expected distance to be 1, got %f", distance)
 	}
 
-	spoofedFingerprint = mash.New(17, 9)
+	spoofedFingerprint = mash.New(17, 9, crc32.NewIEEE())
 
 	distance = fingerprint1.Distance(spoofedFingerprint)
 	if distance != 1 {
 		t.Errorf("Expected distance to be 1, got %f", distance)
 	}
 
-	fingerprint1 = mash.New(17, 10)
+	fingerprint1 = mash.New(17, 10, crc32.NewIEEE())
 	fingerprint1.Sketch("ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGA")
 
-	fingerprint2 = mash.New(17, 5)
+	fingerprint2 = mash.New(17, 5, crc32.NewIEEE())
 	fingerprint2.Sketch("ATCGATCGATCGATCGATCGATCGATCGATCGATCGAATGCGATCGATCGATCGATCGATCG")
 
 	distance = fingerprint1.Distance(fingerprint2)
@@ -49,10 +50,10 @@ func TestMash(t *testing.T) {
 		t.Errorf("Expected distance to be 0.19999999999999996, got %f", distance)
 	}
 
-	fingerprint1 = mash.New(17, 10)
+	fingerprint1 = mash.New(17, 10, crc32.NewIEEE())
 	fingerprint1.Sketch("ATCGATCGATCGATCGATCGATCGATCGATCGATCGAATGCGATCGATCGATCGATCGATCG")
 
-	fingerprint2 = mash.New(17, 5)
+	fingerprint2 = mash.New(17, 5, crc32.NewIEEE())
 	fingerprint2.Sketch("ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGA")
 
 	distance = fingerprint1.Distance(fingerprint2)
@@ -62,10 +63,10 @@ func TestMash(t *testing.T) {
 }
 
 func BenchmarkMashDistancee(b *testing.B) {
-	fingerprint1 := mash.New(17, 10)
+	fingerprint1 := mash.New(17, 10, crc32.NewIEEE())
 	fingerprint1.Sketch("ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGA")
 
-	fingerprint2 := mash.New(17, 9)
+	fingerprint2 := mash.New(17, 9, crc32.NewIEEE())
 	fingerprint2.Sketch("ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGA")
 
 	for i := 0; i < b.N; i++ {

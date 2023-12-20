@@ -43,24 +43,28 @@ Tim
 package mash
 
 import (
+	"encoding/binary"
+	"hash"
 	"sort"
+)
 
-	"github.com/koeng101/dnadesign/lib/mash/murmur3"
-) // murmur3 is a fast non-cryptographic hash algorithm that was also used in the original papers-> https://github.com/shenwei356/go-hashing-kmer-bench
+// murmur3 is a fast non-cryptographic hash algorithm that was also used in the original papers-> https://github.com/shenwei356/go-hashing-kmer-bench
 
 // Mash is a collection of hashes of kmers from a given sequence.
 type Mash struct {
-	KmerSize   int      // The kmer size is the size of the sliding window that is used to generate the hashes.
-	SketchSize int      // The sketch size is the number of hashes to store.
-	Sketches   []uint32 // The sketches are the hashes of the kmers that we can compare to other sketches.
+	KmerSize   int       // The kmer size is the size of the sliding window that is used to generate the hashes.
+	SketchSize int       // The sketch size is the number of hashes to store.
+	Sketches   []uint32  // The sketches are the hashes of the kmers that we can compare to other sketches.
+	Hash       hash.Hash // Hash is the go standard library hashing interface. Can be used to switch algorithms.
 }
 
 // New initializes a new mash sketch.
-func New(kmerSize int, sketchSize int) *Mash {
+func New(kmerSize int, sketchSize int, hashInterface hash.Hash) *Mash {
 	return &Mash{
 		KmerSize:   kmerSize,
 		SketchSize: sketchSize,
 		Sketches:   make([]uint32, sketchSize),
+		Hash:       hashInterface,
 	}
 }
 
@@ -73,7 +77,8 @@ func (mash *Mash) Sketch(sequence string) {
 	for kmerStart := 0; kmerStart < len(sequence)-mash.KmerSize; kmerStart++ {
 		kmer := sequence[kmerStart : kmerStart+mash.KmerSize]
 		// hash the kmer to a 32 bit number
-		hash := murmur3.Sum32([]byte(kmer))
+		hashBytes := mash.Hash.Sum([]byte(kmer))
+		hash := binary.BigEndian.Uint32(hashBytes[:4]) // need to convert []byte to uint32
 		// keep the minimum hash value of all the kmers in the window up to a given sketch size
 		// the sketch is a vector of the minimum hash values
 
