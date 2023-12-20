@@ -1,4 +1,4 @@
-package fold
+package zuker
 
 import (
 	"fmt"

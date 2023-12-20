@@ -1,4 +1,4 @@
-package fold
+package zuker
 
 func abs(x int) int {
 	if x < 0 {
