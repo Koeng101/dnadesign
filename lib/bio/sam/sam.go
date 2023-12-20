@@ -46,14 +46,80 @@ type Header struct {
 	CO []string            // One-line text comment. Unordered multiple @CO lines are allowed. UTF-8 encoding may be used.
 }
 
+// headerWriteHelper helps write SAM headers in an ordered way.
+func headerWriteHelper(sb strings.Builder, headerString string, headerMap map[string]string, orderedKeys []string) {
+	_, _ = sb.WriteString(headerString)
+	// Write orderedKeys first, if they exist
+	for _, key := range orderedKeys {
+		if value, exists := headerMap[key]; exists {
+			_, _ = sb.WriteString(fmt.Sprintf("\t%s:%s", key, value))
+		}
+	}
+	// Write the remaining key-value pairs
+	for key, value := range headerMap {
+		// Skip if the key is one of the specific keys
+		var skip bool
+		for _, orderedKey := range orderedKeys {
+			if key == orderedKey {
+				skip = true
+			}
+		}
+		if skip {
+			continue
+		}
+		_, _ = sb.WriteString(fmt.Sprintf("\t%s:%s", key, value))
+	}
+	_, _ = sb.WriteString("\n")
+	return
+}
+
 // WriteTo writes a SAM header to an io.Writer.
 func (header *Header) WriteTo(w io.Writer) (int64, error) {
-	return 0, nil // TODO
+	// Here we write the header into a SAM file. Please check the official
+	// documentation for the meaning of each tag used as ordered keys.
+	// Here, we iterate through each, and write it to a file.
+	var sb strings.Builder
+	if len(header.HD) > 0 {
+		headerWriteHelper(sb, "@HD", header.HD, []string{"VN", "SO", "GO", "SS"})
+	}
+	for _, sq := range header.SQ {
+		headerWriteHelper(sb, "@SQ", sq, []string{"SN", "LN", "AH", "AN", "AS", "DS", "M5", "SP", "TP", "UR"})
+	}
+	for _, rg := range header.RG {
+		headerWriteHelper(sb, "@RG", rg, []string{"ID", "BC", "CN", "DS", "DT", "FO", "KS", "LB", "PG", "PI", "PL", "PM", "PU", "SM"})
+	}
+	for _, pg := range header.PG {
+		headerWriteHelper(sb, "@PG", pg, []string{"ID", "PN", "CL", "PP", "DS", "VN"})
+	}
+	for _, co := range header.CO {
+		_, _ = sb.WriteString(fmt.Sprintf("@CO %s\n", co))
+	}
+
+	newWrittenBytes, err := w.Write([]byte(sb.String()))
+	return int64(newWrittenBytes), err
 }
 
 // Validate validates that the header has all required information, as
 // described in the SAMv1 specification document.
 func (header *Header) Validate() error {
+	/* The following rules apply:
+
+	1. @HD.VN: Format version. Accepted format: /^[0-9]+\.[0-9]+$/.
+	2. @HD.SO: Valid values: unknown (default), unsorted, queryname and coordinate
+	3. @HD.GO: Valid values: none (default), query (alignments are grouped by QNAME), and reference (alignments are grouped by RNAME/POS)
+	4. @HD.SS: Regular expression: (coordinate|queryname|unsorted)(:[A-Za-z0-9_-]+)+
+	5. @SQ.SN: Regular expression: [:rname:∧*=][:rname:]*
+	6. @SQ.SN/AN: The SN tags and all individual AN names in all @SQ lines must be distinct
+	7. @SQ.LN: Reference sequence length. Range: [1, 2^31 − 1]
+	8. @SQ.AN: Regular expression: name(,name)* where name is [:rname:∧*=][:rname:]* (definition of 6)
+	9. @SQ.TP: Valid values: linear (default) and circular
+	10. @RG.ID: Each @RG line must have a unique ID
+	11. @RG.DT: Date the run was produced (ISO8601 date or date/time).
+	12. @RG.FO: Format: /\*|[ACMGRSVTWYHKDBN]+/
+	13. @RG.PL: Valid values: CAPILLARY, DNBSEQ (MGI/BGI), ELEMENT, HELICOS, ILLUMINA, IONTORRENT, LS454, ONT (Oxford Nanopore), PACBIO (Pacific Bio-sciences), SOLID, and ULTIMA
+	14. @PG.ID: Each @PG line must have a unique ID.
+	15. @PG.PP: Previous @PG-ID. Must match another @PG header’s ID tag. @PG records may be chained using PP tag, with the last record in the chain having no PP tag
+	*/
 	return nil // TODO
 }
 
@@ -62,6 +128,7 @@ func (header *Header) Validate() error {
 //
 // For more information, check section 1.5 of http://samtools.github.io/hts-specs/SAMv1.pdf.
 type Optional struct {
+	Tag  string // Tag is typically a two letter tag corresponding to what the optional represents.
 	Type rune   // The type may be one of A (character), B (general array), f (real number), H (hexadecimal array), i (integer), or Z (string).
 	Data string // Optional data
 }
@@ -74,24 +141,51 @@ type Optional struct {
 //
 // For more information, check section 1.4 of the reference document.
 type Alignment struct {
-	QNAME     string              // Query template NAME
-	FLAG      uint16              // bitwise FLAG
-	RNAME     string              // References sequence NAME
-	POS       int32               // 1- based leftmost mapping POSition
-	MAPQ      byte                // MAPping Quality
-	CIGAR     string              // CIGAR string
-	RNEXT     string              // Ref. name of the mate/next read
-	PNEXT     int32               // Position of the mate/next read
-	TLEN      int32               // observed Template LENgth
-	SEQ       string              // segment SEQuence
-	QUAL      string              // ASCII of Phred-scaled base QUALity+33
-	Optionals map[string]Optional // Map of TAG to {TYPE:DATA}
+	QNAME     string     // Query template NAME
+	FLAG      uint16     // bitwise FLAG
+	RNAME     string     // References sequence NAME
+	POS       int32      // 1- based leftmost mapping POSition
+	MAPQ      byte       // MAPping Quality
+	CIGAR     string     // CIGAR string
+	RNEXT     string     // Ref. name of the mate/next read
+	PNEXT     int32      // Position of the mate/next read
+	TLEN      int32      // observed Template LENgth
+	SEQ       string     // segment SEQuence
+	QUAL      string     // ASCII of Phred-scaled base QUALity+33
+	Optionals []Optional // Map of TAG to {TYPE:DATA}
 }
 
 // Alignment_WriteTo implements the io.WriterTo interface. It writes an
 // alignment line.
 func (alignment *Alignment) WriteTo(w io.Writer) (int64, error) {
-	return 0, nil // TODO
+	var sb strings.Builder
+	_, _ = sb.WriteString(fmt.Sprintf("%s\t%d\t%s\t%d\t%c\t%s\t%s\t%d\t%d\t%s\t%s", alignment.QNAME, alignment.FLAG, alignment.RNAME, alignment.POS, alignment.MAPQ, alignment.CIGAR, alignment.RNEXT, alignment.PNEXT, alignment.TLEN, alignment.SEQ, alignment.QUAL))
+	for _, optional := range alignment.Optionals {
+		_, _ = sb.WriteString(fmt.Sprintf("\t%s:%c:%s", optional.Tag, optional.Type, optional.Data))
+	}
+	_, _ = sb.WriteString("\n")
+	newWrittenBytes, err := w.Write([]byte(sb.String()))
+	return int64(newWrittenBytes), err
+}
+
+// Alignment_Validate validates an alignment as valid, given the REGEXP/range
+// defined in the SAM document.
+func (alignment *Alignment) Validate() error {
+	/* The following rules apply:
+
+	1 QNAME	String	[!-?A-~]{1,254}				Query template NAME
+	2 FLAG	Int		[0, 216 − 1]				bitwise FLAG
+	3 RNAME	String	\*|[:rname:∧*=][:rname:]*	Reference sequence NAME11
+	4 POS	Int		[0, 231 − 1]				1-based leftmost mapping POSition
+	5 MAPQ	Int		[0, 28 − 1]					MAPping Quality
+	6 CIGAR	String	\*|([0-9]+[MIDNSHPX=])+		CIGAR string
+	7 RNEXT	String	\*|=|[:rname:∧*=][:rname:]*	Reference name of the mate/next read
+	8 PNEXT	Int		[0, 231 − 1]				Position of the mate/next read
+	9 TLEN	Int		[−231 + 1, 231 − 1]			observed Template LENgth
+	10 SEQ	String	\*|[A-Za-z=.]+				segment SEQuence
+	11 QUAL	String	[!-~]+						ASCII of Phred-scaled base QUALity+33
+	*/
+	return nil
 }
 
 // Parser is a sam file parser that provide sample control over reading sam
@@ -270,10 +364,10 @@ func (p *Parser) Next() (*Alignment, error) {
 	alignment.SEQ = values[9]
 	alignment.QUAL = values[10]
 
-	optionals := make(map[string]Optional)
+	var optionals []Optional
 	for _, value := range values[11:] {
 		valueSplit := strings.Split(value, ":")
-		optionals[valueSplit[0]] = Optional{Type: rune(valueSplit[1][0]), Data: valueSplit[2]}
+		optionals = append(optionals, Optional{Tag: valueSplit[0], Type: rune(valueSplit[1][0]), Data: valueSplit[2]})
 	}
 	alignment.Optionals = optionals
 	return &alignment, nil
