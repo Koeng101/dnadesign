@@ -1,3 +1,4 @@
+//nolint:all
 /*
 Package secondary_structure provides the structs needed to contain
 information about a RNA's secondary structure
@@ -32,7 +33,7 @@ defined in this file in the unit deca-cal / mol (with the `int` type).
 Thus, to convert to the 'standard' energy unit of kcal/mol, the energy
 values have to be converted to type `float32` or `float64` and divided by `100`.
 */
-package secondarystructure
+package secondary_structure
 
 // SecondaryStructure is composed of a list of `MultiLoop`s, `Hairpin`s,
 // and `SingleStrandedRegion`s. Note that since Go doesn't support inheritance,
