@@ -99,7 +99,7 @@ func (header *Header) WriteTo(w io.Writer) (int64, error) {
 }
 
 // Validate validates that the header has all required information, as
-// described in the SAMv1 specification document.
+// described in the SAMv1 specification document. Not implemented yet.
 func (header *Header) Validate() error {
 	/* The following rules apply:
 
@@ -119,7 +119,7 @@ func (header *Header) Validate() error {
 	14. @PG.ID: Each @PG line must have a unique ID.
 	15. @PG.PP: Previous @PG-ID. Must match another @PG header’s ID tag. @PG records may be chained using PP tag, with the last record in the chain having no PP tag
 	*/
-	return nil // TODO
+	return nil
 }
 
 // Optional fields in SAM alignments are structured as TAG:TYPE:DATA, where
@@ -168,7 +168,7 @@ func (alignment *Alignment) WriteTo(w io.Writer) (int64, error) {
 }
 
 // Alignment_Validate validates an alignment as valid, given the REGEXP/range
-// defined in the SAM document.
+// defined in the SAM document. Not implemented yet.
 func (alignment *Alignment) Validate() error {
 	/* The following rules apply:
 
