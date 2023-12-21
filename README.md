@@ -24,8 +24,6 @@ Write good, useful code. Open a pull request, and we'll see if it fits!
 
 * [MIT](LICENSE)
 
-* Copyright (c) 2023 Keoni Gandall
-
 ### Sources
 
 There are a few pieces of "complete" software that we have directly integrated into the source tree (with their associated licenses). These projects don't receive updates anymore (or just bug fixes with years between). In particular, `lib` has most of these, since we intend to have as few dependencies as possible in `lib`. The integrated projects include the following.
