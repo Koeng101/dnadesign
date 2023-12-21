@@ -8,18 +8,17 @@ import (
 	"github.com/koeng101/dnadesign/lib/fold/mfe/energy_params"
 )
 
-func ExampleCONTRAFoldV2() {
-
+func ExampleCONTRAfoldV2() {
 	result, score := CONTRAfoldV2("UGAGUUCUCGAUCUCUAAAAUCG", DefaultBeamSize)
 
-	fmt.Println(fmt.Sprintf("result: %v , score: %v", result, score))
+	fmt.Printf("result: %v , score: %v", result, score)
 	// Output: result: ....................... , score: -0.22376699999999988
 }
 
 func ExampleViennaRNAFold() {
 	sequence := "UCUAGACUUUUCGAUAUCGCGAAAAAAAAU"
 	result, score := ViennaRNAFold(sequence, DefaultTemperature, DefaultEnergyParamsSet, mfe.DefaultDanglingEndsModel, DefaultBeamSize)
-	fmt.Println(fmt.Sprintf("result: %v , score: %.2f", result, score))
+	fmt.Printf("result: %v , score: %.2f", result, score)
 	// Output: result: .......((((((......))))))..... , score: -3.90
 }
 
@@ -73,15 +72,15 @@ func ViennaRNAFoldTest(sequence, expectedStructure string, expectedScore float64
 	result, score := ViennaRNAFold(sequence, temperature, energyParamsSet, danglingEndsModel, DefaultBeamSize)
 	// we expect the calculated score to be within 5% of the expected value
 	threshold := 0.05
-	var lower_threshold, upper_threshold float64
+	var lowerThreshold, upperThreshold float64
 	if expectedScore < 0 {
-		upper_threshold = expectedScore * (1 - threshold)
-		lower_threshold = expectedScore * (1 + threshold)
+		upperThreshold = expectedScore * (1 - threshold)
+		lowerThreshold = expectedScore * (1 + threshold)
 	} else {
-		lower_threshold = expectedScore * (1 - threshold)
-		upper_threshold = expectedScore * (1 + threshold)
+		lowerThreshold = expectedScore * (1 - threshold)
+		upperThreshold = expectedScore * (1 + threshold)
 	}
-	if score < lower_threshold || score > upper_threshold {
+	if score < lowerThreshold || score > upperThreshold {
 		// if result != expectedStructure || score != expectedScore {
 		t.Errorf("Failed to fold %v. \nExpected \nresult: %v \nscore: %v\nGot \nresult: %v \nscore: %v", sequence, expectedStructure, expectedScore, result, score)
 	}

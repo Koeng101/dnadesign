@@ -2,7 +2,7 @@
 Package secondary_structure provides the structs needed to contain
 information about a RNA's secondary structure
 
-Overview of the structs
+# Overview of the structs
 
 The struct that contains information of a RNA's secondary structure is
 `SecondaryStructure`. The field `Structures` contains a list of the main
@@ -16,8 +16,7 @@ no base pairs between the closing and enclosed base pair.
 See the declaration of the structs for detailed information on their
 definition.
 
-
-Explanation of the energy fields of the structs
+# Explanation of the energy fields of the structs
 
 The energy fields of the structs are only used in the `SecondaryStructure`
 returned from the func `MinimumFreeEnergy` in the subpackage `mfe` in
@@ -32,10 +31,8 @@ defined in this file in the unit deca-cal / mol (with the `int` type).
 
 Thus, to convert to the 'standard' energy unit of kcal/mol, the energy
 values have to be converted to type `float32` or `float64` and divided by `100`.
-
-
 */
-package secondary_structure
+package secondarystructure
 
 // SecondaryStructure is composed of a list of `MultiLoop`s, `Hairpin`s,
 // and `SingleStrandedRegion`s. Note that since Go doesn't support inheritance,

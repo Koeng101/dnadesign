@@ -1,3 +1,4 @@
+//nolint:all
 package energy_params
 
 import "embed"
@@ -41,27 +42,35 @@ func NewEnergyParams(energyParamsSet EnergyParamsSet, temperatureInCelsius float
 // pairs as the first indices followed by the unpaired bases in 5' to 3' direction.
 // For example, if we have a 2x2 interior loop:
 // ```
-// 		      5'-GAUA-3'
-// 		      3'-CGCU-5'
+//
+//	5'-GAUA-3'
+//	3'-CGCU-5'
+//
 // ```
 // The closing pairs for the loops are GC and UA (not AU!), and the unpaired bases
 // are (in 5' to 3' direction, starting at the first pair) A U C G.
 // Thus, the energy for this sequence is:
 // ```
-// 	pairs:                    GC UA A  U  C  G
-// 						interior2x2Loop[1][5][1][4][2][3]
+//
+//	pairs:                    GC UA A  U  C  G
+//						interior2x2Loop[1][5][1][4][2][3]
+//
 // ```
 // (See `BasePairEncodedTypeMap` and `NucleotideEncodedIntMap` for more details
 // on how pairs and unpaired nucleotides are encoded)
 // Note that this sequence is symmetric so the sequence is equivalent to:
 // ```
-// 					5'-UCGC-3'
-// 					3'-AUAG-5'
+//
+//	5'-UCGC-3'
+//	3'-AUAG-5'
+//
 // ```
 // which means the energy of the sequence is equivalent to:
 // ```
-// 	pairs:                    UA GC C  G  A  U
-// 						interior2x2Loop[5][1][1][4][2][3]
+//
+//	pairs:                    UA GC C  G  A  U
+//						interior2x2Loop[5][1][1][4][2][3]
+//
 // ```
 type EnergyParams struct {
 

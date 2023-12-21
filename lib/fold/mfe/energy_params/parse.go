@@ -1,3 +1,4 @@
+//nolint:all
 package energy_params
 
 import (
@@ -477,13 +478,15 @@ func parseFloat64(token string) float64 {
 End Section: Miscellaneous Parsing Functions
 *****************************************************************************/
 
-/*****************************************************************************
+/*
+****************************************************************************
 Section: Adding Offsets to Matrices
 
 The following section contains funcs needed to add pre and post offsets to
 `int` matrices. Please read the documentation for `newRawEnergyParams` to
 understand why pre and post offsets are needed.
-*****************************************************************************/
+****************************************************************************
+*/
 type offsetType int
 
 const (

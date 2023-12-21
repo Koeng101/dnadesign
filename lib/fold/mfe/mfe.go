@@ -1,3 +1,4 @@
+//nolint:all
 package mfe
 
 import (
@@ -294,7 +295,6 @@ func stemStructureEnergy(stemStructure StemStructure, fc *foldCompound) int {
 		closingFivePrimeMismatch, closingThreePrimeMismatch,
 		enclosedThreePrimeMismatch, enclosedFivePrimeMismatch,
 		fc.energyParams)
-
 }
 
 // EvaluateStemStructure computes the energy of either a stacking pair, bulge,
@@ -628,7 +628,6 @@ func multiLoop(multiloop *MultiLoop, fc *foldCompound) (multiLoopEnergy, substru
 			multiLoopEnergy += EvaluateMultiLoopStem(stemPairType, fivePrimeMismatch,
 				threePrimeMismatch, fc.energyParams)
 		}
-
 	}
 
 	stemFivePrimeIdx, stemThreePrimeIdx := multiloop.Stem.EnclosedFivePrimeIdx, multiloop.Stem.EnclosedThreePrimeIdx

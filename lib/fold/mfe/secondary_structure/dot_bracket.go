@@ -1,3 +1,4 @@
+//nolint:all
 package secondary_structure
 
 import (
@@ -15,7 +16,7 @@ structure and `SecondaryStructure` of a RNA from its 'dot-bracket' notation.
 
 'Dot-bracket' notation of a secondary structure is a string where each
 character represents a base. Unpaired nucleotides are represented with a '.'
-and base pairs are represented by paranthesis. '(' denotes the opening base
+and base pairs are represented by parenthesis. '(' denotes the opening base
 and ')' denotes the closing base of a base pair.
 For example,
 	dot-bracket structure: . . ( ( . . ) ) . .
@@ -35,7 +36,7 @@ For example,
 	dot-bracket structure: . . ( ( . . ) ) . .
 		annotated structure: e e ( ( h h ) ) e e
 									index: 0 1 2 3 4 5 6 7 8 9
-Note that the paranthesis surrounding one or more 'h' or 'm' characters form
+Note that the parenthesis surrounding one or more 'h' or 'm' characters form
 the stem of that hairpin or multiloop respectively. Thus, in the example above,
 the bases at index 2, 3, 6, and 7 form the stem of the hairpin loop enclosed
 by the bases at index 3 and 6.

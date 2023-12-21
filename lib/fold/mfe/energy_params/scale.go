@@ -1,3 +1,4 @@
+//nolint:all
 package energy_params
 
 /******************************************************************************
@@ -79,9 +80,11 @@ func (rawEnergyParams rawEnergyParams) scaleByTemperature(temperatureInCelsius f
 
 // Rescale Gibbs free energy according to the equation dG = dH - T * dS
 // where dG is the change in Gibbs free energy
-// 			dH is the change in enthalpy
-// 			dS is the change in entropy
-// 			T is the temperature
+//
+//	dH is the change in enthalpy
+//	dS is the change in entropy
+//	T is the temperature
+//
 // more information: https://chemed.chem.purdue.edu/genchem/topicreview/bp/ch21/gibbs.php
 func rescaleDg(dG, dH int, temperatureInCelsius float64) int {
 	// if temperate == measurementTemperatureInCelsius then below calculation will

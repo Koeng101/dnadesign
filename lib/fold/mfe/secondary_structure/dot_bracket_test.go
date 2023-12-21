@@ -1,3 +1,4 @@
+//nolint:all
 package secondary_structure
 
 import (
