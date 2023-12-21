@@ -8,7 +8,7 @@ import (
 )
 
 func TestCONTRAfold(t *testing.T) {
-	var newFolder SequenceFolder
+	var newFolder SequenceFolder //nolint:gosimple
 	newFolder = linearfold.NewDefaultCONTRAfoldV2FoldWrapper()
 	result, score, _ := newFolder.Fold("UGAGUUCUCGAUCUCUAAAAUCG", 37.0)
 
@@ -23,7 +23,7 @@ func TestCONTRAfold(t *testing.T) {
 }
 
 func TestViennaRNAFold(t *testing.T) {
-	var newFolder SequenceFolder
+	var newFolder SequenceFolder //nolint:gosimple
 	newFolder = linearfold.NewDefaultViennaRnaFoldWrapper()
 	result, score, _ := newFolder.Fold("UCUAGACUUUUCGAUAUCGCGAAAAAAAAU", 37.0)
 
@@ -38,7 +38,7 @@ func TestViennaRNAFold(t *testing.T) {
 }
 
 func TestZuker(t *testing.T) {
-	var newFolder SequenceFolder
+	var newFolder SequenceFolder //nolint:gosimple
 	newFolder = zuker.NewZukerFoldWrapper()
 	result, score, _ := newFolder.Fold("ACCCCCUCCUUCCUUGGAUCAAGGGGCUCAA", 37.0)
 
