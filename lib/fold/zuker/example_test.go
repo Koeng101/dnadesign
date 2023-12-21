@@ -1,13 +1,13 @@
-package fold_test
+package zuker_test
 
 import (
 	"fmt"
 
-	"github.com/koeng101/dnadesign/lib/fold"
+	zuker "github.com/koeng101/dnadesign/lib/fold/zuker"
 )
 
 func ExampleZuker() {
-	result, _ := fold.Zuker("ACCCCCUCCUUCCUUGGAUCAAGGGGCUCAA", 37.0)
+	result, _ := zuker.Zuker("ACCCCCUCCUUCCUUGGAUCAAGGGGCUCAA", 37.0)
 	brackets := result.DotBracket()
 	fmt.Println(brackets)
 	// Output: .((((.(((......)))....))))

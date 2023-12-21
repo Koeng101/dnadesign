@@ -1,4 +1,4 @@
-package fold
+package zuker
 
 import "github.com/koeng101/dnadesign/lib/transform"
 
