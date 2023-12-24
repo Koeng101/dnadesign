@@ -24,8 +24,10 @@ package sam
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -102,7 +104,6 @@ func (header *Header) WriteTo(w io.Writer) (int64, error) {
 // described in the SAMv1 specification document. Not implemented yet.
 func (header *Header) Validate() error {
 	/* The following rules apply:
-
 	1. @HD.VN: Format version. Accepted format: /^[0-9]+\.[0-9]+$/.
 	2. @HD.SO: Valid values: unknown (default), unsorted, queryname and coordinate
 	3. @HD.GO: Valid values: none (default), query (alignments are grouped by QNAME), and reference (alignments are grouped by RNAME/POS)
@@ -119,6 +120,109 @@ func (header *Header) Validate() error {
 	14. @PG.ID: Each @PG line must have a unique ID.
 	15. @PG.PP: Previous @PG-ID. Must match another @PG header’s ID tag. @PG records may be chained using PP tag, with the last record in the chain having no PP tag
 	*/
+
+	// Validate @HD tags
+	if len(header.HD) > 0 {
+		// Accessing HD map directly as it's not a function returning two values
+		hd := header.HD
+
+		// 1. @HD VN
+		if vn, ok := hd["VN"]; ok {
+			matched, _ := regexp.MatchString(`^[0-9]+\.[0-9]+$`, vn)
+			if !matched {
+				return errors.New("Invalid format for @HD VN")
+			}
+		}
+		// 2. @HD SO
+		if so, ok := hd["SO"]; ok {
+			validValues := map[string]bool{"unknown": true, "unsorted": true, "queryname": true, "coordinate": true}
+			if _, valid := validValues[so]; !valid {
+				return errors.New("Invalid value for @HD SO")
+			}
+		}
+		// 3. @HD GO
+		if goTag, ok := hd["GO"]; ok {
+			validValues := map[string]bool{"none": true, "query": true, "reference": true}
+			if _, valid := validValues[goTag]; !valid {
+				return errors.New("Invalid value for @HD GO")
+			}
+		}
+		// 4. @HD SS
+		if ss, ok := hd["SS"]; ok {
+			matched, _ := regexp.MatchString(`(coordinate|queryname|unsorted)(:[A-Za-z0-9_-]+)+`, ss)
+			if !matched {
+				return errors.New("Invalid format for @HD SS")
+			}
+		}
+	}
+
+	// Validate @SQ tags
+	snMap := make(map[string]bool)
+	for _, sq := range header.SQ {
+		// 5. @SQ SN
+		if sn, ok := sq["SN"]; ok {
+			matched, _ := regexp.MatchString(`[:rname:∧*=][:rname:]*`, sn)
+			if !matched || snMap[sn] {
+				return errors.New("Invalid or non-unique @SQ SN")
+			}
+			snMap[sn] = true
+		}
+		// 7. @SQ LN
+		if ln, ok := sq["LN"]; ok {
+			lnInt, err := strconv.Atoi(ln)
+			if err != nil || lnInt < 1 || lnInt > 2147483647 {
+				return errors.New("Invalid value for @SQ LN")
+			}
+		}
+		// 9. @SQ TP
+		if tp, ok := sq["TP"]; ok {
+			validValues := map[string]bool{"linear": true, "circular": true}
+			if _, valid := validValues[tp]; !valid {
+				return errors.New("Invalid value for @SQ TP")
+			}
+		}
+	}
+
+	// Validate @RG tags
+	rgIdMap := make(map[string]bool)
+	for _, rg := range header.RG {
+		// 10. @RG ID
+		if id, ok := rg["ID"]; ok {
+			if rgIdMap[id] {
+				return errors.New("Non-unique @RG ID")
+			}
+			rgIdMap[id] = true
+		}
+		// 12. @RG FO
+		if fo, ok := rg["FO"]; ok {
+			matched, _ := regexp.MatchString(`\*|[ACMGRSVTWYHKDBN]+`, fo)
+			if !matched {
+				return errors.New("Invalid format for @RG FO")
+			}
+		}
+		// 13. @RG PL
+		if pl, ok := rg["PL"]; ok {
+			validValues := map[string]bool{
+				"CAPILLARY": true, "DNBSEQ": true, "ELEMENT": true, "HELICOS": true, "ILLUMINA": true,
+				"IONTORRENT": true, "LS454": true, "ONT": true, "PACBIO": true, "SOLID": true, "ULTIMA": true,
+			}
+			if _, valid := validValues[pl]; !valid {
+				return errors.New("Invalid value for @RG PL")
+			}
+		}
+	}
+
+	// Validate @PG tags
+	pgIdMap := make(map[string]bool)
+	for _, pg := range header.PG {
+		// 14. @PG ID
+		if id, ok := pg["ID"]; ok {
+			if pgIdMap[id] {
+				return errors.New("Non-unique @PG ID")
+			}
+			pgIdMap[id] = true
+		}
+	}
 	return nil
 }
 
