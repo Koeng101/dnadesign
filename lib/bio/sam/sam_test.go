@@ -43,3 +43,206 @@ ae9a66f5-bf71-4572-8106-f6f8dbd3b799	16	pOpen_V3_amplified	1	60	8S54M1D3M1D108M1
 	fmt.Println(samLine.CIGAR)
 	// Output: 8S54M1D3M1D108M1D1M1D62M226S
 }
+
+// TestValidate ensures that every aspect of validation is covered
+func TestValidate(t *testing.T) {
+	// Construct an alignment that is correct in all aspects
+	validAlignment := Alignment{
+		QNAME: "ValidName",
+		FLAG:  255,
+		RNAME: "*",
+		POS:   123456,
+		MAPQ:  50,
+		CIGAR: "10M1I4M",
+		RNEXT: "*",
+		PNEXT: 234567,
+		TLEN:  1000,
+		SEQ:   "ACTGACTGAC",
+		QUAL:  "~~~~~~~~~~",
+	}
+
+	// Should pass (no error)
+	if err := validAlignment.Validate(); err != nil {
+		t.Errorf("Valid alignment did not pass validation: %s", err)
+	}
+
+	// Test cases for each field
+	testCases := []struct {
+		modify   func(a *Alignment)
+		expected string
+	}{
+		{ // Invalid QNAME
+			func(a *Alignment) { a.QNAME = "Invalid QNAME due to length and spaces" },
+			"Invalid QNAME",
+		},
+		{ // Invalid RNAME
+			func(a *Alignment) { a.RNAME = "Invalid RNAME" },
+			"Invalid RNAME",
+		},
+		{ // Invalid POS, out of range
+			func(a *Alignment) { a.POS = -1 },
+			"Invalid POS",
+		},
+		{ // Invalid CIGAR
+			func(a *Alignment) { a.CIGAR = "X" },
+			"Invalid CIGAR",
+		},
+		{ // Invalid RNEXT
+			func(a *Alignment) { a.RNEXT = "Invalid RNEXT" },
+			"Invalid RNEXT",
+		},
+		{ // Invalid PNEXT, out of range
+			func(a *Alignment) { a.PNEXT = -1 },
+			"Invalid PNEXT",
+		},
+		{ // Invalid SEQ
+			func(a *Alignment) { a.SEQ = "ACTG123" },
+			"Invalid SEQ",
+		},
+		{ // Invalid QUAL
+			func(a *Alignment) { a.QUAL = "qual string with lower case or invalid characters" },
+			"Invalid QUAL",
+		},
+	}
+
+	for _, tc := range testCases {
+		// Copy the valid alignment and modify it for the test
+		invalidAlignment := validAlignment
+		tc.modify(&invalidAlignment)
+
+		// Now validate it
+		err := invalidAlignment.Validate()
+		if err == nil || !contains(err.Error(), tc.expected) {
+			t.Errorf("Expected error for %s but got none or wrong error: %s", tc.expected, err)
+		}
+	}
+}
+
+// contains is a helper function to check if errStr contains the expected substring
+func contains(errStr, expected string) bool {
+	return errStr != "" && strings.Contains(errStr, expected)
+}
+
+// TestValidateAllInOne - testing all validation rules in one function
+func TestValidateAllInOne(t *testing.T) {
+	// Define a series of headers to test different validation scenarios
+	tests := []struct {
+		name          string
+		header        *Header
+		expectedError error
+	}{
+		// Valid Complete Header
+		{
+			name: "Valid Complete Header",
+			header: &Header{
+				HD: map[string]string{"VN": "1.0", "SO": "unsorted", "GO": "none", "SS": "coordinate:example"},
+				SQ: []map[string]string{{"SN": "chr1", "LN": "1000", "TP": "linear"}},
+				RG: []map[string]string{{"ID": "rg1", "PL": "ILLUMINA", "FO": "*", "DT": "2023-01-01"}},
+				PG: []map[string]string{{"ID": "pg1"}},
+				CO: []string{"This is a comment."},
+			},
+			expectedError: nil,
+		},
+		// Invalid @HD VN format
+		{
+			name: "Invalid @HD VN format",
+			header: &Header{
+				HD: map[string]string{"VN": "abc"}, // Invalid VN format
+			},
+			expectedError: fmt.Errorf("Invalid format for @HD VN. Accepted format: /^[0-9]+\\.[0-9]+$/.\nGot: %s", "abc"),
+		},
+		// Invalid @HD SO value
+		{
+			name: "Invalid @HD SO value",
+			header: &Header{
+				HD: map[string]string{"VN": "1.0", "SO": "invalid_so"}, // Invalid SO value
+			},
+			expectedError: fmt.Errorf("Invalid value for @HD SO. Valid values: unknown (default), unsorted, queryname and coordinate. Got: %s", "invalid_so"),
+		},
+		// Invalid @HD GO value
+		{
+			name: "Invalid @HD GO value",
+			header: &Header{
+				HD: map[string]string{"VN": "1.0", "GO": "invalid_go"}, // Invalid GO value
+			},
+			expectedError: fmt.Errorf("Invalid value for @HD GO. Valid values: none (default), query (alignments are grouped by QNAME), and reference (alignments are grouped by RNAME/POS). Got: %s", "invalid_go"),
+		},
+		// Invalid @HD SS format
+		{
+			name: "Invalid @HD SS format",
+			header: &Header{
+				HD: map[string]string{"VN": "1.0", "SS": "invalid_ss"}, // Invalid SS format
+			},
+			expectedError: fmt.Errorf("Invalid format for @HD SS. Needs to match: Regular expression: (coordinate|queryname|unsorted)(:[A-Za-z0-9_-]+)+\nGot: %s", "invalid_ss"),
+		},
+		// Invalid @SQ LN range
+		{
+			name: "Invalid @SQ LN range",
+			header: &Header{
+				SQ: []map[string]string{{"SN": "chr1", "LN": "2147483648"}}, // Invalid LN range
+			},
+			expectedError: fmt.Errorf("Invalid value for @SQ LN. Range: [1, 231 − 1], Got: %d", 2147483648),
+		},
+		// Invalid @SQ TP value
+		{
+			name: "Invalid @SQ TP value",
+			header: &Header{
+				SQ: []map[string]string{{"SN": "chr1", "LN": "1000", "TP": "invalid_tp"}}, // Invalid TP value
+			},
+			expectedError: fmt.Errorf("Invalid value for @SQ TP. Valid values: linear (default) and circular, Got: %s", "invalid_tp"),
+		},
+		// Non-unique @RG ID
+		{
+			name: "Non-unique @RG ID",
+			header: &Header{
+				RG: []map[string]string{{"ID": "rg1", "PL": "ILLUMINA"}, {"ID": "rg1", "PL": "SOLID"}},
+			},
+			expectedError: fmt.Errorf("Non-unique @RG ID. Got: %s", "rg1"),
+		},
+		// Invalid @RG FO format
+		{
+			name: "Invalid @RG FO format",
+			header: &Header{
+				RG: []map[string]string{{"ID": "rg1", "FO": "invalid_fo"}},
+			},
+			expectedError: fmt.Errorf("Invalid format for @RG FO. Required regexp format: /\\*|[ACMGRSVTWYHKDBN]+/\nGot: %s", "invalid_fo"),
+		},
+		// Invalid @RG PL value
+		{
+			name: "Invalid @RG PL value",
+			header: &Header{
+				RG: []map[string]string{{"ID": "rg1", "PL": "invalid_pl"}},
+			},
+			expectedError: fmt.Errorf("Invalid value for @RG PL. Valid values: CAPILLARY, DNBSEQ (MGI/BGI), ELEMENT, HELICOS, ILLUMINA, IONTORRENT, LS454, ONT (Oxford Nanopore), PACBIO (Pacific Bio-sciences), SOLID, and ULTIMA. Got: %s", "invalid_pl"),
+		},
+		// Non-unique @PG ID
+		{
+			name: "Non-unique @PG ID",
+			header: &Header{
+				PG: []map[string]string{{"ID": "pg1"}, {"ID": "pg1"}},
+			},
+			expectedError: fmt.Errorf("Non-unique @PG ID. Got: %s", "pg1"),
+		},
+		// Non-unique @SN SQ
+		{
+			name: "Invalid @SQ SN format",
+			header: &Header{
+				SQ: []map[string]string{{"SN": "invalid_sn", "LN": "1000"}, {"SN": "invalid_sn"}}, // Invalid SN format
+			},
+			expectedError: fmt.Errorf("Non-unique @SQ SN: %s", "invalid_sn"),
+		},
+	}
+
+	// Iterate through each test case
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			// Run the validate function on the header
+			err := tc.header.Validate()
+
+			// Check if the error matches the expected error
+			if (err != nil && tc.expectedError == nil) || (err == nil && tc.expectedError != nil) || (err != nil && tc.expectedError != nil && err.Error() != tc.expectedError.Error()) {
+				t.Errorf("Test %v - Got error %v, want %v", tc.name, err, tc.expectedError)
+			}
+		})
+	}
+}

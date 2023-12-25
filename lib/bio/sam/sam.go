@@ -108,10 +108,10 @@ func (header *Header) Validate() error {
 	2. @HD.SO: Valid values: unknown (default), unsorted, queryname and coordinate
 	3. @HD.GO: Valid values: none (default), query (alignments are grouped by QNAME), and reference (alignments are grouped by RNAME/POS)
 	4. @HD.SS: Regular expression: (coordinate|queryname|unsorted)(:[A-Za-z0-9_-]+)+
-	5. @SQ.SN: Regular expression: [:rname:∧*=][:rname:]*
+	5. @SQ.SN: Regular expression: [:rname:^*=][:rname:]*
 	6. @SQ.SN/AN: The SN tags and all individual AN names in all @SQ lines must be distinct
 	7. @SQ.LN: Reference sequence length. Range: [1, 2^31 − 1]
-	8. @SQ.AN: Regular expression: name(,name)* where name is [:rname:∧*=][:rname:]* (definition of 6)
+	8. @SQ.AN: Regular expression: name(,name)* where name is [:rname:^*=][:rname:]* (definition of 6)
 	9. @SQ.TP: Valid values: linear (default) and circular
 	10. @RG.ID: Each @RG line must have a unique ID
 	11. @RG.DT: Date the run was produced (ISO8601 date or date/time).
@@ -130,28 +130,28 @@ func (header *Header) Validate() error {
 		if vn, ok := hd["VN"]; ok {
 			matched, _ := regexp.MatchString(`^[0-9]+\.[0-9]+$`, vn)
 			if !matched {
-				return errors.New("Invalid format for @HD VN")
+				return fmt.Errorf("Invalid format for @HD VN. Accepted format: /^[0-9]+\\.[0-9]+$/.\nGot: %s", vn)
 			}
 		}
 		// 2. @HD SO
 		if so, ok := hd["SO"]; ok {
 			validValues := map[string]bool{"unknown": true, "unsorted": true, "queryname": true, "coordinate": true}
 			if _, valid := validValues[so]; !valid {
-				return errors.New("Invalid value for @HD SO")
+				return fmt.Errorf("Invalid value for @HD SO. Valid values: unknown (default), unsorted, queryname and coordinate. Got: %s", so)
 			}
 		}
 		// 3. @HD GO
 		if goTag, ok := hd["GO"]; ok {
 			validValues := map[string]bool{"none": true, "query": true, "reference": true}
 			if _, valid := validValues[goTag]; !valid {
-				return errors.New("Invalid value for @HD GO")
+				return fmt.Errorf("Invalid value for @HD GO. Valid values: none (default), query (alignments are grouped by QNAME), and reference (alignments are grouped by RNAME/POS). Got: %s", goTag)
 			}
 		}
 		// 4. @HD SS
 		if ss, ok := hd["SS"]; ok {
 			matched, _ := regexp.MatchString(`(coordinate|queryname|unsorted)(:[A-Za-z0-9_-]+)+`, ss)
 			if !matched {
-				return errors.New("Invalid format for @HD SS")
+				return fmt.Errorf("Invalid format for @HD SS. Needs to match: Regular expression: (coordinate|queryname|unsorted)(:[A-Za-z0-9_-]+)+\nGot: %s", ss)
 			}
 		}
 	}
@@ -161,9 +161,11 @@ func (header *Header) Validate() error {
 	for _, sq := range header.SQ {
 		// 5. @SQ SN
 		if sn, ok := sq["SN"]; ok {
-			matched, _ := regexp.MatchString(`[:rname:∧*=][:rname:]*`, sn)
-			if !matched || snMap[sn] {
-				return errors.New("Invalid or non-unique @SQ SN")
+			// [:rname:^*=][:rname:]* isn't actually a valid regexp, so I'm not
+			// sure why they've used this as the definition. We skip this check
+			// because it doesn't make much sense.
+			if snMap[sn] {
+				return fmt.Errorf("Non-unique @SQ SN: %s", sn)
 			}
 			snMap[sn] = true
 		}
@@ -171,33 +173,34 @@ func (header *Header) Validate() error {
 		if ln, ok := sq["LN"]; ok {
 			lnInt, err := strconv.Atoi(ln)
 			if err != nil || lnInt < 1 || lnInt > 2147483647 {
-				return errors.New("Invalid value for @SQ LN")
+				return fmt.Errorf("Invalid value for @SQ LN. Range: [1, 231 − 1], Got: %d", lnInt)
 			}
 		}
 		// 9. @SQ TP
 		if tp, ok := sq["TP"]; ok {
 			validValues := map[string]bool{"linear": true, "circular": true}
 			if _, valid := validValues[tp]; !valid {
-				return errors.New("Invalid value for @SQ TP")
+				return fmt.Errorf("Invalid value for @SQ TP. Valid values: linear (default) and circular, Got: %s", tp)
 			}
 		}
 	}
 
 	// Validate @RG tags
-	rgIdMap := make(map[string]bool)
+	rgIDMap := make(map[string]bool)
+	rgFoRegexp := regexp.MustCompile(`\*|[ACMGRSVTWYHKDBN]+`)
 	for _, rg := range header.RG {
 		// 10. @RG ID
 		if id, ok := rg["ID"]; ok {
-			if rgIdMap[id] {
-				return errors.New("Non-unique @RG ID")
+			if rgIDMap[id] {
+				return fmt.Errorf("Non-unique @RG ID. Got: %s", id)
 			}
-			rgIdMap[id] = true
+			rgIDMap[id] = true
 		}
 		// 12. @RG FO
 		if fo, ok := rg["FO"]; ok {
-			matched, _ := regexp.MatchString(`\*|[ACMGRSVTWYHKDBN]+`, fo)
+			matched := rgFoRegexp.MatchString(fo)
 			if !matched {
-				return errors.New("Invalid format for @RG FO")
+				return fmt.Errorf("Invalid format for @RG FO. Required regexp format: /\\*|[ACMGRSVTWYHKDBN]+/\nGot: %s", fo)
 			}
 		}
 		// 13. @RG PL
@@ -207,20 +210,20 @@ func (header *Header) Validate() error {
 				"IONTORRENT": true, "LS454": true, "ONT": true, "PACBIO": true, "SOLID": true, "ULTIMA": true,
 			}
 			if _, valid := validValues[pl]; !valid {
-				return errors.New("Invalid value for @RG PL")
+				return fmt.Errorf("Invalid value for @RG PL. Valid values: CAPILLARY, DNBSEQ (MGI/BGI), ELEMENT, HELICOS, ILLUMINA, IONTORRENT, LS454, ONT (Oxford Nanopore), PACBIO (Pacific Bio-sciences), SOLID, and ULTIMA. Got: %s", pl)
 			}
 		}
 	}
 
 	// Validate @PG tags
-	pgIdMap := make(map[string]bool)
+	pgIDMap := make(map[string]bool)
 	for _, pg := range header.PG {
 		// 14. @PG ID
 		if id, ok := pg["ID"]; ok {
-			if pgIdMap[id] {
-				return errors.New("Non-unique @PG ID")
+			if pgIDMap[id] {
+				return fmt.Errorf("Non-unique @PG ID. Got: %s", id)
 			}
-			pgIdMap[id] = true
+			pgIDMap[id] = true
 		}
 	}
 	return nil
@@ -288,6 +291,58 @@ func (alignment *Alignment) Validate() error {
 	10 SEQ	String	\*|[A-Za-z=.]+				segment SEQuence
 	11 QUAL	String	[!-~]+						ASCII of Phred-scaled base QUALity+33
 	*/
+	// 1. Validate QNAME
+	qnameRegex := `^[!-?A-~]{1,254}$`
+	if matched, _ := regexp.MatchString(qnameRegex, alignment.QNAME); !matched {
+		return errors.New("Invalid QNAME: must match " + qnameRegex)
+	}
+
+	// 2. FLAG is validated through uint16 typing.
+
+	// 3. Validate RNAME
+	rnameRegex := `^\*|[:rname:^\*=][:rname:]*$`
+	if matched, _ := regexp.MatchString(rnameRegex, alignment.RNAME); !matched {
+		return errors.New("Invalid RNAME: must match " + rnameRegex)
+	}
+
+	// 4. Validate POS
+	if alignment.POS < 0 || alignment.POS > 2147483647 { // 2^31 - 1
+		return errors.New("Invalid POS: must be in range [0, 2147483647]")
+	}
+
+	// 5. MAPQ is validated through byte typing.
+
+	// 6. Validate CIGAR
+	cigarRegex := `^\*|([0-9]+[MIDNSHPX=])+$`
+	if matched, _ := regexp.MatchString(cigarRegex, alignment.CIGAR); !matched {
+		return errors.New("Invalid CIGAR: must match " + cigarRegex)
+	}
+
+	// 7. Validate RNEXT
+	rnextRegex := `^\*|=\|[:rname:^\*=][:rname:]*$`
+	if matched, _ := regexp.MatchString(rnextRegex, alignment.RNEXT); !matched {
+		return errors.New("Invalid RNEXT: must match " + rnextRegex)
+	}
+
+	// 8. Validate PNEXT
+	if alignment.PNEXT < 0 || alignment.PNEXT > 2147483647 { // 2^31 - 1
+		return errors.New("Invalid PNEXT: must be in range [0, 2147483647]")
+	}
+
+	// 9. TLEN is validated through int32 typing.
+
+	// 10. Validate SEQ
+	seqRegex := `^\*|[A-Za-z=.]+$`
+	if matched, _ := regexp.MatchString(seqRegex, alignment.SEQ); !matched {
+		return errors.New("Invalid SEQ: must match " + seqRegex)
+	}
+
+	// 11. Validate QUAL
+	qualRegex := `^[!-~]+$`
+	if matched, _ := regexp.MatchString(qualRegex, alignment.QUAL); !matched {
+		return errors.New("Invalid QUAL: must match " + qualRegex)
+	}
+
 	return nil
 }
 
