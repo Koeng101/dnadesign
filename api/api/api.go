@@ -96,7 +96,7 @@ func InitializeApp() App {
 	app.Router.HandleFunc("/", indexHandler)
 	app.Router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(subFS))))
 	app.Router.HandleFunc("/scalar/", scalarHandler(jsonSwagger))
-	app.Router.HandleFunc("/api.json", func(w http.ResponseWriter, r *http.Request) { _, _ = w.Write(jsonSwagger) })
+	app.Router.HandleFunc("/spec.json", func(w http.ResponseWriter, r *http.Request) { _, _ = w.Write(jsonSwagger) })
 
 	// Lua handlers.
 	app.Router.HandleFunc("/api/execute_lua", appImpl.PostExecuteLua)
@@ -115,7 +115,7 @@ func InitializeApp() App {
 	app.Router.HandleFunc("/api/pcr/simple_pcr", appImpl.PostPcrSimplePcr)
 
 	// Synthesis handlers.
-	app.Router.HandleFunc("/api/synthesis/fragment", appImpl.PostSynthesisFragment)
+	app.Router.HandleFunc("/api/synthesis/fragment", appImpl.PostCloningFragment)
 
 	return app
 }
@@ -165,9 +165,9 @@ func (app *App) ExecuteLua(data string, attachments []gen.Attachment) (string, s
 	L.SetGlobal("translate", L.NewFunction(app.LuaCdsTranslate))
 
 	// Add simulate functions
-	L.SetGlobal("fragment", L.NewFunction(app.LuaSimulateFragment))
-	L.SetGlobal("complex_pcr", L.NewFunction(app.LuaSimulateComplexPcr))
-	L.SetGlobal("pcr", L.NewFunction(app.LuaSimulatePcr))
+	L.SetGlobal("fragment", L.NewFunction(app.LuaCloningFragment))
+	L.SetGlobal("complex_pcr", L.NewFunction(app.LuaPcrComplexPcr))
+	L.SetGlobal("pcr", L.NewFunction(app.LuaPcrSimplePcr))
 
 	// Execute the Lua script
 	if err := L.DoString(data); err != nil {
@@ -267,6 +267,7 @@ func (app *App) LuaIoFastaParse(L *lua.LState) int {
 func (app *App) PostIoFastaWrite(ctx context.Context, request gen.PostIoFastaWriteRequestObject) (gen.PostIoFastaWriteResponseObject, error) {
 	return nil, nil
 }
+func (app *App) LuaIoFastaWrite(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoGenbankParse(ctx context.Context, request gen.PostIoGenbankParseRequestObject) (gen.PostIoGenbankParseResponseObject, error) {
 	genbankString := *request.Body
@@ -298,14 +299,47 @@ func (app *App) LuaIoGenbankParse(L *lua.LState) int {
 func (app *App) PostIoGenbankWrite(ctx context.Context, request gen.PostIoGenbankWriteRequestObject) (gen.PostIoGenbankWriteResponseObject, error) {
 	return nil, nil
 }
+func (app *App) LuaIoGenbankWrite(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoFastqParse(ctx context.Context, request gen.PostIoFastqParseRequestObject) (gen.PostIoFastqParseResponseObject, error) {
 	return nil, nil
 }
+func (app *App) LuaIoFastqParse(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoFastqWrite(ctx context.Context, request gen.PostIoFastqWriteRequestObject) (gen.PostIoFastqWriteResponseObject, error) {
 	return nil, nil
 }
+func (app *App) LuaIoFastqWrite(L *lua.LState) int { return 0 }
+
+func (app *App) PostIoSlow5Parse(ctx context.Context, request gen.PostIoSlow5ParseRequestObject) (gen.PostIoSlow5ParseResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaIoSlow5Parse(L *lua.LState) int { return 0 }
+
+func (app *App) PostIoSlow5Write(ctx context.Context, request gen.PostIoSlow5WriteRequestObject) (gen.PostIoSlow5WriteResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaIoSlow5Write(L *lua.LState) int { return 0 }
+
+func (app *App) PostIoSlow5SvbCompress(ctx context.Context, request gen.PostIoSlow5SvbCompressRequestObject) (gen.PostIoSlow5SvbCompressResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaIoSlow5SvbCompress(L *lua.LState) int { return 0 }
+
+func (app *App) PostIoSlow5SvbDecompress(ctx context.Context, request gen.PostIoSlow5SvbDecompressRequestObject) (gen.PostIoSlow5SvbDecompressResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaIoSlow5SvbDecompress(L *lua.LState) int { return 0 }
+
+func (app *App) PostIoPileupParse(ctx context.Context, request gen.PostIoPileupParseRequestObject) (gen.PostIoPileupParseResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaIoPileupParse(L *lua.LState) int { return 0 }
+
+func (app *App) PostIoPileupWrite(ctx context.Context, request gen.PostIoPileupWriteRequestObject) (gen.PostIoPileupWriteResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaIoPileupWrite(L *lua.LState) int { return 0 }
 
 /*
 *****************************************************************************
@@ -457,8 +491,8 @@ func (app *App) PostPcrComplexPcr(ctx context.Context, request gen.PostPcrComple
 	return gen.PostPcrComplexPcr200JSONResponse(amplicons), nil
 }
 
-// LuaSimulateComplexPcr implements complex pcr in lua.
-func (app *App) LuaSimulateComplexPcr(L *lua.LState) int {
+// LuaPcrComplexPcr implements complex pcr in lua.
+func (app *App) LuaPcrComplexPcr(L *lua.LState) int {
 	templates, err := luaStringArrayToGoSlice(L, 1)
 	if err != nil {
 		L.RaiseError(err.Error())
@@ -494,8 +528,8 @@ func (app *App) PostPcrSimplePcr(ctx context.Context, request gen.PostPcrSimpleP
 	return gen.PostPcrSimplePcr200JSONResponse(amplicons[0]), nil
 }
 
-// LuaSimulatePcr implements pcr in lua
-func (app *App) LuaSimulatePcr(L *lua.LState) int {
+// LuaPcrSimplePcr implements pcr in lua
+func (app *App) LuaPcrSimplePcr(L *lua.LState) int {
 	template := L.ToString(1)
 	forwardPrimer := L.ToString(2)
 	reversePrimer := L.ToString(3)
@@ -514,18 +548,27 @@ func (app *App) LuaSimulatePcr(L *lua.LState) int {
 func (app *App) PostPcrPrimersDebruijnBarcodes(ctx context.Context, request gen.PostPcrPrimersDebruijnBarcodesRequestObject) (gen.PostPcrPrimersDebruijnBarcodesResponseObject, error) {
 	return nil, nil
 }
+func (app *App) LuaPcrPrimersDebruijnBarcodes(L *lua.LState) int { return 0 }
 
 func (app *App) PostPcrPrimersMarmurDoty(ctx context.Context, request gen.PostPcrPrimersMarmurDotyRequestObject) (gen.PostPcrPrimersMarmurDotyResponseObject, error) {
 	return nil, nil
 }
+func (app *App) LuaPcrPrimersMarmurDoty(L *lua.LState) int { return 0 }
 
 func (app *App) PostPcrPrimersSantaLucia(ctx context.Context, request gen.PostPcrPrimersSantaLuciaRequestObject) (gen.PostPcrPrimersSantaLuciaResponseObject, error) {
 	return nil, nil
 }
+func (app *App) LuaPcrPrimersSantaLucia(L *lua.LState) int { return 0 }
 
 func (app *App) PostPcrPrimersMeltingTemperature(ctx context.Context, request gen.PostPcrPrimersMeltingTemperatureRequestObject) (gen.PostPcrPrimersMeltingTemperatureResponseObject, error) {
 	return nil, nil
 }
+func (app *App) LuaPcrPrimersMeltingTemperature(L *lua.LState) int { return 0 }
+
+func (app *App) PostPcrPrimersDesignPrimers(ctx context.Context, request gen.PostPcrPrimersDesignPrimersRequestObject) (gen.PostPcrPrimersDesignPrimersResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaPcrPrimersDesignPrimers(L *lua.LState) int { return 0 }
 
 /*
 *****************************************************************************
@@ -538,13 +581,16 @@ func (app *App) PostPcrPrimersMeltingTemperature(ctx context.Context, request ge
 func (app *App) PostCloningGoldengate(ctx context.Context, request gen.PostCloningGoldengateRequestObject) (gen.PostCloningGoldengateResponseObject, error) {
 	return nil, nil
 }
+func (app *App) LuaCloningGoldengate(L *lua.LState) int { return 0 }
 func (app *App) PostCloningLigate(ctx context.Context, request gen.PostCloningLigateRequestObject) (gen.PostCloningLigateResponseObject, error) {
 	return nil, nil
 }
+func (app *App) LuaCloningLigate(L *lua.LState) int { return 0 }
 func (app *App) PostCloningRestrictionDigest(ctx context.Context, request gen.PostCloningRestrictionDigestRequestObject) (gen.PostCloningRestrictionDigestResponseObject, error) {
 	return nil, nil
 }
-func (app *App) PostSynthesisFragment(ctx context.Context, request gen.PostSynthesisFragmentRequestObject) (gen.PostSynthesisFragmentResponseObject, error) {
+func (app *App) LuaCloningRestrictionDigest(L *lua.LState) int { return 0 }
+func (app *App) PostCloningFragment(ctx context.Context, request gen.PostCloningFragmentRequestObject) (gen.PostCloningFragmentResponseObject, error) {
 	var excludeOverhangs []string
 	overhangs := *request.Body.ExcludeOverhangs
 	if overhangs != nil {
@@ -552,13 +598,13 @@ func (app *App) PostSynthesisFragment(ctx context.Context, request gen.PostSynth
 	}
 	fragments, efficiency, err := fragment.Fragment(request.Body.Sequence, request.Body.MinFragmentSize, request.Body.MaxFragmentSize, excludeOverhangs)
 	if err != nil {
-		return gen.PostSynthesisFragment500TextResponse(fmt.Sprintf("Got internal server error: %s", err)), nil
+		return gen.PostCloningFragment500TextResponse(fmt.Sprintf("Got internal server error: %s", err)), nil
 	}
-	return gen.PostSynthesisFragment200JSONResponse{Fragments: fragments, Efficiency: float32(efficiency)}, nil
+	return gen.PostCloningFragment200JSONResponse{Fragments: fragments, Efficiency: float32(efficiency)}, nil
 }
 
-// LuaSimulateFragment implements fragment in lua.
-func (app *App) LuaSimulateFragment(L *lua.LState) int {
+// LuaCloningFragment implements fragment in lua.
+func (app *App) LuaCloningFragment(L *lua.LState) int {
 	sequence := L.ToString(1)
 	minFragmentSize := L.ToInt(2)
 	maxFragmentSize := L.ToInt(3)
@@ -591,17 +637,20 @@ func (app *App) LuaSimulateFragment(L *lua.LState) int {
 *****************************************************************************
 */
 
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
+func (app *App) PostFoldingZuker(ctx context.Context, request gen.PostFoldingZukerRequestObject) (gen.PostFoldingZukerResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaFoldingZuker(L *lua.LState) int { return 0 }
+
+func (app *App) PostFoldingLinearfoldContraFoldV2(ctx context.Context, request gen.PostFoldingLinearfoldContraFoldV2RequestObject) (gen.PostFoldingLinearfoldContraFoldV2ResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaFoldingLinearfoldContraFoldV2(L *lua.LState) int { return 0 }
+
+func (app *App) PostFoldingLinearfoldViennaRnaFold(ctx context.Context, request gen.PostFoldingLinearfoldViennaRnaFoldRequestObject) (gen.PostFoldingLinearfoldViennaRnaFoldResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaFoldingLinearfoldViennaRnaFold(L *lua.LState) int { return 0 }
 
 /*
 *****************************************************************************
@@ -611,12 +660,15 @@ func (app *App) LuaSimulateFragment(L *lua.LState) int {
 *****************************************************************************
 */
 
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
+func (app *App) PostSeqhash(ctx context.Context, request gen.PostSeqhashRequestObject) (gen.PostSeqhashResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaSeqhash(L *lua.LState) int { return 0 }
+
+func (app *App) PostSeqhashFragment(ctx context.Context, request gen.PostSeqhashFragmentRequestObject) (gen.PostSeqhashFragmentResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaSeqhashFragment(L *lua.LState) int { return 0 }
 
 /*
 *****************************************************************************
@@ -626,24 +678,35 @@ func (app *App) LuaSimulateFragment(L *lua.LState) int {
 *****************************************************************************
 */
 
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
+func (app *App) PostCodonTablesFromGenbank(ctx context.Context, request gen.PostCodonTablesFromGenbankRequestObject) (gen.PostCodonTablesFromGenbankResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaCodonTablesFromGenbank(L *lua.LState) int { return 0 }
+
+func (app *App) PostCodonTablesNew(ctx context.Context, request gen.PostCodonTablesNewRequestObject) (gen.PostCodonTablesNewResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaCodonTablesNew(L *lua.LState) int { return 0 }
+
+func (app *App) PostCodonTablesCompromiseTables(ctx context.Context, request gen.PostCodonTablesCompromiseTablesRequestObject) (gen.PostCodonTablesCompromiseTablesResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaCodonTablesCompromiseTables(L *lua.LState) int { return 0 }
+
+func (app *App) PostCodonTablesAddTables(ctx context.Context, request gen.PostCodonTablesAddTablesRequestObject) (gen.PostCodonTablesAddTablesResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaCodonTablesAddTables(L *lua.LState) int { return 0 }
+
+func (app *App) GetCodonTablesDefaultOrganisms(ctx context.Context, request gen.GetCodonTablesDefaultOrganismsRequestObject) (gen.GetCodonTablesDefaultOrganismsResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaCodonTablesDefaultOrganisms(L *lua.LState) int { return 0 }
+
+func (app *App) PostCodonTablesGetOrganismTable(ctx context.Context, request gen.PostCodonTablesGetOrganismTableRequestObject) (gen.PostCodonTablesGetOrganismTableResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaCodonTablesGetOrganismTable(L *lua.LState) int { return 0 }
 
 /*
 *****************************************************************************
@@ -653,18 +716,25 @@ func (app *App) LuaSimulateFragment(L *lua.LState) int {
 *****************************************************************************
 */
 
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
+func (app *App) PostAlignNeedlemanWunsch(ctx context.Context, request gen.PostAlignNeedlemanWunschRequestObject) (gen.PostAlignNeedlemanWunschResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaAlignNeedlemanWunsch(L *lua.LState) int { return 0 }
+
+func (app *App) PostAlignSmithWaterman(ctx context.Context, request gen.PostAlignSmithWatermanRequestObject) (gen.PostAlignSmithWatermanResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaAlignSmithWaterman(L *lua.LState) int { return 0 }
+
+func (app *App) PostAlignMash(ctx context.Context, request gen.PostAlignMashRequestObject) (gen.PostAlignMashResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaPostAlignMash(L *lua.LState) int { return 0 }
+
+func (app *App) PostAlignMashMany(ctx context.Context, request gen.PostAlignMashManyRequestObject) (gen.PostAlignMashManyResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaAlignMashMany(L *lua.LState) int { return 0 }
 
 /*
 *****************************************************************************
@@ -674,15 +744,15 @@ func (app *App) LuaSimulateFragment(L *lua.LState) int {
 *****************************************************************************
 */
 
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
+func (app *App) PostUtilsReverseComplement(ctx context.Context, request gen.PostUtilsReverseComplementRequestObject) (gen.PostUtilsReverseComplementResponseObject, error) {
+	return nil, nil
+}
+func (app *App) Lua(L *lua.LState) int { return 0 }
+
+func (app *App) PostUtilsIsPalindromic(ctx context.Context, request gen.PostUtilsIsPalindromicRequestObject) (gen.PostUtilsIsPalindromicResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaUtilsIsPalindromic(L *lua.LState) int { return 0 }
 
 /*
 *****************************************************************************
@@ -692,15 +762,30 @@ func (app *App) LuaSimulateFragment(L *lua.LState) int {
 *****************************************************************************
 */
 
+func (app *App) PostRandomRandomDna(ctx context.Context, request gen.PostRandomRandomDnaRequestObject) (gen.PostRandomRandomDnaResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaRandomRandomDna(L *lua.LState) int { return 0 }
+
+func (app *App) PostRandomRandomRna(ctx context.Context, request gen.PostRandomRandomRnaRequestObject) (gen.PostRandomRandomRnaResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaRandomRandomRna(L *lua.LState) int { return 0 }
+
+func (app *App) PostRandomRandomProtein(ctx context.Context, request gen.PostRandomRandomProteinRequestObject) (gen.PostRandomRandomProteinResponseObject, error) {
+	return nil, nil
+}
+func (app *App) LuaRandomRandomProtein(L *lua.LState) int { return 0 }
+
+/*
+*****************************************************************************
+
+# Template for functions
+
+*****************************************************************************
+*/
+//func (app *App) Lua(L *lua.LState) int { return 0 }
 //func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
 //    return nil, nil
 //}
-//
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//
-//func (app *App) x(ctx context.Context, request gen.RequestObject) (gen.ResponseObject, error) {
-//    return nil, nil
-//}
-//
+//func (app *App) Lua(L *lua.LState) int { return 0 }

@@ -1666,33 +1666,6 @@ paths:
                   sequence:
                     type: string
   
-  /utils/rna_reverse_complement:
-    post:
-      summary: Reverse Complement of RNA Sequence
-      tags:
-        - utils
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                sequence:
-                  type: string
-              required:
-                - sequence
-      responses:
-        '200':
-          description: Reverse complement RNA sequence
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sequence:
-                    type: string
-  
   /utils/is_palindromic:
     post:
       summary: Check if Sequence is Palindromic

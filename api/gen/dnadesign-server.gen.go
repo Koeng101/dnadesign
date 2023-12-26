@@ -23,6 +23,18 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Calculate Mash Distance
+	// (POST /align/mash)
+	PostAlignMash(w http.ResponseWriter, r *http.Request)
+	// Calculate Mash Distance Against Many Sequences
+	// (POST /align/mash_many)
+	PostAlignMashMany(w http.ResponseWriter, r *http.Request)
+	// Perform Needleman-Wunsch Alignment
+	// (POST /align/needleman_wunsch)
+	PostAlignNeedlemanWunsch(w http.ResponseWriter, r *http.Request)
+	// Perform Smith-Waterman Alignment
+	// (POST /align/smith_waterman)
+	PostAlignSmithWaterman(w http.ResponseWriter, r *http.Request)
 	// Fix CDS
 	// (POST /cds/fix)
 	PostCdsFix(w http.ResponseWriter, r *http.Request)
@@ -32,7 +44,10 @@ type ServerInterface interface {
 	// Translate CDS
 	// (POST /cds/translate)
 	PostCdsTranslate(w http.ResponseWriter, r *http.Request)
-	// Simulate Golden Gate assembly
+	// Fragment DNA for GoldenGate
+	// (POST /cloning/fragment)
+	PostCloningFragment(w http.ResponseWriter, r *http.Request)
+	// Simulate GoldenGate assembly
 	// (POST /cloning/goldengate)
 	PostCloningGoldengate(w http.ResponseWriter, r *http.Request)
 	// Simulate ligation
@@ -41,9 +56,36 @@ type ServerInterface interface {
 	// Simulate restriction digest
 	// (POST /cloning/restriction_digest)
 	PostCloningRestrictionDigest(w http.ResponseWriter, r *http.Request)
+	// Add Two Codon Tables
+	// (POST /codon_tables/add_tables)
+	PostCodonTablesAddTables(w http.ResponseWriter, r *http.Request)
+	// Create Compromise Codon Table
+	// (POST /codon_tables/compromise_tables)
+	PostCodonTablesCompromiseTables(w http.ResponseWriter, r *http.Request)
+	// Get Default Organism Names
+	// (GET /codon_tables/default_organisms)
+	GetCodonTablesDefaultOrganisms(w http.ResponseWriter, r *http.Request)
+	// Create Weighted Codon Table from Genbank Record
+	// (POST /codon_tables/from_genbank)
+	PostCodonTablesFromGenbank(w http.ResponseWriter, r *http.Request)
+	// Get Codon Table for an Organism
+	// (POST /codon_tables/get_organism_table)
+	PostCodonTablesGetOrganismTable(w http.ResponseWriter, r *http.Request)
+	// Create New Codon Table
+	// (POST /codon_tables/new)
+	PostCodonTablesNew(w http.ResponseWriter, r *http.Request)
 	// Run a lua script
 	// (POST /execute_lua)
 	PostExecuteLua(w http.ResponseWriter, r *http.Request)
+	// Contra Fold V2
+	// (POST /folding/linearfold/contra_fold_v2)
+	PostFoldingLinearfoldContraFoldV2(w http.ResponseWriter, r *http.Request)
+	// Vienna RNA Fold
+	// (POST /folding/linearfold/vienna_rna_fold)
+	PostFoldingLinearfoldViennaRnaFold(w http.ResponseWriter, r *http.Request)
+	// Zuker Folding
+	// (POST /folding/zuker)
+	PostFoldingZuker(w http.ResponseWriter, r *http.Request)
 	// Parse FASTA data
 	// (POST /io/fasta/parse)
 	PostIoFastaParse(w http.ResponseWriter, r *http.Request)
@@ -62,12 +104,33 @@ type ServerInterface interface {
 	// Write Genbank data
 	// (POST /io/genbank/write)
 	PostIoGenbankWrite(w http.ResponseWriter, r *http.Request)
+	// Parse Pileup Data
+	// (POST /io/pileup/parse)
+	PostIoPileupParse(w http.ResponseWriter, r *http.Request)
+	// Write Pileup Data
+	// (POST /io/pileup/write)
+	PostIoPileupWrite(w http.ResponseWriter, r *http.Request)
+	// Parse slow5 Data
+	// (POST /io/slow5/parse)
+	PostIoSlow5Parse(w http.ResponseWriter, r *http.Request)
+	// Compress Raw Signal with SVB
+	// (POST /io/slow5/svb_compress)
+	PostIoSlow5SvbCompress(w http.ResponseWriter, r *http.Request)
+	// Decompress Raw Signal with SVB
+	// (POST /io/slow5/svb_decompress)
+	PostIoSlow5SvbDecompress(w http.ResponseWriter, r *http.Request)
+	// Write slow5 Data
+	// (POST /io/slow5/write)
+	PostIoSlow5Write(w http.ResponseWriter, r *http.Request)
 	// Simulate PCR
 	// (POST /pcr/complex_pcr)
 	PostPcrComplexPcr(w http.ResponseWriter, r *http.Request)
 	// Generate De Bruijn sequence-based barcodes
 	// (POST /pcr/primers/debruijn_barcodes)
 	PostPcrPrimersDebruijnBarcodes(w http.ResponseWriter, r *http.Request)
+	// Design PCR Primers
+	// (POST /pcr/primers/design_primers)
+	PostPcrPrimersDesignPrimers(w http.ResponseWriter, r *http.Request)
 	// Calculate Melting Temperature using Marmur Doty method
 	// (POST /pcr/primers/marmur_doty)
 	PostPcrPrimersMarmurDoty(w http.ResponseWriter, r *http.Request)
@@ -80,14 +143,56 @@ type ServerInterface interface {
 	// Simulate a simple PCR
 	// (POST /pcr/simple_pcr)
 	PostPcrSimplePcr(w http.ResponseWriter, r *http.Request)
-	// Fragment CDS
-	// (POST /synthesis/fragment)
-	PostSynthesisFragment(w http.ResponseWriter, r *http.Request)
+	// Generate Random DNA Sequence
+	// (POST /random/random_dna)
+	PostRandomRandomDna(w http.ResponseWriter, r *http.Request)
+	// Generate Random Protein Sequence
+	// (POST /random/random_protein)
+	PostRandomRandomProtein(w http.ResponseWriter, r *http.Request)
+	// Generate Random RNA Sequence
+	// (POST /random/random_rna)
+	PostRandomRandomRna(w http.ResponseWriter, r *http.Request)
+	// Sequence Hashing
+	// (POST /seqhash)
+	PostSeqhash(w http.ResponseWriter, r *http.Request)
+	// Sequence Hashing for Fragment
+	// (POST /seqhash_fragment)
+	PostSeqhashFragment(w http.ResponseWriter, r *http.Request)
+	// Check if Sequence is Palindromic
+	// (POST /utils/is_palindromic)
+	PostUtilsIsPalindromic(w http.ResponseWriter, r *http.Request)
+	// Reverse Complement of DNA Sequence
+	// (POST /utils/reverse_complement)
+	PostUtilsReverseComplement(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
+
+// Calculate Mash Distance
+// (POST /align/mash)
+func (_ Unimplemented) PostAlignMash(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Calculate Mash Distance Against Many Sequences
+// (POST /align/mash_many)
+func (_ Unimplemented) PostAlignMashMany(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Perform Needleman-Wunsch Alignment
+// (POST /align/needleman_wunsch)
+func (_ Unimplemented) PostAlignNeedlemanWunsch(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Perform Smith-Waterman Alignment
+// (POST /align/smith_waterman)
+func (_ Unimplemented) PostAlignSmithWaterman(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
 
 // Fix CDS
 // (POST /cds/fix)
@@ -107,7 +212,13 @@ func (_ Unimplemented) PostCdsTranslate(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Simulate Golden Gate assembly
+// Fragment DNA for GoldenGate
+// (POST /cloning/fragment)
+func (_ Unimplemented) PostCloningFragment(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Simulate GoldenGate assembly
 // (POST /cloning/goldengate)
 func (_ Unimplemented) PostCloningGoldengate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
@@ -125,9 +236,63 @@ func (_ Unimplemented) PostCloningRestrictionDigest(w http.ResponseWriter, r *ht
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// Add Two Codon Tables
+// (POST /codon_tables/add_tables)
+func (_ Unimplemented) PostCodonTablesAddTables(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Create Compromise Codon Table
+// (POST /codon_tables/compromise_tables)
+func (_ Unimplemented) PostCodonTablesCompromiseTables(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get Default Organism Names
+// (GET /codon_tables/default_organisms)
+func (_ Unimplemented) GetCodonTablesDefaultOrganisms(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Create Weighted Codon Table from Genbank Record
+// (POST /codon_tables/from_genbank)
+func (_ Unimplemented) PostCodonTablesFromGenbank(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Get Codon Table for an Organism
+// (POST /codon_tables/get_organism_table)
+func (_ Unimplemented) PostCodonTablesGetOrganismTable(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Create New Codon Table
+// (POST /codon_tables/new)
+func (_ Unimplemented) PostCodonTablesNew(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // Run a lua script
 // (POST /execute_lua)
 func (_ Unimplemented) PostExecuteLua(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Contra Fold V2
+// (POST /folding/linearfold/contra_fold_v2)
+func (_ Unimplemented) PostFoldingLinearfoldContraFoldV2(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Vienna RNA Fold
+// (POST /folding/linearfold/vienna_rna_fold)
+func (_ Unimplemented) PostFoldingLinearfoldViennaRnaFold(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Zuker Folding
+// (POST /folding/zuker)
+func (_ Unimplemented) PostFoldingZuker(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -167,6 +332,42 @@ func (_ Unimplemented) PostIoGenbankWrite(w http.ResponseWriter, r *http.Request
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// Parse Pileup Data
+// (POST /io/pileup/parse)
+func (_ Unimplemented) PostIoPileupParse(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Write Pileup Data
+// (POST /io/pileup/write)
+func (_ Unimplemented) PostIoPileupWrite(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Parse slow5 Data
+// (POST /io/slow5/parse)
+func (_ Unimplemented) PostIoSlow5Parse(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Compress Raw Signal with SVB
+// (POST /io/slow5/svb_compress)
+func (_ Unimplemented) PostIoSlow5SvbCompress(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Decompress Raw Signal with SVB
+// (POST /io/slow5/svb_decompress)
+func (_ Unimplemented) PostIoSlow5SvbDecompress(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Write slow5 Data
+// (POST /io/slow5/write)
+func (_ Unimplemented) PostIoSlow5Write(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // Simulate PCR
 // (POST /pcr/complex_pcr)
 func (_ Unimplemented) PostPcrComplexPcr(w http.ResponseWriter, r *http.Request) {
@@ -176,6 +377,12 @@ func (_ Unimplemented) PostPcrComplexPcr(w http.ResponseWriter, r *http.Request)
 // Generate De Bruijn sequence-based barcodes
 // (POST /pcr/primers/debruijn_barcodes)
 func (_ Unimplemented) PostPcrPrimersDebruijnBarcodes(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Design PCR Primers
+// (POST /pcr/primers/design_primers)
+func (_ Unimplemented) PostPcrPrimersDesignPrimers(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -203,9 +410,45 @@ func (_ Unimplemented) PostPcrSimplePcr(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Fragment CDS
-// (POST /synthesis/fragment)
-func (_ Unimplemented) PostSynthesisFragment(w http.ResponseWriter, r *http.Request) {
+// Generate Random DNA Sequence
+// (POST /random/random_dna)
+func (_ Unimplemented) PostRandomRandomDna(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Generate Random Protein Sequence
+// (POST /random/random_protein)
+func (_ Unimplemented) PostRandomRandomProtein(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Generate Random RNA Sequence
+// (POST /random/random_rna)
+func (_ Unimplemented) PostRandomRandomRna(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Sequence Hashing
+// (POST /seqhash)
+func (_ Unimplemented) PostSeqhash(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Sequence Hashing for Fragment
+// (POST /seqhash_fragment)
+func (_ Unimplemented) PostSeqhashFragment(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Check if Sequence is Palindromic
+// (POST /utils/is_palindromic)
+func (_ Unimplemented) PostUtilsIsPalindromic(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Reverse Complement of DNA Sequence
+// (POST /utils/reverse_complement)
+func (_ Unimplemented) PostUtilsReverseComplement(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -217,6 +460,66 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(http.Handler) http.Handler
+
+// PostAlignMash operation middleware
+func (siw *ServerInterfaceWrapper) PostAlignMash(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAlignMash(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostAlignMashMany operation middleware
+func (siw *ServerInterfaceWrapper) PostAlignMashMany(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAlignMashMany(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostAlignNeedlemanWunsch operation middleware
+func (siw *ServerInterfaceWrapper) PostAlignNeedlemanWunsch(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAlignNeedlemanWunsch(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostAlignSmithWaterman operation middleware
+func (siw *ServerInterfaceWrapper) PostAlignSmithWaterman(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAlignSmithWaterman(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
 
 // PostCdsFix operation middleware
 func (siw *ServerInterfaceWrapper) PostCdsFix(w http.ResponseWriter, r *http.Request) {
@@ -254,6 +557,21 @@ func (siw *ServerInterfaceWrapper) PostCdsTranslate(w http.ResponseWriter, r *ht
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostCdsTranslate(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostCloningFragment operation middleware
+func (siw *ServerInterfaceWrapper) PostCloningFragment(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCloningFragment(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -308,12 +626,147 @@ func (siw *ServerInterfaceWrapper) PostCloningRestrictionDigest(w http.ResponseW
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
+// PostCodonTablesAddTables operation middleware
+func (siw *ServerInterfaceWrapper) PostCodonTablesAddTables(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCodonTablesAddTables(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostCodonTablesCompromiseTables operation middleware
+func (siw *ServerInterfaceWrapper) PostCodonTablesCompromiseTables(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCodonTablesCompromiseTables(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// GetCodonTablesDefaultOrganisms operation middleware
+func (siw *ServerInterfaceWrapper) GetCodonTablesDefaultOrganisms(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCodonTablesDefaultOrganisms(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostCodonTablesFromGenbank operation middleware
+func (siw *ServerInterfaceWrapper) PostCodonTablesFromGenbank(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCodonTablesFromGenbank(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostCodonTablesGetOrganismTable operation middleware
+func (siw *ServerInterfaceWrapper) PostCodonTablesGetOrganismTable(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCodonTablesGetOrganismTable(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostCodonTablesNew operation middleware
+func (siw *ServerInterfaceWrapper) PostCodonTablesNew(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCodonTablesNew(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
 // PostExecuteLua operation middleware
 func (siw *ServerInterfaceWrapper) PostExecuteLua(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostExecuteLua(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostFoldingLinearfoldContraFoldV2 operation middleware
+func (siw *ServerInterfaceWrapper) PostFoldingLinearfoldContraFoldV2(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostFoldingLinearfoldContraFoldV2(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostFoldingLinearfoldViennaRnaFold operation middleware
+func (siw *ServerInterfaceWrapper) PostFoldingLinearfoldViennaRnaFold(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostFoldingLinearfoldViennaRnaFold(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostFoldingZuker operation middleware
+func (siw *ServerInterfaceWrapper) PostFoldingZuker(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostFoldingZuker(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -413,6 +866,96 @@ func (siw *ServerInterfaceWrapper) PostIoGenbankWrite(w http.ResponseWriter, r *
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
+// PostIoPileupParse operation middleware
+func (siw *ServerInterfaceWrapper) PostIoPileupParse(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostIoPileupParse(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostIoPileupWrite operation middleware
+func (siw *ServerInterfaceWrapper) PostIoPileupWrite(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostIoPileupWrite(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostIoSlow5Parse operation middleware
+func (siw *ServerInterfaceWrapper) PostIoSlow5Parse(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostIoSlow5Parse(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostIoSlow5SvbCompress operation middleware
+func (siw *ServerInterfaceWrapper) PostIoSlow5SvbCompress(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostIoSlow5SvbCompress(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostIoSlow5SvbDecompress operation middleware
+func (siw *ServerInterfaceWrapper) PostIoSlow5SvbDecompress(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostIoSlow5SvbDecompress(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostIoSlow5Write operation middleware
+func (siw *ServerInterfaceWrapper) PostIoSlow5Write(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostIoSlow5Write(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
 // PostPcrComplexPcr operation middleware
 func (siw *ServerInterfaceWrapper) PostPcrComplexPcr(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -434,6 +977,21 @@ func (siw *ServerInterfaceWrapper) PostPcrPrimersDebruijnBarcodes(w http.Respons
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostPcrPrimersDebruijnBarcodes(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostPcrPrimersDesignPrimers operation middleware
+func (siw *ServerInterfaceWrapper) PostPcrPrimersDesignPrimers(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostPcrPrimersDesignPrimers(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -503,12 +1061,102 @@ func (siw *ServerInterfaceWrapper) PostPcrSimplePcr(w http.ResponseWriter, r *ht
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostSynthesisFragment operation middleware
-func (siw *ServerInterfaceWrapper) PostSynthesisFragment(w http.ResponseWriter, r *http.Request) {
+// PostRandomRandomDna operation middleware
+func (siw *ServerInterfaceWrapper) PostRandomRandomDna(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostSynthesisFragment(w, r)
+		siw.Handler.PostRandomRandomDna(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostRandomRandomProtein operation middleware
+func (siw *ServerInterfaceWrapper) PostRandomRandomProtein(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostRandomRandomProtein(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostRandomRandomRna operation middleware
+func (siw *ServerInterfaceWrapper) PostRandomRandomRna(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostRandomRandomRna(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostSeqhash operation middleware
+func (siw *ServerInterfaceWrapper) PostSeqhash(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostSeqhash(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostSeqhashFragment operation middleware
+func (siw *ServerInterfaceWrapper) PostSeqhashFragment(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostSeqhashFragment(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostUtilsIsPalindromic operation middleware
+func (siw *ServerInterfaceWrapper) PostUtilsIsPalindromic(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostUtilsIsPalindromic(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostUtilsReverseComplement operation middleware
+func (siw *ServerInterfaceWrapper) PostUtilsReverseComplement(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostUtilsReverseComplement(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -632,6 +1280,18 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/align/mash", wrapper.PostAlignMash)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/align/mash_many", wrapper.PostAlignMashMany)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/align/needleman_wunsch", wrapper.PostAlignNeedlemanWunsch)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/align/smith_waterman", wrapper.PostAlignSmithWaterman)
+	})
+	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/cds/fix", wrapper.PostCdsFix)
 	})
 	r.Group(func(r chi.Router) {
@@ -639,6 +1299,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/cds/translate", wrapper.PostCdsTranslate)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/cloning/fragment", wrapper.PostCloningFragment)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/cloning/goldengate", wrapper.PostCloningGoldengate)
@@ -650,7 +1313,34 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/cloning/restriction_digest", wrapper.PostCloningRestrictionDigest)
 	})
 	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/codon_tables/add_tables", wrapper.PostCodonTablesAddTables)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/codon_tables/compromise_tables", wrapper.PostCodonTablesCompromiseTables)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/codon_tables/default_organisms", wrapper.GetCodonTablesDefaultOrganisms)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/codon_tables/from_genbank", wrapper.PostCodonTablesFromGenbank)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/codon_tables/get_organism_table", wrapper.PostCodonTablesGetOrganismTable)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/codon_tables/new", wrapper.PostCodonTablesNew)
+	})
+	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/execute_lua", wrapper.PostExecuteLua)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/folding/linearfold/contra_fold_v2", wrapper.PostFoldingLinearfoldContraFoldV2)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/folding/linearfold/vienna_rna_fold", wrapper.PostFoldingLinearfoldViennaRnaFold)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/folding/zuker", wrapper.PostFoldingZuker)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/io/fasta/parse", wrapper.PostIoFastaParse)
@@ -671,10 +1361,31 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/io/genbank/write", wrapper.PostIoGenbankWrite)
 	})
 	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/io/pileup/parse", wrapper.PostIoPileupParse)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/io/pileup/write", wrapper.PostIoPileupWrite)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/io/slow5/parse", wrapper.PostIoSlow5Parse)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/io/slow5/svb_compress", wrapper.PostIoSlow5SvbCompress)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/io/slow5/svb_decompress", wrapper.PostIoSlow5SvbDecompress)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/io/slow5/write", wrapper.PostIoSlow5Write)
+	})
+	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/pcr/complex_pcr", wrapper.PostPcrComplexPcr)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/pcr/primers/debruijn_barcodes", wrapper.PostPcrPrimersDebruijnBarcodes)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/pcr/primers/design_primers", wrapper.PostPcrPrimersDesignPrimers)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/pcr/primers/marmur_doty", wrapper.PostPcrPrimersMarmurDoty)
@@ -689,10 +1400,106 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/pcr/simple_pcr", wrapper.PostPcrSimplePcr)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/synthesis/fragment", wrapper.PostSynthesisFragment)
+		r.Post(options.BaseURL+"/random/random_dna", wrapper.PostRandomRandomDna)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/random/random_protein", wrapper.PostRandomRandomProtein)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/random/random_rna", wrapper.PostRandomRandomRna)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/seqhash", wrapper.PostSeqhash)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/seqhash_fragment", wrapper.PostSeqhashFragment)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/utils/is_palindromic", wrapper.PostUtilsIsPalindromic)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/utils/reverse_complement", wrapper.PostUtilsReverseComplement)
 	})
 
 	return r
+}
+
+type PostAlignMashRequestObject struct {
+	Body *PostAlignMashJSONRequestBody
+}
+
+type PostAlignMashResponseObject interface {
+	VisitPostAlignMashResponse(w http.ResponseWriter) error
+}
+
+type PostAlignMash200JSONResponse struct {
+	Distance *float32 `json:"distance,omitempty"`
+}
+
+func (response PostAlignMash200JSONResponse) VisitPostAlignMashResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostAlignMashManyRequestObject struct {
+	Body *PostAlignMashManyJSONRequestBody
+}
+
+type PostAlignMashManyResponseObject interface {
+	VisitPostAlignMashManyResponse(w http.ResponseWriter) error
+}
+
+type PostAlignMashMany200JSONResponse []float32
+
+func (response PostAlignMashMany200JSONResponse) VisitPostAlignMashManyResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostAlignNeedlemanWunschRequestObject struct {
+	Body *PostAlignNeedlemanWunschJSONRequestBody
+}
+
+type PostAlignNeedlemanWunschResponseObject interface {
+	VisitPostAlignNeedlemanWunschResponse(w http.ResponseWriter) error
+}
+
+type PostAlignNeedlemanWunsch200JSONResponse struct {
+	AlignmentA *string  `json:"alignment_a,omitempty"`
+	AlignmentB *string  `json:"alignment_b,omitempty"`
+	Score      *float32 `json:"score,omitempty"`
+}
+
+func (response PostAlignNeedlemanWunsch200JSONResponse) VisitPostAlignNeedlemanWunschResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostAlignSmithWatermanRequestObject struct {
+	Body *PostAlignSmithWatermanJSONRequestBody
+}
+
+type PostAlignSmithWatermanResponseObject interface {
+	VisitPostAlignSmithWatermanResponse(w http.ResponseWriter) error
+}
+
+type PostAlignSmithWaterman200JSONResponse struct {
+	AlignmentA *string  `json:"alignment_a,omitempty"`
+	AlignmentB *string  `json:"alignment_b,omitempty"`
+	Score      *float32 `json:"score,omitempty"`
+}
+
+func (response PostAlignSmithWaterman200JSONResponse) VisitPostAlignSmithWatermanResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 type PostCdsFixRequestObject struct {
@@ -799,6 +1606,36 @@ func (response PostCdsTranslate500TextResponse) VisitPostCdsTranslateResponse(w 
 	return err
 }
 
+type PostCloningFragmentRequestObject struct {
+	Body *PostCloningFragmentJSONRequestBody
+}
+
+type PostCloningFragmentResponseObject interface {
+	VisitPostCloningFragmentResponse(w http.ResponseWriter) error
+}
+
+type PostCloningFragment200JSONResponse struct {
+	Efficiency float32  `json:"efficiency"`
+	Fragments  []string `json:"fragments"`
+}
+
+func (response PostCloningFragment200JSONResponse) VisitPostCloningFragmentResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostCloningFragment500TextResponse string
+
+func (response PostCloningFragment500TextResponse) VisitPostCloningFragmentResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(500)
+
+	_, err := w.Write([]byte(response))
+	return err
+}
+
 type PostCloningGoldengateRequestObject struct {
 	Body *PostCloningGoldengateJSONRequestBody
 }
@@ -867,6 +1704,107 @@ func (response PostCloningRestrictionDigest500TextResponse) VisitPostCloningRest
 	return err
 }
 
+type PostCodonTablesAddTablesRequestObject struct {
+	Body *PostCodonTablesAddTablesJSONRequestBody
+}
+
+type PostCodonTablesAddTablesResponseObject interface {
+	VisitPostCodonTablesAddTablesResponse(w http.ResponseWriter) error
+}
+
+type PostCodonTablesAddTables200JSONResponse CodonTable
+
+func (response PostCodonTablesAddTables200JSONResponse) VisitPostCodonTablesAddTablesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostCodonTablesCompromiseTablesRequestObject struct {
+	Body *PostCodonTablesCompromiseTablesJSONRequestBody
+}
+
+type PostCodonTablesCompromiseTablesResponseObject interface {
+	VisitPostCodonTablesCompromiseTablesResponse(w http.ResponseWriter) error
+}
+
+type PostCodonTablesCompromiseTables200JSONResponse CodonTable
+
+func (response PostCodonTablesCompromiseTables200JSONResponse) VisitPostCodonTablesCompromiseTablesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetCodonTablesDefaultOrganismsRequestObject struct {
+}
+
+type GetCodonTablesDefaultOrganismsResponseObject interface {
+	VisitGetCodonTablesDefaultOrganismsResponse(w http.ResponseWriter) error
+}
+
+type GetCodonTablesDefaultOrganisms200JSONResponse []string
+
+func (response GetCodonTablesDefaultOrganisms200JSONResponse) VisitGetCodonTablesDefaultOrganismsResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostCodonTablesFromGenbankRequestObject struct {
+	Body *PostCodonTablesFromGenbankJSONRequestBody
+}
+
+type PostCodonTablesFromGenbankResponseObject interface {
+	VisitPostCodonTablesFromGenbankResponse(w http.ResponseWriter) error
+}
+
+type PostCodonTablesFromGenbank200JSONResponse CodonTable
+
+func (response PostCodonTablesFromGenbank200JSONResponse) VisitPostCodonTablesFromGenbankResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostCodonTablesGetOrganismTableRequestObject struct {
+	Body *PostCodonTablesGetOrganismTableJSONRequestBody
+}
+
+type PostCodonTablesGetOrganismTableResponseObject interface {
+	VisitPostCodonTablesGetOrganismTableResponse(w http.ResponseWriter) error
+}
+
+type PostCodonTablesGetOrganismTable200JSONResponse CodonTable
+
+func (response PostCodonTablesGetOrganismTable200JSONResponse) VisitPostCodonTablesGetOrganismTableResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostCodonTablesNewRequestObject struct {
+	Body *PostCodonTablesNewJSONRequestBody
+}
+
+type PostCodonTablesNewResponseObject interface {
+	VisitPostCodonTablesNewResponse(w http.ResponseWriter) error
+}
+
+type PostCodonTablesNew200JSONResponse CodonTable
+
+func (response PostCodonTablesNew200JSONResponse) VisitPostCodonTablesNewResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 type PostExecuteLuaRequestObject struct {
 	Body *PostExecuteLuaJSONRequestBody
 }
@@ -895,6 +1833,66 @@ func (response PostExecuteLua500TextResponse) VisitPostExecuteLuaResponse(w http
 
 	_, err := w.Write([]byte(response))
 	return err
+}
+
+type PostFoldingLinearfoldContraFoldV2RequestObject struct {
+	Body *PostFoldingLinearfoldContraFoldV2JSONRequestBody
+}
+
+type PostFoldingLinearfoldContraFoldV2ResponseObject interface {
+	VisitPostFoldingLinearfoldContraFoldV2Response(w http.ResponseWriter) error
+}
+
+type PostFoldingLinearfoldContraFoldV2200JSONResponse struct {
+	DotBracket *string  `json:"dot_bracket,omitempty"`
+	Score      *float32 `json:"score,omitempty"`
+}
+
+func (response PostFoldingLinearfoldContraFoldV2200JSONResponse) VisitPostFoldingLinearfoldContraFoldV2Response(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostFoldingLinearfoldViennaRnaFoldRequestObject struct {
+	Body *PostFoldingLinearfoldViennaRnaFoldJSONRequestBody
+}
+
+type PostFoldingLinearfoldViennaRnaFoldResponseObject interface {
+	VisitPostFoldingLinearfoldViennaRnaFoldResponse(w http.ResponseWriter) error
+}
+
+type PostFoldingLinearfoldViennaRnaFold200JSONResponse struct {
+	DotBracket *string  `json:"dot_bracket,omitempty"`
+	Score      *float32 `json:"score,omitempty"`
+}
+
+func (response PostFoldingLinearfoldViennaRnaFold200JSONResponse) VisitPostFoldingLinearfoldViennaRnaFoldResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostFoldingZukerRequestObject struct {
+	Body *PostFoldingZukerJSONRequestBody
+}
+
+type PostFoldingZukerResponseObject interface {
+	VisitPostFoldingZukerResponse(w http.ResponseWriter) error
+}
+
+type PostFoldingZuker200JSONResponse struct {
+	DotBracket *string  `json:"dot_bracket,omitempty"`
+	Score      *float32 `json:"score,omitempty"`
+}
+
+func (response PostFoldingZuker200JSONResponse) VisitPostFoldingZukerResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 type PostIoFastaParseRequestObject struct {
@@ -1016,6 +2014,120 @@ func (response PostIoGenbankWrite200Response) VisitPostIoGenbankWriteResponse(w 
 	return nil
 }
 
+type PostIoPileupParseRequestObject struct {
+	Body *PostIoPileupParseJSONRequestBody
+}
+
+type PostIoPileupParseResponseObject interface {
+	VisitPostIoPileupParseResponse(w http.ResponseWriter) error
+}
+
+type PostIoPileupParse200JSONResponse []PileupLine
+
+func (response PostIoPileupParse200JSONResponse) VisitPostIoPileupParseResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostIoPileupWriteRequestObject struct {
+	Body *PostIoPileupWriteJSONRequestBody
+}
+
+type PostIoPileupWriteResponseObject interface {
+	VisitPostIoPileupWriteResponse(w http.ResponseWriter) error
+}
+
+type PostIoPileupWrite200JSONResponse struct {
+	Data *string `json:"data,omitempty"`
+}
+
+func (response PostIoPileupWrite200JSONResponse) VisitPostIoPileupWriteResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostIoSlow5ParseRequestObject struct {
+	Body *PostIoSlow5ParseJSONRequestBody
+}
+
+type PostIoSlow5ParseResponseObject interface {
+	VisitPostIoSlow5ParseResponse(w http.ResponseWriter) error
+}
+
+type PostIoSlow5Parse200JSONResponse struct {
+	Header *Slow5Header `json:"header,omitempty"`
+	Reads  *[]Slow5Read `json:"reads,omitempty"`
+}
+
+func (response PostIoSlow5Parse200JSONResponse) VisitPostIoSlow5ParseResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostIoSlow5SvbCompressRequestObject struct {
+	Body *PostIoSlow5SvbCompressJSONRequestBody
+}
+
+type PostIoSlow5SvbCompressResponseObject interface {
+	VisitPostIoSlow5SvbCompressResponse(w http.ResponseWriter) error
+}
+
+type PostIoSlow5SvbCompress200JSONResponse struct {
+	Data *string `json:"data,omitempty"`
+	Mask *string `json:"mask,omitempty"`
+}
+
+func (response PostIoSlow5SvbCompress200JSONResponse) VisitPostIoSlow5SvbCompressResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostIoSlow5SvbDecompressRequestObject struct {
+	Body *PostIoSlow5SvbDecompressJSONRequestBody
+}
+
+type PostIoSlow5SvbDecompressResponseObject interface {
+	VisitPostIoSlow5SvbDecompressResponse(w http.ResponseWriter) error
+}
+
+type PostIoSlow5SvbDecompress200JSONResponse struct {
+	RawSignal *[]int `json:"rawSignal,omitempty"`
+}
+
+func (response PostIoSlow5SvbDecompress200JSONResponse) VisitPostIoSlow5SvbDecompressResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostIoSlow5WriteRequestObject struct {
+	Body *PostIoSlow5WriteJSONRequestBody
+}
+
+type PostIoSlow5WriteResponseObject interface {
+	VisitPostIoSlow5WriteResponse(w http.ResponseWriter) error
+}
+
+type PostIoSlow5Write200JSONResponse struct {
+	Data *string `json:"data,omitempty"`
+}
+
+func (response PostIoSlow5Write200JSONResponse) VisitPostIoSlow5WriteResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 type PostPcrComplexPcrRequestObject struct {
 	Body *PostPcrComplexPcrJSONRequestBody
 }
@@ -1057,6 +2169,26 @@ type PostPcrPrimersDebruijnBarcodes200Response struct {
 func (response PostPcrPrimersDebruijnBarcodes200Response) VisitPostPcrPrimersDebruijnBarcodesResponse(w http.ResponseWriter) error {
 	w.WriteHeader(200)
 	return nil
+}
+
+type PostPcrPrimersDesignPrimersRequestObject struct {
+	Body *PostPcrPrimersDesignPrimersJSONRequestBody
+}
+
+type PostPcrPrimersDesignPrimersResponseObject interface {
+	VisitPostPcrPrimersDesignPrimersResponse(w http.ResponseWriter) error
+}
+
+type PostPcrPrimersDesignPrimers200JSONResponse struct {
+	ForwardPrimer *string `json:"forward_primer,omitempty"`
+	ReversePrimer *string `json:"reverse_primer,omitempty"`
+}
+
+func (response PostPcrPrimersDesignPrimers200JSONResponse) VisitPostPcrPrimersDesignPrimersResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 type PostPcrPrimersMarmurDotyRequestObject struct {
@@ -1134,38 +2266,153 @@ func (response PostPcrSimplePcr500TextResponse) VisitPostPcrSimplePcrResponse(w 
 	return err
 }
 
-type PostSynthesisFragmentRequestObject struct {
-	Body *PostSynthesisFragmentJSONRequestBody
+type PostRandomRandomDnaRequestObject struct {
+	Body *PostRandomRandomDnaJSONRequestBody
 }
 
-type PostSynthesisFragmentResponseObject interface {
-	VisitPostSynthesisFragmentResponse(w http.ResponseWriter) error
+type PostRandomRandomDnaResponseObject interface {
+	VisitPostRandomRandomDnaResponse(w http.ResponseWriter) error
 }
 
-type PostSynthesisFragment200JSONResponse struct {
-	Efficiency float32  `json:"efficiency"`
-	Fragments  []string `json:"fragments"`
+type PostRandomRandomDna200JSONResponse struct {
+	Sequence *string `json:"sequence,omitempty"`
 }
 
-func (response PostSynthesisFragment200JSONResponse) VisitPostSynthesisFragmentResponse(w http.ResponseWriter) error {
+func (response PostRandomRandomDna200JSONResponse) VisitPostRandomRandomDnaResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostSynthesisFragment500TextResponse string
+type PostRandomRandomProteinRequestObject struct {
+	Body *PostRandomRandomProteinJSONRequestBody
+}
 
-func (response PostSynthesisFragment500TextResponse) VisitPostSynthesisFragmentResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(500)
+type PostRandomRandomProteinResponseObject interface {
+	VisitPostRandomRandomProteinResponse(w http.ResponseWriter) error
+}
 
-	_, err := w.Write([]byte(response))
-	return err
+type PostRandomRandomProtein200JSONResponse struct {
+	Sequence *string `json:"sequence,omitempty"`
+}
+
+func (response PostRandomRandomProtein200JSONResponse) VisitPostRandomRandomProteinResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostRandomRandomRnaRequestObject struct {
+	Body *PostRandomRandomRnaJSONRequestBody
+}
+
+type PostRandomRandomRnaResponseObject interface {
+	VisitPostRandomRandomRnaResponse(w http.ResponseWriter) error
+}
+
+type PostRandomRandomRna200JSONResponse struct {
+	Sequence *string `json:"sequence,omitempty"`
+}
+
+func (response PostRandomRandomRna200JSONResponse) VisitPostRandomRandomRnaResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostSeqhashRequestObject struct {
+	Body *PostSeqhashJSONRequestBody
+}
+
+type PostSeqhashResponseObject interface {
+	VisitPostSeqhashResponse(w http.ResponseWriter) error
+}
+
+type PostSeqhash200JSONResponse struct {
+	Hash *string `json:"hash,omitempty"`
+}
+
+func (response PostSeqhash200JSONResponse) VisitPostSeqhashResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostSeqhashFragmentRequestObject struct {
+	Body *PostSeqhashFragmentJSONRequestBody
+}
+
+type PostSeqhashFragmentResponseObject interface {
+	VisitPostSeqhashFragmentResponse(w http.ResponseWriter) error
+}
+
+type PostSeqhashFragment200JSONResponse struct {
+	Hash *string `json:"hash,omitempty"`
+}
+
+func (response PostSeqhashFragment200JSONResponse) VisitPostSeqhashFragmentResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostUtilsIsPalindromicRequestObject struct {
+	Body *PostUtilsIsPalindromicJSONRequestBody
+}
+
+type PostUtilsIsPalindromicResponseObject interface {
+	VisitPostUtilsIsPalindromicResponse(w http.ResponseWriter) error
+}
+
+type PostUtilsIsPalindromic200JSONResponse struct {
+	IsPalindromic *bool `json:"isPalindromic,omitempty"`
+}
+
+func (response PostUtilsIsPalindromic200JSONResponse) VisitPostUtilsIsPalindromicResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostUtilsReverseComplementRequestObject struct {
+	Body *PostUtilsReverseComplementJSONRequestBody
+}
+
+type PostUtilsReverseComplementResponseObject interface {
+	VisitPostUtilsReverseComplementResponse(w http.ResponseWriter) error
+}
+
+type PostUtilsReverseComplement200JSONResponse struct {
+	Sequence *string `json:"sequence,omitempty"`
+}
+
+func (response PostUtilsReverseComplement200JSONResponse) VisitPostUtilsReverseComplementResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
+	// Calculate Mash Distance
+	// (POST /align/mash)
+	PostAlignMash(ctx context.Context, request PostAlignMashRequestObject) (PostAlignMashResponseObject, error)
+	// Calculate Mash Distance Against Many Sequences
+	// (POST /align/mash_many)
+	PostAlignMashMany(ctx context.Context, request PostAlignMashManyRequestObject) (PostAlignMashManyResponseObject, error)
+	// Perform Needleman-Wunsch Alignment
+	// (POST /align/needleman_wunsch)
+	PostAlignNeedlemanWunsch(ctx context.Context, request PostAlignNeedlemanWunschRequestObject) (PostAlignNeedlemanWunschResponseObject, error)
+	// Perform Smith-Waterman Alignment
+	// (POST /align/smith_waterman)
+	PostAlignSmithWaterman(ctx context.Context, request PostAlignSmithWatermanRequestObject) (PostAlignSmithWatermanResponseObject, error)
 	// Fix CDS
 	// (POST /cds/fix)
 	PostCdsFix(ctx context.Context, request PostCdsFixRequestObject) (PostCdsFixResponseObject, error)
@@ -1175,7 +2422,10 @@ type StrictServerInterface interface {
 	// Translate CDS
 	// (POST /cds/translate)
 	PostCdsTranslate(ctx context.Context, request PostCdsTranslateRequestObject) (PostCdsTranslateResponseObject, error)
-	// Simulate Golden Gate assembly
+	// Fragment DNA for GoldenGate
+	// (POST /cloning/fragment)
+	PostCloningFragment(ctx context.Context, request PostCloningFragmentRequestObject) (PostCloningFragmentResponseObject, error)
+	// Simulate GoldenGate assembly
 	// (POST /cloning/goldengate)
 	PostCloningGoldengate(ctx context.Context, request PostCloningGoldengateRequestObject) (PostCloningGoldengateResponseObject, error)
 	// Simulate ligation
@@ -1184,9 +2434,36 @@ type StrictServerInterface interface {
 	// Simulate restriction digest
 	// (POST /cloning/restriction_digest)
 	PostCloningRestrictionDigest(ctx context.Context, request PostCloningRestrictionDigestRequestObject) (PostCloningRestrictionDigestResponseObject, error)
+	// Add Two Codon Tables
+	// (POST /codon_tables/add_tables)
+	PostCodonTablesAddTables(ctx context.Context, request PostCodonTablesAddTablesRequestObject) (PostCodonTablesAddTablesResponseObject, error)
+	// Create Compromise Codon Table
+	// (POST /codon_tables/compromise_tables)
+	PostCodonTablesCompromiseTables(ctx context.Context, request PostCodonTablesCompromiseTablesRequestObject) (PostCodonTablesCompromiseTablesResponseObject, error)
+	// Get Default Organism Names
+	// (GET /codon_tables/default_organisms)
+	GetCodonTablesDefaultOrganisms(ctx context.Context, request GetCodonTablesDefaultOrganismsRequestObject) (GetCodonTablesDefaultOrganismsResponseObject, error)
+	// Create Weighted Codon Table from Genbank Record
+	// (POST /codon_tables/from_genbank)
+	PostCodonTablesFromGenbank(ctx context.Context, request PostCodonTablesFromGenbankRequestObject) (PostCodonTablesFromGenbankResponseObject, error)
+	// Get Codon Table for an Organism
+	// (POST /codon_tables/get_organism_table)
+	PostCodonTablesGetOrganismTable(ctx context.Context, request PostCodonTablesGetOrganismTableRequestObject) (PostCodonTablesGetOrganismTableResponseObject, error)
+	// Create New Codon Table
+	// (POST /codon_tables/new)
+	PostCodonTablesNew(ctx context.Context, request PostCodonTablesNewRequestObject) (PostCodonTablesNewResponseObject, error)
 	// Run a lua script
 	// (POST /execute_lua)
 	PostExecuteLua(ctx context.Context, request PostExecuteLuaRequestObject) (PostExecuteLuaResponseObject, error)
+	// Contra Fold V2
+	// (POST /folding/linearfold/contra_fold_v2)
+	PostFoldingLinearfoldContraFoldV2(ctx context.Context, request PostFoldingLinearfoldContraFoldV2RequestObject) (PostFoldingLinearfoldContraFoldV2ResponseObject, error)
+	// Vienna RNA Fold
+	// (POST /folding/linearfold/vienna_rna_fold)
+	PostFoldingLinearfoldViennaRnaFold(ctx context.Context, request PostFoldingLinearfoldViennaRnaFoldRequestObject) (PostFoldingLinearfoldViennaRnaFoldResponseObject, error)
+	// Zuker Folding
+	// (POST /folding/zuker)
+	PostFoldingZuker(ctx context.Context, request PostFoldingZukerRequestObject) (PostFoldingZukerResponseObject, error)
 	// Parse FASTA data
 	// (POST /io/fasta/parse)
 	PostIoFastaParse(ctx context.Context, request PostIoFastaParseRequestObject) (PostIoFastaParseResponseObject, error)
@@ -1205,12 +2482,33 @@ type StrictServerInterface interface {
 	// Write Genbank data
 	// (POST /io/genbank/write)
 	PostIoGenbankWrite(ctx context.Context, request PostIoGenbankWriteRequestObject) (PostIoGenbankWriteResponseObject, error)
+	// Parse Pileup Data
+	// (POST /io/pileup/parse)
+	PostIoPileupParse(ctx context.Context, request PostIoPileupParseRequestObject) (PostIoPileupParseResponseObject, error)
+	// Write Pileup Data
+	// (POST /io/pileup/write)
+	PostIoPileupWrite(ctx context.Context, request PostIoPileupWriteRequestObject) (PostIoPileupWriteResponseObject, error)
+	// Parse slow5 Data
+	// (POST /io/slow5/parse)
+	PostIoSlow5Parse(ctx context.Context, request PostIoSlow5ParseRequestObject) (PostIoSlow5ParseResponseObject, error)
+	// Compress Raw Signal with SVB
+	// (POST /io/slow5/svb_compress)
+	PostIoSlow5SvbCompress(ctx context.Context, request PostIoSlow5SvbCompressRequestObject) (PostIoSlow5SvbCompressResponseObject, error)
+	// Decompress Raw Signal with SVB
+	// (POST /io/slow5/svb_decompress)
+	PostIoSlow5SvbDecompress(ctx context.Context, request PostIoSlow5SvbDecompressRequestObject) (PostIoSlow5SvbDecompressResponseObject, error)
+	// Write slow5 Data
+	// (POST /io/slow5/write)
+	PostIoSlow5Write(ctx context.Context, request PostIoSlow5WriteRequestObject) (PostIoSlow5WriteResponseObject, error)
 	// Simulate PCR
 	// (POST /pcr/complex_pcr)
 	PostPcrComplexPcr(ctx context.Context, request PostPcrComplexPcrRequestObject) (PostPcrComplexPcrResponseObject, error)
 	// Generate De Bruijn sequence-based barcodes
 	// (POST /pcr/primers/debruijn_barcodes)
 	PostPcrPrimersDebruijnBarcodes(ctx context.Context, request PostPcrPrimersDebruijnBarcodesRequestObject) (PostPcrPrimersDebruijnBarcodesResponseObject, error)
+	// Design PCR Primers
+	// (POST /pcr/primers/design_primers)
+	PostPcrPrimersDesignPrimers(ctx context.Context, request PostPcrPrimersDesignPrimersRequestObject) (PostPcrPrimersDesignPrimersResponseObject, error)
 	// Calculate Melting Temperature using Marmur Doty method
 	// (POST /pcr/primers/marmur_doty)
 	PostPcrPrimersMarmurDoty(ctx context.Context, request PostPcrPrimersMarmurDotyRequestObject) (PostPcrPrimersMarmurDotyResponseObject, error)
@@ -1223,9 +2521,27 @@ type StrictServerInterface interface {
 	// Simulate a simple PCR
 	// (POST /pcr/simple_pcr)
 	PostPcrSimplePcr(ctx context.Context, request PostPcrSimplePcrRequestObject) (PostPcrSimplePcrResponseObject, error)
-	// Fragment CDS
-	// (POST /synthesis/fragment)
-	PostSynthesisFragment(ctx context.Context, request PostSynthesisFragmentRequestObject) (PostSynthesisFragmentResponseObject, error)
+	// Generate Random DNA Sequence
+	// (POST /random/random_dna)
+	PostRandomRandomDna(ctx context.Context, request PostRandomRandomDnaRequestObject) (PostRandomRandomDnaResponseObject, error)
+	// Generate Random Protein Sequence
+	// (POST /random/random_protein)
+	PostRandomRandomProtein(ctx context.Context, request PostRandomRandomProteinRequestObject) (PostRandomRandomProteinResponseObject, error)
+	// Generate Random RNA Sequence
+	// (POST /random/random_rna)
+	PostRandomRandomRna(ctx context.Context, request PostRandomRandomRnaRequestObject) (PostRandomRandomRnaResponseObject, error)
+	// Sequence Hashing
+	// (POST /seqhash)
+	PostSeqhash(ctx context.Context, request PostSeqhashRequestObject) (PostSeqhashResponseObject, error)
+	// Sequence Hashing for Fragment
+	// (POST /seqhash_fragment)
+	PostSeqhashFragment(ctx context.Context, request PostSeqhashFragmentRequestObject) (PostSeqhashFragmentResponseObject, error)
+	// Check if Sequence is Palindromic
+	// (POST /utils/is_palindromic)
+	PostUtilsIsPalindromic(ctx context.Context, request PostUtilsIsPalindromicRequestObject) (PostUtilsIsPalindromicResponseObject, error)
+	// Reverse Complement of DNA Sequence
+	// (POST /utils/reverse_complement)
+	PostUtilsReverseComplement(ctx context.Context, request PostUtilsReverseComplementRequestObject) (PostUtilsReverseComplementResponseObject, error)
 }
 
 type StrictHandlerFunc = strictnethttp.StrictHttpHandlerFunc
@@ -1255,6 +2571,130 @@ type strictHandler struct {
 	ssi         StrictServerInterface
 	middlewares []StrictMiddlewareFunc
 	options     StrictHTTPServerOptions
+}
+
+// PostAlignMash operation middleware
+func (sh *strictHandler) PostAlignMash(w http.ResponseWriter, r *http.Request) {
+	var request PostAlignMashRequestObject
+
+	var body PostAlignMashJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostAlignMash(ctx, request.(PostAlignMashRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostAlignMash")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostAlignMashResponseObject); ok {
+		if err := validResponse.VisitPostAlignMashResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostAlignMashMany operation middleware
+func (sh *strictHandler) PostAlignMashMany(w http.ResponseWriter, r *http.Request) {
+	var request PostAlignMashManyRequestObject
+
+	var body PostAlignMashManyJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostAlignMashMany(ctx, request.(PostAlignMashManyRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostAlignMashMany")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostAlignMashManyResponseObject); ok {
+		if err := validResponse.VisitPostAlignMashManyResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostAlignNeedlemanWunsch operation middleware
+func (sh *strictHandler) PostAlignNeedlemanWunsch(w http.ResponseWriter, r *http.Request) {
+	var request PostAlignNeedlemanWunschRequestObject
+
+	var body PostAlignNeedlemanWunschJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostAlignNeedlemanWunsch(ctx, request.(PostAlignNeedlemanWunschRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostAlignNeedlemanWunsch")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostAlignNeedlemanWunschResponseObject); ok {
+		if err := validResponse.VisitPostAlignNeedlemanWunschResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostAlignSmithWaterman operation middleware
+func (sh *strictHandler) PostAlignSmithWaterman(w http.ResponseWriter, r *http.Request) {
+	var request PostAlignSmithWatermanRequestObject
+
+	var body PostAlignSmithWatermanJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostAlignSmithWaterman(ctx, request.(PostAlignSmithWatermanRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostAlignSmithWaterman")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostAlignSmithWatermanResponseObject); ok {
+		if err := validResponse.VisitPostAlignSmithWatermanResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
 }
 
 // PostCdsFix operation middleware
@@ -1343,6 +2783,37 @@ func (sh *strictHandler) PostCdsTranslate(w http.ResponseWriter, r *http.Request
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(PostCdsTranslateResponseObject); ok {
 		if err := validResponse.VisitPostCdsTranslateResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostCloningFragment operation middleware
+func (sh *strictHandler) PostCloningFragment(w http.ResponseWriter, r *http.Request) {
+	var request PostCloningFragmentRequestObject
+
+	var body PostCloningFragmentJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostCloningFragment(ctx, request.(PostCloningFragmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostCloningFragment")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostCloningFragmentResponseObject); ok {
+		if err := validResponse.VisitPostCloningFragmentResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -1443,6 +2914,185 @@ func (sh *strictHandler) PostCloningRestrictionDigest(w http.ResponseWriter, r *
 	}
 }
 
+// PostCodonTablesAddTables operation middleware
+func (sh *strictHandler) PostCodonTablesAddTables(w http.ResponseWriter, r *http.Request) {
+	var request PostCodonTablesAddTablesRequestObject
+
+	var body PostCodonTablesAddTablesJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostCodonTablesAddTables(ctx, request.(PostCodonTablesAddTablesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostCodonTablesAddTables")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostCodonTablesAddTablesResponseObject); ok {
+		if err := validResponse.VisitPostCodonTablesAddTablesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostCodonTablesCompromiseTables operation middleware
+func (sh *strictHandler) PostCodonTablesCompromiseTables(w http.ResponseWriter, r *http.Request) {
+	var request PostCodonTablesCompromiseTablesRequestObject
+
+	var body PostCodonTablesCompromiseTablesJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostCodonTablesCompromiseTables(ctx, request.(PostCodonTablesCompromiseTablesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostCodonTablesCompromiseTables")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostCodonTablesCompromiseTablesResponseObject); ok {
+		if err := validResponse.VisitPostCodonTablesCompromiseTablesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetCodonTablesDefaultOrganisms operation middleware
+func (sh *strictHandler) GetCodonTablesDefaultOrganisms(w http.ResponseWriter, r *http.Request) {
+	var request GetCodonTablesDefaultOrganismsRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetCodonTablesDefaultOrganisms(ctx, request.(GetCodonTablesDefaultOrganismsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetCodonTablesDefaultOrganisms")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetCodonTablesDefaultOrganismsResponseObject); ok {
+		if err := validResponse.VisitGetCodonTablesDefaultOrganismsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostCodonTablesFromGenbank operation middleware
+func (sh *strictHandler) PostCodonTablesFromGenbank(w http.ResponseWriter, r *http.Request) {
+	var request PostCodonTablesFromGenbankRequestObject
+
+	var body PostCodonTablesFromGenbankJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostCodonTablesFromGenbank(ctx, request.(PostCodonTablesFromGenbankRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostCodonTablesFromGenbank")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostCodonTablesFromGenbankResponseObject); ok {
+		if err := validResponse.VisitPostCodonTablesFromGenbankResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostCodonTablesGetOrganismTable operation middleware
+func (sh *strictHandler) PostCodonTablesGetOrganismTable(w http.ResponseWriter, r *http.Request) {
+	var request PostCodonTablesGetOrganismTableRequestObject
+
+	var body PostCodonTablesGetOrganismTableJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostCodonTablesGetOrganismTable(ctx, request.(PostCodonTablesGetOrganismTableRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostCodonTablesGetOrganismTable")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostCodonTablesGetOrganismTableResponseObject); ok {
+		if err := validResponse.VisitPostCodonTablesGetOrganismTableResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostCodonTablesNew operation middleware
+func (sh *strictHandler) PostCodonTablesNew(w http.ResponseWriter, r *http.Request) {
+	var request PostCodonTablesNewRequestObject
+
+	var body PostCodonTablesNewJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostCodonTablesNew(ctx, request.(PostCodonTablesNewRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostCodonTablesNew")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostCodonTablesNewResponseObject); ok {
+		if err := validResponse.VisitPostCodonTablesNewResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // PostExecuteLua operation middleware
 func (sh *strictHandler) PostExecuteLua(w http.ResponseWriter, r *http.Request) {
 	var request PostExecuteLuaRequestObject
@@ -1467,6 +3117,99 @@ func (sh *strictHandler) PostExecuteLua(w http.ResponseWriter, r *http.Request) 
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(PostExecuteLuaResponseObject); ok {
 		if err := validResponse.VisitPostExecuteLuaResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostFoldingLinearfoldContraFoldV2 operation middleware
+func (sh *strictHandler) PostFoldingLinearfoldContraFoldV2(w http.ResponseWriter, r *http.Request) {
+	var request PostFoldingLinearfoldContraFoldV2RequestObject
+
+	var body PostFoldingLinearfoldContraFoldV2JSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostFoldingLinearfoldContraFoldV2(ctx, request.(PostFoldingLinearfoldContraFoldV2RequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostFoldingLinearfoldContraFoldV2")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostFoldingLinearfoldContraFoldV2ResponseObject); ok {
+		if err := validResponse.VisitPostFoldingLinearfoldContraFoldV2Response(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostFoldingLinearfoldViennaRnaFold operation middleware
+func (sh *strictHandler) PostFoldingLinearfoldViennaRnaFold(w http.ResponseWriter, r *http.Request) {
+	var request PostFoldingLinearfoldViennaRnaFoldRequestObject
+
+	var body PostFoldingLinearfoldViennaRnaFoldJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostFoldingLinearfoldViennaRnaFold(ctx, request.(PostFoldingLinearfoldViennaRnaFoldRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostFoldingLinearfoldViennaRnaFold")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostFoldingLinearfoldViennaRnaFoldResponseObject); ok {
+		if err := validResponse.VisitPostFoldingLinearfoldViennaRnaFoldResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostFoldingZuker operation middleware
+func (sh *strictHandler) PostFoldingZuker(w http.ResponseWriter, r *http.Request) {
+	var request PostFoldingZukerRequestObject
+
+	var body PostFoldingZukerJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostFoldingZuker(ctx, request.(PostFoldingZukerRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostFoldingZuker")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostFoldingZukerResponseObject); ok {
+		if err := validResponse.VisitPostFoldingZukerResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -1663,6 +3406,192 @@ func (sh *strictHandler) PostIoGenbankWrite(w http.ResponseWriter, r *http.Reque
 	}
 }
 
+// PostIoPileupParse operation middleware
+func (sh *strictHandler) PostIoPileupParse(w http.ResponseWriter, r *http.Request) {
+	var request PostIoPileupParseRequestObject
+
+	var body PostIoPileupParseJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostIoPileupParse(ctx, request.(PostIoPileupParseRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostIoPileupParse")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostIoPileupParseResponseObject); ok {
+		if err := validResponse.VisitPostIoPileupParseResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostIoPileupWrite operation middleware
+func (sh *strictHandler) PostIoPileupWrite(w http.ResponseWriter, r *http.Request) {
+	var request PostIoPileupWriteRequestObject
+
+	var body PostIoPileupWriteJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostIoPileupWrite(ctx, request.(PostIoPileupWriteRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostIoPileupWrite")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostIoPileupWriteResponseObject); ok {
+		if err := validResponse.VisitPostIoPileupWriteResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostIoSlow5Parse operation middleware
+func (sh *strictHandler) PostIoSlow5Parse(w http.ResponseWriter, r *http.Request) {
+	var request PostIoSlow5ParseRequestObject
+
+	var body PostIoSlow5ParseJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostIoSlow5Parse(ctx, request.(PostIoSlow5ParseRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostIoSlow5Parse")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostIoSlow5ParseResponseObject); ok {
+		if err := validResponse.VisitPostIoSlow5ParseResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostIoSlow5SvbCompress operation middleware
+func (sh *strictHandler) PostIoSlow5SvbCompress(w http.ResponseWriter, r *http.Request) {
+	var request PostIoSlow5SvbCompressRequestObject
+
+	var body PostIoSlow5SvbCompressJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostIoSlow5SvbCompress(ctx, request.(PostIoSlow5SvbCompressRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostIoSlow5SvbCompress")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostIoSlow5SvbCompressResponseObject); ok {
+		if err := validResponse.VisitPostIoSlow5SvbCompressResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostIoSlow5SvbDecompress operation middleware
+func (sh *strictHandler) PostIoSlow5SvbDecompress(w http.ResponseWriter, r *http.Request) {
+	var request PostIoSlow5SvbDecompressRequestObject
+
+	var body PostIoSlow5SvbDecompressJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostIoSlow5SvbDecompress(ctx, request.(PostIoSlow5SvbDecompressRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostIoSlow5SvbDecompress")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostIoSlow5SvbDecompressResponseObject); ok {
+		if err := validResponse.VisitPostIoSlow5SvbDecompressResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostIoSlow5Write operation middleware
+func (sh *strictHandler) PostIoSlow5Write(w http.ResponseWriter, r *http.Request) {
+	var request PostIoSlow5WriteRequestObject
+
+	var body PostIoSlow5WriteJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostIoSlow5Write(ctx, request.(PostIoSlow5WriteRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostIoSlow5Write")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostIoSlow5WriteResponseObject); ok {
+		if err := validResponse.VisitPostIoSlow5WriteResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // PostPcrComplexPcr operation middleware
 func (sh *strictHandler) PostPcrComplexPcr(w http.ResponseWriter, r *http.Request) {
 	var request PostPcrComplexPcrRequestObject
@@ -1718,6 +3647,37 @@ func (sh *strictHandler) PostPcrPrimersDebruijnBarcodes(w http.ResponseWriter, r
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(PostPcrPrimersDebruijnBarcodesResponseObject); ok {
 		if err := validResponse.VisitPostPcrPrimersDebruijnBarcodesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostPcrPrimersDesignPrimers operation middleware
+func (sh *strictHandler) PostPcrPrimersDesignPrimers(w http.ResponseWriter, r *http.Request) {
+	var request PostPcrPrimersDesignPrimersRequestObject
+
+	var body PostPcrPrimersDesignPrimersJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostPcrPrimersDesignPrimers(ctx, request.(PostPcrPrimersDesignPrimersRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostPcrPrimersDesignPrimers")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostPcrPrimersDesignPrimersResponseObject); ok {
+		if err := validResponse.VisitPostPcrPrimersDesignPrimersResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -1849,11 +3809,11 @@ func (sh *strictHandler) PostPcrSimplePcr(w http.ResponseWriter, r *http.Request
 	}
 }
 
-// PostSynthesisFragment operation middleware
-func (sh *strictHandler) PostSynthesisFragment(w http.ResponseWriter, r *http.Request) {
-	var request PostSynthesisFragmentRequestObject
+// PostRandomRandomDna operation middleware
+func (sh *strictHandler) PostRandomRandomDna(w http.ResponseWriter, r *http.Request) {
+	var request PostRandomRandomDnaRequestObject
 
-	var body PostSynthesisFragmentJSONRequestBody
+	var body PostRandomRandomDnaJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -1861,18 +3821,204 @@ func (sh *strictHandler) PostSynthesisFragment(w http.ResponseWriter, r *http.Re
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostSynthesisFragment(ctx, request.(PostSynthesisFragmentRequestObject))
+		return sh.ssi.PostRandomRandomDna(ctx, request.(PostRandomRandomDnaRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostSynthesisFragment")
+		handler = middleware(handler, "PostRandomRandomDna")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostSynthesisFragmentResponseObject); ok {
-		if err := validResponse.VisitPostSynthesisFragmentResponse(w); err != nil {
+	} else if validResponse, ok := response.(PostRandomRandomDnaResponseObject); ok {
+		if err := validResponse.VisitPostRandomRandomDnaResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostRandomRandomProtein operation middleware
+func (sh *strictHandler) PostRandomRandomProtein(w http.ResponseWriter, r *http.Request) {
+	var request PostRandomRandomProteinRequestObject
+
+	var body PostRandomRandomProteinJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostRandomRandomProtein(ctx, request.(PostRandomRandomProteinRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostRandomRandomProtein")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostRandomRandomProteinResponseObject); ok {
+		if err := validResponse.VisitPostRandomRandomProteinResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostRandomRandomRna operation middleware
+func (sh *strictHandler) PostRandomRandomRna(w http.ResponseWriter, r *http.Request) {
+	var request PostRandomRandomRnaRequestObject
+
+	var body PostRandomRandomRnaJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostRandomRandomRna(ctx, request.(PostRandomRandomRnaRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostRandomRandomRna")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostRandomRandomRnaResponseObject); ok {
+		if err := validResponse.VisitPostRandomRandomRnaResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostSeqhash operation middleware
+func (sh *strictHandler) PostSeqhash(w http.ResponseWriter, r *http.Request) {
+	var request PostSeqhashRequestObject
+
+	var body PostSeqhashJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostSeqhash(ctx, request.(PostSeqhashRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostSeqhash")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostSeqhashResponseObject); ok {
+		if err := validResponse.VisitPostSeqhashResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostSeqhashFragment operation middleware
+func (sh *strictHandler) PostSeqhashFragment(w http.ResponseWriter, r *http.Request) {
+	var request PostSeqhashFragmentRequestObject
+
+	var body PostSeqhashFragmentJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostSeqhashFragment(ctx, request.(PostSeqhashFragmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostSeqhashFragment")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostSeqhashFragmentResponseObject); ok {
+		if err := validResponse.VisitPostSeqhashFragmentResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostUtilsIsPalindromic operation middleware
+func (sh *strictHandler) PostUtilsIsPalindromic(w http.ResponseWriter, r *http.Request) {
+	var request PostUtilsIsPalindromicRequestObject
+
+	var body PostUtilsIsPalindromicJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostUtilsIsPalindromic(ctx, request.(PostUtilsIsPalindromicRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostUtilsIsPalindromic")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostUtilsIsPalindromicResponseObject); ok {
+		if err := validResponse.VisitPostUtilsIsPalindromicResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostUtilsReverseComplement operation middleware
+func (sh *strictHandler) PostUtilsReverseComplement(w http.ResponseWriter, r *http.Request) {
+	var request PostUtilsReverseComplementRequestObject
+
+	var body PostUtilsReverseComplementJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostUtilsReverseComplement(ctx, request.(PostUtilsReverseComplementRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostUtilsReverseComplement")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostUtilsReverseComplementResponseObject); ok {
+		if err := validResponse.VisitPostUtilsReverseComplementResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -1883,45 +4029,75 @@ func (sh *strictHandler) PostSynthesisFragment(w http.ResponseWriter, r *http.Re
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xa23LbONJ+FRT//5JrKTO7WzO6s+U46ypnolje2outlAoimhISEqBxcKxJ+d23APAk",
-	"EqRg+TSztVeOgu5Gd39fg43DjyjhecEZMCWj2Y9IJlvIsf3nqVI42ebAlPlVCF6AUBTsWMKZKgfUroBo",
-	"FkklKNtED3HEcA6egYc4EnCrqQASzf7tpOLa0Je4kufrr5AoY+gMS5hz7Zt/jSV4J08q+XKEMgUbEL3p",
-	"rYFK3Df5fIvZBvozXwiee2decEkV5cw3eRxdA5Z7Y43iUkHhV7rhh/NYT1saip2HVrme1hfge/b7zgEF",
-	"TOfG1JnEl1Ecna2l+bPAt3P7U+Znly0LjeMXWCp8DQkXpJ8nSoApmlIQ3qAl3GpgSQBRWoZaar6IjD+3",
-	"14A93lyOe/OpMCnEmZXFhFD3c7Fno6fVc+CzxhlVOz/KwQFftgOu1Rrr3tABKy08dMVKCbrWCkZDowry",
-	"0RixEHjnjZmATAQtOsxvDGQ8wdXg/wtIo1n0f5NmzZmUC87kqpIbJ0flwaEk2tF97+J2MlqTtHz0plbg",
-	"jX8RvODiOxbk0x0Is1h4vb2GOxASRmXCqbEco/8HYGvMvg0VZOooso/3GCIVpzwsyEHhQ+ofjcyjKt1a",
-	"jRtHD5T7VYtZ3a9TXmSQ73+g1pxngC2/gBH/gpvSO1gImsMCC0Vx5lffrL9Vcy9dJD5Uv3LK/PpSYaH8",
-	"Dki9rkyHA9UunV69bgUcDKmDg/PPpSluJ7MMypMn30S+RHUiHIBVSw+mVCQ6w2IAEsf9c3pH5dBKlHNC",
-	"U+qmPscKBoQySHQGN/5VZrC7abg652SIEpXIFbCN2gb3SB21jpP94D2h9tyLm4T6QPhYFnjnY5IkIAfz",
-	"u263a0HEbRo8D3PJEEQEUsro4AfnG+y+c0Hk0NdIh9STlqNYc7HBjMp8YJBuqN83rrauAzm+xxCQgjBA",
-	"hq8P15WKL82SazH0pcX3nPF897gOwXzv/Nh02E0cMVtwxi2GNYZakLYyX3ve8rPOfQX0XrraDK2gKDH2",
-	"lcCnFsZVh/zepFTQZEsxSnhGTZvsfhVYKi6o9DbKDQD9ktJqy4Uc2MswyYWiOh/4wGjB9hb0ZqzQ649A",
-	"vEOi2tf0RyDH4psfZKqygC94FU2l0DhZu1RPU3myF2cfCDMFZanbCTkvovPfThEBSTcMnS4uW1SZRdOT",
-	"6ck7W2oFMFzQaBb9fDI9mRoHsNraRE8SIicpvbdocGnXq702Nrqg9yBRwvOcM1QIvs4gl4gyND9f2r+F",
-	"gAILu76ilAtkPJI7prYgqTyJ7PRu+JJEM7NJU3MiL+h95BIGUp1xsutspXFRZOWqPflabhddEfeJ016C",
-	"xoq/prEDmN9B1UQ+svMP7+NanXWrXLuT+6C2hmTBmXTe/TSdPiFFid3Ch6+T5Zb/uWKvpvdzuk84YtiF",
-	"nF30naotyqhUiKeosvQQR3/tZUTBvZoUGaadXHT97M35TwkCUVZohUAIbvvPvz2f+UumwJQ+kiDuQFRz",
-	"2CY3z7HYubBN0HYN30iTv4TI6IsRskXKC0Vz+jsMV+r1bx/QEoAgAinWmZJIcTQdKsBPlb23rEIJMLD9",
-	"eFqJvURBHUT5ZguoQomg2q3/OqZWzDF0PRnkqxKYyaxsXCvCepl4U0s+FxXHD03K6ShnK4XX7ltelkw0",
-	"e/cuPnRe2jcwujt/DeZVGWxoh5qAX5ketTPDy1nGGWWbyYZnBNjmMEec/IdG/LmIAvXB79iKVR4Pt1al",
-	"R/ULD+GU2M+2Cxh9MLnEUkK+znamBSM6USW+8g0AXtJcW3x9/rUBd7B1QM9oMOBX9Ilgh53tVYeafeDC",
-	"YHJukj4y/qzZBLjN3HimBBhLiV1nCN2Ay9bBrF03audO662rxf8NP64mTg00phFMS9jetAJaECFSJduP",
-	"KtxDohWsMo3HYXzvBK80fjbgcH19Gb4DaF15+nYBNmMBzZmTe/kNTsb954xcq0IHOFrKxdZQyDZlqe35",
-	"TKozVOq+Pg+vNUMYZRqjMs8N+QzNHPEon6RYKjwpsJAHFt5Lbi8yF1ZyjH3BYT0V5bAlvHX76lnFu6m1",
-	"4RF0cbq8OUXCqr3FKmLdKL0g2N73VOhR3gXvu6AqDLx/WcmX/miOZzxoKXeRpzQDZKJTwJCsiyrbdbJl",
-	"wwrL1m041W//jFR3F/uPI/rnhugDJPx8OK3BJLx9NRIO5iKYgp+PoOBorso7qDASljfVfzYa7l+wh1Ox",
-	"1HvzVbfyIwDGINKX9l6F9gdzH7a5LDPwOPIfyluRiIm7Jb9fFYkYT9siEXMnu0jEszW747fjhaA5iMe+",
-	"9MFiA2ql8r2jor9Pa0mm87U7t1SQF2Zr8NgTgr0DptpG42/biZfopoNd7Vf2/PqPdCixmF+3iGk42DCz",
-	"TOaEwFpo+pWt1lgknLiMjfJ04TTPS8WzSu+5SLvGjAFZyePuo8owVln3MUXrQH2TrIT/GWeO71ebpKXV",
-	"sDmnzD/ku443dqRerzzb/uGnp3uOe2y0HP/y5DODDTCDLRBUToyahO/T6UMpic4BnVnIa9G/rLFsLMiD",
-	"ZMuxyLVYEe5eQ4bQ7KNVOTcar3AkPnSfcnS+5zhLtDuOziFTlG2QWdJMvFoAwhKlGceqk/JaC30slW5a",
-	"Slqa/3GJQSYzKAe15eRw+p2xVcuDYBicasuN/8FR52E86xIzhVeZTigOzfbSqFxZjefKco43DCTV+Zyz",
-	"BJgSuPNUqlnpnOOH5STOVIDUMbeXPhd8E8ZDcb0QQ2JE/hEjsqyZIo+oXIsusvAeqlxJTU8Y1D4urejr",
-	"dY+pe+a8clANvByyr5zHRI5oJwNeeVeSPS97Pr10L3mwofuDtYwYOcoN9o71c6ZJ2n4BP8jMZSVf3y09",
-	"2xXMfZJpAitePqJ/ZKNo2qsqhJUsX5PUDPx5Oo09naNpAoeVfvIrHbUC9mfyufzylwmQpjShwJLdXqjT",
-	"k19/9dRocxN1/JavsRG3Zw+5iOjfiCHMCMLVV/31XzKVfnTu/+siMkVlGWIsmKEfkRZZNIu2ShVyNpkQ",
-	"ht2TxpM15RNc0OghbsvMJpOMJzjbcqlmv0x/mTqZLw//CQAA///JCz1BwjcAAA==",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
