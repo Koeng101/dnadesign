@@ -47,6 +47,14 @@ type FastaRecord struct {
 	Sequence   string `json:"sequence"`
 }
 
+// FastqRead defines model for FastqRead.
+type FastqRead struct {
+	Identifier string             `json:"Identifier"`
+	Optionals  *map[string]string `json:"Optionals,omitempty"`
+	Quality    string             `json:"Quality"`
+	Sequence   string             `json:"Sequence"`
+}
+
 // Feature defines model for Feature.
 type Feature struct {
 	Attributes  map[string][]string `json:"attributes"`
@@ -125,24 +133,39 @@ type Reference struct {
 	Title      string `json:"title"`
 }
 
-// PostDesignCdsFixJSONBody defines parameters for PostDesignCdsFix.
-type PostDesignCdsFixJSONBody struct {
+// PostCdsFixJSONBody defines parameters for PostCdsFix.
+type PostCdsFixJSONBody struct {
 	Organism        Organism `json:"organism"`
 	RemoveSequences []string `json:"removeSequences"`
 	Sequence        string   `json:"sequence"`
 }
 
-// PostDesignCdsOptimizeJSONBody defines parameters for PostDesignCdsOptimize.
-type PostDesignCdsOptimizeJSONBody struct {
+// PostCdsOptimizeJSONBody defines parameters for PostCdsOptimize.
+type PostCdsOptimizeJSONBody struct {
 	Organism Organism `json:"organism"`
 	Seed     *int     `json:"seed,omitempty"`
 	Sequence string   `json:"sequence"`
 }
 
-// PostDesignCdsTranslateJSONBody defines parameters for PostDesignCdsTranslate.
-type PostDesignCdsTranslateJSONBody struct {
+// PostCdsTranslateJSONBody defines parameters for PostCdsTranslate.
+type PostCdsTranslateJSONBody struct {
 	Sequence         string `json:"sequence"`
 	TranslationTable int    `json:"translation_table"`
+}
+
+// PostCloningGoldengateJSONBody defines parameters for PostCloningGoldengate.
+type PostCloningGoldengateJSONBody struct {
+	Enzyme    *Enzyme   `json:"enzyme,omitempty"`
+	Sequences *[]string `json:"sequences,omitempty"`
+}
+
+// PostCloningLigateJSONBody defines parameters for PostCloningLigate.
+type PostCloningLigateJSONBody = []Fragment
+
+// PostCloningRestrictionDigestJSONBody defines parameters for PostCloningRestrictionDigest.
+type PostCloningRestrictionDigestJSONBody struct {
+	Enzyme   *Enzyme `json:"enzyme,omitempty"`
+	Sequence *string `json:"sequence,omitempty"`
 }
 
 // PostExecuteLuaJSONBody defines parameters for PostExecuteLua.
@@ -154,36 +177,60 @@ type PostExecuteLuaJSONBody struct {
 // PostIoFastaParseTextBody defines parameters for PostIoFastaParse.
 type PostIoFastaParseTextBody = string
 
+// PostIoFastaWriteJSONBody defines parameters for PostIoFastaWrite.
+type PostIoFastaWriteJSONBody = []FastaRecord
+
+// PostIoFastqParseTextBody defines parameters for PostIoFastqParse.
+type PostIoFastqParseTextBody = string
+
+// PostIoFastqWriteJSONBody defines parameters for PostIoFastqWrite.
+type PostIoFastqWriteJSONBody = []FastqRead
+
 // PostIoGenbankParseTextBody defines parameters for PostIoGenbankParse.
 type PostIoGenbankParseTextBody = string
 
-// PostSimulateComplexPcrJSONBody defines parameters for PostSimulateComplexPcr.
-type PostSimulateComplexPcrJSONBody struct {
+// PostIoGenbankWriteJSONBody defines parameters for PostIoGenbankWrite.
+type PostIoGenbankWriteJSONBody = []GenbankRecord
+
+// PostPcrComplexPcrJSONBody defines parameters for PostPcrComplexPcr.
+type PostPcrComplexPcrJSONBody struct {
 	Circular  *bool    `json:"circular,omitempty"`
 	Primers   []string `json:"primers"`
 	TargetTm  float32  `json:"target_tm"`
 	Templates []string `json:"templates"`
 }
 
-// PostSimulateFragmentJSONBody defines parameters for PostSimulateFragment.
-type PostSimulateFragmentJSONBody struct {
-	ExcludeOverhangs *[]string `json:"exclude_overhangs,omitempty"`
-	MaxFragmentSize  int       `json:"max_fragment_size"`
-	MinFragmentSize  int       `json:"min_fragment_size"`
-	Sequence         string    `json:"sequence"`
+// PostPcrPrimersDebruijnBarcodesJSONBody defines parameters for PostPcrPrimersDebruijnBarcodes.
+type PostPcrPrimersDebruijnBarcodesJSONBody struct {
+	BannedSequences *[]string `json:"banned_sequences,omitempty"`
+	BarcodeLength   int       `json:"barcode_length"`
+	GcRange         struct {
+		MaxGc *float32 `json:"max_gc,omitempty"`
+		MinGc *float32 `json:"min_gc,omitempty"`
+	} `json:"gc_range"`
+	MaxSubSequence int `json:"max_sub_sequence"`
 }
 
-// PostSimulateGoldengateJSONBody defines parameters for PostSimulateGoldengate.
-type PostSimulateGoldengateJSONBody struct {
-	Enzyme    *Enzyme   `json:"enzyme,omitempty"`
-	Sequences *[]string `json:"sequences,omitempty"`
+// PostPcrPrimersMarmurDotyJSONBody defines parameters for PostPcrPrimersMarmurDoty.
+type PostPcrPrimersMarmurDotyJSONBody struct {
+	Sequence string `json:"sequence"`
 }
 
-// PostSimulateLigateJSONBody defines parameters for PostSimulateLigate.
-type PostSimulateLigateJSONBody = []Fragment
+// PostPcrPrimersMeltingTemperatureJSONBody defines parameters for PostPcrPrimersMeltingTemperature.
+type PostPcrPrimersMeltingTemperatureJSONBody struct {
+	Sequence string `json:"sequence"`
+}
 
-// PostSimulatePcrJSONBody defines parameters for PostSimulatePcr.
-type PostSimulatePcrJSONBody struct {
+// PostPcrPrimersSantaLuciaJSONBody defines parameters for PostPcrPrimersSantaLucia.
+type PostPcrPrimersSantaLuciaJSONBody struct {
+	MagnesiumConcentration float32 `json:"magnesiumConcentration"`
+	PrimerConcentration    float32 `json:"primerConcentration"`
+	SaltConcentration      float32 `json:"saltConcentration"`
+	Sequence               string  `json:"sequence"`
+}
+
+// PostPcrSimplePcrJSONBody defines parameters for PostPcrSimplePcr.
+type PostPcrSimplePcrJSONBody struct {
 	Circular      *bool   `json:"circular,omitempty"`
 	ForwardPrimer string  `json:"forward_primer"`
 	ReversePrimer string  `json:"reverse_primer"`
@@ -191,20 +238,31 @@ type PostSimulatePcrJSONBody struct {
 	Template      string  `json:"template"`
 }
 
-// PostSimulateRestrictionDigestJSONBody defines parameters for PostSimulateRestrictionDigest.
-type PostSimulateRestrictionDigestJSONBody struct {
-	Enzyme   *Enzyme `json:"enzyme,omitempty"`
-	Sequence *string `json:"sequence,omitempty"`
+// PostSynthesisFragmentJSONBody defines parameters for PostSynthesisFragment.
+type PostSynthesisFragmentJSONBody struct {
+	ExcludeOverhangs *[]string `json:"exclude_overhangs,omitempty"`
+	MaxFragmentSize  int       `json:"max_fragment_size"`
+	MinFragmentSize  int       `json:"min_fragment_size"`
+	Sequence         string    `json:"sequence"`
 }
 
-// PostDesignCdsFixJSONRequestBody defines body for PostDesignCdsFix for application/json ContentType.
-type PostDesignCdsFixJSONRequestBody PostDesignCdsFixJSONBody
+// PostCdsFixJSONRequestBody defines body for PostCdsFix for application/json ContentType.
+type PostCdsFixJSONRequestBody PostCdsFixJSONBody
 
-// PostDesignCdsOptimizeJSONRequestBody defines body for PostDesignCdsOptimize for application/json ContentType.
-type PostDesignCdsOptimizeJSONRequestBody PostDesignCdsOptimizeJSONBody
+// PostCdsOptimizeJSONRequestBody defines body for PostCdsOptimize for application/json ContentType.
+type PostCdsOptimizeJSONRequestBody PostCdsOptimizeJSONBody
 
-// PostDesignCdsTranslateJSONRequestBody defines body for PostDesignCdsTranslate for application/json ContentType.
-type PostDesignCdsTranslateJSONRequestBody PostDesignCdsTranslateJSONBody
+// PostCdsTranslateJSONRequestBody defines body for PostCdsTranslate for application/json ContentType.
+type PostCdsTranslateJSONRequestBody PostCdsTranslateJSONBody
+
+// PostCloningGoldengateJSONRequestBody defines body for PostCloningGoldengate for application/json ContentType.
+type PostCloningGoldengateJSONRequestBody PostCloningGoldengateJSONBody
+
+// PostCloningLigateJSONRequestBody defines body for PostCloningLigate for application/json ContentType.
+type PostCloningLigateJSONRequestBody = PostCloningLigateJSONBody
+
+// PostCloningRestrictionDigestJSONRequestBody defines body for PostCloningRestrictionDigest for application/json ContentType.
+type PostCloningRestrictionDigestJSONRequestBody PostCloningRestrictionDigestJSONBody
 
 // PostExecuteLuaJSONRequestBody defines body for PostExecuteLua for application/json ContentType.
 type PostExecuteLuaJSONRequestBody PostExecuteLuaJSONBody
@@ -212,23 +270,38 @@ type PostExecuteLuaJSONRequestBody PostExecuteLuaJSONBody
 // PostIoFastaParseTextRequestBody defines body for PostIoFastaParse for text/plain ContentType.
 type PostIoFastaParseTextRequestBody = PostIoFastaParseTextBody
 
+// PostIoFastaWriteJSONRequestBody defines body for PostIoFastaWrite for application/json ContentType.
+type PostIoFastaWriteJSONRequestBody = PostIoFastaWriteJSONBody
+
+// PostIoFastqParseTextRequestBody defines body for PostIoFastqParse for text/plain ContentType.
+type PostIoFastqParseTextRequestBody = PostIoFastqParseTextBody
+
+// PostIoFastqWriteJSONRequestBody defines body for PostIoFastqWrite for application/json ContentType.
+type PostIoFastqWriteJSONRequestBody = PostIoFastqWriteJSONBody
+
 // PostIoGenbankParseTextRequestBody defines body for PostIoGenbankParse for text/plain ContentType.
 type PostIoGenbankParseTextRequestBody = PostIoGenbankParseTextBody
 
-// PostSimulateComplexPcrJSONRequestBody defines body for PostSimulateComplexPcr for application/json ContentType.
-type PostSimulateComplexPcrJSONRequestBody PostSimulateComplexPcrJSONBody
+// PostIoGenbankWriteJSONRequestBody defines body for PostIoGenbankWrite for application/json ContentType.
+type PostIoGenbankWriteJSONRequestBody = PostIoGenbankWriteJSONBody
 
-// PostSimulateFragmentJSONRequestBody defines body for PostSimulateFragment for application/json ContentType.
-type PostSimulateFragmentJSONRequestBody PostSimulateFragmentJSONBody
+// PostPcrComplexPcrJSONRequestBody defines body for PostPcrComplexPcr for application/json ContentType.
+type PostPcrComplexPcrJSONRequestBody PostPcrComplexPcrJSONBody
 
-// PostSimulateGoldengateJSONRequestBody defines body for PostSimulateGoldengate for application/json ContentType.
-type PostSimulateGoldengateJSONRequestBody PostSimulateGoldengateJSONBody
+// PostPcrPrimersDebruijnBarcodesJSONRequestBody defines body for PostPcrPrimersDebruijnBarcodes for application/json ContentType.
+type PostPcrPrimersDebruijnBarcodesJSONRequestBody PostPcrPrimersDebruijnBarcodesJSONBody
 
-// PostSimulateLigateJSONRequestBody defines body for PostSimulateLigate for application/json ContentType.
-type PostSimulateLigateJSONRequestBody = PostSimulateLigateJSONBody
+// PostPcrPrimersMarmurDotyJSONRequestBody defines body for PostPcrPrimersMarmurDoty for application/json ContentType.
+type PostPcrPrimersMarmurDotyJSONRequestBody PostPcrPrimersMarmurDotyJSONBody
 
-// PostSimulatePcrJSONRequestBody defines body for PostSimulatePcr for application/json ContentType.
-type PostSimulatePcrJSONRequestBody PostSimulatePcrJSONBody
+// PostPcrPrimersMeltingTemperatureJSONRequestBody defines body for PostPcrPrimersMeltingTemperature for application/json ContentType.
+type PostPcrPrimersMeltingTemperatureJSONRequestBody PostPcrPrimersMeltingTemperatureJSONBody
 
-// PostSimulateRestrictionDigestJSONRequestBody defines body for PostSimulateRestrictionDigest for application/json ContentType.
-type PostSimulateRestrictionDigestJSONRequestBody PostSimulateRestrictionDigestJSONBody
+// PostPcrPrimersSantaLuciaJSONRequestBody defines body for PostPcrPrimersSantaLucia for application/json ContentType.
+type PostPcrPrimersSantaLuciaJSONRequestBody PostPcrPrimersSantaLuciaJSONBody
+
+// PostPcrSimplePcrJSONRequestBody defines body for PostPcrSimplePcr for application/json ContentType.
+type PostPcrSimplePcrJSONRequestBody PostPcrSimplePcrJSONBody
+
+// PostSynthesisFragmentJSONRequestBody defines body for PostSynthesisFragment for application/json ContentType.
+type PostSynthesisFragmentJSONRequestBody PostSynthesisFragmentJSONBody

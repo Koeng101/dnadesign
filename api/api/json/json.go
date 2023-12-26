@@ -106,11 +106,11 @@ func (j jsonValue) MarshalJSON() (data []byte, err error) {
 			for key != lua.LNil {
 				if key.Type() != lua.LTNumber {
 					err = errInvalidKeys
-					return
+					return data, err
 				}
 				if expectedKey != key {
 					err = errSparseArray
-					return
+					return data, err
 				}
 				arr = append(arr, jsonValue{value, j.visited})
 				expectedKey++
@@ -122,7 +122,7 @@ func (j jsonValue) MarshalJSON() (data []byte, err error) {
 			for key != lua.LNil {
 				if key.Type() != lua.LTString {
 					err = errInvalidKeys
-					return
+					return data, err
 				}
 				obj[key.String()] = jsonValue{value, j.visited}
 				key, value = converted.Next(key)

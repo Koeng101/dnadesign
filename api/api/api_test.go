@@ -94,11 +94,11 @@ ORIGIN
 }
 
 func TestFix(t *testing.T) {
-	req := httptest.NewRequest("POST", "/api/design/cds/fix", strings.NewReader(`{"organism":"Escherichia coli","sequence":"ATGGGTCTCTAA","removeSequences":["GGTCTC"]}`))
+	req := httptest.NewRequest("POST", "/api/cds/fix", strings.NewReader(`{"organism":"Escherichia coli","sequence":"ATGCGTCTCTAA","removeSequences":["CGTCTC"]}`))
 	resp := httptest.NewRecorder()
 	app.Router.ServeHTTP(resp, req)
 
-	r := `{"changes":[{"From":"CTC","Position":2,"Reason":"Common TypeIIS restriction enzymes - BsaI, BbsI, PaqCI","Step":0,"To":"CTG"}],"sequence":"ATGGGTCTGTAA"}`
+	r := `{"changes":[{"From":"CTC","Position":2,"Reason":"User requested sequence removal","Step":0,"To":"CTG"}],"sequence":"ATGCGTCTGTAA"}`
 	if strings.TrimSpace(resp.Body.String()) != r {
 		t.Errorf("Unexpected response. Expected: " + r + "\nGot: " + resp.Body.String())
 	}
@@ -106,7 +106,7 @@ func TestFix(t *testing.T) {
 
 func TestOptimize(t *testing.T) {
 	gfp := "MASKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK"
-	req := httptest.NewRequest("POST", "/api/design/cds/optimize", strings.NewReader(fmt.Sprintf(`{"organism":"Escherichia coli","sequence":"%s"}`, gfp)))
+	req := httptest.NewRequest("POST", "/api/cds/optimize", strings.NewReader(fmt.Sprintf(`{"organism":"Escherichia coli","sequence":"%s"}`, gfp)))
 	resp := httptest.NewRecorder()
 	app.Router.ServeHTTP(resp, req)
 
@@ -118,7 +118,7 @@ func TestOptimize(t *testing.T) {
 
 func TestTranslate(t *testing.T) {
 	gfp := "ATGGCATCCAAGGGCGAGGAGTTGTTCACCGGTGTTGTGCCGATCCTGGTGGAGCTGGACGGTGACGTGAACGGTCACAAATTTAGCGTGTCCGGTGAGGGTGAGGGTGATGCTACCTATGGCAAGCTGACCCTGAAATTCATTTGTACCACGGGTAAACTGCCGGTCCCGTGGCCGACGCTGGTGACCACCTTCAGCTATGGTGTGCAGTGTTTCAGCCGCTACCCGGACCACATGAAGCGCCACGACTTTTTCAAGAGCGCGATGCCGGAGGGTTATGTGCAAGAACGTACCATCAGCTTTAAAGATGATGGTAACTATAAGACCCGCGCGGAAGTCAAGTTTGAGGGTGACACGCTGGTGAATCGTATTGAGTTGAAGGGTATTGACTTTAAGGAGGATGGTAATATTTTGGGCCACAAACTGGAGTACAATTACAATAGCCACAATGTTTACATCACGGCAGATAAACAGAAGAACGGTATCAAGGCGAACTTCAAAATTCGTCACAACATTGAGGACGGTTCTGTTCAACTGGCGGACCATTACCAACAGAATACCCCGATCGGTGACGGCCCGGTTCTGCTGCCGGACAACCATTATTTGAGCACCCAGTCCGCCCTGAGCAAGGACCCGAATGAGAAGCGTGATCATATGGTTCTGCTGGAGTTTGTGACCGCGGCGGGCATCACCCACGGCATGGACGAGCTGTACAAG"
-	req := httptest.NewRequest("POST", "/api/design/cds/translate", strings.NewReader(fmt.Sprintf(`{"translation_table":11,"sequence":"%s"}`, gfp)))
+	req := httptest.NewRequest("POST", "/api/cds/translate", strings.NewReader(fmt.Sprintf(`{"translation_table":11,"sequence":"%s"}`, gfp)))
 	resp := httptest.NewRecorder()
 	app.Router.ServeHTTP(resp, req)
 
@@ -141,7 +141,7 @@ func TestFragment(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to marshal: %s", err)
 	}
-	req := httptest.NewRequest("POST", "/api/simulate/fragment", bytes.NewBuffer(b))
+	req := httptest.NewRequest("POST", "/api/synthesis/fragment", bytes.NewBuffer(b))
 	resp := httptest.NewRecorder()
 	app.Router.ServeHTTP(resp, req)
 
@@ -149,7 +149,6 @@ func TestFragment(t *testing.T) {
 	if strings.TrimSpace(resp.Body.String()) != r {
 		t.Errorf("Unexpected response. Expected: " + r + "\nGot: " + resp.Body.String())
 	}
-
 }
 
 func TestPCR(t *testing.T) {
@@ -158,12 +157,12 @@ func TestPCR(t *testing.T) {
 	revPrimer := "TATATGGTCTCTTCATTTAAGAAAGCGCATTTTCCAGC"
 	primers := []string{fwdPrimer, revPrimer}
 	circular := false
-	complexReq := &gen.PostSimulateComplexPcrJSONBody{Circular: &circular, Primers: primers, TargetTm: 55.0, Templates: []string{gene}}
+	complexReq := &gen.PostPcrComplexPcrJSONBody{Circular: &circular, Primers: primers, TargetTm: 55.0, Templates: []string{gene}}
 	b, err := json.Marshal(complexReq)
 	if err != nil {
 		t.Errorf("Failed to marshal: %s", err)
 	}
-	req := httptest.NewRequest("POST", "/api/simulate/complex_pcr", bytes.NewBuffer(b))
+	req := httptest.NewRequest("POST", "/api/pcr/complex_pcr", bytes.NewBuffer(b))
 	resp := httptest.NewRecorder()
 	app.Router.ServeHTTP(resp, req)
 	r := `["TTATAGGTCTCATACTAATAATTACACCGAGATAACACATCATGGATAAACCGATACTCAAAGATTCTATGAAGCTATTTGAGGCACTTGGTACGATCAAGTCGCGCTCAATGTTTGGTGGCTTCGGACTTTTCGCTGATGAAACGATGTTTGCACTGGTTGTGAATGATCAACTTCACATACGAGCAGACCAGCAAACTTCATCTAACTTCGAGAAGCAAGGGCTAAAACCGTACGTTTATAAAAAGCGTGGTTTTCCAGTCGTTACTAAGTACTACGCGATTTCCGACGACTTGTGGGAATCCAGTGAACGCTTGATAGAAGTAGCGAAGAAGTCGTTAGAACAAGCCAATTTGGAAAAAAAGCAACAGGCAAGTAGTAAGCCCGACAGGTTGAAAGACCTGCCTAACTTACGACTAGCGACTGAACGAATGCTTAAGAAAGCTGGTATAAAATCAGTTGAACAACTTGAAGAGAAAGGTGCATTGAATGCTTACAAAGCGATACGTGACTCTCACTCCGCAAAAGTAAGTATTGAGCTACTCTGGGCTTTAGAAGGAGCGATAAACGGCACGCACTGGAGCGTCGTTCCTCAATCTCGCAGAGAAGAGCTGGAAAATGCGCTTTCTTAAATGAAGAGACCATATA"]`
@@ -171,12 +170,12 @@ func TestPCR(t *testing.T) {
 		t.Errorf("Unexpected response. Expected: " + r + "\nGot: " + resp.Body.String())
 	}
 
-	simpleReq := &gen.PostSimulatePcrJSONBody{Circular: &circular, TargetTm: 55.0, Template: gene, ForwardPrimer: fwdPrimer, ReversePrimer: revPrimer}
+	simpleReq := &gen.PostPcrSimplePcrJSONBody{Circular: &circular, TargetTm: 55.0, Template: gene, ForwardPrimer: fwdPrimer, ReversePrimer: revPrimer}
 	b, err = json.Marshal(simpleReq)
 	if err != nil {
 		t.Errorf("Failed to marshal: %s", err)
 	}
-	req = httptest.NewRequest("POST", "/api/simulate/pcr", bytes.NewBuffer(b))
+	req = httptest.NewRequest("POST", "/api/pcr/simple_pcr", bytes.NewBuffer(b))
 	resp = httptest.NewRecorder()
 	app.Router.ServeHTTP(resp, req)
 	r = `"TTATAGGTCTCATACTAATAATTACACCGAGATAACACATCATGGATAAACCGATACTCAAAGATTCTATGAAGCTATTTGAGGCACTTGGTACGATCAAGTCGCGCTCAATGTTTGGTGGCTTCGGACTTTTCGCTGATGAAACGATGTTTGCACTGGTTGTGAATGATCAACTTCACATACGAGCAGACCAGCAAACTTCATCTAACTTCGAGAAGCAAGGGCTAAAACCGTACGTTTATAAAAAGCGTGGTTTTCCAGTCGTTACTAAGTACTACGCGATTTCCGACGACTTGTGGGAATCCAGTGAACGCTTGATAGAAGTAGCGAAGAAGTCGTTAGAACAAGCCAATTTGGAAAAAAAGCAACAGGCAAGTAGTAAGCCCGACAGGTTGAAAGACCTGCCTAACTTACGACTAGCGACTGAACGAATGCTTAAGAAAGCTGGTATAAAATCAGTTGAACAACTTGAAGAGAAAGGTGCATTGAATGCTTACAAAGCGATACGTGACTCTCACTCCGCAAAAGTAAGTATTGAGCTACTCTGGGCTTTAGAAGGAGCGATAAACGGCACGCACTGGAGCGTCGTTCCTCAATCTCGCAGAGAAGAGCTGGAAAATGCGCTTTCTTAAATGAAGAGACCATATA"`

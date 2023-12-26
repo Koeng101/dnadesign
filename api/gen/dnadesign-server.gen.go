@@ -24,41 +24,65 @@ import (
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Fix CDS
-	// (POST /design/cds/fix)
-	PostDesignCdsFix(w http.ResponseWriter, r *http.Request)
+	// (POST /cds/fix)
+	PostCdsFix(w http.ResponseWriter, r *http.Request)
 	// Optimize CDS.
-	// (POST /design/cds/optimize)
-	PostDesignCdsOptimize(w http.ResponseWriter, r *http.Request)
+	// (POST /cds/optimize)
+	PostCdsOptimize(w http.ResponseWriter, r *http.Request)
 	// Translate CDS
-	// (POST /design/cds/translate)
-	PostDesignCdsTranslate(w http.ResponseWriter, r *http.Request)
+	// (POST /cds/translate)
+	PostCdsTranslate(w http.ResponseWriter, r *http.Request)
+	// Simulate Golden Gate assembly
+	// (POST /cloning/goldengate)
+	PostCloningGoldengate(w http.ResponseWriter, r *http.Request)
+	// Simulate ligation
+	// (POST /cloning/ligate)
+	PostCloningLigate(w http.ResponseWriter, r *http.Request)
+	// Simulate restriction digest
+	// (POST /cloning/restriction_digest)
+	PostCloningRestrictionDigest(w http.ResponseWriter, r *http.Request)
 	// Run a lua script
 	// (POST /execute_lua)
 	PostExecuteLua(w http.ResponseWriter, r *http.Request)
 	// Parse FASTA data
 	// (POST /io/fasta/parse)
 	PostIoFastaParse(w http.ResponseWriter, r *http.Request)
+	// Write FASTA data
+	// (POST /io/fasta/write)
+	PostIoFastaWrite(w http.ResponseWriter, r *http.Request)
+	// Parse FASTQ data
+	// (POST /io/fastq/parse)
+	PostIoFastqParse(w http.ResponseWriter, r *http.Request)
+	// Write FASTQ data
+	// (POST /io/fastq/write)
+	PostIoFastqWrite(w http.ResponseWriter, r *http.Request)
 	// Parse Genbank data
 	// (POST /io/genbank/parse)
 	PostIoGenbankParse(w http.ResponseWriter, r *http.Request)
+	// Write Genbank data
+	// (POST /io/genbank/write)
+	PostIoGenbankWrite(w http.ResponseWriter, r *http.Request)
 	// Simulate PCR
-	// (POST /simulate/complex_pcr)
-	PostSimulateComplexPcr(w http.ResponseWriter, r *http.Request)
-	// Fragment CDS
-	// (POST /simulate/fragment)
-	PostSimulateFragment(w http.ResponseWriter, r *http.Request)
-	// Simulate Golden Gate assembly
-	// (POST /simulate/goldengate)
-	PostSimulateGoldengate(w http.ResponseWriter, r *http.Request)
-	// Simulate ligation
-	// (POST /simulate/ligate)
-	PostSimulateLigate(w http.ResponseWriter, r *http.Request)
+	// (POST /pcr/complex_pcr)
+	PostPcrComplexPcr(w http.ResponseWriter, r *http.Request)
+	// Generate De Bruijn sequence-based barcodes
+	// (POST /pcr/primers/debruijn_barcodes)
+	PostPcrPrimersDebruijnBarcodes(w http.ResponseWriter, r *http.Request)
+	// Calculate Melting Temperature using Marmur Doty method
+	// (POST /pcr/primers/marmur_doty)
+	PostPcrPrimersMarmurDoty(w http.ResponseWriter, r *http.Request)
+	// Calculate Melting Temperature
+	// (POST /pcr/primers/melting_temperature)
+	PostPcrPrimersMeltingTemperature(w http.ResponseWriter, r *http.Request)
+	// Calculate Melting Temperature using Santa Lucia method
+	// (POST /pcr/primers/santa_lucia)
+	PostPcrPrimersSantaLucia(w http.ResponseWriter, r *http.Request)
 	// Simulate a simple PCR
-	// (POST /simulate/pcr)
-	PostSimulatePcr(w http.ResponseWriter, r *http.Request)
-	// Simulate restriction digest
-	// (POST /simulate/restriction_digest)
-	PostSimulateRestrictionDigest(w http.ResponseWriter, r *http.Request)
+	// (POST /pcr/simple_pcr)
+	PostPcrSimplePcr(w http.ResponseWriter, r *http.Request)
+	// Fragment CDS
+	// (POST /synthesis/fragment)
+	PostSynthesisFragment(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -66,20 +90,38 @@ type ServerInterface interface {
 type Unimplemented struct{}
 
 // Fix CDS
-// (POST /design/cds/fix)
-func (_ Unimplemented) PostDesignCdsFix(w http.ResponseWriter, r *http.Request) {
+// (POST /cds/fix)
+func (_ Unimplemented) PostCdsFix(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Optimize CDS.
-// (POST /design/cds/optimize)
-func (_ Unimplemented) PostDesignCdsOptimize(w http.ResponseWriter, r *http.Request) {
+// (POST /cds/optimize)
+func (_ Unimplemented) PostCdsOptimize(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Translate CDS
-// (POST /design/cds/translate)
-func (_ Unimplemented) PostDesignCdsTranslate(w http.ResponseWriter, r *http.Request) {
+// (POST /cds/translate)
+func (_ Unimplemented) PostCdsTranslate(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Simulate Golden Gate assembly
+// (POST /cloning/goldengate)
+func (_ Unimplemented) PostCloningGoldengate(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Simulate ligation
+// (POST /cloning/ligate)
+func (_ Unimplemented) PostCloningLigate(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Simulate restriction digest
+// (POST /cloning/restriction_digest)
+func (_ Unimplemented) PostCloningRestrictionDigest(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -95,45 +137,75 @@ func (_ Unimplemented) PostIoFastaParse(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// Write FASTA data
+// (POST /io/fasta/write)
+func (_ Unimplemented) PostIoFastaWrite(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Parse FASTQ data
+// (POST /io/fastq/parse)
+func (_ Unimplemented) PostIoFastqParse(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Write FASTQ data
+// (POST /io/fastq/write)
+func (_ Unimplemented) PostIoFastqWrite(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // Parse Genbank data
 // (POST /io/genbank/parse)
 func (_ Unimplemented) PostIoGenbankParse(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// Write Genbank data
+// (POST /io/genbank/write)
+func (_ Unimplemented) PostIoGenbankWrite(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
 // Simulate PCR
-// (POST /simulate/complex_pcr)
-func (_ Unimplemented) PostSimulateComplexPcr(w http.ResponseWriter, r *http.Request) {
+// (POST /pcr/complex_pcr)
+func (_ Unimplemented) PostPcrComplexPcr(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Fragment CDS
-// (POST /simulate/fragment)
-func (_ Unimplemented) PostSimulateFragment(w http.ResponseWriter, r *http.Request) {
+// Generate De Bruijn sequence-based barcodes
+// (POST /pcr/primers/debruijn_barcodes)
+func (_ Unimplemented) PostPcrPrimersDebruijnBarcodes(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Simulate Golden Gate assembly
-// (POST /simulate/goldengate)
-func (_ Unimplemented) PostSimulateGoldengate(w http.ResponseWriter, r *http.Request) {
+// Calculate Melting Temperature using Marmur Doty method
+// (POST /pcr/primers/marmur_doty)
+func (_ Unimplemented) PostPcrPrimersMarmurDoty(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Simulate ligation
-// (POST /simulate/ligate)
-func (_ Unimplemented) PostSimulateLigate(w http.ResponseWriter, r *http.Request) {
+// Calculate Melting Temperature
+// (POST /pcr/primers/melting_temperature)
+func (_ Unimplemented) PostPcrPrimersMeltingTemperature(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Calculate Melting Temperature using Santa Lucia method
+// (POST /pcr/primers/santa_lucia)
+func (_ Unimplemented) PostPcrPrimersSantaLucia(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Simulate a simple PCR
-// (POST /simulate/pcr)
-func (_ Unimplemented) PostSimulatePcr(w http.ResponseWriter, r *http.Request) {
+// (POST /pcr/simple_pcr)
+func (_ Unimplemented) PostPcrSimplePcr(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Simulate restriction digest
-// (POST /simulate/restriction_digest)
-func (_ Unimplemented) PostSimulateRestrictionDigest(w http.ResponseWriter, r *http.Request) {
+// Fragment CDS
+// (POST /synthesis/fragment)
+func (_ Unimplemented) PostSynthesisFragment(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -146,12 +218,12 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// PostDesignCdsFix operation middleware
-func (siw *ServerInterfaceWrapper) PostDesignCdsFix(w http.ResponseWriter, r *http.Request) {
+// PostCdsFix operation middleware
+func (siw *ServerInterfaceWrapper) PostCdsFix(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostDesignCdsFix(w, r)
+		siw.Handler.PostCdsFix(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -161,12 +233,12 @@ func (siw *ServerInterfaceWrapper) PostDesignCdsFix(w http.ResponseWriter, r *ht
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostDesignCdsOptimize operation middleware
-func (siw *ServerInterfaceWrapper) PostDesignCdsOptimize(w http.ResponseWriter, r *http.Request) {
+// PostCdsOptimize operation middleware
+func (siw *ServerInterfaceWrapper) PostCdsOptimize(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostDesignCdsOptimize(w, r)
+		siw.Handler.PostCdsOptimize(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -176,12 +248,57 @@ func (siw *ServerInterfaceWrapper) PostDesignCdsOptimize(w http.ResponseWriter, 
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostDesignCdsTranslate operation middleware
-func (siw *ServerInterfaceWrapper) PostDesignCdsTranslate(w http.ResponseWriter, r *http.Request) {
+// PostCdsTranslate operation middleware
+func (siw *ServerInterfaceWrapper) PostCdsTranslate(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostDesignCdsTranslate(w, r)
+		siw.Handler.PostCdsTranslate(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostCloningGoldengate operation middleware
+func (siw *ServerInterfaceWrapper) PostCloningGoldengate(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCloningGoldengate(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostCloningLigate operation middleware
+func (siw *ServerInterfaceWrapper) PostCloningLigate(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCloningLigate(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostCloningRestrictionDigest operation middleware
+func (siw *ServerInterfaceWrapper) PostCloningRestrictionDigest(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostCloningRestrictionDigest(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -221,6 +338,51 @@ func (siw *ServerInterfaceWrapper) PostIoFastaParse(w http.ResponseWriter, r *ht
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
+// PostIoFastaWrite operation middleware
+func (siw *ServerInterfaceWrapper) PostIoFastaWrite(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostIoFastaWrite(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostIoFastqParse operation middleware
+func (siw *ServerInterfaceWrapper) PostIoFastqParse(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostIoFastqParse(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostIoFastqWrite operation middleware
+func (siw *ServerInterfaceWrapper) PostIoFastqWrite(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostIoFastqWrite(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
 // PostIoGenbankParse operation middleware
 func (siw *ServerInterfaceWrapper) PostIoGenbankParse(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -236,12 +398,12 @@ func (siw *ServerInterfaceWrapper) PostIoGenbankParse(w http.ResponseWriter, r *
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostSimulateComplexPcr operation middleware
-func (siw *ServerInterfaceWrapper) PostSimulateComplexPcr(w http.ResponseWriter, r *http.Request) {
+// PostIoGenbankWrite operation middleware
+func (siw *ServerInterfaceWrapper) PostIoGenbankWrite(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostSimulateComplexPcr(w, r)
+		siw.Handler.PostIoGenbankWrite(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -251,12 +413,12 @@ func (siw *ServerInterfaceWrapper) PostSimulateComplexPcr(w http.ResponseWriter,
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostSimulateFragment operation middleware
-func (siw *ServerInterfaceWrapper) PostSimulateFragment(w http.ResponseWriter, r *http.Request) {
+// PostPcrComplexPcr operation middleware
+func (siw *ServerInterfaceWrapper) PostPcrComplexPcr(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostSimulateFragment(w, r)
+		siw.Handler.PostPcrComplexPcr(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -266,12 +428,12 @@ func (siw *ServerInterfaceWrapper) PostSimulateFragment(w http.ResponseWriter, r
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostSimulateGoldengate operation middleware
-func (siw *ServerInterfaceWrapper) PostSimulateGoldengate(w http.ResponseWriter, r *http.Request) {
+// PostPcrPrimersDebruijnBarcodes operation middleware
+func (siw *ServerInterfaceWrapper) PostPcrPrimersDebruijnBarcodes(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostSimulateGoldengate(w, r)
+		siw.Handler.PostPcrPrimersDebruijnBarcodes(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -281,12 +443,12 @@ func (siw *ServerInterfaceWrapper) PostSimulateGoldengate(w http.ResponseWriter,
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostSimulateLigate operation middleware
-func (siw *ServerInterfaceWrapper) PostSimulateLigate(w http.ResponseWriter, r *http.Request) {
+// PostPcrPrimersMarmurDoty operation middleware
+func (siw *ServerInterfaceWrapper) PostPcrPrimersMarmurDoty(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostSimulateLigate(w, r)
+		siw.Handler.PostPcrPrimersMarmurDoty(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -296,12 +458,12 @@ func (siw *ServerInterfaceWrapper) PostSimulateLigate(w http.ResponseWriter, r *
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostSimulatePcr operation middleware
-func (siw *ServerInterfaceWrapper) PostSimulatePcr(w http.ResponseWriter, r *http.Request) {
+// PostPcrPrimersMeltingTemperature operation middleware
+func (siw *ServerInterfaceWrapper) PostPcrPrimersMeltingTemperature(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostSimulatePcr(w, r)
+		siw.Handler.PostPcrPrimersMeltingTemperature(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -311,12 +473,42 @@ func (siw *ServerInterfaceWrapper) PostSimulatePcr(w http.ResponseWriter, r *htt
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
-// PostSimulateRestrictionDigest operation middleware
-func (siw *ServerInterfaceWrapper) PostSimulateRestrictionDigest(w http.ResponseWriter, r *http.Request) {
+// PostPcrPrimersSantaLucia operation middleware
+func (siw *ServerInterfaceWrapper) PostPcrPrimersSantaLucia(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostSimulateRestrictionDigest(w, r)
+		siw.Handler.PostPcrPrimersSantaLucia(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostPcrSimplePcr operation middleware
+func (siw *ServerInterfaceWrapper) PostPcrSimplePcr(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostPcrSimplePcr(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostSynthesisFragment operation middleware
+func (siw *ServerInterfaceWrapper) PostSynthesisFragment(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostSynthesisFragment(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -440,13 +632,22 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/design/cds/fix", wrapper.PostDesignCdsFix)
+		r.Post(options.BaseURL+"/cds/fix", wrapper.PostCdsFix)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/design/cds/optimize", wrapper.PostDesignCdsOptimize)
+		r.Post(options.BaseURL+"/cds/optimize", wrapper.PostCdsOptimize)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/design/cds/translate", wrapper.PostDesignCdsTranslate)
+		r.Post(options.BaseURL+"/cds/translate", wrapper.PostCdsTranslate)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/cloning/goldengate", wrapper.PostCloningGoldengate)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/cloning/ligate", wrapper.PostCloningLigate)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/cloning/restriction_digest", wrapper.PostCloningRestrictionDigest)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/execute_lua", wrapper.PostExecuteLua)
@@ -455,53 +656,68 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/io/fasta/parse", wrapper.PostIoFastaParse)
 	})
 	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/io/fasta/write", wrapper.PostIoFastaWrite)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/io/fastq/parse", wrapper.PostIoFastqParse)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/io/fastq/write", wrapper.PostIoFastqWrite)
+	})
+	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/io/genbank/parse", wrapper.PostIoGenbankParse)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/simulate/complex_pcr", wrapper.PostSimulateComplexPcr)
+		r.Post(options.BaseURL+"/io/genbank/write", wrapper.PostIoGenbankWrite)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/simulate/fragment", wrapper.PostSimulateFragment)
+		r.Post(options.BaseURL+"/pcr/complex_pcr", wrapper.PostPcrComplexPcr)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/simulate/goldengate", wrapper.PostSimulateGoldengate)
+		r.Post(options.BaseURL+"/pcr/primers/debruijn_barcodes", wrapper.PostPcrPrimersDebruijnBarcodes)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/simulate/ligate", wrapper.PostSimulateLigate)
+		r.Post(options.BaseURL+"/pcr/primers/marmur_doty", wrapper.PostPcrPrimersMarmurDoty)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/simulate/pcr", wrapper.PostSimulatePcr)
+		r.Post(options.BaseURL+"/pcr/primers/melting_temperature", wrapper.PostPcrPrimersMeltingTemperature)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/simulate/restriction_digest", wrapper.PostSimulateRestrictionDigest)
+		r.Post(options.BaseURL+"/pcr/primers/santa_lucia", wrapper.PostPcrPrimersSantaLucia)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/pcr/simple_pcr", wrapper.PostPcrSimplePcr)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/synthesis/fragment", wrapper.PostSynthesisFragment)
 	})
 
 	return r
 }
 
-type PostDesignCdsFixRequestObject struct {
-	Body *PostDesignCdsFixJSONRequestBody
+type PostCdsFixRequestObject struct {
+	Body *PostCdsFixJSONRequestBody
 }
 
-type PostDesignCdsFixResponseObject interface {
-	VisitPostDesignCdsFixResponse(w http.ResponseWriter) error
+type PostCdsFixResponseObject interface {
+	VisitPostCdsFixResponse(w http.ResponseWriter) error
 }
 
-type PostDesignCdsFix200JSONResponse struct {
+type PostCdsFix200JSONResponse struct {
 	Changes  []Change `json:"changes"`
 	Sequence string   `json:"sequence"`
 }
 
-func (response PostDesignCdsFix200JSONResponse) VisitPostDesignCdsFixResponse(w http.ResponseWriter) error {
+func (response PostCdsFix200JSONResponse) VisitPostCdsFixResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostDesignCdsFix400TextResponse string
+type PostCdsFix400TextResponse string
 
-func (response PostDesignCdsFix400TextResponse) VisitPostDesignCdsFixResponse(w http.ResponseWriter) error {
+func (response PostCdsFix400TextResponse) VisitPostCdsFixResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(400)
 
@@ -509,9 +725,9 @@ func (response PostDesignCdsFix400TextResponse) VisitPostDesignCdsFixResponse(w 
 	return err
 }
 
-type PostDesignCdsFix500TextResponse string
+type PostCdsFix500TextResponse string
 
-func (response PostDesignCdsFix500TextResponse) VisitPostDesignCdsFixResponse(w http.ResponseWriter) error {
+func (response PostCdsFix500TextResponse) VisitPostCdsFixResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(500)
 
@@ -519,26 +735,26 @@ func (response PostDesignCdsFix500TextResponse) VisitPostDesignCdsFixResponse(w 
 	return err
 }
 
-type PostDesignCdsOptimizeRequestObject struct {
-	Body *PostDesignCdsOptimizeJSONRequestBody
+type PostCdsOptimizeRequestObject struct {
+	Body *PostCdsOptimizeJSONRequestBody
 }
 
-type PostDesignCdsOptimizeResponseObject interface {
-	VisitPostDesignCdsOptimizeResponse(w http.ResponseWriter) error
+type PostCdsOptimizeResponseObject interface {
+	VisitPostCdsOptimizeResponse(w http.ResponseWriter) error
 }
 
-type PostDesignCdsOptimize200JSONResponse string
+type PostCdsOptimize200JSONResponse string
 
-func (response PostDesignCdsOptimize200JSONResponse) VisitPostDesignCdsOptimizeResponse(w http.ResponseWriter) error {
+func (response PostCdsOptimize200JSONResponse) VisitPostCdsOptimizeResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostDesignCdsOptimize400TextResponse string
+type PostCdsOptimize400TextResponse string
 
-func (response PostDesignCdsOptimize400TextResponse) VisitPostDesignCdsOptimizeResponse(w http.ResponseWriter) error {
+func (response PostCdsOptimize400TextResponse) VisitPostCdsOptimizeResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(400)
 
@@ -546,9 +762,9 @@ func (response PostDesignCdsOptimize400TextResponse) VisitPostDesignCdsOptimizeR
 	return err
 }
 
-type PostDesignCdsOptimize500TextResponse string
+type PostCdsOptimize500TextResponse string
 
-func (response PostDesignCdsOptimize500TextResponse) VisitPostDesignCdsOptimizeResponse(w http.ResponseWriter) error {
+func (response PostCdsOptimize500TextResponse) VisitPostCdsOptimizeResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(500)
 
@@ -556,26 +772,94 @@ func (response PostDesignCdsOptimize500TextResponse) VisitPostDesignCdsOptimizeR
 	return err
 }
 
-type PostDesignCdsTranslateRequestObject struct {
-	Body *PostDesignCdsTranslateJSONRequestBody
+type PostCdsTranslateRequestObject struct {
+	Body *PostCdsTranslateJSONRequestBody
 }
 
-type PostDesignCdsTranslateResponseObject interface {
-	VisitPostDesignCdsTranslateResponse(w http.ResponseWriter) error
+type PostCdsTranslateResponseObject interface {
+	VisitPostCdsTranslateResponse(w http.ResponseWriter) error
 }
 
-type PostDesignCdsTranslate200JSONResponse string
+type PostCdsTranslate200JSONResponse string
 
-func (response PostDesignCdsTranslate200JSONResponse) VisitPostDesignCdsTranslateResponse(w http.ResponseWriter) error {
+func (response PostCdsTranslate200JSONResponse) VisitPostCdsTranslateResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostDesignCdsTranslate500TextResponse string
+type PostCdsTranslate500TextResponse string
 
-func (response PostDesignCdsTranslate500TextResponse) VisitPostDesignCdsTranslateResponse(w http.ResponseWriter) error {
+func (response PostCdsTranslate500TextResponse) VisitPostCdsTranslateResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(500)
+
+	_, err := w.Write([]byte(response))
+	return err
+}
+
+type PostCloningGoldengateRequestObject struct {
+	Body *PostCloningGoldengateJSONRequestBody
+}
+
+type PostCloningGoldengateResponseObject interface {
+	VisitPostCloningGoldengateResponse(w http.ResponseWriter) error
+}
+
+type PostCloningGoldengate200Response struct {
+}
+
+func (response PostCloningGoldengate200Response) VisitPostCloningGoldengateResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostCloningGoldengate500TextResponse string
+
+func (response PostCloningGoldengate500TextResponse) VisitPostCloningGoldengateResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(500)
+
+	_, err := w.Write([]byte(response))
+	return err
+}
+
+type PostCloningLigateRequestObject struct {
+	Body *PostCloningLigateJSONRequestBody
+}
+
+type PostCloningLigateResponseObject interface {
+	VisitPostCloningLigateResponse(w http.ResponseWriter) error
+}
+
+type PostCloningLigate200Response struct {
+}
+
+func (response PostCloningLigate200Response) VisitPostCloningLigateResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostCloningRestrictionDigestRequestObject struct {
+	Body *PostCloningRestrictionDigestJSONRequestBody
+}
+
+type PostCloningRestrictionDigestResponseObject interface {
+	VisitPostCloningRestrictionDigestResponse(w http.ResponseWriter) error
+}
+
+type PostCloningRestrictionDigest200Response struct {
+}
+
+func (response PostCloningRestrictionDigest200Response) VisitPostCloningRestrictionDigestResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostCloningRestrictionDigest500TextResponse string
+
+func (response PostCloningRestrictionDigest500TextResponse) VisitPostCloningRestrictionDigestResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(500)
 
@@ -640,6 +924,55 @@ func (response PostIoFastaParse500TextResponse) VisitPostIoFastaParseResponse(w 
 	return err
 }
 
+type PostIoFastaWriteRequestObject struct {
+	Body *PostIoFastaWriteJSONRequestBody
+}
+
+type PostIoFastaWriteResponseObject interface {
+	VisitPostIoFastaWriteResponse(w http.ResponseWriter) error
+}
+
+type PostIoFastaWrite200Response struct {
+}
+
+func (response PostIoFastaWrite200Response) VisitPostIoFastaWriteResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostIoFastqParseRequestObject struct {
+	Body *PostIoFastqParseTextRequestBody
+}
+
+type PostIoFastqParseResponseObject interface {
+	VisitPostIoFastqParseResponse(w http.ResponseWriter) error
+}
+
+type PostIoFastqParse200JSONResponse []FastqRead
+
+func (response PostIoFastqParse200JSONResponse) VisitPostIoFastqParseResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostIoFastqWriteRequestObject struct {
+	Body *PostIoFastqWriteJSONRequestBody
+}
+
+type PostIoFastqWriteResponseObject interface {
+	VisitPostIoFastqWriteResponse(w http.ResponseWriter) error
+}
+
+type PostIoFastqWrite200Response struct {
+}
+
+func (response PostIoFastqWrite200Response) VisitPostIoFastqWriteResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
 type PostIoGenbankParseRequestObject struct {
 	Body *PostIoGenbankParseTextRequestBody
 }
@@ -667,26 +1000,42 @@ func (response PostIoGenbankParse500TextResponse) VisitPostIoGenbankParseRespons
 	return err
 }
 
-type PostSimulateComplexPcrRequestObject struct {
-	Body *PostSimulateComplexPcrJSONRequestBody
+type PostIoGenbankWriteRequestObject struct {
+	Body *PostIoGenbankWriteJSONRequestBody
 }
 
-type PostSimulateComplexPcrResponseObject interface {
-	VisitPostSimulateComplexPcrResponse(w http.ResponseWriter) error
+type PostIoGenbankWriteResponseObject interface {
+	VisitPostIoGenbankWriteResponse(w http.ResponseWriter) error
 }
 
-type PostSimulateComplexPcr200JSONResponse []string
+type PostIoGenbankWrite200Response struct {
+}
 
-func (response PostSimulateComplexPcr200JSONResponse) VisitPostSimulateComplexPcrResponse(w http.ResponseWriter) error {
+func (response PostIoGenbankWrite200Response) VisitPostIoGenbankWriteResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostPcrComplexPcrRequestObject struct {
+	Body *PostPcrComplexPcrJSONRequestBody
+}
+
+type PostPcrComplexPcrResponseObject interface {
+	VisitPostPcrComplexPcrResponse(w http.ResponseWriter) error
+}
+
+type PostPcrComplexPcr200JSONResponse []string
+
+func (response PostPcrComplexPcr200JSONResponse) VisitPostPcrComplexPcrResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostSimulateComplexPcr500TextResponse string
+type PostPcrComplexPcr500TextResponse string
 
-func (response PostSimulateComplexPcr500TextResponse) VisitPostSimulateComplexPcrResponse(w http.ResponseWriter) error {
+func (response PostPcrComplexPcr500TextResponse) VisitPostPcrComplexPcrResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(500)
 
@@ -694,124 +1043,120 @@ func (response PostSimulateComplexPcr500TextResponse) VisitPostSimulateComplexPc
 	return err
 }
 
-type PostSimulateFragmentRequestObject struct {
-	Body *PostSimulateFragmentJSONRequestBody
+type PostPcrPrimersDebruijnBarcodesRequestObject struct {
+	Body *PostPcrPrimersDebruijnBarcodesJSONRequestBody
 }
 
-type PostSimulateFragmentResponseObject interface {
-	VisitPostSimulateFragmentResponse(w http.ResponseWriter) error
+type PostPcrPrimersDebruijnBarcodesResponseObject interface {
+	VisitPostPcrPrimersDebruijnBarcodesResponse(w http.ResponseWriter) error
 }
 
-type PostSimulateFragment200JSONResponse struct {
+type PostPcrPrimersDebruijnBarcodes200Response struct {
+}
+
+func (response PostPcrPrimersDebruijnBarcodes200Response) VisitPostPcrPrimersDebruijnBarcodesResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostPcrPrimersMarmurDotyRequestObject struct {
+	Body *PostPcrPrimersMarmurDotyJSONRequestBody
+}
+
+type PostPcrPrimersMarmurDotyResponseObject interface {
+	VisitPostPcrPrimersMarmurDotyResponse(w http.ResponseWriter) error
+}
+
+type PostPcrPrimersMarmurDoty200Response struct {
+}
+
+func (response PostPcrPrimersMarmurDoty200Response) VisitPostPcrPrimersMarmurDotyResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostPcrPrimersMeltingTemperatureRequestObject struct {
+	Body *PostPcrPrimersMeltingTemperatureJSONRequestBody
+}
+
+type PostPcrPrimersMeltingTemperatureResponseObject interface {
+	VisitPostPcrPrimersMeltingTemperatureResponse(w http.ResponseWriter) error
+}
+
+type PostPcrPrimersMeltingTemperature200Response struct {
+}
+
+func (response PostPcrPrimersMeltingTemperature200Response) VisitPostPcrPrimersMeltingTemperatureResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostPcrPrimersSantaLuciaRequestObject struct {
+	Body *PostPcrPrimersSantaLuciaJSONRequestBody
+}
+
+type PostPcrPrimersSantaLuciaResponseObject interface {
+	VisitPostPcrPrimersSantaLuciaResponse(w http.ResponseWriter) error
+}
+
+type PostPcrPrimersSantaLucia200Response struct {
+}
+
+func (response PostPcrPrimersSantaLucia200Response) VisitPostPcrPrimersSantaLuciaResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostPcrSimplePcrRequestObject struct {
+	Body *PostPcrSimplePcrJSONRequestBody
+}
+
+type PostPcrSimplePcrResponseObject interface {
+	VisitPostPcrSimplePcrResponse(w http.ResponseWriter) error
+}
+
+type PostPcrSimplePcr200JSONResponse string
+
+func (response PostPcrSimplePcr200JSONResponse) VisitPostPcrSimplePcrResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostPcrSimplePcr500TextResponse string
+
+func (response PostPcrSimplePcr500TextResponse) VisitPostPcrSimplePcrResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(500)
+
+	_, err := w.Write([]byte(response))
+	return err
+}
+
+type PostSynthesisFragmentRequestObject struct {
+	Body *PostSynthesisFragmentJSONRequestBody
+}
+
+type PostSynthesisFragmentResponseObject interface {
+	VisitPostSynthesisFragmentResponse(w http.ResponseWriter) error
+}
+
+type PostSynthesisFragment200JSONResponse struct {
 	Efficiency float32  `json:"efficiency"`
 	Fragments  []string `json:"fragments"`
 }
 
-func (response PostSimulateFragment200JSONResponse) VisitPostSimulateFragmentResponse(w http.ResponseWriter) error {
+func (response PostSynthesisFragment200JSONResponse) VisitPostSynthesisFragmentResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostSimulateFragment500TextResponse string
+type PostSynthesisFragment500TextResponse string
 
-func (response PostSimulateFragment500TextResponse) VisitPostSimulateFragmentResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(500)
-
-	_, err := w.Write([]byte(response))
-	return err
-}
-
-type PostSimulateGoldengateRequestObject struct {
-	Body *PostSimulateGoldengateJSONRequestBody
-}
-
-type PostSimulateGoldengateResponseObject interface {
-	VisitPostSimulateGoldengateResponse(w http.ResponseWriter) error
-}
-
-type PostSimulateGoldengate200Response struct {
-}
-
-func (response PostSimulateGoldengate200Response) VisitPostSimulateGoldengateResponse(w http.ResponseWriter) error {
-	w.WriteHeader(200)
-	return nil
-}
-
-type PostSimulateGoldengate500TextResponse string
-
-func (response PostSimulateGoldengate500TextResponse) VisitPostSimulateGoldengateResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(500)
-
-	_, err := w.Write([]byte(response))
-	return err
-}
-
-type PostSimulateLigateRequestObject struct {
-	Body *PostSimulateLigateJSONRequestBody
-}
-
-type PostSimulateLigateResponseObject interface {
-	VisitPostSimulateLigateResponse(w http.ResponseWriter) error
-}
-
-type PostSimulateLigate200Response struct {
-}
-
-func (response PostSimulateLigate200Response) VisitPostSimulateLigateResponse(w http.ResponseWriter) error {
-	w.WriteHeader(200)
-	return nil
-}
-
-type PostSimulatePcrRequestObject struct {
-	Body *PostSimulatePcrJSONRequestBody
-}
-
-type PostSimulatePcrResponseObject interface {
-	VisitPostSimulatePcrResponse(w http.ResponseWriter) error
-}
-
-type PostSimulatePcr200JSONResponse string
-
-func (response PostSimulatePcr200JSONResponse) VisitPostSimulatePcrResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PostSimulatePcr500TextResponse string
-
-func (response PostSimulatePcr500TextResponse) VisitPostSimulatePcrResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(500)
-
-	_, err := w.Write([]byte(response))
-	return err
-}
-
-type PostSimulateRestrictionDigestRequestObject struct {
-	Body *PostSimulateRestrictionDigestJSONRequestBody
-}
-
-type PostSimulateRestrictionDigestResponseObject interface {
-	VisitPostSimulateRestrictionDigestResponse(w http.ResponseWriter) error
-}
-
-type PostSimulateRestrictionDigest200Response struct {
-}
-
-func (response PostSimulateRestrictionDigest200Response) VisitPostSimulateRestrictionDigestResponse(w http.ResponseWriter) error {
-	w.WriteHeader(200)
-	return nil
-}
-
-type PostSimulateRestrictionDigest500TextResponse string
-
-func (response PostSimulateRestrictionDigest500TextResponse) VisitPostSimulateRestrictionDigestResponse(w http.ResponseWriter) error {
+func (response PostSynthesisFragment500TextResponse) VisitPostSynthesisFragmentResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(500)
 
@@ -822,41 +1167,65 @@ func (response PostSimulateRestrictionDigest500TextResponse) VisitPostSimulateRe
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// Fix CDS
-	// (POST /design/cds/fix)
-	PostDesignCdsFix(ctx context.Context, request PostDesignCdsFixRequestObject) (PostDesignCdsFixResponseObject, error)
+	// (POST /cds/fix)
+	PostCdsFix(ctx context.Context, request PostCdsFixRequestObject) (PostCdsFixResponseObject, error)
 	// Optimize CDS.
-	// (POST /design/cds/optimize)
-	PostDesignCdsOptimize(ctx context.Context, request PostDesignCdsOptimizeRequestObject) (PostDesignCdsOptimizeResponseObject, error)
+	// (POST /cds/optimize)
+	PostCdsOptimize(ctx context.Context, request PostCdsOptimizeRequestObject) (PostCdsOptimizeResponseObject, error)
 	// Translate CDS
-	// (POST /design/cds/translate)
-	PostDesignCdsTranslate(ctx context.Context, request PostDesignCdsTranslateRequestObject) (PostDesignCdsTranslateResponseObject, error)
+	// (POST /cds/translate)
+	PostCdsTranslate(ctx context.Context, request PostCdsTranslateRequestObject) (PostCdsTranslateResponseObject, error)
+	// Simulate Golden Gate assembly
+	// (POST /cloning/goldengate)
+	PostCloningGoldengate(ctx context.Context, request PostCloningGoldengateRequestObject) (PostCloningGoldengateResponseObject, error)
+	// Simulate ligation
+	// (POST /cloning/ligate)
+	PostCloningLigate(ctx context.Context, request PostCloningLigateRequestObject) (PostCloningLigateResponseObject, error)
+	// Simulate restriction digest
+	// (POST /cloning/restriction_digest)
+	PostCloningRestrictionDigest(ctx context.Context, request PostCloningRestrictionDigestRequestObject) (PostCloningRestrictionDigestResponseObject, error)
 	// Run a lua script
 	// (POST /execute_lua)
 	PostExecuteLua(ctx context.Context, request PostExecuteLuaRequestObject) (PostExecuteLuaResponseObject, error)
 	// Parse FASTA data
 	// (POST /io/fasta/parse)
 	PostIoFastaParse(ctx context.Context, request PostIoFastaParseRequestObject) (PostIoFastaParseResponseObject, error)
+	// Write FASTA data
+	// (POST /io/fasta/write)
+	PostIoFastaWrite(ctx context.Context, request PostIoFastaWriteRequestObject) (PostIoFastaWriteResponseObject, error)
+	// Parse FASTQ data
+	// (POST /io/fastq/parse)
+	PostIoFastqParse(ctx context.Context, request PostIoFastqParseRequestObject) (PostIoFastqParseResponseObject, error)
+	// Write FASTQ data
+	// (POST /io/fastq/write)
+	PostIoFastqWrite(ctx context.Context, request PostIoFastqWriteRequestObject) (PostIoFastqWriteResponseObject, error)
 	// Parse Genbank data
 	// (POST /io/genbank/parse)
 	PostIoGenbankParse(ctx context.Context, request PostIoGenbankParseRequestObject) (PostIoGenbankParseResponseObject, error)
+	// Write Genbank data
+	// (POST /io/genbank/write)
+	PostIoGenbankWrite(ctx context.Context, request PostIoGenbankWriteRequestObject) (PostIoGenbankWriteResponseObject, error)
 	// Simulate PCR
-	// (POST /simulate/complex_pcr)
-	PostSimulateComplexPcr(ctx context.Context, request PostSimulateComplexPcrRequestObject) (PostSimulateComplexPcrResponseObject, error)
-	// Fragment CDS
-	// (POST /simulate/fragment)
-	PostSimulateFragment(ctx context.Context, request PostSimulateFragmentRequestObject) (PostSimulateFragmentResponseObject, error)
-	// Simulate Golden Gate assembly
-	// (POST /simulate/goldengate)
-	PostSimulateGoldengate(ctx context.Context, request PostSimulateGoldengateRequestObject) (PostSimulateGoldengateResponseObject, error)
-	// Simulate ligation
-	// (POST /simulate/ligate)
-	PostSimulateLigate(ctx context.Context, request PostSimulateLigateRequestObject) (PostSimulateLigateResponseObject, error)
+	// (POST /pcr/complex_pcr)
+	PostPcrComplexPcr(ctx context.Context, request PostPcrComplexPcrRequestObject) (PostPcrComplexPcrResponseObject, error)
+	// Generate De Bruijn sequence-based barcodes
+	// (POST /pcr/primers/debruijn_barcodes)
+	PostPcrPrimersDebruijnBarcodes(ctx context.Context, request PostPcrPrimersDebruijnBarcodesRequestObject) (PostPcrPrimersDebruijnBarcodesResponseObject, error)
+	// Calculate Melting Temperature using Marmur Doty method
+	// (POST /pcr/primers/marmur_doty)
+	PostPcrPrimersMarmurDoty(ctx context.Context, request PostPcrPrimersMarmurDotyRequestObject) (PostPcrPrimersMarmurDotyResponseObject, error)
+	// Calculate Melting Temperature
+	// (POST /pcr/primers/melting_temperature)
+	PostPcrPrimersMeltingTemperature(ctx context.Context, request PostPcrPrimersMeltingTemperatureRequestObject) (PostPcrPrimersMeltingTemperatureResponseObject, error)
+	// Calculate Melting Temperature using Santa Lucia method
+	// (POST /pcr/primers/santa_lucia)
+	PostPcrPrimersSantaLucia(ctx context.Context, request PostPcrPrimersSantaLuciaRequestObject) (PostPcrPrimersSantaLuciaResponseObject, error)
 	// Simulate a simple PCR
-	// (POST /simulate/pcr)
-	PostSimulatePcr(ctx context.Context, request PostSimulatePcrRequestObject) (PostSimulatePcrResponseObject, error)
-	// Simulate restriction digest
-	// (POST /simulate/restriction_digest)
-	PostSimulateRestrictionDigest(ctx context.Context, request PostSimulateRestrictionDigestRequestObject) (PostSimulateRestrictionDigestResponseObject, error)
+	// (POST /pcr/simple_pcr)
+	PostPcrSimplePcr(ctx context.Context, request PostPcrSimplePcrRequestObject) (PostPcrSimplePcrResponseObject, error)
+	// Fragment CDS
+	// (POST /synthesis/fragment)
+	PostSynthesisFragment(ctx context.Context, request PostSynthesisFragmentRequestObject) (PostSynthesisFragmentResponseObject, error)
 }
 
 type StrictHandlerFunc = strictnethttp.StrictHttpHandlerFunc
@@ -888,11 +1257,11 @@ type strictHandler struct {
 	options     StrictHTTPServerOptions
 }
 
-// PostDesignCdsFix operation middleware
-func (sh *strictHandler) PostDesignCdsFix(w http.ResponseWriter, r *http.Request) {
-	var request PostDesignCdsFixRequestObject
+// PostCdsFix operation middleware
+func (sh *strictHandler) PostCdsFix(w http.ResponseWriter, r *http.Request) {
+	var request PostCdsFixRequestObject
 
-	var body PostDesignCdsFixJSONRequestBody
+	var body PostCdsFixJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -900,18 +1269,18 @@ func (sh *strictHandler) PostDesignCdsFix(w http.ResponseWriter, r *http.Request
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostDesignCdsFix(ctx, request.(PostDesignCdsFixRequestObject))
+		return sh.ssi.PostCdsFix(ctx, request.(PostCdsFixRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostDesignCdsFix")
+		handler = middleware(handler, "PostCdsFix")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostDesignCdsFixResponseObject); ok {
-		if err := validResponse.VisitPostDesignCdsFixResponse(w); err != nil {
+	} else if validResponse, ok := response.(PostCdsFixResponseObject); ok {
+		if err := validResponse.VisitPostCdsFixResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -919,11 +1288,11 @@ func (sh *strictHandler) PostDesignCdsFix(w http.ResponseWriter, r *http.Request
 	}
 }
 
-// PostDesignCdsOptimize operation middleware
-func (sh *strictHandler) PostDesignCdsOptimize(w http.ResponseWriter, r *http.Request) {
-	var request PostDesignCdsOptimizeRequestObject
+// PostCdsOptimize operation middleware
+func (sh *strictHandler) PostCdsOptimize(w http.ResponseWriter, r *http.Request) {
+	var request PostCdsOptimizeRequestObject
 
-	var body PostDesignCdsOptimizeJSONRequestBody
+	var body PostCdsOptimizeJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -931,18 +1300,18 @@ func (sh *strictHandler) PostDesignCdsOptimize(w http.ResponseWriter, r *http.Re
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostDesignCdsOptimize(ctx, request.(PostDesignCdsOptimizeRequestObject))
+		return sh.ssi.PostCdsOptimize(ctx, request.(PostCdsOptimizeRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostDesignCdsOptimize")
+		handler = middleware(handler, "PostCdsOptimize")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostDesignCdsOptimizeResponseObject); ok {
-		if err := validResponse.VisitPostDesignCdsOptimizeResponse(w); err != nil {
+	} else if validResponse, ok := response.(PostCdsOptimizeResponseObject); ok {
+		if err := validResponse.VisitPostCdsOptimizeResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -950,11 +1319,11 @@ func (sh *strictHandler) PostDesignCdsOptimize(w http.ResponseWriter, r *http.Re
 	}
 }
 
-// PostDesignCdsTranslate operation middleware
-func (sh *strictHandler) PostDesignCdsTranslate(w http.ResponseWriter, r *http.Request) {
-	var request PostDesignCdsTranslateRequestObject
+// PostCdsTranslate operation middleware
+func (sh *strictHandler) PostCdsTranslate(w http.ResponseWriter, r *http.Request) {
+	var request PostCdsTranslateRequestObject
 
-	var body PostDesignCdsTranslateJSONRequestBody
+	var body PostCdsTranslateJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -962,18 +1331,111 @@ func (sh *strictHandler) PostDesignCdsTranslate(w http.ResponseWriter, r *http.R
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostDesignCdsTranslate(ctx, request.(PostDesignCdsTranslateRequestObject))
+		return sh.ssi.PostCdsTranslate(ctx, request.(PostCdsTranslateRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostDesignCdsTranslate")
+		handler = middleware(handler, "PostCdsTranslate")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostDesignCdsTranslateResponseObject); ok {
-		if err := validResponse.VisitPostDesignCdsTranslateResponse(w); err != nil {
+	} else if validResponse, ok := response.(PostCdsTranslateResponseObject); ok {
+		if err := validResponse.VisitPostCdsTranslateResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostCloningGoldengate operation middleware
+func (sh *strictHandler) PostCloningGoldengate(w http.ResponseWriter, r *http.Request) {
+	var request PostCloningGoldengateRequestObject
+
+	var body PostCloningGoldengateJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostCloningGoldengate(ctx, request.(PostCloningGoldengateRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostCloningGoldengate")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostCloningGoldengateResponseObject); ok {
+		if err := validResponse.VisitPostCloningGoldengateResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostCloningLigate operation middleware
+func (sh *strictHandler) PostCloningLigate(w http.ResponseWriter, r *http.Request) {
+	var request PostCloningLigateRequestObject
+
+	var body PostCloningLigateJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostCloningLigate(ctx, request.(PostCloningLigateRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostCloningLigate")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostCloningLigateResponseObject); ok {
+		if err := validResponse.VisitPostCloningLigateResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostCloningRestrictionDigest operation middleware
+func (sh *strictHandler) PostCloningRestrictionDigest(w http.ResponseWriter, r *http.Request) {
+	var request PostCloningRestrictionDigestRequestObject
+
+	var body PostCloningRestrictionDigestJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostCloningRestrictionDigest(ctx, request.(PostCloningRestrictionDigestRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostCloningRestrictionDigest")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostCloningRestrictionDigestResponseObject); ok {
+		if err := validResponse.VisitPostCloningRestrictionDigestResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -1044,6 +1506,100 @@ func (sh *strictHandler) PostIoFastaParse(w http.ResponseWriter, r *http.Request
 	}
 }
 
+// PostIoFastaWrite operation middleware
+func (sh *strictHandler) PostIoFastaWrite(w http.ResponseWriter, r *http.Request) {
+	var request PostIoFastaWriteRequestObject
+
+	var body PostIoFastaWriteJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostIoFastaWrite(ctx, request.(PostIoFastaWriteRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostIoFastaWrite")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostIoFastaWriteResponseObject); ok {
+		if err := validResponse.VisitPostIoFastaWriteResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostIoFastqParse operation middleware
+func (sh *strictHandler) PostIoFastqParse(w http.ResponseWriter, r *http.Request) {
+	var request PostIoFastqParseRequestObject
+
+	data, err := io.ReadAll(r.Body)
+	if err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't read body: %w", err))
+		return
+	}
+	body := PostIoFastqParseTextRequestBody(data)
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostIoFastqParse(ctx, request.(PostIoFastqParseRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostIoFastqParse")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostIoFastqParseResponseObject); ok {
+		if err := validResponse.VisitPostIoFastqParseResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostIoFastqWrite operation middleware
+func (sh *strictHandler) PostIoFastqWrite(w http.ResponseWriter, r *http.Request) {
+	var request PostIoFastqWriteRequestObject
+
+	var body PostIoFastqWriteJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostIoFastqWrite(ctx, request.(PostIoFastqWriteRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostIoFastqWrite")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostIoFastqWriteResponseObject); ok {
+		if err := validResponse.VisitPostIoFastqWriteResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // PostIoGenbankParse operation middleware
 func (sh *strictHandler) PostIoGenbankParse(w http.ResponseWriter, r *http.Request) {
 	var request PostIoGenbankParseRequestObject
@@ -1076,11 +1632,11 @@ func (sh *strictHandler) PostIoGenbankParse(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-// PostSimulateComplexPcr operation middleware
-func (sh *strictHandler) PostSimulateComplexPcr(w http.ResponseWriter, r *http.Request) {
-	var request PostSimulateComplexPcrRequestObject
+// PostIoGenbankWrite operation middleware
+func (sh *strictHandler) PostIoGenbankWrite(w http.ResponseWriter, r *http.Request) {
+	var request PostIoGenbankWriteRequestObject
 
-	var body PostSimulateComplexPcrJSONRequestBody
+	var body PostIoGenbankWriteJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -1088,18 +1644,18 @@ func (sh *strictHandler) PostSimulateComplexPcr(w http.ResponseWriter, r *http.R
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostSimulateComplexPcr(ctx, request.(PostSimulateComplexPcrRequestObject))
+		return sh.ssi.PostIoGenbankWrite(ctx, request.(PostIoGenbankWriteRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostSimulateComplexPcr")
+		handler = middleware(handler, "PostIoGenbankWrite")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostSimulateComplexPcrResponseObject); ok {
-		if err := validResponse.VisitPostSimulateComplexPcrResponse(w); err != nil {
+	} else if validResponse, ok := response.(PostIoGenbankWriteResponseObject); ok {
+		if err := validResponse.VisitPostIoGenbankWriteResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -1107,11 +1663,11 @@ func (sh *strictHandler) PostSimulateComplexPcr(w http.ResponseWriter, r *http.R
 	}
 }
 
-// PostSimulateFragment operation middleware
-func (sh *strictHandler) PostSimulateFragment(w http.ResponseWriter, r *http.Request) {
-	var request PostSimulateFragmentRequestObject
+// PostPcrComplexPcr operation middleware
+func (sh *strictHandler) PostPcrComplexPcr(w http.ResponseWriter, r *http.Request) {
+	var request PostPcrComplexPcrRequestObject
 
-	var body PostSimulateFragmentJSONRequestBody
+	var body PostPcrComplexPcrJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -1119,18 +1675,18 @@ func (sh *strictHandler) PostSimulateFragment(w http.ResponseWriter, r *http.Req
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostSimulateFragment(ctx, request.(PostSimulateFragmentRequestObject))
+		return sh.ssi.PostPcrComplexPcr(ctx, request.(PostPcrComplexPcrRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostSimulateFragment")
+		handler = middleware(handler, "PostPcrComplexPcr")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostSimulateFragmentResponseObject); ok {
-		if err := validResponse.VisitPostSimulateFragmentResponse(w); err != nil {
+	} else if validResponse, ok := response.(PostPcrComplexPcrResponseObject); ok {
+		if err := validResponse.VisitPostPcrComplexPcrResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -1138,11 +1694,11 @@ func (sh *strictHandler) PostSimulateFragment(w http.ResponseWriter, r *http.Req
 	}
 }
 
-// PostSimulateGoldengate operation middleware
-func (sh *strictHandler) PostSimulateGoldengate(w http.ResponseWriter, r *http.Request) {
-	var request PostSimulateGoldengateRequestObject
+// PostPcrPrimersDebruijnBarcodes operation middleware
+func (sh *strictHandler) PostPcrPrimersDebruijnBarcodes(w http.ResponseWriter, r *http.Request) {
+	var request PostPcrPrimersDebruijnBarcodesRequestObject
 
-	var body PostSimulateGoldengateJSONRequestBody
+	var body PostPcrPrimersDebruijnBarcodesJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -1150,18 +1706,18 @@ func (sh *strictHandler) PostSimulateGoldengate(w http.ResponseWriter, r *http.R
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostSimulateGoldengate(ctx, request.(PostSimulateGoldengateRequestObject))
+		return sh.ssi.PostPcrPrimersDebruijnBarcodes(ctx, request.(PostPcrPrimersDebruijnBarcodesRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostSimulateGoldengate")
+		handler = middleware(handler, "PostPcrPrimersDebruijnBarcodes")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostSimulateGoldengateResponseObject); ok {
-		if err := validResponse.VisitPostSimulateGoldengateResponse(w); err != nil {
+	} else if validResponse, ok := response.(PostPcrPrimersDebruijnBarcodesResponseObject); ok {
+		if err := validResponse.VisitPostPcrPrimersDebruijnBarcodesResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -1169,11 +1725,11 @@ func (sh *strictHandler) PostSimulateGoldengate(w http.ResponseWriter, r *http.R
 	}
 }
 
-// PostSimulateLigate operation middleware
-func (sh *strictHandler) PostSimulateLigate(w http.ResponseWriter, r *http.Request) {
-	var request PostSimulateLigateRequestObject
+// PostPcrPrimersMarmurDoty operation middleware
+func (sh *strictHandler) PostPcrPrimersMarmurDoty(w http.ResponseWriter, r *http.Request) {
+	var request PostPcrPrimersMarmurDotyRequestObject
 
-	var body PostSimulateLigateJSONRequestBody
+	var body PostPcrPrimersMarmurDotyJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -1181,18 +1737,18 @@ func (sh *strictHandler) PostSimulateLigate(w http.ResponseWriter, r *http.Reque
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostSimulateLigate(ctx, request.(PostSimulateLigateRequestObject))
+		return sh.ssi.PostPcrPrimersMarmurDoty(ctx, request.(PostPcrPrimersMarmurDotyRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostSimulateLigate")
+		handler = middleware(handler, "PostPcrPrimersMarmurDoty")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostSimulateLigateResponseObject); ok {
-		if err := validResponse.VisitPostSimulateLigateResponse(w); err != nil {
+	} else if validResponse, ok := response.(PostPcrPrimersMarmurDotyResponseObject); ok {
+		if err := validResponse.VisitPostPcrPrimersMarmurDotyResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -1200,11 +1756,11 @@ func (sh *strictHandler) PostSimulateLigate(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-// PostSimulatePcr operation middleware
-func (sh *strictHandler) PostSimulatePcr(w http.ResponseWriter, r *http.Request) {
-	var request PostSimulatePcrRequestObject
+// PostPcrPrimersMeltingTemperature operation middleware
+func (sh *strictHandler) PostPcrPrimersMeltingTemperature(w http.ResponseWriter, r *http.Request) {
+	var request PostPcrPrimersMeltingTemperatureRequestObject
 
-	var body PostSimulatePcrJSONRequestBody
+	var body PostPcrPrimersMeltingTemperatureJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -1212,18 +1768,18 @@ func (sh *strictHandler) PostSimulatePcr(w http.ResponseWriter, r *http.Request)
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostSimulatePcr(ctx, request.(PostSimulatePcrRequestObject))
+		return sh.ssi.PostPcrPrimersMeltingTemperature(ctx, request.(PostPcrPrimersMeltingTemperatureRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostSimulatePcr")
+		handler = middleware(handler, "PostPcrPrimersMeltingTemperature")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostSimulatePcrResponseObject); ok {
-		if err := validResponse.VisitPostSimulatePcrResponse(w); err != nil {
+	} else if validResponse, ok := response.(PostPcrPrimersMeltingTemperatureResponseObject); ok {
+		if err := validResponse.VisitPostPcrPrimersMeltingTemperatureResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -1231,11 +1787,11 @@ func (sh *strictHandler) PostSimulatePcr(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-// PostSimulateRestrictionDigest operation middleware
-func (sh *strictHandler) PostSimulateRestrictionDigest(w http.ResponseWriter, r *http.Request) {
-	var request PostSimulateRestrictionDigestRequestObject
+// PostPcrPrimersSantaLucia operation middleware
+func (sh *strictHandler) PostPcrPrimersSantaLucia(w http.ResponseWriter, r *http.Request) {
+	var request PostPcrPrimersSantaLuciaRequestObject
 
-	var body PostSimulateRestrictionDigestJSONRequestBody
+	var body PostPcrPrimersSantaLuciaJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -1243,18 +1799,80 @@ func (sh *strictHandler) PostSimulateRestrictionDigest(w http.ResponseWriter, r 
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostSimulateRestrictionDigest(ctx, request.(PostSimulateRestrictionDigestRequestObject))
+		return sh.ssi.PostPcrPrimersSantaLucia(ctx, request.(PostPcrPrimersSantaLuciaRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostSimulateRestrictionDigest")
+		handler = middleware(handler, "PostPcrPrimersSantaLucia")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostSimulateRestrictionDigestResponseObject); ok {
-		if err := validResponse.VisitPostSimulateRestrictionDigestResponse(w); err != nil {
+	} else if validResponse, ok := response.(PostPcrPrimersSantaLuciaResponseObject); ok {
+		if err := validResponse.VisitPostPcrPrimersSantaLuciaResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostPcrSimplePcr operation middleware
+func (sh *strictHandler) PostPcrSimplePcr(w http.ResponseWriter, r *http.Request) {
+	var request PostPcrSimplePcrRequestObject
+
+	var body PostPcrSimplePcrJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostPcrSimplePcr(ctx, request.(PostPcrSimplePcrRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostPcrSimplePcr")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostPcrSimplePcrResponseObject); ok {
+		if err := validResponse.VisitPostPcrSimplePcrResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostSynthesisFragment operation middleware
+func (sh *strictHandler) PostSynthesisFragment(w http.ResponseWriter, r *http.Request) {
+	var request PostSynthesisFragmentRequestObject
+
+	var body PostSynthesisFragmentJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostSynthesisFragment(ctx, request.(PostSynthesisFragmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostSynthesisFragment")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostSynthesisFragmentResponseObject); ok {
+		if err := validResponse.VisitPostSynthesisFragmentResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -1265,38 +1883,45 @@ func (sh *strictHandler) PostSimulateRestrictionDigest(w http.ResponseWriter, r 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/9xaW2/bOBb+K4R2HwXLndldzPgtcZoiQDo17OzTojBo8chmK5EqL6k9Rf77QqQo0RYl",
-	"K81tdp9Sl4fn9n3n8JD2jyjlRckZMCWj2Y9IpjsosPnnhVI43RXAVPWpFLwEoSiYtZQzVS+oQwnRLJJK",
-	"ULaNHuKI4QICCw9xJOCbpgJINPuPlYobRZ9jJ883XyBVlaJLLGHOdcj+BksIGk+dfL1CmYItiI55o8CJ",
-	"h4zPd5htoWv5WvAiaHnBJVWUs5DxOFoClkdr7caVgjK86Y6fz2NjtlYUWw/N5sZsKMD37M+DBQqYLipV",
-	"lxLfRHF0uZHVnwX+NjcfZXF542loHb/GUuElpFyQbp4oAaZoRkEEg5bwTQNLRxDFU+RtC0V0DVhpEcAM",
-	"KyXoRqv6EyEmYzhfHHusoJBBZ+v/wELgg/e5tUxApoKWJ/C3CnKeYrf4dwFZNIv+lrSFl9RVl9w6ueEM",
-	"OQ/Opc6sHnsX+8nwjHg+BlMr8DbcCa65+I4F+XQPoqqYoLdLuAchYVBmNZoQqyEOfAC2wexrHyszS5Fj",
-	"vIcQcZwKsKAAhc9t/1jJPIruRmvcOnqG87ces05bdFHmUBx36Q3nOWDDL2Ak3HUyeg8LQQtYYKEozsPb",
-	"t5uvzvbKRhJC9QunLLxfKixU2AGpN071eKD80unU607A2ZBOcLD+2TTFfjLroAJ5ChkKJeokwh5YtQxg",
-	"SkWqcyx6ILHcv6L3VPZ1ooITmlFr+gor6BHKIdU53IW7TO8R33J1zkkfJZzILbCt2o0eFE62nTjZDT4Q",
-	"ase9uE1oCISPdYGfHCZpCrI3vxt/ZhlF3HbKCTCX9EFEIKOM9h44X+HwnQsi+04jPaaetBzEmostZlQW",
-	"PYt0S8O+cbWzQ0HfQdx3/rbICMhAVECO7w9LtyWUZsm16Dtp8Z4zXhweNyFU510YmxN2E0tMD87YY1ir",
-	"yIPUy3zjuednk3sH9FG6fIY6KGqMQyXwycPYjYnvq5QKmu4oRinPaTUr2k8llooLKoPTYgtAt6S02nEh",
-	"ewZ6JrlQVBc9B4wW7Kiht2ul3nwEElwSbrjvrkCBxdcwyFTlI05wF43b0DrZuNSYcZ4cxdkFojJBWWav",
-	"A9aL6OqPC0RA0i1DF4sbjyqzaDqZTt6ZUiuB4ZJGs+jXyXQyrRzAamcSndi9SUpkktG9AYVL07aOptno",
-	"mu5BopQXBWeoFHyTQyERZWh+tTJ/SwElFqbNoowLVDkmD0ztQFI5iYwXdvmGRLPqwqKujO05kdd0H9ns",
-	"gVSXnBxOLpe4LPO6hSdf6guUregui/x+NNQJGk5btPk9uInykdeA8UOdN2Z7tXtqPIS7USRLzqT17pfp",
-	"9AkpSs2ldnzTrC/BzxW7Mx8meJd2pOIYsnrRd6p2KKdSIZ4hp+khjv7RyYiCvUrKHNOTXJz62bH5bwkC",
-	"UVZqhUAIbobRfz6f+humoOoDSIK4B+FsmIm3KLA42LCroE1D38oqfymR0edKyK9YXipa0D+hv2yXf3xA",
-	"KwCCCGRY50oixdF0uBo/Oa1vWZISoOdi8rR6e4nqOgv53Q6Qw4qgxq3/O9o65lTcnZwjrxKYybyebB17",
-	"B2h518g/Fy+H31Zqc5SztcIbe+TXVRTN3r2Lz70tdhUMXuJfg4Yugy0HURvwK3Olcaa30cEeUq1gnWs8",
-	"TJH3VvBW42ejBm5evccfk95LeeioNPkZ0bSs3MtPATkP38y5VqUe4WgtFxtFY87ylTY3mkznqN77+qxb",
-	"aoYwyjVGdZ5b4lU0s8SjPMmwVDgpsZBn2tMNN+/fCyM5xL7RYT0V5XEPmt6jfYes3dSa8Ai6vljdXSBh",
-	"tsk3QM+4UXtBsHkhdehR3oJXPwKNg69+Kv5fA/D4hXs8hPW+NwfR+dEHo6SFrk6HxL657tdlKoahXNU7",
-	"5nbDIhXPdhoMP7iWghYgHvvlERZbUGtVHI0V/5o2kkwXGzvwKijKKrBHWTgdRhodrb++Ey9x3Ix2tcvV",
-	"+RKVghOdqnpAeQuiOkKhxXzpUdQx85Somf/l2FmWNl+lPRdHYZ/mmsCa11+vPZKPBd6vXQRrWd8pG17+",
-	"Op3GgatYQdnApl/Cm37q/ta1FHL55YcmyDKaUmDp4SjU6eT33wOV67x7SuW2OmLf+piB66JSiHiGGh0I",
-	"M4IwynKO32L6cqQ/Gfn7KmrLcwJse/aK6GrqQyv/bFXV/Dxi6DCuf0ThkfuxiI+l7XHObcDoQ9WksJRQ",
-	"bPLDX6lxhvwbgXtOx2N+S5+I97hx2XXrwOE1CinrJumCE06cyYD9wudcskbPRa83EGX2xyBrO2j0fL9i",
-	"fgsyJPITE9KI38I4yY6XHZ9eejw6W2p/sSkII0mryXrkOCSgspua5y9CtyBHDkbLdt+V3fbWvTzMqp/r",
-	"2N0j+S0h9TBCxCU7BKzJRqWvWvkRaZFHs2inVClnSUIYts+6kw3lCS5p9BD7MrMkyXmK8x2Xavbb9Lep",
-	"lfn88N8AAAD//+A7BjN2KgAA",
+	"H4sIAAAAAAAC/+xa23LbONJ+FRT//5JrKTO7WzO6s+U46ypnolje2outlAoimhISEqBxcKxJ+d23APAk",
+	"EqRg+TSztVeOgu5Gd39fg43DjyjhecEZMCWj2Y9IJlvIsf3nqVI42ebAlPlVCF6AUBTsWMKZKgfUroBo",
+	"FkklKNtED3HEcA6egYc4EnCrqQASzf7tpOLa0Je4kufrr5AoY+gMS5hz7Zt/jSV4J08q+XKEMgUbEL3p",
+	"rYFK3Df5fIvZBvozXwiee2decEkV5cw3eRxdA5Z7Y43iUkHhV7rhh/NYT1saip2HVrme1hfge/b7zgEF",
+	"TOfG1JnEl1Ecna2l+bPAt3P7U+Znly0LjeMXWCp8DQkXpJ8nSoApmlIQ3qAl3GpgSQBRWoZaar6IjD+3",
+	"14A93lyOe/OpMCnEmZXFhFD3c7Fno6fVc+CzxhlVOz/KwQFftgOu1Rrr3tABKy08dMVKCbrWCkZDowry",
+	"0RixEHjnjZmATAQtOsxvDGQ8wdXg/wtIo1n0f5NmzZmUC87kqpIbJ0flwaEk2tF97+J2MlqTtHz0plbg",
+	"jX8RvODiOxbk0x0Is1h4vb2GOxASRmXCqbEco/8HYGvMvg0VZOooso/3GCIVpzwsyEHhQ+ofjcyjKt1a",
+	"jRtHD5T7VYtZ3a9TXmSQ73+g1pxngC2/gBH/gpvSO1gImsMCC0Vx5lffrL9Vcy9dJD5Uv3LK/PpSYaH8",
+	"Dki9rkyHA9UunV69bgUcDKmDg/PPpSluJ7MMypMn30S+RHUiHIBVSw+mVCQ6w2IAEsf9c3pH5dBKlHNC",
+	"U+qmPscKBoQySHQGN/5VZrC7abg652SIEpXIFbCN2gb3SB21jpP94D2h9tyLm4T6QPhYFnjnY5IkIAfz",
+	"u263a0HEbRo8D3PJEEQEUsro4AfnG+y+c0Hk0NdIh9STlqNYc7HBjMp8YJBuqN83rrauAzm+xxCQgjBA",
+	"hq8P15WKL82SazH0pcX3nPF897gOwXzv/Nh02E0cMVtwxi2GNYZakLYyX3ve8rPOfQX0XrraDK2gKDH2",
+	"lcCnFsZVh/zepFTQZEsxSnhGTZvsfhVYKi6o9DbKDQD9ktJqy4Uc2MswyYWiOh/4wGjB9hb0ZqzQ649A",
+	"vEOi2tf0RyDH4psfZKqygC94FU2l0DhZu1RPU3myF2cfCDMFZanbCTkvovPfThEBSTcMnS4uW1SZRdOT",
+	"6ck7W2oFMFzQaBb9fDI9mRoHsNraRE8SIicpvbdocGnXq702Nrqg9yBRwvOcM1QIvs4gl4gyND9f2r+F",
+	"gAILu76ilAtkPJI7prYgqTyJ7PRu+JJEM7NJU3MiL+h95BIGUp1xsutspXFRZOWqPflabhddEfeJ016C",
+	"xoq/prEDmN9B1UQ+svMP7+NanXWrXLuT+6C2hmTBmXTe/TSdPiFFid3Ch6+T5Zb/uWKvpvdzuk84YtiF",
+	"nF30naotyqhUiKeosvQQR3/tZUTBvZoUGaadXHT97M35TwkCUVZohUAIbvvPvz2f+UumwJQ+kiDuQFRz",
+	"2CY3z7HYubBN0HYN30iTv4TI6IsRskXKC0Vz+jsMV+r1bx/QEoAgAinWmZJIcTQdKsBPlb23rEIJMLD9",
+	"eFqJvURBHUT5ZguoQomg2q3/OqZWzDF0PRnkqxKYyaxsXCvCepl4U0s+FxXHD03K6ShnK4XX7ltelkw0",
+	"e/cuPnRe2jcwujt/DeZVGWxoh5qAX5ketTPDy1nGGWWbyYZnBNjmMEec/IdG/LmIAvXB79iKVR4Pt1al",
+	"R/ULD+GU2M+2Cxh9MLnEUkK+znamBSM6USW+8g0AXtJcW3x9/rUBd7B1QM9oMOBX9Ilgh53tVYeafeDC",
+	"YHJukj4y/qzZBLjN3HimBBhLiV1nCN2Ay9bBrF03audO662rxf8NP64mTg00phFMS9jetAJaECFSJduP",
+	"KtxDohWsMo3HYXzvBK80fjbgcH19Gb4DaF15+nYBNmMBzZmTe/kNTsb954xcq0IHOFrKxdZQyDZlqe35",
+	"TKozVOq+Pg+vNUMYZRqjMs8N+QzNHPEon6RYKjwpsJAHFt5Lbi8yF1ZyjH3BYT0V5bAlvHX76lnFu6m1",
+	"4RF0cbq8OUXCqr3FKmLdKL0g2N73VOhR3gXvu6AqDLx/WcmX/miOZzxoKXeRpzQDZKJTwJCsiyrbdbJl",
+	"wwrL1m041W//jFR3F/uPI/rnhugDJPx8OK3BJLx9NRIO5iKYgp+PoOBorso7qDASljfVfzYa7l+wh1Ox",
+	"1HvzVbfyIwDGINKX9l6F9gdzH7a5LDPwOPIfyluRiIm7Jb9fFYkYT9siEXMnu0jEszW747fjhaA5iMe+",
+	"9MFiA2ql8r2jor9Pa0mm87U7t1SQF2Zr8NgTgr0DptpG42/biZfopoNd7Vf2/PqPdCixmF+3iGk42DCz",
+	"TOaEwFpo+pWt1lgknLiMjfJ04TTPS8WzSu+5SLvGjAFZyePuo8owVln3MUXrQH2TrIT/GWeO71ebpKXV",
+	"sDmnzD/ku443dqRerzzb/uGnp3uOe2y0HP/y5DODDTCDLRBUToyahO/T6UMpic4BnVnIa9G/rLFsLMiD",
+	"ZMuxyLVYEe5eQ4bQ7KNVOTcar3AkPnSfcnS+5zhLtDuOziFTlG2QWdJMvFoAwhKlGceqk/JaC30slW5a",
+	"Slqa/3GJQSYzKAe15eRw+p2xVcuDYBicasuN/8FR52E86xIzhVeZTigOzfbSqFxZjefKco43DCTV+Zyz",
+	"BJgSuPNUqlnpnOOH5STOVIDUMbeXPhd8E8ZDcb0QQ2JE/hEjsqyZIo+oXIsusvAeqlxJTU8Y1D4urejr",
+	"dY+pe+a8clANvByyr5zHRI5oJwNeeVeSPS97Pr10L3mwofuDtYwYOcoN9o71c6ZJ2n4BP8jMZSVf3y09",
+	"2xXMfZJpAitePqJ/ZKNo2qsqhJUsX5PUDPx5Oo09naNpAoeVfvIrHbUC9mfyufzylwmQpjShwJLdXqjT",
+	"k19/9dRocxN1/JavsRG3Zw+5iOjfiCHMCMLVV/31XzKVfnTu/+siMkVlGWIsmKEfkRZZNIu2ShVyNpkQ",
+	"ht2TxpM15RNc0OghbsvMJpOMJzjbcqlmv0x/mTqZLw//CQAA///JCz1BwjcAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

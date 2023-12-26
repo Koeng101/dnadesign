@@ -3,7 +3,6 @@ module github.com/koeng101/dnadesign/api
 go 1.21.5
 
 require (
-	github.com/flowchartsman/swaggerui v0.0.0-20221017034628-909ed4f3701b
 	github.com/getkin/kin-openapi v0.122.0
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/koeng101/dnadesign/lib v0.0.0-20231216182748-f354ee0f2714
