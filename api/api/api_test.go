@@ -141,7 +141,7 @@ func TestFragment(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to marshal: %s", err)
 	}
-	req := httptest.NewRequest("POST", "/api/synthesis/fragment", bytes.NewBuffer(b))
+	req := httptest.NewRequest("POST", "/api/cloning/fragment", bytes.NewBuffer(b))
 	resp := httptest.NewRecorder()
 	app.Router.ServeHTTP(resp, req)
 

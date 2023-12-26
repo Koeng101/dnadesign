@@ -257,8 +257,8 @@ type PostCloningFragmentJSONBody struct {
 	Sequence         string    `json:"sequence"`
 }
 
-// PostCloningGoldengateJSONBody defines parameters for PostCloningGoldengate.
-type PostCloningGoldengateJSONBody struct {
+// PostCloningGoldenGateJSONBody defines parameters for PostCloningGoldenGate.
+type PostCloningGoldenGateJSONBody struct {
 	Enzyme    *Enzyme   `json:"enzyme,omitempty"`
 	Sequences *[]string `json:"sequences,omitempty"`
 }
@@ -498,8 +498,8 @@ type PostCdsTranslateJSONRequestBody PostCdsTranslateJSONBody
 // PostCloningFragmentJSONRequestBody defines body for PostCloningFragment for application/json ContentType.
 type PostCloningFragmentJSONRequestBody PostCloningFragmentJSONBody
 
-// PostCloningGoldengateJSONRequestBody defines body for PostCloningGoldengate for application/json ContentType.
-type PostCloningGoldengateJSONRequestBody PostCloningGoldengateJSONBody
+// PostCloningGoldenGateJSONRequestBody defines body for PostCloningGoldenGate for application/json ContentType.
+type PostCloningGoldenGateJSONRequestBody PostCloningGoldenGateJSONBody
 
 // PostCloningLigateJSONRequestBody defines body for PostCloningLigate for application/json ContentType.
 type PostCloningLigateJSONRequestBody = PostCloningLigateJSONBody

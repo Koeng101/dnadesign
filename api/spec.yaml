@@ -1107,7 +1107,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /cloning/goldengate:
+  /cloning/golden_gate:
     post:
       tags:
         - cloning

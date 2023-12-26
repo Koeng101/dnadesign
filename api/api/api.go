@@ -103,7 +103,17 @@ func InitializeApp() App {
 
 	// IO handlers.
 	app.Router.HandleFunc("/api/io/fasta/parse", appImpl.PostIoFastaParse)
+	app.Router.HandleFunc("/api/io/fasta/write", appImpl.PostIoFastaWrite)
 	app.Router.HandleFunc("/api/io/genbank/parse", appImpl.PostIoGenbankParse)
+	app.Router.HandleFunc("/api/io/genbank/write", appImpl.PostIoGenbankWrite)
+	app.Router.HandleFunc("/api/io/fastq/parse", appImpl.PostIoFastqParse)
+	app.Router.HandleFunc("/api/io/fastq/write", appImpl.PostIoFastqWrite)
+	app.Router.HandleFunc("/api/io/pileup/parse", appImpl.PostIoPileupParse)
+	app.Router.HandleFunc("/api/io/pileup/write", appImpl.PostIoPileupWrite)
+	app.Router.HandleFunc("/api/io/slow5/parse", appImpl.PostIoSlow5Parse)
+	app.Router.HandleFunc("/api/io/slow5/write", appImpl.PostIoSlow5Write)
+	app.Router.HandleFunc("/api/io/slow5/svb_compress", appImpl.PostIoSlow5SvbCompress)
+	app.Router.HandleFunc("/api/io/slow5/svb_decompress", appImpl.PostIoSlow5SvbDecompress)
 
 	// CDS design handlers.
 	app.Router.HandleFunc("/api/cds/fix", appImpl.PostCdsFix)
@@ -111,11 +121,51 @@ func InitializeApp() App {
 	app.Router.HandleFunc("/api/cds/translate", appImpl.PostCdsTranslate)
 
 	// PCR handlers.
+	app.Router.HandleFunc("/api/pcr/primers/debruijn_barcodes", appImpl.PostPcrPrimersDebruijnBarcodes)
+	app.Router.HandleFunc("/api/pcr/primers/marmur_doty", appImpl.PostPcrPrimersMarmurDoty)
+	app.Router.HandleFunc("/api/pcr/primers/santa_lucia", appImpl.PostPcrPrimersSantaLucia)
+	app.Router.HandleFunc("/api/pcr/primers/melting_temperature", appImpl.PostPcrPrimersMeltingTemperature)
+	app.Router.HandleFunc("/api/pcr/primers/design_primers", appImpl.PostPcrPrimersDesignPrimers)
 	app.Router.HandleFunc("/api/pcr/complex_pcr", appImpl.PostPcrComplexPcr)
 	app.Router.HandleFunc("/api/pcr/simple_pcr", appImpl.PostPcrSimplePcr)
 
-	// Synthesis handlers.
-	app.Router.HandleFunc("/api/synthesis/fragment", appImpl.PostCloningFragment)
+	// Cloning handlers.
+	app.Router.HandleFunc("/api/cloning/ligate", appImpl.PostCloningLigate)
+	app.Router.HandleFunc("/api/cloning/restriction_digest", appImpl.PostCloningRestrictionDigest)
+	app.Router.HandleFunc("/api/cloning/golden_gate", appImpl.PostCloningGoldenGate)
+	app.Router.HandleFunc("/api/cloning/fragment", appImpl.PostCloningFragment)
+
+	// Folding handlers.
+	app.Router.HandleFunc("/api/folding/zuker", appImpl.PostFoldingZuker)
+	app.Router.HandleFunc("/api/folding/linearfold/contra_fold_v2", appImpl.PostFoldingLinearfoldContraFoldV2)
+	app.Router.HandleFunc("/api/folding/linearfold/vienna_rna_fold", appImpl.PostFoldingLinearfoldViennaRnaFold)
+
+	// Seqhash handlers.
+	app.Router.HandleFunc("/api/seqhash", appImpl.PostSeqhash)
+	app.Router.HandleFunc("/api/seqhash_fragment", appImpl.PostSeqhashFragment)
+
+	// Codon Table handlers.
+	app.Router.HandleFunc("/api/codon_tables/new", appImpl.PostCodonTablesNew)
+	app.Router.HandleFunc("/api/codon_tables/from_genbank", appImpl.PostCodonTablesFromGenbank)
+	app.Router.HandleFunc("/api/codon_tables/compromise_tables", appImpl.PostCodonTablesCompromiseTables)
+	app.Router.HandleFunc("/api/codon_tables/add_tables", appImpl.PostCodonTablesAddTables)
+	app.Router.HandleFunc("/api/codon_tables/default_organisms", appImpl.GetCodonTablesDefaultOrganisms)
+	app.Router.HandleFunc("/api/codon_tables/get_organism_table", appImpl.PostCodonTablesGetOrganismTable)
+
+	// Alignment handlers.
+	app.Router.HandleFunc("/api/align/needleman_wunsch", appImpl.PostAlignNeedlemanWunsch)
+	app.Router.HandleFunc("/api/align/smith_waterman", appImpl.PostAlignSmithWaterman)
+	app.Router.HandleFunc("/api/align/mash", appImpl.PostAlignMash)
+	app.Router.HandleFunc("/api/align/mash_many", appImpl.PostAlignMashMany)
+
+	// Utils handlers.
+	app.Router.HandleFunc("/api/utils/reverse_complement", appImpl.PostUtilsReverseComplement)
+	app.Router.HandleFunc("/api/utils/is_palindromic", appImpl.PostUtilsIsPalindromic)
+
+	// Random handlers.
+	app.Router.HandleFunc("/api/random/random_dna", appImpl.PostRandomRandomDna)
+	app.Router.HandleFunc("/api/random/random_rna", appImpl.PostRandomRandomRna)
+	app.Router.HandleFunc("/api/random/random_protein", appImpl.PostRandomRandomProtein)
 
 	return app
 }
@@ -578,10 +628,10 @@ func (app *App) LuaPcrPrimersDesignPrimers(L *lua.LState) int { return 0 }
 *****************************************************************************
 */
 
-func (app *App) PostCloningGoldengate(ctx context.Context, request gen.PostCloningGoldengateRequestObject) (gen.PostCloningGoldengateResponseObject, error) {
+func (app *App) PostCloningGoldenGate(ctx context.Context, request gen.PostCloningGoldenGateRequestObject) (gen.PostCloningGoldenGateResponseObject, error) {
 	return nil, nil
 }
-func (app *App) LuaCloningGoldengate(L *lua.LState) int { return 0 }
+func (app *App) LuaCloningGoldenGate(L *lua.LState) int { return 0 }
 func (app *App) PostCloningLigate(ctx context.Context, request gen.PostCloningLigateRequestObject) (gen.PostCloningLigateResponseObject, error) {
 	return nil, nil
 }
@@ -626,7 +676,7 @@ func (app *App) LuaCloningFragment(L *lua.LState) int {
 		L.RaiseError(err.Error())
 		return 0
 	}
-	return app.luaResponse(L, "/api/synthesis/fragment", string(b))
+	return app.luaResponse(L, "/api/cloning/fragment", string(b))
 }
 
 /*
