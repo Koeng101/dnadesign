@@ -106,10 +106,10 @@ type GenbankRecord struct {
 
 // HeaderValue defines model for HeaderValue.
 type HeaderValue struct {
-	Attributes         *map[string]string `json:"Attributes,omitempty"`
-	EndReasonHeaderMap *map[string]int    `json:"EndReasonHeaderMap,omitempty"`
-	ReadGroupID        *int               `json:"ReadGroupID,omitempty"`
-	Slow5Version       *string            `json:"Slow5Version,omitempty"`
+	Attributes         map[string]string `json:"Attributes"`
+	EndReasonHeaderMap map[string]int    `json:"EndReasonHeaderMap"`
+	ReadGroupID        int               `json:"ReadGroupID"`
+	Slow5Version       string            `json:"Slow5Version"`
 }
 
 // Location defines model for Location.
@@ -179,26 +179,26 @@ type Reference struct {
 
 // Slow5Header defines model for Slow5Header.
 type Slow5Header struct {
-	HeaderValues *[]HeaderValue `json:"HeaderValues,omitempty"`
+	HeaderValues []HeaderValue `json:"HeaderValues"`
 }
 
 // Slow5Read defines model for Slow5Read.
 type Slow5Read struct {
-	ChannelNumber *string         `json:"ChannelNumber,omitempty"`
-	Digitisation  *float32        `json:"Digitisation,omitempty"`
-	EndReason     *string         `json:"EndReason,omitempty"`
-	EndReasonMap  *map[string]int `json:"EndReasonMap,omitempty"`
-	LenRawSignal  *int            `json:"LenRawSignal,omitempty"`
-	MedianBefore  *float32        `json:"MedianBefore,omitempty"`
-	Offset        *float32        `json:"Offset,omitempty"`
-	Range         *float32        `json:"Range,omitempty"`
-	RawSignal     *[]int          `json:"RawSignal,omitempty"`
-	ReadGroupID   *int            `json:"ReadGroupID,omitempty"`
-	ReadID        *string         `json:"ReadID,omitempty"`
-	ReadNumber    *int            `json:"ReadNumber,omitempty"`
-	SamplingRate  *float32        `json:"SamplingRate,omitempty"`
-	StartMux      *int            `json:"StartMux,omitempty"`
-	StartTime     *int            `json:"StartTime,omitempty"`
+	ChannelNumber string         `json:"ChannelNumber"`
+	Digitisation  float32        `json:"Digitisation"`
+	EndReason     string         `json:"EndReason"`
+	EndReasonMap  map[string]int `json:"EndReasonMap"`
+	LenRawSignal  int            `json:"LenRawSignal"`
+	MedianBefore  float32        `json:"MedianBefore"`
+	Offset        float32        `json:"Offset"`
+	Range         float32        `json:"Range"`
+	RawSignal     []int          `json:"RawSignal"`
+	ReadGroupID   int            `json:"ReadGroupID"`
+	ReadID        string         `json:"ReadID"`
+	ReadNumber    int            `json:"ReadNumber"`
+	SamplingRate  float32        `json:"SamplingRate"`
+	StartMux      int            `json:"StartMux"`
+	StartTime     int            `json:"StartTime"`
 }
 
 // PostAlignMashJSONBody defines parameters for PostAlignMash.
@@ -347,9 +347,7 @@ type PostIoPileupParseJSONBody struct {
 }
 
 // PostIoPileupWriteJSONBody defines parameters for PostIoPileupWrite.
-type PostIoPileupWriteJSONBody struct {
-	Lines *[]PileupLine `json:"lines,omitempty"`
-}
+type PostIoPileupWriteJSONBody = []PileupLine
 
 // PostIoSlow5ParseJSONBody defines parameters for PostIoSlow5Parse.
 type PostIoSlow5ParseJSONBody struct {
@@ -556,7 +554,7 @@ type PostIoGenbankWriteJSONRequestBody = PostIoGenbankWriteJSONBody
 type PostIoPileupParseJSONRequestBody PostIoPileupParseJSONBody
 
 // PostIoPileupWriteJSONRequestBody defines body for PostIoPileupWrite for application/json ContentType.
-type PostIoPileupWriteJSONRequestBody PostIoPileupWriteJSONBody
+type PostIoPileupWriteJSONRequestBody = PostIoPileupWriteJSONBody
 
 // PostIoSlow5ParseJSONRequestBody defines body for PostIoSlow5Parse for application/json ContentType.
 type PostIoSlow5ParseJSONRequestBody PostIoSlow5ParseJSONBody

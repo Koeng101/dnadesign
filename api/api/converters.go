@@ -3,7 +3,93 @@ package api
 import (
 	"github.com/koeng101/dnadesign/api/gen"
 	"github.com/koeng101/dnadesign/lib/bio/genbank"
+	"github.com/koeng101/dnadesign/lib/bio/pileup"
+	"github.com/koeng101/dnadesign/lib/bio/slow5"
 )
+
+func ConvertPileupLineToGenPileupLine(pileupLine pileup.Line) gen.PileupLine {
+	return gen.PileupLine{
+		Position:      int(pileupLine.Position),
+		Quality:       pileupLine.Quality,
+		ReadCount:     int(pileupLine.ReadCount),
+		ReadResults:   pileupLine.ReadResults,
+		ReferenceBase: pileupLine.ReferenceBase,
+		Sequence:      pileupLine.Sequence,
+	}
+}
+
+func ConvertGenPileupLineToPileupLine(genPileupLine gen.PileupLine) pileup.Line {
+	return pileup.Line{
+		Sequence:      genPileupLine.Sequence,
+		Position:      uint(genPileupLine.Position),
+		ReferenceBase: genPileupLine.ReferenceBase,
+		ReadCount:     uint(genPileupLine.ReadCount),
+		ReadResults:   genPileupLine.ReadResults,
+		Quality:       genPileupLine.Quality,
+	}
+}
+
+//nolint:dupl
+func ConvertSlow5ReadToRead(slow5Read gen.Slow5Read) slow5.Read {
+	var read slow5.Read
+
+	// Convert and assign each field
+	read.ReadID = slow5Read.ReadID
+	read.ReadGroupID = uint32(slow5Read.ReadGroupID)
+	read.Digitisation = float64(slow5Read.Digitisation)
+	read.Offset = float64(slow5Read.Offset)
+	read.Range = float64(slow5Read.Range)
+	read.SamplingRate = float64(slow5Read.SamplingRate)
+	read.LenRawSignal = uint64(slow5Read.LenRawSignal)
+
+	read.RawSignal = make([]int16, len(slow5Read.RawSignal))
+	for i, v := range slow5Read.RawSignal {
+		read.RawSignal[i] = int16(v)
+	}
+
+	// Auxiliary fields
+	read.ChannelNumber = slow5Read.ChannelNumber
+	read.MedianBefore = float64(slow5Read.MedianBefore)
+	read.ReadNumber = int32(slow5Read.ReadNumber)
+	read.StartMux = uint8(slow5Read.StartMux)
+	read.StartTime = uint64(slow5Read.StartTime)
+	read.EndReason = slow5Read.EndReason
+
+	read.EndReasonMap = slow5Read.EndReasonMap
+
+	return read
+}
+
+//nolint:dupl
+func ConvertReadToSlow5Read(read slow5.Read) gen.Slow5Read {
+	var slow5Read gen.Slow5Read
+
+	// Convert and assign each field
+	slow5Read.ReadID = read.ReadID
+	slow5Read.ReadGroupID = int(read.ReadGroupID)
+	slow5Read.Digitisation = float32(read.Digitisation)
+	slow5Read.Offset = float32(read.Offset)
+	slow5Read.Range = float32(read.Range)
+	slow5Read.SamplingRate = float32(read.SamplingRate)
+	slow5Read.LenRawSignal = int(read.LenRawSignal)
+
+	slow5Read.RawSignal = make([]int, len(read.RawSignal))
+	for i, v := range read.RawSignal {
+		slow5Read.RawSignal[i] = int(v)
+	}
+
+	// Auxiliary fields
+	slow5Read.ChannelNumber = read.ChannelNumber
+	slow5Read.MedianBefore = float32(read.MedianBefore)
+	slow5Read.ReadNumber = int(read.ReadNumber)
+	slow5Read.StartMux = int(read.StartMux)
+	slow5Read.StartTime = int(read.StartTime)
+	slow5Read.EndReason = read.EndReason
+
+	slow5Read.EndReasonMap = read.EndReasonMap
+
+	return slow5Read
+}
 
 // ConvertGenbankToGenbankRecord converts a genbank.Genbank object to a gen.GenbankRecord object.
 func ConvertGenbankToGenbankRecord(gb genbank.Genbank) gen.GenbankRecord {

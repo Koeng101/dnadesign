@@ -51,6 +51,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HeaderValue'
+      required:
+        - HeaderValues
     HeaderValue:
       type: object
       properties:
@@ -66,6 +68,11 @@ components:
           type: object
           additionalProperties:
             type: integer
+      required:
+        - ReadGroupID
+        - Slow5Version
+        - Attributes
+        - EndReasonHeaderMap
     Slow5Read:
       type: object
       properties:
@@ -103,6 +110,22 @@ components:
           type: object
           additionalProperties:
             type: integer
+      required:
+        - ReadID
+        - ReadGroupID
+        - Digitisation
+        - Offset
+        - Range
+        - SamplingRate
+        - LenRawSignal
+        - RawSignal
+        - ChannelNumber
+        - MedianBefore
+        - ReadNumber
+        - StartMux
+        - StartTime
+        - EndReason
+        - EndReasonMap
     PileupLine:
       type: object
       properties:
@@ -479,6 +502,10 @@ paths:
       responses:
         '200':
           description: FASTA file written successfully
+          content:
+            text/plain:
+              schema:
+                type: string
   /io/genbank/parse:
     post:
       tags:
@@ -554,6 +581,10 @@ paths:
       responses:
         '200':
           description: FASTQ file written successfully
+          content:
+            text/plain:
+              schema:
+                type: string
   /io/pileup/parse:
     post:
       summary: Parse Pileup Data
@@ -589,22 +620,16 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                lines:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/PileupLine'
+              type: array
+              items:
+                $ref: '#/components/schemas/PileupLine'
       responses:
         '200':
           description: Pileup data string
           content:
-            application/json:
+            text/plain:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: string
+                type: string
 
   /io/slow5/parse:
     post:
@@ -658,12 +683,9 @@ paths:
         '200':
           description: slow5 data written successfully
           content:
-            application/json:
+            text/plain:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: string
+                type: string
   /io/slow5/svb_compress:
     post:
       summary: Compress Raw Signal with SVB

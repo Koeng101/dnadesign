@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"context"
 	"embed"
 	"encoding/json"
@@ -17,6 +18,9 @@ import (
 	luajson "github.com/koeng101/dnadesign/api/api/json"
 	"github.com/koeng101/dnadesign/api/gen"
 	"github.com/koeng101/dnadesign/lib/bio"
+	"github.com/koeng101/dnadesign/lib/bio/fasta"
+	"github.com/koeng101/dnadesign/lib/bio/fastq"
+	"github.com/koeng101/dnadesign/lib/bio/slow5"
 	"github.com/koeng101/dnadesign/lib/primers/pcr"
 	"github.com/koeng101/dnadesign/lib/synthesis/codon"
 	"github.com/koeng101/dnadesign/lib/synthesis/fix"
@@ -209,15 +213,23 @@ func (app *App) ExecuteLua(data string, attachments []gen.Attachment) (string, s
 	L.SetGlobal("fasta_parse", L.NewFunction(app.LuaIoFastaParse))
 	L.SetGlobal("genbank_parse", L.NewFunction(app.LuaIoGenbankParse))
 
-	// Add CDS design functions
+	// Add CDS functions
 	L.SetGlobal("fix", L.NewFunction(app.LuaCdsFix))
 	L.SetGlobal("optimize", L.NewFunction(app.LuaCdsOptimize))
 	L.SetGlobal("translate", L.NewFunction(app.LuaCdsTranslate))
 
-	// Add simulate functions
-	L.SetGlobal("fragment", L.NewFunction(app.LuaCloningFragment))
+	// Add PCR functions
 	L.SetGlobal("complex_pcr", L.NewFunction(app.LuaPcrComplexPcr))
 	L.SetGlobal("pcr", L.NewFunction(app.LuaPcrSimplePcr))
+
+	// Add Cloning functions
+	L.SetGlobal("fragment", L.NewFunction(app.LuaCloningFragment))
+
+	// Add Folding functions
+	// Add Seqhash functions
+	// Add CodonTable functions
+	// Add Utils functions
+	// Add Random functions
 
 	// Execute the Lua script
 	if err := L.DoString(data); err != nil {
@@ -315,7 +327,12 @@ func (app *App) LuaIoFastaParse(L *lua.LState) int {
 }
 
 func (app *App) PostIoFastaWrite(ctx context.Context, request gen.PostIoFastaWriteRequestObject) (gen.PostIoFastaWriteResponseObject, error) {
-	return nil, nil
+	var w bytes.Buffer
+	for _, fastaRecord := range *request.Body {
+		fastaStruct := fasta.Record(fastaRecord)
+		_, _ = fastaStruct.WriteTo(&w) // other than memory problems, there are no circumstances where bytes.Buffer errors
+	}
+	return gen.PostIoFastaWrite200TextResponse(w.String()), nil
 }
 func (app *App) LuaIoFastaWrite(L *lua.LState) int { return 0 }
 
@@ -357,7 +374,12 @@ func (app *App) PostIoFastqParse(ctx context.Context, request gen.PostIoFastqPar
 func (app *App) LuaIoFastqParse(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoFastqWrite(ctx context.Context, request gen.PostIoFastqWriteRequestObject) (gen.PostIoFastqWriteResponseObject, error) {
-	return nil, nil
+	var w bytes.Buffer
+	for _, fastqRead := range *request.Body {
+		fastqStruct := fastq.Read{Identifier: fastqRead.Identifier, Sequence: fastqRead.Sequence, Quality: fastqRead.Quality, Optionals: *fastqRead.Optionals}
+		_, _ = fastqStruct.WriteTo(&w) // other than memory problems, there are no circumstances where bytes.Buffer errors
+	}
+	return gen.PostIoFastqWrite200TextResponse(w.String()), nil
 }
 func (app *App) LuaIoFastqWrite(L *lua.LState) int { return 0 }
 
@@ -367,7 +389,20 @@ func (app *App) PostIoSlow5Parse(ctx context.Context, request gen.PostIoSlow5Par
 func (app *App) LuaIoSlow5Parse(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoSlow5Write(ctx context.Context, request gen.PostIoSlow5WriteRequestObject) (gen.PostIoSlow5WriteResponseObject, error) {
-	return nil, nil
+	var w bytes.Buffer
+	var headerValues []slow5.HeaderValue
+	requestHeaderValues := request.Body.Header.HeaderValues
+	for _, headerValue := range requestHeaderValues {
+		headerValues = append(headerValues, slow5.HeaderValue{ReadGroupID: uint32(headerValue.ReadGroupID), Slow5Version: headerValue.Slow5Version, EndReasonHeaderMap: headerValue.EndReasonHeaderMap})
+	}
+	header := slow5.Header{HeaderValues: headerValues}
+	reads := request.Body.Reads
+	_, _ = header.WriteTo(&w)
+	for _, read := range *reads {
+		slow5Struct := ConvertSlow5ReadToRead(read)
+		_, _ = slow5Struct.WriteTo(&w)
+	}
+	return gen.PostIoSlow5Write200TextResponse(w.String()), nil
 }
 func (app *App) LuaIoSlow5Write(L *lua.LState) int { return 0 }
 
@@ -387,7 +422,12 @@ func (app *App) PostIoPileupParse(ctx context.Context, request gen.PostIoPileupP
 func (app *App) LuaIoPileupParse(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoPileupWrite(ctx context.Context, request gen.PostIoPileupWriteRequestObject) (gen.PostIoPileupWriteResponseObject, error) {
-	return nil, nil
+	var w bytes.Buffer
+	for _, pileupLine := range *request.Body {
+		pileupStruct := ConvertGenPileupLineToPileupLine(pileupLine)
+		_, _ = pileupStruct.WriteTo(&w) // other than memory problems, there are no circumstances where bytes.Buffer errors
+	}
+	return gen.PostIoPileupWrite200TextResponse(w.String()), nil
 }
 func (app *App) LuaIoPileupWrite(L *lua.LState) int { return 0 }
 
