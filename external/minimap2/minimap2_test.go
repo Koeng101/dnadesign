@@ -28,7 +28,7 @@ func TestMinimap2(t *testing.T) {
 	// Prepare the writer to capture the output
 	var buf bytes.Buffer
 
-	// Execute the Minimap2Raw function
+	// Execute the Minimap2 function
 	err = minimap2.Minimap2(templateFile, fastqFile, &buf)
 	if err != nil {
 		t.Errorf("Minimap2Raw returned an error: %v", err)

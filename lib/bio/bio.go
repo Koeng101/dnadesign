@@ -20,6 +20,7 @@ import (
 	"github.com/koeng101/dnadesign/lib/bio/fastq"
 	"github.com/koeng101/dnadesign/lib/bio/genbank"
 	"github.com/koeng101/dnadesign/lib/bio/pileup"
+	"github.com/koeng101/dnadesign/lib/bio/sam"
 	"github.com/koeng101/dnadesign/lib/bio/slow5"
 	"github.com/koeng101/dnadesign/lib/bio/uniprot"
 	"golang.org/x/sync/errgroup"
@@ -33,6 +34,7 @@ const (
 	Fastq
 	Genbank
 	Slow5
+	Sam
 	Pileup
 )
 
@@ -48,6 +50,7 @@ var DefaultMaxLengths = map[Format]int{
 	Fastq:   8 * 1024 * 1024, // The longest single nanopore sequencing read so far is 4Mb. A 8mb buffer should be large enough for any sequencing.
 	Genbank: defaultMaxLineLength,
 	Slow5:   128 * 1024 * 1024, // 128mb is used because slow5 lines can be massive, since a single read can be many millions of base pairs.
+	Sam:     defaultMaxLineLength,
 	Pileup:  defaultMaxLineLength,
 }
 
@@ -89,36 +92,36 @@ type Parser[Data io.WriterTo, Header io.WriterTo] struct {
 }
 
 // NewFastaParser initiates a new FASTA parser from an io.Reader.
-func NewFastaParser(r io.Reader) (*Parser[*fasta.Record, *fasta.Header], error) {
+func NewFastaParser(r io.Reader) *Parser[*fasta.Record, *fasta.Header] {
 	return NewFastaParserWithMaxLineLength(r, DefaultMaxLengths[Fasta])
 }
 
 // NewFastaParserWithMaxLineLength initiates a new FASTA parser from an
 // io.Reader and a user-given maxLineLength.
-func NewFastaParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[*fasta.Record, *fasta.Header], error) {
-	return &Parser[*fasta.Record, *fasta.Header]{parserInterface: fasta.NewParser(r, maxLineLength)}, nil
+func NewFastaParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[*fasta.Record, *fasta.Header] {
+	return &Parser[*fasta.Record, *fasta.Header]{parserInterface: fasta.NewParser(r, maxLineLength)}
 }
 
 // NewFastqParser initiates a new FASTQ parser from an io.Reader.
-func NewFastqParser(r io.Reader) (*Parser[*fastq.Read, *fastq.Header], error) {
+func NewFastqParser(r io.Reader) *Parser[*fastq.Read, *fastq.Header] {
 	return NewFastqParserWithMaxLineLength(r, DefaultMaxLengths[Fastq])
 }
 
 // NewFastqParserWithMaxLineLength initiates a new FASTQ parser from an
 // io.Reader and a user-given maxLineLength.
-func NewFastqParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[*fastq.Read, *fastq.Header], error) {
-	return &Parser[*fastq.Read, *fastq.Header]{parserInterface: fastq.NewParser(r, maxLineLength)}, nil
+func NewFastqParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[*fastq.Read, *fastq.Header] {
+	return &Parser[*fastq.Read, *fastq.Header]{parserInterface: fastq.NewParser(r, maxLineLength)}
 }
 
 // NewGenbankParser initiates a new Genbank parser form an io.Reader.
-func NewGenbankParser(r io.Reader) (*Parser[*genbank.Genbank, *genbank.Header], error) {
+func NewGenbankParser(r io.Reader) *Parser[*genbank.Genbank, *genbank.Header] {
 	return NewGenbankParserWithMaxLineLength(r, DefaultMaxLengths[Genbank])
 }
 
 // NewGenbankParserWithMaxLineLength initiates a new Genbank parser from an
 // io.Reader and a user-given maxLineLength.
-func NewGenbankParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[*genbank.Genbank, *genbank.Header], error) {
-	return &Parser[*genbank.Genbank, *genbank.Header]{parserInterface: genbank.NewParser(r, maxLineLength)}, nil
+func NewGenbankParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[*genbank.Genbank, *genbank.Header] {
+	return &Parser[*genbank.Genbank, *genbank.Header]{parserInterface: genbank.NewParser(r, maxLineLength)}
 }
 
 // NewSlow5Parser initiates a new SLOW5 parser from an io.Reader.
@@ -133,15 +136,27 @@ func NewSlow5ParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[*s
 	return &Parser[*slow5.Read, *slow5.Header]{parserInterface: parser}, err
 }
 
+// NewSamParser initiates a new SAM parser from an io.Reader.
+func NewSamParser(r io.Reader) (*Parser[*sam.Alignment, *sam.Header], error) {
+	return NewSamParserWithMaxLineLength(r, DefaultMaxLengths[Sam])
+}
+
+// NewSamParserWithMaxLineLength initiates a new SAM parser from an io.Reader
+// and a user-given maxLineLength.
+func NewSamParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[*sam.Alignment, *sam.Header], error) {
+	parser, _, err := sam.NewParser(r, maxLineLength)
+	return &Parser[*sam.Alignment, *sam.Header]{parserInterface: parser}, err
+}
+
 // NewPileupParser initiates a new Pileup parser from an io.Reader.
-func NewPileupParser(r io.Reader) (*Parser[*pileup.Line, *pileup.Header], error) {
+func NewPileupParser(r io.Reader) *Parser[*pileup.Line, *pileup.Header] {
 	return NewPileupParserWithMaxLineLength(r, DefaultMaxLengths[Pileup])
 }
 
 // NewPileupParserWithMaxLineLength initiates a new Pileup parser from an
 // io.Reader and a user-given maxLineLength.
-func NewPileupParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[*pileup.Line, *pileup.Header], error) {
-	return &Parser[*pileup.Line, *pileup.Header]{parserInterface: pileup.NewParser(r, maxLineLength)}, nil
+func NewPileupParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[*pileup.Line, *pileup.Header] {
+	return &Parser[*pileup.Line, *pileup.Header]{parserInterface: pileup.NewParser(r, maxLineLength)}
 }
 
 // NewUniprotParser initiates a new Uniprot parser from an io.Reader. No

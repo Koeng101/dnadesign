@@ -20,12 +20,9 @@ For more information on minimap2, please visit Heng Li's git: https://github.com
 package minimap2
 
 import (
-	"context"
 	"io"
 	"os"
 	"os/exec"
-
-	"golang.org/x/sync/errgroup"
 )
 
 // Minimap2 aligns sequences using minimap2 over the command line. Right
@@ -69,37 +66,11 @@ func Minimap2(templateFastaInput io.Reader, fastqInput io.Reader, w io.Writer) e
 
 	// Start minimap2 pointing to the temporary file and stdin for sequencing data
 	cmd := exec.Command("minimap2", "-ax", "map-ont", tmpFile.Name(), "-")
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		return err
-	}
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		return err
-	}
+	cmd.Stdout = w
+	cmd.Stdin = fastqInput
 	if err := cmd.Start(); err != nil {
 		return err
 	}
 
-	// Create an errgroup group to manage goroutines
-	g, _ := errgroup.WithContext(context.Background())
-
-	// Write data to the stdin of minimap2 (sequencing data) using a goroutine
-	g.Go(func() error {
-		defer stdin.Close()
-		_, err := io.Copy(stdin, fastqInput)
-		return err
-	})
-
-	// Start copying the output of minimap2 to w using a goroutine
-	g.Go(func() error {
-		_, err := io.Copy(w, stdout)
-		return err
-	})
-
-	// Wait for all goroutines to complete
-	if err := g.Wait(); err != nil {
-		return err
-	}
 	return cmd.Wait()
 }
