@@ -49,7 +49,7 @@ type Header struct {
 }
 
 // headerWriteHelper helps write SAM headers in an ordered way.
-func headerWriteHelper(sb strings.Builder, headerString string, headerMap map[string]string, orderedKeys []string) {
+func headerWriteHelper(sb io.StringWriter, headerString string, headerMap map[string]string, orderedKeys []string) {
 	_, _ = sb.WriteString(headerString)
 	// Write orderedKeys first, if they exist
 	for _, key := range orderedKeys {
@@ -81,16 +81,16 @@ func (header *Header) WriteTo(w io.Writer) (int64, error) {
 	// Here, we iterate through each, and write it to a file.
 	var sb strings.Builder
 	if len(header.HD) > 0 {
-		headerWriteHelper(sb, "@HD", header.HD, []string{"VN", "SO", "GO", "SS"})
+		headerWriteHelper(&sb, "@HD", header.HD, []string{"VN", "SO", "GO", "SS"})
 	}
 	for _, sq := range header.SQ {
-		headerWriteHelper(sb, "@SQ", sq, []string{"SN", "LN", "AH", "AN", "AS", "DS", "M5", "SP", "TP", "UR"})
+		headerWriteHelper(&sb, "@SQ", sq, []string{"SN", "LN", "AH", "AN", "AS", "DS", "M5", "SP", "TP", "UR"})
 	}
 	for _, rg := range header.RG {
-		headerWriteHelper(sb, "@RG", rg, []string{"ID", "BC", "CN", "DS", "DT", "FO", "KS", "LB", "PG", "PI", "PL", "PM", "PU", "SM"})
+		headerWriteHelper(&sb, "@RG", rg, []string{"ID", "BC", "CN", "DS", "DT", "FO", "KS", "LB", "PG", "PI", "PL", "PM", "PU", "SM"})
 	}
 	for _, pg := range header.PG {
-		headerWriteHelper(sb, "@PG", pg, []string{"ID", "PN", "CL", "PP", "DS", "VN"})
+		headerWriteHelper(&sb, "@PG", pg, []string{"ID", "PN", "VN", "CL", "PP", "DS"})
 	}
 	for _, co := range header.CO {
 		_, _ = sb.WriteString(fmt.Sprintf("@CO %s\n", co))
@@ -265,7 +265,7 @@ type Alignment struct {
 // alignment line.
 func (alignment *Alignment) WriteTo(w io.Writer) (int64, error) {
 	var sb strings.Builder
-	_, _ = sb.WriteString(fmt.Sprintf("%s\t%d\t%s\t%d\t%c\t%s\t%s\t%d\t%d\t%s\t%s", alignment.QNAME, alignment.FLAG, alignment.RNAME, alignment.POS, alignment.MAPQ, alignment.CIGAR, alignment.RNEXT, alignment.PNEXT, alignment.TLEN, alignment.SEQ, alignment.QUAL))
+	_, _ = sb.WriteString(fmt.Sprintf("%s\t%d\t%s\t%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s", alignment.QNAME, alignment.FLAG, alignment.RNAME, alignment.POS, alignment.MAPQ, alignment.CIGAR, alignment.RNEXT, alignment.PNEXT, alignment.TLEN, alignment.SEQ, alignment.QUAL))
 	for _, optional := range alignment.Optionals {
 		_, _ = sb.WriteString(fmt.Sprintf("\t%s:%c:%s", optional.Tag, optional.Type, optional.Data))
 	}
