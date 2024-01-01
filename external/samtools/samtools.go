@@ -13,8 +13,29 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// Pileup runs a
+// Pileup generates a pileup file from sam alignments.
+// Specifically, it runs the following commands, with the sam alignments in
+// stdin and the templateFastas written to a temporary file:
+//
+//	`samtools view -bF 4 | samtools sort - | samtools mpileup -f tmpFile.fasta -`
+//
+// The first samtools view removes unmapped sequences, the sort sorts the
+// sequences for piping into pileup, and the final command builds the pileup
+// file.
 func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) error {
+	/*
+		Due to how os.exec works in Golang, we can't directly have pipes as if
+		the whole thing was a script. However, we can attach pipes to each
+		command, and move data between all 3. This is how this function works.
+
+		First, we create a temporary template fasta (named pipes tend to be
+		unreliable). Then, we create each command, set up pipes between them,
+		and then run each in a errGroup as a goroutine.
+
+		Then, we wait for all the goroutines to finish. They will be sending
+		pileup lines to the output io.Writer. These can be converted to
+		pileup lines for analysis.
+	*/
 	// Create a temporary file for the template fasta
 	tmpFile, err := os.CreateTemp("", "template_*.fasta")
 	if err != nil {
