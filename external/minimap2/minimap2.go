@@ -11,7 +11,11 @@ standard library io.Reader and io.Writer, both of which can be used with
 dnadesign `bio` parsers. Data should be piped in using data `WriteTo`
 functions, and can be read using a sam parser.
 
-https://github.com/lh3/minimap2
+We use `os.Exec` instead of cgo in order to make the package simpler, and
+also because the overhead of launching is minimal in comparison to how much
+data is expected to run through minimap2.
+
+For more information on minimap2, please visit Heng Li's git: https://github.com/lh3/minimap2
 */
 package minimap2
 
