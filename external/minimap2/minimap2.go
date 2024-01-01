@@ -50,7 +50,7 @@ func Minimap2(templateFastaInput io.Reader, fastqInput io.Reader, w io.Writer) e
 	// Create an errgroup group to manage goroutines
 	g, _ := errgroup.WithContext(context.Background())
 
-	// Create temporary file for templates.
+	// 1. Create temporary file for templates.
 	/*
 		This took me a while to figure out. For whatver reason, named pipes
 		don't work: they occasionally stall out minimap2 (like 1/10 the time).
@@ -81,22 +81,20 @@ func Minimap2(templateFastaInput io.Reader, fastqInput io.Reader, w io.Writer) e
 	if err != nil {
 		return err
 	}
-
-	// Start the command
 	if err := cmd.Start(); err != nil {
 		return err
 	}
-
-	// Start copying the output of minimap2 to w using a goroutine
-	g.Go(func() error {
-		_, err := io.Copy(w, stdout)
-		return err
-	})
 
 	// Write data to the stdin of minimap2 (sequencing data) using a goroutine
 	g.Go(func() error {
 		defer stdin.Close()
 		_, err := io.Copy(stdin, fastqInput)
+		return err
+	})
+
+	// Start copying the output of minimap2 to w using a goroutine
+	g.Go(func() error {
+		_, err := io.Copy(w, stdout)
 		return err
 	})
 
