@@ -26,7 +26,7 @@ func ExampleTranslationTable_Optimize() {
 
 	file, _ := os.Open(puc19path)
 	defer file.Close()
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 	codonTable := codon.NewTranslationTable(11)
 	_ = codonTable.UpdateWeightsWithSequence(*sequence)
@@ -83,7 +83,7 @@ func ExampleWriteCodonJSON() {
 func ExampleCompromiseCodonTable() {
 	file, _ := os.Open(puc19path)
 	defer file.Close()
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 
 	// weight our codon optimization table using the regions we collected from the genbank file above
@@ -95,7 +95,7 @@ func ExampleCompromiseCodonTable() {
 
 	file2, _ := os.Open(phix174path)
 	defer file2.Close()
-	parser2, _ := bio.NewGenbankParser(file2)
+	parser2 := bio.NewGenbankParser(file2)
 	sequence2, _ := parser2.Next()
 
 	optimizationTable2 := codon.NewTranslationTable(11)
@@ -118,7 +118,7 @@ func ExampleCompromiseCodonTable() {
 func ExampleAddCodonTable() {
 	file, _ := os.Open(puc19path)
 	defer file.Close()
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 
 	// weight our codon optimization table using the regions we collected from the genbank file above
@@ -130,7 +130,7 @@ func ExampleAddCodonTable() {
 
 	file2, _ := os.Open(phix174path)
 	defer file2.Close()
-	parser2, _ := bio.NewGenbankParser(file2)
+	parser2 := bio.NewGenbankParser(file2)
 	sequence2, _ := parser2.Next()
 
 	optimizationTable2 := codon.NewTranslationTable(11)

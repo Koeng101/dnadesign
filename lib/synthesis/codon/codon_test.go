@@ -54,7 +54,7 @@ func TestOptimize(t *testing.T) {
 
 	file, _ := os.Open("../../bio/genbank/data/puc19.gbk")
 	defer file.Close()
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 
 	table := NewTranslationTable(11)
@@ -78,7 +78,7 @@ func TestOptimizeSameSeed(t *testing.T) {
 	var gfpTranslation = "MASKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK*"
 	file, _ := os.Open(puc19path)
 	defer file.Close()
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 
 	optimizationTable := NewTranslationTable(11)
@@ -101,7 +101,7 @@ func TestOptimizeDifferentSeed(t *testing.T) {
 	var gfpTranslation = "MASKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKIRHNIEDGSVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK*"
 	file, _ := os.Open(puc19path)
 	defer file.Close()
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 
 	optimizationTable := NewTranslationTable(11)
@@ -210,7 +210,7 @@ Codon Compromise + Add related tests begin here.
 func TestCompromiseCodonTable(t *testing.T) {
 	file, _ := os.Open(puc19path)
 	defer file.Close()
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 
 	// weight our codon optimization table using the regions we collected from the genbank file above
@@ -222,7 +222,7 @@ func TestCompromiseCodonTable(t *testing.T) {
 
 	file2, _ := os.Open("../../data/phix174.gb")
 	defer file2.Close()
-	parser2, _ := bio.NewGenbankParser(file2)
+	parser2 := bio.NewGenbankParser(file2)
 	sequence2, _ := parser2.Next()
 	optimizationTable2 := NewTranslationTable(11)
 	err = optimizationTable2.UpdateWeightsWithSequence(*sequence2)
@@ -243,7 +243,7 @@ func TestCompromiseCodonTable(t *testing.T) {
 func TestAddCodonTable(t *testing.T) {
 	file, _ := os.Open(puc19path)
 	defer file.Close()
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 
 	// weight our codon optimization table using the regions we collected from the genbank file above
@@ -256,7 +256,7 @@ func TestAddCodonTable(t *testing.T) {
 
 	file2, _ := os.Open("../../data/phix174.gb")
 	defer file2.Close()
-	parser2, _ := bio.NewGenbankParser(file2)
+	parser2 := bio.NewGenbankParser(file2)
 	sequence2, _ := parser2.Next()
 	optimizationTable2 := NewTranslationTable(11)
 	err = optimizationTable2.UpdateWeightsWithSequence(*sequence2)
@@ -285,7 +285,7 @@ func TestCapitalizationRegression(t *testing.T) {
 
 	file, _ := os.Open(puc19path)
 	defer file.Close()
-	parser, _ := bio.NewGenbankParser(file)
+	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 
 	optimizationTable := NewTranslationTable(11)
@@ -311,7 +311,7 @@ func TestOptimizeSequence(t *testing.T) {
 		puc19          = func() genbank.Genbank {
 			file, _ := os.Open("../../bio/genbank/data/puc19.gbk")
 			defer file.Close()
-			parser, _ := bio.NewGenbankParser(file)
+			parser := bio.NewGenbankParser(file)
 			sequence, _ := parser.Next()
 			return *sequence
 		}()
