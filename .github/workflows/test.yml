@@ -7,7 +7,7 @@ on:
   pull_request:
 name: Test
 jobs:
-  test:
+  test-lib:
     strategy:
       matrix:
         go-version: [1.21.x,]
@@ -22,6 +22,39 @@ jobs:
       uses: actions/checkout@v2
     - name: Test
       run: go test -v ./lib/...
+  test-external:
+    strategy:
+      matrix:
+        go-version: [1.21.x,]
+        platform: [ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Download minimap2
+      run: |
+        curl -L https://github.com/lh3/minimap2/releases/download/v2.26/minimap2-2.26_x64-linux.tar.bz2 | tar -jxvf -
+        mkdir -p $HOME/bin
+        cp ./minimap2-2.26_x64-linux/minimap2 $HOME/bin
+        echo "$HOME/bin" >> $GITHUB_PATH
+    - name: Install dependencies for samtools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libncurses5-dev libbz2-dev liblzma-dev zlib1g-dev
+    - name: Download and install samtools
+      run: |
+        curl -L https://github.com/samtools/samtools/releases/download/1.13/samtools-1.13.tar.bz2 | tar -jxvf -
+        cd samtools-1.13
+        ./configure --prefix=$HOME/samtools
+        make
+        make install
+        echo "$HOME/samtools/bin" >> $GITHUB_PATH
+    - name: Test external
+      run: go test -v ./external/...
   openbsd-test:
     runs-on: ubuntu-latest
     name: 1.21.5 openbsd
