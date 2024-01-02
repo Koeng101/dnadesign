@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"hash/crc32"
 
-	"github.com/koeng101/dnadesign/lib/mash"
+	"github.com/koeng101/dnadesign/lib/align/mash"
 )
 
 func ExampleMash() {

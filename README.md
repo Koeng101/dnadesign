@@ -16,6 +16,25 @@ DnaDesign is a Go project creating tools for automated genetic design, spanning 
 
 * **[Library](https://pkg.go.dev/github.com/koeng101/dnadesign)**
 
+# Repo organization
+
+* `lib` contains the core DnaDesign library, with nearly all functionality, all in idiomatic Go with nearly no dependencies.
+    * `lib/bio` contains biological parsers for file formats including genbank, fasta, uniprot, fastq, slow5, sam, and pileup files.
+    * `lib/align` contains Needleman-Wunsch and Smith-Waterman alignment functions, as well as the mash similarity algorithm.
+    * `lib/clone` contains functions for simulating DNA cloning, including restriction digestion, ligation, and GoldenGate assembly.
+    * `lib/fold` contains DNA and RNA folding simulation software, including the Zuker and Linearfold folding algorithms.
+    * `lib/primers` contains DNA primer design and PCR simulation functions.
+    * `lib/seqhash` contains the Seqhash algorithm to create universal identifiers for DNA/RNA/protein.
+    * `lib/synthesis` contains various functions for designing synthetic DNA.
+        * `lib/synthesis/codon` contains functions for working with codon tables, translating genes, and optimizing codons for expression.
+        * `lib/synthesis/fragment` contains functions for optimal GoldenGate fragmentation.
+        * `lib/synthesis/fix` contains functions for fixing proteins in preparation for synthesis.
+    * `lib/transform` contains basic utility functions for transforming DNA, like reverse complementation.
+* `external` contains integrations with external bioinformatics software, usually operating on the command line.
+    * `external/minimap2` contains a function for working with minimap2 with Go.
+    * `external/samtools` contains a function for generating pileup files with Go.
+
+
 ## Contributing
 
 Write good, useful code. Open a pull request, and we'll see if it fits!
@@ -24,13 +43,23 @@ Write good, useful code. Open a pull request, and we'll see if it fits!
 
 * [MIT](LICENSE)
 
-### Sources
+## Sources
 
 There are a few pieces of "complete" software that we have directly integrated into the source tree (with their associated licenses). These projects don't receive updates anymore (or just bug fixes with years between). In particular, `lib` has most of these, since we intend to have as few dependencies as possible in `lib`. The integrated projects include the following.
 - [svb](https://github.com/rleiwang/svb) in `lib/bio/slow5/svb`
 - [intel-cpuid](https://github.com/aregm/cpuid) in `lib/bio/slow5/svb/intel-cpuid`
 - [wordwrap](https://github.com/mitchellh/go-wordwrap) in `lib/bio/genbank`
 
-### Other
+## Other
 
 DnaDesign is a fork of [Poly](https://github.com/TimothyStiles/poly) at commit f76bf05 with a different mission focus. 
+
+# Changelog
+
+All notable changes to this project will be documented here.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
