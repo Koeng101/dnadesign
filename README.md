@@ -18,22 +18,22 @@ DnaDesign is a Go project creating tools for automated genetic design, spanning 
 
 ## Repo organization
 
-* `lib` contains the core DnaDesign library, with nearly all functionality, all in idiomatic Go with nearly no dependencies.
-    * `lib/bio` contains biological parsers for file formats including [genbank](https://en.wikipedia.org/wiki/GenBank), [fasta](https://en.wikipedia.org/wiki/FASTA_format), [uniprot](https://en.wikipedia.org/wiki/UniProt), [fastq](https://en.wikipedia.org/wiki/FASTQ_format), [slow5](https://doi.org/10.1038/s41587-021-01147-4), [sam](https://en.wikipedia.org/wiki/SAM_(file_format)), and [pileup](https://en.wikipedia.org/wiki/Pileup_format) files.
-    * `lib/align` contains [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) and [Smith-Waterman](https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm) alignment functions, as well as the [mash](https://doi.org/10.1186/s13059-016-0997-x) similarity algorithm.
-    * `lib/clone` contains functions for simulating [DNA cloning](https://en.wikipedia.org/wiki/Molecular_cloning), including [restriction digestion](https://www.neb.com/en-us/applications/cloning-and-synthetic-biology/dna-preparation/restriction-enzyme-digestion), [ligation](https://en.wikipedia.org/wiki/Ligation_(molecular_biology)), and [GoldenGate assembly](https://en.wikipedia.org/wiki/Golden_Gate_Cloning).
-    * `lib/fold` contains DNA and RNA folding simulation software, including the [Zuker](https://doi.org/10.1093/nar/9.1.133) and [LinearFold](https://doi.org/10.1093/bioinformatics/btz375) folding algorithms.
-    * `lib/primers` contains [DNA primer](https://www.nature.com/scitable/definition/primer-305/) design functions.
-        * `lib/primers/pcr` contains [PCR](https://www.ncbi.nlm.nih.gov/probe/docs/techpcr/) simulation functions.
-    * `lib/seqhash` contains the Seqhash algorithm to create universal identifiers for DNA/RNA/protein.
-    * `lib/synthesis` contains various functions for designing synthetic DNA.
-        * `lib/synthesis/codon` contains functions for working with [codon tables](https://en.wikipedia.org/wiki/DNA_and_RNA_codon_tables), [translating genes](https://en.wikipedia.org/wiki/Translation_(biology)), and [optimizing codons](https://doi.org/10.1073/pnas.0909910107) for expression.
-        * `lib/synthesis/fragment` contains functions for [optimal GoldenGate fragmentation](https://doi.org/10.1371/journal.pone.0238592).
-        * `lib/synthesis/fix` contains functions for fixing proteins in preparation for synthesis.
-    * `lib/transform` contains basic utility functions for transforming DNA, like reverse complementation.
-* `external` contains integrations with external bioinformatics software, usually operating on the command line.
-    * `external/minimap2` contains a function for working with [minimap2](https://github.com/lh3/minimap2) with Go.
-    * `external/samtools` contains a function for generating pileup files using [samtools](https://github.com/samtools/samtools) with Go.
+* [lib](https://pkg.go.dev/github.com/koeng101/dnadesign/lib) contains the core DnaDesign library, with nearly all functionality, all in idiomatic Go with nearly no dependencies.
+    * [lib/bio](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/bio) contains biological parsers (example and docs [here](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/bio)) for file formats including [genbank](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/genbank/genbank.go), [fasta](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/fasta/fasta.go), [uniprot](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/uniprot/uniprot.go), [fastq](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/fastq/fastq.go), [slow5](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/slow5/slow5.go), [sam](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/sam/sam.go), and [pileup](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/pileup/pileup.go) files.
+    * [lib/align](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/align) contains [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) and [Smith-Waterman](https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm) alignment functions, as well as the [mash](https://doi.org/10.1186/s13059-016-0997-x) similarity algorithm.
+    * [lib/clone](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/clone) contains functions for simulating [DNA cloning](https://en.wikipedia.org/wiki/Molecular_cloning), including [restriction digestion](https://www.neb.com/en-us/applications/cloning-and-synthetic-biology/dna-preparation/restriction-enzyme-digestion), [ligation](https://en.wikipedia.org/wiki/Ligation_(molecular_biology)), and [GoldenGate assembly](https://en.wikipedia.org/wiki/Golden_Gate_Cloning).
+    * [lib/fold](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/fold) contains DNA and RNA folding simulation software, including the [Zuker](https://doi.org/10.1093/nar/9.1.133) and [LinearFold](https://doi.org/10.1093/bioinformatics/btz375) folding algorithms.
+    * [lib/primers](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/primers) contains [DNA primer](https://www.nature.com/scitable/definition/primer-305/) design functions.
+        * [lib/primers/pcr](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/primers/pcr) contains [PCR](https://www.ncbi.nlm.nih.gov/probe/docs/techpcr/) simulation functions.
+    * [lib/seqhash](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/seqhash) contains the Seqhash algorithm to create universal identifiers for DNA/RNA/protein.
+    * [lib/synthesis](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis) contains various functions for designing synthetic DNA.
+        * [lib/synthesis/codon](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis/codon) contains functions for working with [codon tables](https://en.wikipedia.org/wiki/DNA_and_RNA_codon_tables), [translating genes](https://en.wikipedia.org/wiki/Translation_(biology)), and [optimizing codons](https://doi.org/10.1073/pnas.0909910107) for expression.
+        * [lib/synthesis/fragment](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis/fragment) contains functions for [optimal GoldenGate fragmentation](https://doi.org/10.1371/journal.pone.0238592).
+        * [lib/synthesis/fix](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis/fix) contains functions for fixing proteins in preparation for synthesis.
+    * [lib/transform](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/transform) contains basic utility functions for transforming DNA, like reverse complementation.
+* [external](https://pkg.go.dev/github.com/koeng101/dnadesign/external) contains integrations with external bioinformatics software, usually operating on the command line.
+    * [external/minimap2](https://pkg.go.dev/github.com/koeng101/dnadesign/external/minimap2) contains a function for working with [minimap2](https://github.com/lh3/minimap2) with Go.
+    * [external/samtools](https://pkg.go.dev/github.com/koeng101/dnadesign/external/samtools) contains a function for generating pileup files using [samtools](https://github.com/samtools/samtools) with Go.
 
 
 ## Contributing
