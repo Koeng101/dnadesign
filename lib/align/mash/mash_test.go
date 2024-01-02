@@ -4,7 +4,7 @@ import (
 	"hash/crc32"
 	"testing"
 
-	"github.com/koeng101/dnadesign/lib/mash"
+	"github.com/koeng101/dnadesign/lib/align/mash"
 )
 
 func TestMash(t *testing.T) {
