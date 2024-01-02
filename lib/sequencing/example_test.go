@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 
 	"github.com/koeng101/dnadesign/external/minimap2"
 	"github.com/koeng101/dnadesign/lib/bio"
@@ -19,6 +20,12 @@ import (
 )
 
 func ExampleAmpliconAlignment() {
+	// Only run function if minimap2 is available
+	_, err := exec.LookPath("minimap2")
+	if err != nil {
+		fmt.Println("oligo2")
+		return
+	}
 	// First, let's define the type we are looking for: amplicons in a pool.
 	type Amplicon struct {
 		Identifier       string
