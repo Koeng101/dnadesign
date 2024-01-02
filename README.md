@@ -23,7 +23,7 @@ DnaDesign is a Go project creating tools for automated genetic design, spanning 
     * `lib/align` contains [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) and [Smith-Waterman](https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm) alignment functions, as well as the [mash](https://doi.org/10.1186/s13059-016-0997-x) similarity algorithm.
     * `lib/clone` contains functions for simulating [DNA cloning](https://en.wikipedia.org/wiki/Molecular_cloning), including [restriction digestion](https://www.neb.com/en-us/applications/cloning-and-synthetic-biology/dna-preparation/restriction-enzyme-digestion), [ligation](https://en.wikipedia.org/wiki/Ligation_(molecular_biology)), and [GoldenGate assembly](https://en.wikipedia.org/wiki/Golden_Gate_Cloning).
     * `lib/fold` contains DNA and RNA folding simulation software, including the [Zuker](https://doi.org/10.1093/nar/9.1.133) and [LinearFold](https://doi.org/10.1093/bioinformatics/btz375) folding algorithms.
-    * `lib/primers` contains DNA primer design functions.
+    * `lib/primers` contains [DNA primer](https://www.nature.com/scitable/definition/primer-305/) design functions.
         * `lib/primers/pcr` contains [PCR](https://www.ncbi.nlm.nih.gov/probe/docs/techpcr/) simulation functions.
     * `lib/seqhash` contains the Seqhash algorithm to create universal identifiers for DNA/RNA/protein.
     * `lib/synthesis` contains various functions for designing synthetic DNA.
