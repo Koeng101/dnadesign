@@ -6,7 +6,7 @@
 
 DnaDesign is a Go project creating tools for automated genetic design, spanning from the lowest levels of DNA sequence manipulation to higher level functionality.
 
-* **Practical:** DnaDesign tooling is meant to be used by practitioners of synthetic biology. Let's make something actually useful!
+* **Practical:** DnaDesign tooling is meant to be used by practitioners of synthetic biology.
 
 * **Modern:** DnaDesign is at the bleeding edge of technology. We are happy to adopt the newest advancements in synthetic biology, wasm, LLMs, and more to get our tools in the hands of people who need it.
 
@@ -16,7 +16,7 @@ DnaDesign is a Go project creating tools for automated genetic design, spanning 
 
 * **[Library](https://pkg.go.dev/github.com/koeng101/dnadesign)**
 
-# Repo organization
+## Repo organization
 
 * `lib` contains the core DnaDesign library, with nearly all functionality, all in idiomatic Go with nearly no dependencies.
     * `lib/bio` contains biological parsers for file formats including genbank, fasta, uniprot, fastq, slow5, sam, and pileup files.
@@ -62,4 +62,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
+- Added minimap2 and samtools(pileup) integrations in external (#46)
+- Added sam parser (#5)
+- Added the LinearFold folding algorithms (#38)
+- Added Get function to uniprot for getting a single uniprot xml from online (#37)
+- Removed murmur3 in favor of crc32 for mash (#33)
+- Patch start codon problems (#32)
+- Added tests for OpenBSD (#31)
+- Removed a large number of unneeded dependencies (#28)
+- Added full rebase text database into tree (27b41fb)
+- Updated uniprot to be a standardized parser (#22)
+- Purged unsupported gff parser (#23)
+- Moved library to lib directory (#21)
+- Fixed issue with JSON codon tables (#4)
+- Added Seqhash v2 (#3)
+- Added lowercase methylation options during cloning (#2)
+- Standardized parsers with generics (#1)
