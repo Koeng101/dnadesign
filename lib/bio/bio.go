@@ -295,3 +295,22 @@ func ManyToChannel[Data io.WriterTo, Header io.WriterTo](ctx context.Context, ch
 	close(channel)
 	return err
 }
+
+// FilterData is a generic function that implements a channel filter. Users
+// give an input and output channel, with a filtering function, and FilterData
+// filters data from the input into the output.
+func FilterData[Data *genbank.Genbank | *fasta.Record | *fastq.Read | *slow5.Read | *sam.Alignment | *pileup.Line | *uniprot.Entry](input <-chan Data, output chan<- Data, filter func(a Data) bool) {
+	for {
+		select {
+		case data, ok := <-input:
+			if !ok {
+				// If the input channel is closed, we close the output channel and return
+				close(output)
+				return
+			}
+			if filter(data) {
+				output <- data
+			}
+		}
+	}
+}
