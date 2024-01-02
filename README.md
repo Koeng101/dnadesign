@@ -18,8 +18,16 @@ DnaDesign is a Go project creating tools for automated genetic design, spanning 
 
 ## Repo organization
 
+On the highest level:
+* `lib` contains core functionality as a go library.
+* `external` contains functions to work with external bioinformatics command-line interfaces.
+* `api` contains an OpenAPI exposing all the major functions of lib.
+* `deployment` contains full integration tests and yaml for deploying the DnaDesign API to a k3s cluster.
+
+### Detailed repo organization
+
 * [lib](https://pkg.go.dev/github.com/koeng101/dnadesign/lib) contains the core DnaDesign library, with nearly all functionality, all in idiomatic Go with nearly no dependencies.
-    * [lib/bio](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/bio) contains biological parsers (example and docs [here](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/bio)) for file formats including [genbank](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/genbank/genbank.go), [fasta](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/fasta/fasta.go), [uniprot](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/uniprot/uniprot.go), [fastq](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/fastq/fastq.go), [slow5](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/slow5/slow5.go), [sam](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/sam/sam.go), and [pileup](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/pileup/pileup.go) files.
+    * [lib/bio](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/bio) contains biological parsers for file formats including [genbank](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/genbank/genbank.go), [fasta](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/fasta/fasta.go), [uniprot](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/uniprot/uniprot.go), [fastq](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/fastq/fastq.go), [slow5](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/slow5/slow5.go), [sam](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/sam/sam.go), and [pileup](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/pileup/pileup.go) files.
     * [lib/align](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/align) contains [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) and [Smith-Waterman](https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm) alignment functions, as well as the [mash](https://doi.org/10.1186/s13059-016-0997-x) similarity algorithm.
     * [lib/clone](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/clone) contains functions for simulating [DNA cloning](https://en.wikipedia.org/wiki/Molecular_cloning), including [restriction digestion](https://www.neb.com/en-us/applications/cloning-and-synthetic-biology/dna-preparation/restriction-enzyme-digestion), [ligation](https://en.wikipedia.org/wiki/Ligation_(molecular_biology)), and [GoldenGate assembly](https://en.wikipedia.org/wiki/Golden_Gate_Cloning).
     * [lib/fold](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/fold) contains DNA and RNA folding simulation software, including the [Zuker](https://doi.org/10.1093/nar/9.1.133) and [LinearFold](https://doi.org/10.1093/bioinformatics/btz375) folding algorithms.
