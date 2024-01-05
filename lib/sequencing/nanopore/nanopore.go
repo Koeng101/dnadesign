@@ -169,50 +169,55 @@ func TrimBarcode(barcodeName string, fastqRead fastq.Read) (fastq.Read, error) {
 	var quality string
 	sequence = fastqRead.Sequence
 	quality = fastqRead.Quality
-	score, alignment, err := Align(sequence[:80], barcode.Forward)
-	if err != nil {
-		return newFastqRead, err
-	}
-	// Empirically from looking around, it seems to me that approximately a
-	// score of 21 looks like a barcode match. This is almost by definition a
-	// magic number, so it is defined above as so.
-	if score >= ScoreMagicNumber {
-		modifiedAlignment := strings.ReplaceAll(alignment, "-", "")
-		index := strings.Index(sequence, modifiedAlignment)
-		// The index needs to be within the first 80 base pairs. Usually the
-		// native adapter + native barcode is within the first ~70 bp, but we
-		// put a small buffer.
-		if index != -1 {
-			// 7 here is a magic number between the native barcode and your
-			// target sequence. It's just a number that exists irl, so it is
-			// not defined above.
-			newStart := index + 7
-			if newStart < len(sequence) {
-				sequence = sequence[newStart:]
-				quality = quality[newStart:]
+	if len(sequence) > 80 {
+		score, alignment, err := Align(sequence[:80], barcode.Forward)
+		if err != nil {
+			return newFastqRead, err
+		}
+		// Empirically from looking around, it seems to me that approximately a
+		// score of 21 looks like a barcode match. This is almost by definition a
+		// magic number, so it is defined above as so.
+		if score >= ScoreMagicNumber {
+			modifiedAlignment := strings.ReplaceAll(alignment, "-", "")
+			index := strings.Index(sequence, modifiedAlignment)
+			// The index needs to be within the first 80 base pairs. Usually the
+			// native adapter + native barcode is within the first ~70 bp, but we
+			// put a small buffer.
+			if index != -1 {
+				// 7 here is a magic number between the native barcode and your
+				// target sequence. It's just a number that exists irl, so it is
+				// not defined above.
+				newStart := index + 7
+				if newStart < len(sequence) {
+					sequence = sequence[newStart:]
+					quality = quality[newStart:]
+				}
 			}
 		}
 	}
+
 	// Now do the same thing with the reverse strand.
-	score, alignment, err = Align(sequence[len(sequence)-80:], barcode.Reverse)
-	if err != nil {
-		return newFastqRead, err
-	}
-	if score >= ScoreMagicNumber {
-		modifiedAlignment := strings.ReplaceAll(alignment, "-", "")
-		index := strings.Index(sequence, modifiedAlignment)
-		// This time we need to check within the last 80 base pairs.
-		if index != -1 {
-			newEnd := index - 7
-			if newEnd < len(sequence) {
-				sequence = sequence[:newEnd]
-				quality = quality[:newEnd]
+	if len(sequence) > 80 {
+		score, alignment, err := Align(sequence[len(sequence)-80:], barcode.Reverse)
+		if err != nil {
+			return newFastqRead, err
+		}
+		if score >= ScoreMagicNumber {
+			modifiedAlignment := strings.ReplaceAll(alignment, "-", "")
+			index := strings.Index(sequence, modifiedAlignment)
+			// This time we need to check within the last 80 base pairs.
+			if index != -1 {
+				newEnd := index - 7
+				if newEnd < len(sequence) {
+					sequence = sequence[:newEnd]
+					quality = quality[:newEnd]
+				}
 			}
 		}
 	}
 	newFastqRead.Sequence = sequence
 	newFastqRead.Quality = quality
-	return newFastqRead, err
+	return newFastqRead, nil
 }
 
 // Align uses the SmithWaterman algorithm to align a barcode to a sequence.

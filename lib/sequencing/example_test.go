@@ -126,3 +126,18 @@ func ExampleAmpliconAlignment() {
 	fmt.Println(outputAlignments[0].RNAME)
 	// Output: oligo2
 }
+
+func RunWorkflow(errorGroup *errgroup.Group, functions []func() error) error {
+	for _, function := range functions {
+		errorGroup.Go(func() error {
+			return function()
+		})
+	}
+	return nil
+}
+
+func ExampleErrgroup() {
+
+	fmt.Println("hi")
+	// Output: hi
+}
