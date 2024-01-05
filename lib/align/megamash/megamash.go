@@ -23,7 +23,6 @@ func StandardizedCompressedDNA(sequence string) []byte {
 		deterministicSequence = sequence
 	}
 	return CompressDNA(deterministicSequence)
-
 }
 
 type MegamashMap []map[string]bool
@@ -41,7 +40,7 @@ func MakeMegamashMap(sequences []string, kmerSize uint) MegamashMap {
 
 		// Then, get unique kmers for this sequence and only this sequence
 		uniqueKmerMap := make(map[string]bool)
-		for kmerBase64, _ := range kmerMap {
+		for kmerBase64 := range kmerMap {
 			unique := true
 			for _, otherMegaMashMap := range megamashMap {
 				_, ok := otherMegaMashMap[kmerBase64]
@@ -87,7 +86,7 @@ func (m *MegamashMap) Score(sequence string) []float64 {
 	var kmerSize int
 out:
 	for _, maps := range *m {
-		for kmer, _ := range maps {
+		for kmer := range maps {
 			decodedBytes, _ := base64.StdEncoding.DecodeString(kmer)
 			sequence := DecompressDNA(decodedBytes)
 			kmerSize = len(sequence)
@@ -98,10 +97,10 @@ out:
 	// Now, iterate through each map
 	for _, sequenceMap := range *m {
 		var score float64
-		var totalKmers int = len(sequenceMap)
+		var totalKmers = len(sequenceMap)
 		var matchedKmers int
-		for i := 0; i <= len(sequence)-int(kmerSize); i++ {
-			kmerBytes := StandardizedCompressedDNA(sequence[i : i+int(kmerSize)])
+		for i := 0; i <= len(sequence)-kmerSize; i++ {
+			kmerBytes := StandardizedCompressedDNA(sequence[i : i+kmerSize])
 			kmerBase64 := base64.StdEncoding.EncodeToString(kmerBytes)
 			_, ok := sequenceMap[kmerBase64]
 			if ok {

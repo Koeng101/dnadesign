@@ -53,7 +53,7 @@ func CompressDNA(dna string) []byte {
 func DecompressDNA(compressed []byte) string {
 	flag := compressed[0]
 	var length int
-	lengthBytes := 1
+	var lengthBytes int
 
 	switch flag {
 	case 0x00:
