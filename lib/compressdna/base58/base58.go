@@ -51,7 +51,7 @@ func Encode(input []byte) string {
 // Decode decodes a base58 string into a slice array.
 func Decode(input string) []byte {
 	result := big.NewInt(0)
-	zeroByte := byte(ALPHABET[0]) // Convert the first alphabet character to a byte for comparison
+	zeroByte := ALPHABET[0] // Convert the first alphabet character to a byte for comparison
 
 	for i := 0; i < len(input); i++ {
 		charIndex := bytes.IndexByte([]byte(ALPHABET), input[i]) // input[i] is byte now

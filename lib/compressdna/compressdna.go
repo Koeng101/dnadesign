@@ -12,7 +12,7 @@ standing for uint16, uint32, and uint64, respectively. The next bytes after the
 flag depend on the flag definition: for example, the next byte after flag 0x00
 (uint8) will be the length, which the next 2 bytes after flag 0x01 (uint16)
 will be the length, 4 bytes for flag 0x02 (uint32), and 8 bytes for flag 0x03
-(uint64). The choosen uint unit is dependent on the length of the sequence. A
+(uint64). The chosen uint unit is dependent on the length of the sequence. A
 simple example would look like this, with brackets between bytes:
 
 	[flag 0x00] [uint8 (14)] [4bp] [4bp] [4bp] [2bp] = 6 bytes
