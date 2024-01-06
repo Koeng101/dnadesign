@@ -16,6 +16,7 @@ import (
 	"io"
 	"math"
 
+	"github.com/koeng101/dnadesign/lib/bio/blowq"
 	"github.com/koeng101/dnadesign/lib/bio/fasta"
 	"github.com/koeng101/dnadesign/lib/bio/fastq"
 	"github.com/koeng101/dnadesign/lib/bio/genbank"
@@ -32,6 +33,7 @@ type Format int
 const (
 	Fasta Format = iota
 	Fastq
+	Blowq
 	Genbank
 	Slow5
 	Sam
@@ -48,6 +50,7 @@ const defaultMaxLineLength int = bufio.MaxScanTokenSize // 64kB is a magic numbe
 var DefaultMaxLengths = map[Format]int{
 	Fasta:   defaultMaxLineLength,
 	Fastq:   8 * 1024 * 1024, // The longest single nanopore sequencing read so far is 4Mb. A 8mb buffer should be large enough for any sequencing.
+	Blowq:   8 * 1024 * 1024, // The longest single nanopore sequencing read so far is 4Mb. A 8mb buffer should be large enough for any sequencing.
 	Genbank: defaultMaxLineLength,
 	Slow5:   128 * 1024 * 1024, // 128mb is used because slow5 lines can be massive, since a single read can be many millions of base pairs.
 	Sam:     defaultMaxLineLength,
@@ -111,6 +114,17 @@ func NewFastqParser(r io.Reader) *Parser[*fastq.Read, *fastq.Header] {
 // io.Reader and a user-given maxLineLength.
 func NewFastqParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[*fastq.Read, *fastq.Header] {
 	return &Parser[*fastq.Read, *fastq.Header]{parserInterface: fastq.NewParser(r, maxLineLength)}
+}
+
+// NewBlowqParser initiates a new FASTQ parser from an io.Reader.
+func NewBlowqParser(r io.Reader) *Parser[*fastq.Read, *fastq.Header] {
+	return NewBlowqParserWithMaxLineLength(r, DefaultMaxLengths[Blowq])
+}
+
+// NewBlowqParserWithMaxLineLength initiates a new FASTQ parser from an
+// io.Reader and a user-given maxLineLength.
+func NewBlowqParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[*fastq.Read, *fastq.Header] {
+	return &Parser[*fastq.Read, *fastq.Header]{parserInterface: blowq.NewParser(r, maxLineLength)}
 }
 
 // NewGenbankParser initiates a new Genbank parser form an io.Reader.
