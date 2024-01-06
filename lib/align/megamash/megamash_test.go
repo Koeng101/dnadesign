@@ -2,10 +2,14 @@ package megamash
 
 import (
 	"testing"
+
+	"github.com/koeng101/dnadesign/lib/random"
 )
 
 func TestCompressDNA(t *testing.T) {
 	// Define test cases
+	longDna, _ := random.DNASequence(300, 0)
+	longerDna, _ := random.DNASequence(66000, 0)
 	tests := []struct {
 		name         string
 		dna          string
@@ -15,6 +19,8 @@ func TestCompressDNA(t *testing.T) {
 		{"Empty", "", 2, 0x00},
 		{"Short", "ATGC", 3, 0x00},
 		{"Medium", "ATGCGTATGCCGTAGC", 6, 0x00},
+		{"Long", longDna, 78, 0x01},
+		{"Longest", longerDna, 16505, 0x02},
 		// Add more test cases for longer sequences and edge cases
 	}
 
@@ -22,7 +28,7 @@ func TestCompressDNA(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			compressed := CompressDNA(tc.dna)
 			if len(compressed) != tc.expectedLen {
-				t.Errorf("CompressDNA() with input %s, expected length %d, got %d", tc.dna, tc.expectedLen, len(compressed))
+				t.Errorf("CompressDNA() with input %s, expected length %d, got %d", "", tc.expectedLen, len(compressed))
 			}
 			if compressed[0] != tc.expectedFlag {
 				t.Errorf("CompressDNA() with input %s, expected flag %b, got %b", tc.dna, tc.expectedFlag, compressed[0])
@@ -32,6 +38,8 @@ func TestCompressDNA(t *testing.T) {
 }
 
 func TestDecompressDNA(t *testing.T) {
+	longDna, _ := random.DNASequence(300, 0)
+	longerDna, _ := random.DNASequence(66000, 0)
 	// Define test cases
 	tests := []struct {
 		name     string
@@ -41,6 +49,8 @@ func TestDecompressDNA(t *testing.T) {
 		{"Empty", "", ""},
 		{"Short", "ATGC", "ATGC"},
 		{"Medium", "ATGCGTATGCCGTAGC", "ATGCGTATGCCGTAGC"},
+		{"Long", longDna, longDna},
+		{"Longest", longerDna, longerDna},
 		// Add more test cases as needed
 	}
 

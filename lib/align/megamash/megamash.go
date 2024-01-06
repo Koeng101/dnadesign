@@ -14,6 +14,7 @@ import (
 	"github.com/koeng101/dnadesign/lib/transform"
 )
 
+// StandardizedCompressedDNA returns the CompressedDNA byte string
 func StandardizedCompressedDNA(sequence string) []byte {
 	var deterministicSequence string
 	reverseComplement := transform.ReverseComplement(sequence)
@@ -60,19 +61,7 @@ func MakeMegamashMap(sequences []string, kmerSize uint) MegamashMap {
 		// Add it to megamashMap
 		megamashMap = append(megamashMap, uniqueKmerMap)
 	}
-	// Finally, go back through and make a final megamashMap without
-	// all those falses.
-	var finalMegamashMap MegamashMap
-	for _, singleMegamashMap := range megamashMap {
-		finalMap := make(map[string]bool)
-		for kmerBase64, value := range singleMegamashMap {
-			if value {
-				finalMap[kmerBase64] = true
-			}
-		}
-		finalMegamashMap = append(finalMegamashMap, finalMap)
-	}
-	return finalMegamashMap
+	return megamashMap
 }
 
 func (m *MegamashMap) Score(sequence string) []float64 {
@@ -102,8 +91,8 @@ out:
 		for i := 0; i <= len(sequence)-kmerSize; i++ {
 			kmerBytes := StandardizedCompressedDNA(sequence[i : i+kmerSize])
 			kmerBase64 := base64.StdEncoding.EncodeToString(kmerBytes)
-			_, ok := sequenceMap[kmerBase64]
-			if ok {
+			unique, ok := sequenceMap[kmerBase64]
+			if ok && unique {
 				matchedKmers++
 			}
 		}
