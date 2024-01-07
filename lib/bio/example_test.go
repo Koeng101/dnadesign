@@ -10,6 +10,7 @@ import (
 
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/bio/fasta"
+	"github.com/koeng101/dnadesign/lib/bio/sam"
 )
 
 // Example_read shows an example of reading a file from disk.
@@ -398,4 +399,26 @@ ae9a66f5-bf71-4572-8106-f6f8dbd3b799	16	pOpen_V3_amplified	1	60	8S54M1D3M1D108M1
 
 	fmt.Println(records[0].CIGAR)
 	// Output: 8S54M1D3M1D108M1D1M1D62M226S
+}
+
+func ExampleFilterData() {
+	// Create channels for input and output
+	inputChan := make(chan *sam.Alignment, 2) // Buffered channel to prevent blocking
+	outputChan := make(chan *sam.Alignment)
+
+	var results []sam.Alignment
+	go bio.FilterData(inputChan, outputChan, func(data *sam.Alignment) bool { return (data.FLAG & 0x900) == 0 })
+
+	// Send some example Alignments to the input channel
+	inputChan <- &sam.Alignment{FLAG: 0x900}              // Not primary, should not be outputted
+	inputChan <- &sam.Alignment{SEQ: "FAKE", FLAG: 0x000} // Primary, should be outputted
+	close(inputChan)                                      // Close the input channel to signal no more data
+
+	// Collect results from the output channel
+	for alignment := range outputChan {
+		results = append(results, *alignment)
+	}
+
+	fmt.Println(results)
+	// Output: [{ 0  0 0   0 0 FAKE  []}]
 }
