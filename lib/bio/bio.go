@@ -61,21 +61,27 @@ Lower level interfaces
 
 ******************************************************************************/
 
-// parserInterface is a generic interface that all parsers must support. It is
+// DataTypes defines the possible data types returned by every parser.
+type DataTypes interface {
+	genbank.Genbank | fasta.Record | fastq.Read | slow5.Read | sam.Alignment | pileup.Line | uniprot.Entry
+}
+
+// HeaderTypes defines the possible header types returned by every parser.
+type HeaderTypes interface {
+	genbank.Header | fasta.Header | fastq.Header | slow5.Header | sam.Header | pileup.Header | uniprot.Header
+}
+
+// ParserInterface is a generic interface that all parsers must support. It is
 // very simple, only requiring two functions, Header() and Next(). Header()
 // returns the header of the file if there is one: most files, like fasta,
 // fastq, and pileup do not contain headers, while others like sam and slow5 do
 // have headers. Next() returns a record/read/line from the file format, and
 // terminates on an io.EOF error.
 //
-// Next() may terminate with an io.EOF error with a nil Data or with a
-// full Data, depending on where the EOF is in the actual file. A check
-// for this is needed at the last Next(), when it returns an io.EOF error. A
-// pointer is used to represent the difference between a null Data and an
-// empty Data.
-type parserInterface[Data io.WriterTo, Header io.WriterTo] interface {
+// Next() terminates at io.EOF with an empty Data struct.
+type ParserInterface[Data DataTypes, Header HeaderTypes] interface {
 	Header() (Header, error)
-	Next() (Data, error)
+	Next() (Data, error) // Returns io.EOF on end of file
 }
 
 /******************************************************************************
@@ -87,82 +93,82 @@ Higher level parse
 // Parser is generic bioinformatics file parser. It contains a LowerLevelParser
 // and implements useful functions on top of it: such as Parse(), ParseToChannel(), and
 // ParseWithHeader().
-type Parser[Data io.WriterTo, Header io.WriterTo] struct {
-	parserInterface parserInterface[Data, Header]
+type Parser[Data DataTypes, Header HeaderTypes] struct {
+	ParserInterface ParserInterface[Data, Header]
 }
 
 // NewFastaParser initiates a new FASTA parser from an io.Reader.
-func NewFastaParser(r io.Reader) *Parser[*fasta.Record, *fasta.Header] {
+func NewFastaParser(r io.Reader) *Parser[fasta.Record, fasta.Header] {
 	return NewFastaParserWithMaxLineLength(r, DefaultMaxLengths[Fasta])
 }
 
 // NewFastaParserWithMaxLineLength initiates a new FASTA parser from an
 // io.Reader and a user-given maxLineLength.
-func NewFastaParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[*fasta.Record, *fasta.Header] {
-	return &Parser[*fasta.Record, *fasta.Header]{parserInterface: fasta.NewParser(r, maxLineLength)}
+func NewFastaParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[fasta.Record, fasta.Header] {
+	return &Parser[fasta.Record, fasta.Header]{ParserInterface: fasta.NewParser(r, maxLineLength)}
 }
 
 // NewFastqParser initiates a new FASTQ parser from an io.Reader.
-func NewFastqParser(r io.Reader) *Parser[*fastq.Read, *fastq.Header] {
+func NewFastqParser(r io.Reader) *Parser[fastq.Read, fastq.Header] {
 	return NewFastqParserWithMaxLineLength(r, DefaultMaxLengths[Fastq])
 }
 
 // NewFastqParserWithMaxLineLength initiates a new FASTQ parser from an
 // io.Reader and a user-given maxLineLength.
-func NewFastqParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[*fastq.Read, *fastq.Header] {
-	return &Parser[*fastq.Read, *fastq.Header]{parserInterface: fastq.NewParser(r, maxLineLength)}
+func NewFastqParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[fastq.Read, fastq.Header] {
+	return &Parser[fastq.Read, fastq.Header]{ParserInterface: fastq.NewParser(r, maxLineLength)}
 }
 
 // NewGenbankParser initiates a new Genbank parser form an io.Reader.
-func NewGenbankParser(r io.Reader) *Parser[*genbank.Genbank, *genbank.Header] {
+func NewGenbankParser(r io.Reader) *Parser[genbank.Genbank, genbank.Header] {
 	return NewGenbankParserWithMaxLineLength(r, DefaultMaxLengths[Genbank])
 }
 
 // NewGenbankParserWithMaxLineLength initiates a new Genbank parser from an
 // io.Reader and a user-given maxLineLength.
-func NewGenbankParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[*genbank.Genbank, *genbank.Header] {
-	return &Parser[*genbank.Genbank, *genbank.Header]{parserInterface: genbank.NewParser(r, maxLineLength)}
+func NewGenbankParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[genbank.Genbank, genbank.Header] {
+	return &Parser[genbank.Genbank, genbank.Header]{ParserInterface: genbank.NewParser(r, maxLineLength)}
 }
 
 // NewSlow5Parser initiates a new SLOW5 parser from an io.Reader.
-func NewSlow5Parser(r io.Reader) (*Parser[*slow5.Read, *slow5.Header], error) {
+func NewSlow5Parser(r io.Reader) (*Parser[slow5.Read, slow5.Header], error) {
 	return NewSlow5ParserWithMaxLineLength(r, DefaultMaxLengths[Slow5])
 }
 
 // NewSlow5ParserWithMaxLineLength initiates a new SLOW5 parser from an
 // io.Reader and a user-given maxLineLength.
-func NewSlow5ParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[*slow5.Read, *slow5.Header], error) {
+func NewSlow5ParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[slow5.Read, slow5.Header], error) {
 	parser, err := slow5.NewParser(r, maxLineLength)
-	return &Parser[*slow5.Read, *slow5.Header]{parserInterface: parser}, err
+	return &Parser[slow5.Read, slow5.Header]{ParserInterface: parser}, err
 }
 
 // NewSamParser initiates a new SAM parser from an io.Reader.
-func NewSamParser(r io.Reader) (*Parser[*sam.Alignment, *sam.Header], error) {
+func NewSamParser(r io.Reader) (*Parser[sam.Alignment, sam.Header], error) {
 	return NewSamParserWithMaxLineLength(r, DefaultMaxLengths[Sam])
 }
 
 // NewSamParserWithMaxLineLength initiates a new SAM parser from an io.Reader
 // and a user-given maxLineLength.
-func NewSamParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[*sam.Alignment, *sam.Header], error) {
+func NewSamParserWithMaxLineLength(r io.Reader, maxLineLength int) (*Parser[sam.Alignment, sam.Header], error) {
 	parser, _, err := sam.NewParser(r, maxLineLength)
-	return &Parser[*sam.Alignment, *sam.Header]{parserInterface: parser}, err
+	return &Parser[sam.Alignment, sam.Header]{ParserInterface: parser}, err
 }
 
 // NewPileupParser initiates a new Pileup parser from an io.Reader.
-func NewPileupParser(r io.Reader) *Parser[*pileup.Line, *pileup.Header] {
+func NewPileupParser(r io.Reader) *Parser[pileup.Line, pileup.Header] {
 	return NewPileupParserWithMaxLineLength(r, DefaultMaxLengths[Pileup])
 }
 
 // NewPileupParserWithMaxLineLength initiates a new Pileup parser from an
 // io.Reader and a user-given maxLineLength.
-func NewPileupParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[*pileup.Line, *pileup.Header] {
-	return &Parser[*pileup.Line, *pileup.Header]{parserInterface: pileup.NewParser(r, maxLineLength)}
+func NewPileupParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[pileup.Line, pileup.Header] {
+	return &Parser[pileup.Line, pileup.Header]{ParserInterface: pileup.NewParser(r, maxLineLength)}
 }
 
 // NewUniprotParser initiates a new Uniprot parser from an io.Reader. No
 // maxLineLength is necessary.
-func NewUniprotParser(r io.Reader) *Parser[*uniprot.Entry, *uniprot.Header] {
-	return &Parser[*uniprot.Entry, *uniprot.Header]{parserInterface: uniprot.NewParser(r)}
+func NewUniprotParser(r io.Reader) *Parser[uniprot.Entry, uniprot.Header] {
+	return &Parser[uniprot.Entry, uniprot.Header]{ParserInterface: uniprot.NewParser(r)}
 }
 
 /******************************************************************************
@@ -179,7 +185,7 @@ Parser higher-level functions
 // records in a file, as the parser reads the underlying io.Reader in a
 // straight line.
 func (p *Parser[Data, Header]) Next() (Data, error) {
-	return p.parserInterface.Next()
+	return p.ParserInterface.Next()
 }
 
 // Header is a parsing primitive that should be used when low-level control is
@@ -198,7 +204,7 @@ func (p *Parser[Data, Header]) Next() (Data, error) {
 //
 //	SLOW5
 func (p *Parser[Data, Header]) Header() (Header, error) {
-	return p.parserInterface.Header()
+	return p.ParserInterface.Header()
 }
 
 // ParseN returns a countN number of records/reads/lines from the parser.
@@ -255,7 +261,7 @@ Concurrent higher-level functions
 // Context can be used to close the parser in the middle of parsing - for
 // example, if an error is found in another parser elsewhere and all files
 // need to close.
-func (p *Parser[Data, Header]) ParseToChannel(ctx context.Context, channel chan<- Data, keepChannelOpen bool) error {
+func (p *Parser[DataTypes, HeaderTypes]) ParseToChannel(ctx context.Context, channel chan<- DataTypes, keepChannelOpen bool) error {
 	for {
 		select {
 		case <-ctx.Done():
@@ -280,7 +286,7 @@ func (p *Parser[Data, Header]) ParseToChannel(ctx context.Context, channel chan<
 // functions. It properly does concurrent parsing of many parsers to a
 // single channel, then closes that channel. If any of the files fail to
 // parse, the entire pipeline exits and returns.
-func ManyToChannel[Data io.WriterTo, Header io.WriterTo](ctx context.Context, channel chan<- Data, parsers ...*Parser[Data, Header]) error {
+func ManyToChannel[Data DataTypes, Header HeaderTypes](ctx context.Context, channel chan<- Data, parsers ...*Parser[Data, Header]) error {
 	errorGroup, ctx := errgroup.WithContext(ctx)
 	// For each parser, start a new goroutine to parse data to the channel
 	for _, p := range parsers {
@@ -299,16 +305,21 @@ func ManyToChannel[Data io.WriterTo, Header io.WriterTo](ctx context.Context, ch
 // FilterData is a generic function that implements a channel filter. Users
 // give an input and output channel, with a filtering function, and FilterData
 // filters data from the input into the output.
-func FilterData[Data *genbank.Genbank | *fasta.Record | *fastq.Read | *slow5.Read | *sam.Alignment | *pileup.Line | *uniprot.Entry](input <-chan Data, output chan<- Data, filter func(a Data) bool) {
+func FilterData[Data DataTypes](ctx context.Context, input <-chan Data, output chan<- Data, filter func(a Data) bool) error {
 	for {
 		select {
+		case <-ctx.Done():
+			close(output)
+			return ctx.Err()
+
 		case data, ok := <-input:
 			if !ok {
 				// If the input channel is closed, we close the output channel and return
 				close(output)
-				return
+				return nil // returning nil as the input channel being closed is a normal completion signal
 			}
 			if filter(data) {
+				// Only send data through if it passes the filter.
 				output <- data
 			}
 		}

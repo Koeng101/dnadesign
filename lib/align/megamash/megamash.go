@@ -9,13 +9,16 @@ reaction.
 package megamash
 
 import (
-	"encoding/base64"
+	"context"
+	"fmt"
 
+	"github.com/koeng101/dnadesign/lib/bio/fasta"
+	"github.com/koeng101/dnadesign/lib/bio/fastq"
 	"github.com/koeng101/dnadesign/lib/transform"
 )
 
-// StandardizedCompressedDNA returns the CompressedDNA byte string
-func StandardizedCompressedDNA(sequence string) []byte {
+// StandardizedDNA returns the a standard DNA string
+func StandardizedDNA(sequence string) string {
 	var deterministicSequence string
 	reverseComplement := transform.ReverseComplement(sequence)
 	if sequence > reverseComplement {
@@ -23,27 +26,45 @@ func StandardizedCompressedDNA(sequence string) []byte {
 	} else {
 		deterministicSequence = sequence
 	}
-	return CompressDNA(deterministicSequence)
+	return deterministicSequence
 }
 
-type MegamashMap []map[string]bool
+var (
+	DefaultKmerSize         uint    = 16
+	DefaultMinimalKmerCount uint    = 10
+	DefaultScoreThreshold   float64 = 0.2
+)
 
-func MakeMegamashMap(sequences []string, kmerSize uint) MegamashMap {
+type MegamashMap struct {
+	Identifiers      []string
+	Kmers            []map[string]bool
+	KmerSize         uint
+	KmerMinimalCount uint
+	Threshold        float64
+}
+
+func NewMegamashMap(sequences []fasta.Record, kmerSize uint, kmerMinimalCount uint, threshold float64) (MegamashMap, error) {
 	var megamashMap MegamashMap
-	for _, sequence := range sequences {
+	megamashMap.KmerSize = kmerSize
+	megamashMap.KmerMinimalCount = kmerMinimalCount
+	megamashMap.Threshold = threshold
+
+	for _, fastaRecord := range sequences {
+		megamashMap.Identifiers = append(megamashMap.Identifiers, fastaRecord.Identifier)
+		sequence := fastaRecord.Sequence
+
 		// First get all kmers with a given sequence
 		kmerMap := make(map[string]bool)
 		for i := 0; i <= len(sequence)-int(kmerSize); i++ {
-			kmerBytes := StandardizedCompressedDNA(sequence[i : i+int(kmerSize)])
-			kmerBase64 := base64.StdEncoding.EncodeToString(kmerBytes)
-			kmerMap[kmerBase64] = true
+			kmerString := StandardizedDNA(sequence[i : i+int(kmerSize)])
+			kmerMap[kmerString] = true
 		}
 
 		// Then, get unique kmers for this sequence and only this sequence
 		uniqueKmerMap := make(map[string]bool)
 		for kmerBase64 := range kmerMap {
 			unique := true
-			for _, otherMegaMashMap := range megamashMap {
+			for _, otherMegaMashMap := range megamashMap.Kmers {
 				_, ok := otherMegaMashMap[kmerBase64]
 				// If this kmer is found, set both to false
 				if ok {
@@ -56,15 +77,30 @@ func MakeMegamashMap(sequences []string, kmerSize uint) MegamashMap {
 				uniqueKmerMap[kmerBase64] = true
 			}
 		}
+		// Check if we have the minimal kmerCount
+		var kmerCount uint = 0
+		for _, unique := range uniqueKmerMap {
+			if unique {
+				kmerCount++
+			}
+		}
+		if kmerCount < kmerMinimalCount {
+			return megamashMap, fmt.Errorf("Got only %d unique kmers of required %d for sequence %s", kmerCount, kmerMinimalCount, fastaRecord.Identifier)
+		}
 
 		// Now we have a unique Kmer map for the given sequence.
 		// Add it to megamashMap
-		megamashMap = append(megamashMap, uniqueKmerMap)
+		megamashMap.Kmers = append(megamashMap.Kmers, uniqueKmerMap)
 	}
-	return megamashMap
+	return megamashMap, nil
 }
 
-func (m *MegamashMap) Score(sequence string) []float64 {
+type Match struct {
+	Identifier string
+	Score      float64
+}
+
+func (m *MegamashMap) Match(sequence string) []Match {
 	var scores []float64
 	// The algorithm is as follows:
 	// - Go through each map.
@@ -74,24 +110,21 @@ func (m *MegamashMap) Score(sequence string) []float64 {
 	// First, get the kmer total
 	var kmerSize int
 out:
-	for _, maps := range *m {
+	for _, maps := range m.Kmers {
 		for kmer := range maps {
-			decodedBytes, _ := base64.StdEncoding.DecodeString(kmer)
-			sequence := DecompressDNA(decodedBytes)
-			kmerSize = len(sequence)
+			kmerSize = len(kmer)
 			break out
 		}
 	}
 
 	// Now, iterate through each map
-	for _, sequenceMap := range *m {
+	for _, sequenceMap := range m.Kmers {
 		var score float64
 		var totalKmers = len(sequenceMap)
 		var matchedKmers int
 		for i := 0; i <= len(sequence)-kmerSize; i++ {
-			kmerBytes := StandardizedCompressedDNA(sequence[i : i+kmerSize])
-			kmerBase64 := base64.StdEncoding.EncodeToString(kmerBytes)
-			unique, ok := sequenceMap[kmerBase64]
+			kmerString := StandardizedDNA(sequence[i : i+kmerSize])
+			unique, ok := sequenceMap[kmerString]
 			if ok && unique {
 				matchedKmers++
 			}
@@ -103,5 +136,29 @@ out:
 		}
 		scores = append(scores, score)
 	}
-	return scores
+
+	var matches []Match
+	for i, score := range scores {
+		if score > m.Threshold {
+			matches = append(matches, Match{Identifier: m.Identifiers[i], Score: score})
+		}
+	}
+	return matches
+}
+
+func (m *MegamashMap) FastqMatchChannel(ctx context.Context, sequences <-chan fastq.Read, matches chan<- []Match) error {
+	for {
+		select {
+		case <-ctx.Done():
+			// Clean up resources, handle cancellation.
+			return ctx.Err()
+		case sequence, ok := <-sequences:
+			if !ok {
+				close(matches)
+				return nil
+			}
+			sequenceMatches := m.Match(sequence.Sequence)
+			matches <- sequenceMatches
+		}
+	}
 }
