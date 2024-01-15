@@ -288,7 +288,7 @@ func TestPrimary(t *testing.T) {
 			// Create an Alignment with the given FLAG
 			a := Alignment{FLAG: tc.flag}
 			// Call the Primary function
-			got := Primary(&a)
+			got := Primary(a)
 			// Assert that the result is as expected
 			if got != tc.want {
 				t.Errorf("Primary() with FLAG 0x%x = %v, want %v", tc.flag, got, tc.want)

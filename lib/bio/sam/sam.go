@@ -542,7 +542,7 @@ sam files.
 // Primary determines whether the Alignment is the primary line of the read.
 // This is useful for finding out if a particular read is the best aligned to
 // a certain fragment.
-func Primary(a *Alignment) bool {
+func Primary(a Alignment) bool {
 	// Perform bitwise AND of FLAG with 0x900 and compare to 0
 	return (a.FLAG & 0x900) == 0
 }

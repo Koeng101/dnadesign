@@ -29,7 +29,7 @@ func ExampleTranslationTable_Optimize() {
 	parser := bio.NewGenbankParser(file)
 	sequence, _ := parser.Next()
 	codonTable := codon.NewTranslationTable(11)
-	_ = codonTable.UpdateWeightsWithSequence(*sequence)
+	_ = codonTable.UpdateWeightsWithSequence(sequence)
 
 	// Here, we double check if the number of genes is equal to the number of stop codons
 	stopCodonCount := 0
@@ -88,7 +88,7 @@ func ExampleCompromiseCodonTable() {
 
 	// weight our codon optimization table using the regions we collected from the genbank file above
 	optimizationTable := codon.NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
+	err := optimizationTable.UpdateWeightsWithSequence(sequence)
 	if err != nil {
 		panic(fmt.Errorf("got unexpected error in an example: %w", err))
 	}
@@ -99,7 +99,7 @@ func ExampleCompromiseCodonTable() {
 	sequence2, _ := parser2.Next()
 
 	optimizationTable2 := codon.NewTranslationTable(11)
-	err = optimizationTable2.UpdateWeightsWithSequence(*sequence2)
+	err = optimizationTable2.UpdateWeightsWithSequence(sequence2)
 	if err != nil {
 		panic(fmt.Errorf("got unexpected error in an example: %w", err))
 	}
@@ -123,7 +123,7 @@ func ExampleAddCodonTable() {
 
 	// weight our codon optimization table using the regions we collected from the genbank file above
 	optimizationTable := codon.NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
+	err := optimizationTable.UpdateWeightsWithSequence(sequence)
 	if err != nil {
 		panic(fmt.Errorf("got unexpected error in an example: %w", err))
 	}
@@ -134,7 +134,7 @@ func ExampleAddCodonTable() {
 	sequence2, _ := parser2.Next()
 
 	optimizationTable2 := codon.NewTranslationTable(11)
-	err = optimizationTable2.UpdateWeightsWithSequence(*sequence2)
+	err = optimizationTable2.UpdateWeightsWithSequence(sequence2)
 	if err != nil {
 		panic(fmt.Errorf("got unexpected error in an example: %w", err))
 	}

@@ -58,7 +58,7 @@ func TestOptimize(t *testing.T) {
 	sequence, _ := parser.Next()
 
 	table := NewTranslationTable(11)
-	err := table.UpdateWeightsWithSequence(*sequence)
+	err := table.UpdateWeightsWithSequence(sequence)
 	if err != nil {
 		t.Error(err)
 	}
@@ -82,7 +82,7 @@ func TestOptimizeSameSeed(t *testing.T) {
 	sequence, _ := parser.Next()
 
 	optimizationTable := NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
+	err := optimizationTable.UpdateWeightsWithSequence(sequence)
 	if err != nil {
 		t.Error(err)
 	}
@@ -105,7 +105,7 @@ func TestOptimizeDifferentSeed(t *testing.T) {
 	sequence, _ := parser.Next()
 
 	optimizationTable := NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
+	err := optimizationTable.UpdateWeightsWithSequence(sequence)
 	if err != nil {
 		t.Error(err)
 	}
@@ -215,7 +215,7 @@ func TestCompromiseCodonTable(t *testing.T) {
 
 	// weight our codon optimization table using the regions we collected from the genbank file above
 	optimizationTable := NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
+	err := optimizationTable.UpdateWeightsWithSequence(sequence)
 	if err != nil {
 		t.Error(err)
 	}
@@ -225,7 +225,7 @@ func TestCompromiseCodonTable(t *testing.T) {
 	parser2 := bio.NewGenbankParser(file2)
 	sequence2, _ := parser2.Next()
 	optimizationTable2 := NewTranslationTable(11)
-	err = optimizationTable2.UpdateWeightsWithSequence(*sequence2)
+	err = optimizationTable2.UpdateWeightsWithSequence(sequence2)
 	if err != nil {
 		t.Error(err)
 	}
@@ -249,7 +249,7 @@ func TestAddCodonTable(t *testing.T) {
 	// weight our codon optimization table using the regions we collected from the genbank file above
 
 	optimizationTable := NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
+	err := optimizationTable.UpdateWeightsWithSequence(sequence)
 	if err != nil {
 		t.Error(err)
 	}
@@ -259,7 +259,7 @@ func TestAddCodonTable(t *testing.T) {
 	parser2 := bio.NewGenbankParser(file2)
 	sequence2, _ := parser2.Next()
 	optimizationTable2 := NewTranslationTable(11)
-	err = optimizationTable2.UpdateWeightsWithSequence(*sequence2)
+	err = optimizationTable2.UpdateWeightsWithSequence(sequence2)
 	if err != nil {
 		t.Error(err)
 	}
@@ -289,7 +289,7 @@ func TestCapitalizationRegression(t *testing.T) {
 	sequence, _ := parser.Next()
 
 	optimizationTable := NewTranslationTable(11)
-	err := optimizationTable.UpdateWeightsWithSequence(*sequence)
+	err := optimizationTable.UpdateWeightsWithSequence(sequence)
 	if err != nil {
 		t.Error(err)
 	}
@@ -313,7 +313,7 @@ func TestOptimizeSequence(t *testing.T) {
 			defer file.Close()
 			parser := bio.NewGenbankParser(file)
 			sequence, _ := parser.Next()
-			return *sequence
+			return sequence
 		}()
 	)
 

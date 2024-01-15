@@ -14,12 +14,15 @@ import (
 	"github.com/koeng101/dnadesign/lib/bio/fastq"
 	"github.com/koeng101/dnadesign/lib/bio/sam"
 	"github.com/koeng101/dnadesign/lib/primers/pcr"
-	"github.com/koeng101/dnadesign/lib/sequencing/nanopore"
 	"github.com/koeng101/dnadesign/lib/transform"
 	"golang.org/x/sync/errgroup"
 )
 
-func ExampleAmpliconAlignment() {
+func Example_ampliconAlignment() {
+	// This is currently a work-in-progress. Sequencing utilities are under
+	// development right now.
+	//
+	//
 	// Only run function if minimap2 is available
 	_, err := exec.LookPath("minimap2")
 	if err != nil {
@@ -48,7 +51,7 @@ func ExampleAmpliconAlignment() {
 	*/
 	var amplicons []Amplicon
 	var templates []fasta.Record
-	var pcrTm float64 = 50.0
+	pcrTm := 50.0
 
 	forward := "CCGTGCGACAAGATTTCAAG"
 	reverse := transform.ReverseComplement("CGGATCGAACTTAGGTAGCC")
@@ -86,11 +89,10 @@ func ExampleAmpliconAlignment() {
 	ctx := context.Background()
 	errorGroup, ctx := errgroup.WithContext(ctx)
 
-	fastqReads := make(chan *fastq.Read)
-	fastqBarcoded := make(chan *fastq.Read)
-	fastqTrimmed := make(chan *fastq.Read)
-	samReads := make(chan *sam.Alignment)
-	samPrimary := make(chan *sam.Alignment)
+	fastqReads := make(chan fastq.Read)
+	fastqBarcoded := make(chan fastq.Read)
+	samReads := make(chan sam.Alignment)
+	samPrimary := make(chan sam.Alignment)
 
 	// Read fastqs into channel
 	errorGroup.Go(func() error {
@@ -98,46 +100,26 @@ func ExampleAmpliconAlignment() {
 	})
 
 	// Filter the right barcode fastqs from channel
-	go func() {
-		bio.FilterData(fastqReads, fastqBarcoded, func(data *fastq.Read) bool { return data.Optionals["barcode"] == barcode })
-	}()
-
-	// Trim barcodes
 	errorGroup.Go(func() error {
-		return nanopore.TrimBarcodeWithChannels(barcode, fastqBarcoded, fastqTrimmed)
+		return bio.FilterData(ctx, fastqReads, fastqBarcoded, func(data fastq.Read) bool { return data.Optionals["barcode"] == barcode })
 	})
 
 	// Run minimap
 	errorGroup.Go(func() error {
-		return minimap2.Minimap2Channeled(&buf, fastqTrimmed, samReads)
+		return minimap2.Minimap2Channeled(&buf, fastqBarcoded, samReads)
 	})
 
 	// Sort out primary alignments
-	go func() {
-		bio.FilterData(samReads, samPrimary, sam.Primary)
-	}()
+	errorGroup.Go(func() error {
+		return bio.FilterData(ctx, samReads, samPrimary, sam.Primary)
+	})
 
 	// Read all them alignments out into memory
 	var outputAlignments []sam.Alignment
 	for alignment := range samPrimary {
-		outputAlignments = append(outputAlignments, *alignment)
+		outputAlignments = append(outputAlignments, alignment)
 	}
 
 	fmt.Println(outputAlignments[0].RNAME)
 	// Output: oligo2
-}
-
-func RunWorkflow(errorGroup *errgroup.Group, functions []func() error) error {
-	for _, function := range functions {
-		errorGroup.Go(func() error {
-			return function()
-		})
-	}
-	return nil
-}
-
-func ExampleErrgroup() {
-
-	fmt.Println("hi")
-	// Output: hi
 }

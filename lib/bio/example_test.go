@@ -10,6 +10,7 @@ import (
 
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/bio/fasta"
+	"github.com/koeng101/dnadesign/lib/bio/fastq"
 	"github.com/koeng101/dnadesign/lib/bio/sam"
 	"golang.org/x/sync/errgroup"
 )
@@ -426,4 +427,54 @@ func ExampleFilterData() {
 
 	fmt.Println(results)
 	// Output: [{ 0  0 0   0 0 FAKE  []}]
+}
+
+func Example_runWorkflow() {
+	// Workflows are a way of running bioinformatics programs replacing stdin/stdout
+	// with go channels. This allows for concurrent processing of data.
+	//
+	// Currently, we just use standard errorGroup handling for workflows, but
+	// aim to support multiple workers for maximizing throughput.
+
+	// First, setup parser
+	file := strings.NewReader(`@289a197e-4c05-4143-80e6-488e23044378 runid=bb4427242f6da39e67293199a11c6c4b6ab2b141 read=34575 ch=111 start_time=2023-12-29T16:06:13.719061-08:00 flow_cell_id=AQY258 protocol_group_id=nseq28 sample_id=build3-build3gg-u11 barcode=barcode06 barcode_alias=barcode06 parent_read_id=289a197e-4c05-4143-80e6-488e23044378 basecall_model_version_id=dna_r10.4.1_e8.2_400bps_sup@v4.2.0
+TTTTGTCTACTTCGTTCCGTTGCGTATTGCTAAGGTTAAGACTACTTTCTGCCTTTGCGAGACGGCGCCTCCGTGCGACGAGATTTCAAGGGTCTCTGTGCTATATTGCCGCTAGTTCCGCTCTAGCTGCTCCAGTTAATACTACTACTGAAGATGAATTGGAGGGTGACTTCGATGTTGCTGTTCTGCCTTTTTCCGCTTCTGAGACCCAGATCGACTTTTAGATTCCTCAGGTGCTGTTCTCGCAAAGGCAGAAAGTAGTCTTAACCTTAGCAATACGTGG
++
+$%%&%%$$%&'+)**,-+)))+866788711112=>A?@@@BDB@>?746@?>A@D2@970,-+..*++++;662/.-.+,++,//+167>A@A@@B=<887-,'&&%%&''((5555644578::<==B?ABCIJA>>>>@DCAA99::<BAA@-----DECJEDDEGEFHE;;;:;;:88754998989998887,-<<;<>>=<<<=67777+***)//+,,+)&&&+--.02:>442000/1225:=D?=<<=7;866/..../AAA226545+&%%$$
+@af86ed57-1cfe-486f-8205-b2c8d1186454 runid=bb4427242f6da39e67293199a11c6c4b6ab2b141 read=2233 ch=123 start_time=2023-12-29T10:04:32.719061-08:00 flow_cell_id=AQY258 protocol_group_id=nseq28 sample_id=build3-build3gg-u11 barcode=barcode07 barcode_alias=barcode07 parent_read_id=af86ed57-1cfe-486f-8205-b2c8d1186454 basecall_model_version_id=dna_r10.4.1_e8.2_400bps_sup@v4.2.0
+TGTCCTTTACTTCGTTCAGTTACGTATTGCTAAGGTTAAGACTACTTTCTGCCTTTGCGAGAACAGCACCTCTGCTAGGGGCTACTTATCGGGTCTCTAGTTCCGCTCTAGCTGCTCCAGTTAATACTACTACTGAAGATGAATTGGAGGGTGACTTCGATGTTGCTGTTCTGCCTTTTTCCGCTTCTATCTGAGACCGAAGTGGTTTGCCTAAACGCAGGTGCTGTTGGCAAAGGCAGAAAGTAGTCTTAACCTTGACAATGAGTGGTA
++
+$%&$$$$$#')+)+,<>@B?>==<>>;;<<<B??>?@DA@?=>==>??<>??7;<706=>=>CBCCB????@CCBDAGFFFGJ<<<<<=54455>@?>:::9..++?@BDCCDCGECFHD@>=<<==>@@B@?@@>>>==>>===>>>A?@ADFGDCA@?????CCCEFDDDDDGJODAA@A;;ABBD<=<:92222223:>>@?@@B?@=<62212=<<<=>AAB=<'&&&'-,-.,**)'&'(,,,-.114888&&&&&'+++++,,*`)
+	parser := bio.NewFastqParser(file)
+
+	// We setup the error group here. It's context is used if we need to cancel
+	// code that is running.
+	ctx := context.Background()
+	errorGroup, ctx := errgroup.WithContext(ctx)
+
+	// Now we set up a workflow. We need two things: channels for the internal
+	// workflow steps to pass between, and the workflow steps themselves. We
+	// Set them up here.
+	fastqReads := make(chan fastq.Read)
+	fastqBarcoded := make(chan fastq.Read)
+
+	// Read fastqs into channel
+	errorGroup.Go(func() error {
+		return parser.ParseToChannel(ctx, fastqReads, false)
+	})
+
+	// Filter the right barcode fastqs from channel
+	barcode := "barcode07"
+	errorGroup.Go(func() error {
+		return bio.FilterData(ctx, fastqReads, fastqBarcoded, func(data fastq.Read) bool { return data.Optionals["barcode"] == barcode })
+	})
+
+	// Now, check the outputs. We should have sorted only for barcode07
+	var reads []fastq.Read
+	for read := range fastqBarcoded {
+		reads = append(reads, read)
+	}
+
+	fmt.Println(reads[0].Identifier)
+	// Output: af86ed57-1cfe-486f-8205-b2c8d1186454
 }
