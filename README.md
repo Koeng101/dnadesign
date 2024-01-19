@@ -71,6 +71,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Added the megamash algorithm [#50](https://github.com/Koeng101/dnadesign/pull/50)
+- Changed parsers to return values instead of pointers. Added some sequencing utils [#49](https://github.com/Koeng101/dnadesign/pull/49)
 - Added minimap2 and samtools(pileup) integrations in external [#46](https://github.com/Koeng101/dnadesign/pull/46)
 - Added sam parser [#5](https://github.com/Koeng101/dnadesign/pull/5)
 - Added the LinearFold folding algorithms [#38](https://github.com/Koeng101/dnadesign/pull/38)
