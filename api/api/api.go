@@ -305,17 +305,14 @@ func luaStringArrayToGoSlice(L *lua.LState, index int) ([]string, error) {
 
 func (app *App) PostIoFastaParse(ctx context.Context, request gen.PostIoFastaParseRequestObject) (gen.PostIoFastaParseResponseObject, error) {
 	fastaString := *request.Body
-	parser, err := bio.NewFastaParser(strings.NewReader(fastaString + "\n"))
-	if err != nil {
-		return gen.PostIoFastaParse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
-	}
+	parser := bio.NewFastaParser(strings.NewReader(fastaString + "\n"))
 	fastas, err := parser.Parse()
 	if err != nil {
 		return gen.PostIoFastaParse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
 	}
 	data := make([]gen.FastaRecord, len(fastas))
 	for i, fastaRecord := range fastas {
-		data[i] = gen.FastaRecord(*fastaRecord)
+		data[i] = gen.FastaRecord(fastaRecord)
 	}
 	return gen.PostIoFastaParse200JSONResponse(data), nil
 }
@@ -338,10 +335,7 @@ func (app *App) LuaIoFastaWrite(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoGenbankParse(ctx context.Context, request gen.PostIoGenbankParseRequestObject) (gen.PostIoGenbankParseResponseObject, error) {
 	genbankString := *request.Body
-	parser, err := bio.NewGenbankParser(strings.NewReader(genbankString + "\n"))
-	if err != nil {
-		return gen.PostIoGenbankParse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
-	}
+	parser := bio.NewGenbankParser(strings.NewReader(genbankString + "\n"))
 	genbanks, err := parser.Parse()
 	if err != nil {
 		return gen.PostIoGenbankParse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
@@ -352,7 +346,7 @@ func (app *App) PostIoGenbankParse(ctx context.Context, request gen.PostIoGenban
 		if err != nil {
 			return gen.PostIoGenbankParse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
 		}
-		data[i] = ConvertGenbankToGenbankRecord(*genbankRecord)
+		data[i] = ConvertGenbankToGenbankRecord(genbankRecord)
 	}
 	return gen.PostIoGenbankParse200JSONResponse(data), nil
 }
