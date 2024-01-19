@@ -568,8 +568,8 @@ type Parser struct {
 }
 
 // Header returns nil,nil.
-func (parser *Parser) Header() (*Header, error) {
-	return &Header{}, nil
+func (parser *Parser) Header() (Header, error) {
+	return Header{}, nil
 }
 
 // NewParser returns a Parser that uses r as the source
@@ -584,7 +584,7 @@ func NewParser(r io.Reader, maxLineSize int) *Parser {
 }
 
 // Next takes in a reader representing a multi gbk/gb/genbank file and outputs the next record
-func (parser *Parser) Next() (*Genbank, error) {
+func (parser *Parser) Next() (Genbank, error) {
 	parser.parameters.init()
 	// Loop through each line of the file
 	for lineNum := 0; parser.scanner.Scan(); lineNum++ {
@@ -615,7 +615,7 @@ func (parser *Parser) Next() (*Genbank, error) {
 		case "metadata":
 			// Handle empty lines
 			if len(line) == 0 {
-				return &Genbank{}, &ParseError{line: line, lineNo: lineNum, info: "unexpected empty metadata"}
+				return Genbank{}, &ParseError{line: line, lineNo: lineNum, info: "unexpected empty metadata"}
 			}
 
 			// If we are currently reading a line, we need to figure out if it is a new meta line.
@@ -637,7 +637,7 @@ func (parser *Parser) Next() (*Genbank, error) {
 					// parseReferencesFn = parseReferences in genbank_test. We use Fn for testing purposes.
 					reference, err := parseReferencesFn(parser.parameters.metadataData)
 					if err != nil {
-						return &Genbank{}, &ParseError{line: line, lineNo: lineNum, before: true, wraps: err, info: "failed in parsing reference"}
+						return Genbank{}, &ParseError{line: line, lineNo: lineNum, before: true, wraps: err, info: "failed in parsing reference"}
 					}
 					parser.parameters.genbank.Meta.References = append(parser.parameters.genbank.Meta.References, reference)
 
@@ -669,7 +669,7 @@ func (parser *Parser) Next() (*Genbank, error) {
 				for countIndex := 2; countIndex < len(fields)-1; countIndex += 2 { // starts at two because we don't want to include "BASE COUNT" in our fields
 					count, err := strconv.Atoi(fields[countIndex])
 					if err != nil {
-						return &Genbank{}, &ParseError{line: line, lineNo: lineNum, wraps: err, info: "invalid base count"}
+						return Genbank{}, &ParseError{line: line, lineNo: lineNum, wraps: err, info: "invalid base count"}
 					}
 
 					baseCount := BaseCount{
@@ -693,12 +693,12 @@ func (parser *Parser) Next() (*Genbank, error) {
 					// TODO: parse location when line is read, or track line number so error is localized
 					location, err := parseLocation(feature.Location.GbkLocationString)
 					if err != nil {
-						return &Genbank{}, &ParseError{before: true, line: line, lineNo: lineNum, wraps: err, info: "invalid feature location"}
+						return Genbank{}, &ParseError{before: true, line: line, lineNo: lineNum, wraps: err, info: "invalid feature location"}
 					}
 					feature.Location = location
 					err = parser.parameters.genbank.AddFeature(&feature)
 					if err != nil {
-						return &Genbank{}, &ParseError{before: true, line: line, lineNo: lineNum, wraps: err, info: "problem adding feature"}
+						return Genbank{}, &ParseError{before: true, line: line, lineNo: lineNum, wraps: err, info: "problem adding feature"}
 					}
 				}
 
@@ -717,7 +717,7 @@ func (parser *Parser) Next() (*Genbank, error) {
 			indent := countLeadingSpaces(parser.parameters.currentLine)
 			// determine if current line is a new top level feature
 			if indent == 0 {
-				return &Genbank{}, &ParseError{line: line, lineNo: lineNum, info: "unexpected metadata when parsing feature"}
+				return Genbank{}, &ParseError{line: line, lineNo: lineNum, info: "unexpected metadata when parsing feature"}
 			} else if indent < countLeadingSpaces(parser.parameters.prevline) || parser.parameters.prevline == "FEATURES" {
 				parser.parameters.saveLastAttribute()
 
@@ -726,7 +726,7 @@ func (parser *Parser) Next() (*Genbank, error) {
 
 				// An initial feature line looks like this: `source          1..2686` with a type separated by its location
 				if len(splitLine) < 2 {
-					return &Genbank{}, &ParseError{line: line, lineNo: lineNum, info: "malformed feature"}
+					return Genbank{}, &ParseError{line: line, lineNo: lineNum, info: "malformed feature"}
 				}
 				parser.parameters.feature.Type = strings.TrimSpace(splitLine[0])
 				parser.parameters.feature.Location.GbkLocationString = strings.TrimSpace(splitLine[len(splitLine)-1])
@@ -769,26 +769,26 @@ func (parser *Parser) Next() (*Genbank, error) {
 				parser.parameters.attributeValue = removeAttributeValueQuotes
 				parser.parameters.multiLineFeature = false // without this we can't tell if something is a multiline feature or multiline qualifier
 			} else {
-				return &Genbank{}, &ParseError{line: line, lineNo: lineNum, info: "invalid feature"}
+				return Genbank{}, &ParseError{line: line, lineNo: lineNum, info: "invalid feature"}
 			}
 
 		case "sequence":
 			if len(line) < 2 { // throw error if line is malformed
-				return &Genbank{}, &ParseError{line: line, lineNo: lineNum, info: "too short line found while parsing genbank sequence"}
+				return Genbank{}, &ParseError{line: line, lineNo: lineNum, info: "too short line found while parsing genbank sequence"}
 			} else if line[0:2] == "//" { // end of sequence
 				parser.parameters.genbank.Sequence = parser.parameters.sequenceBuilder.String()
 
 				parser.parameters.genbankStarted = false
 				parser.parameters.sequenceBuilder.Reset()
-				return &parser.parameters.genbank, nil
+				return parser.parameters.genbank, nil
 			} else { // add line to total sequence
 				parser.parameters.sequenceBuilder.WriteString(sequenceRegex.ReplaceAllString(line, ""))
 			}
 		default:
-			return &Genbank{}, fmt.Errorf("Unknown parse step: %s", parser.parameters.parseStep)
+			return Genbank{}, fmt.Errorf("Unknown parse step: %s", parser.parameters.parseStep)
 		}
 	}
-	return &Genbank{}, io.EOF
+	return Genbank{}, io.EOF
 }
 
 func countLeadingSpaces(line string) int {
@@ -1228,7 +1228,7 @@ func parseMultiNth(r io.Reader, count int) ([]Genbank, *ParseError) {
 			}
 			return genbanks, perr
 		}
-		genbanks = append(genbanks, *gb)
+		genbanks = append(genbanks, gb)
 	}
 	return genbanks, nil
 }
@@ -1236,7 +1236,7 @@ func parseMultiNth(r io.Reader, count int) ([]Genbank, *ParseError) {
 func parse(r io.Reader) (Genbank, error) {
 	parser := NewParser(r, bufio.MaxScanTokenSize)
 	gb, err := parser.Next()
-	return *gb, err
+	return gb, err
 }
 
 func write(gb Genbank, path string) error {

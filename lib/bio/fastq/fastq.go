@@ -59,8 +59,8 @@ type Parser struct {
 }
 
 // Header returns nil,nil.
-func (parser *Parser) Header() (*Header, error) {
-	return &Header{}, nil
+func (parser *Parser) Header() (Header, error) {
+	return Header{}, nil
 }
 
 // NewParser returns a Parser that uses r as the source
@@ -87,9 +87,9 @@ func NewParser(r io.Reader, maxLineSize int) *Parser {
 // files, fastq always have 4 lines following each other - not variable with
 // a line limit of 80 like fasta files have. So instead of a for loop, you
 // can just parse 4 lines at once.
-func (parser *Parser) Next() (*Read, error) {
+func (parser *Parser) Next() (Read, error) {
 	if parser.atEOF {
-		return &Read{}, io.EOF
+		return Read{}, io.EOF
 	}
 	// Initialization of parser state variables.
 	var (
@@ -106,7 +106,7 @@ func (parser *Parser) Next() (*Read, error) {
 	line, err = parser.reader.ReadSlice('\n')
 	parser.line++
 	if err != nil {
-		return &Read{}, err
+		return Read{}, err
 	}
 
 	line = line[:len(line)-1] // Exclude newline delimiter.
@@ -127,17 +127,17 @@ func (parser *Parser) Next() (*Read, error) {
 	line, err = parser.reader.ReadSlice('\n')
 	parser.line++
 	if err != nil {
-		return &Read{}, err
+		return Read{}, err
 	}
 	if len(line) <= 1 { // newline delimiter - actually checking for empty line
-		return &Read{}, fmt.Errorf("empty fastq sequence for %q,  got to line %d: %w", seqIdentifier, parser.line, err)
+		return Read{}, fmt.Errorf("empty fastq sequence for %q,  got to line %d: %w", seqIdentifier, parser.line, err)
 	}
 	sequence = line[:len(line)-1] // Exclude newline delimiter.
 	var newSequence []byte
 	for _, char := range sequence {
 		newSequence = append(newSequence, char)
 		if !strings.ContainsRune("ATGCN", rune(char)) {
-			return &Read{}, errors.New("Only letters ATGCN are allowed for DNA/RNA in fastq file. Got letter: " + string(char))
+			return Read{}, errors.New("Only letters ATGCN are allowed for DNA/RNA in fastq file. Got letter: " + string(char))
 		}
 	}
 
@@ -145,7 +145,7 @@ func (parser *Parser) Next() (*Read, error) {
 	_, err = parser.reader.ReadSlice('\n')
 	parser.line++
 	if err != nil {
-		return &Read{}, err
+		return Read{}, err
 	}
 
 	// parse quality
@@ -154,18 +154,18 @@ func (parser *Parser) Next() (*Read, error) {
 	if err != nil {
 		// If the line is EOF, just continue and finish off returning the new read.
 		if err != io.EOF {
-			return &Read{}, nil
+			return Read{}, nil
 		}
 		parser.atEOF = true
 	}
 	if len(line) <= 1 { // newline delimiter - actually checking for empty line
-		return &Read{}, fmt.Errorf("empty quality sequence for %q,  got to line %d: %w", seqIdentifier, parser.line, err)
+		return Read{}, fmt.Errorf("empty quality sequence for %q,  got to line %d: %w", seqIdentifier, parser.line, err)
 	}
 	quality = string(line[:len(line)-1])
 
 	// Parsing ended. Check for inconsistencies.
 	if lookingForIdentifier {
-		return &Read{}, fmt.Errorf("did not find fastq start '@', got to line %d: %w", parser.line, err)
+		return Read{}, fmt.Errorf("did not find fastq start '@', got to line %d: %w", parser.line, err)
 	}
 	fastq := Read{
 		Identifier: seqIdentifier,
@@ -176,7 +176,7 @@ func (parser *Parser) Next() (*Read, error) {
 	// Gotten to this point err is non-nil only in EOF case.
 	// We report this error to note the fastq may be incomplete/corrupt
 	// like in the case of using an io.LimitReader wrapping the underlying reader.
-	return &fastq, nil
+	return fastq, nil
 }
 
 // Reset discards all data in buffer and resets state.

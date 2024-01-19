@@ -357,8 +357,8 @@ type Parser struct {
 }
 
 // Header returns the parsed sam header.
-func (p *Parser) Header() (*Header, error) {
-	return &p.FileHeader, nil
+func (p *Parser) Header() (Header, error) {
+	return p.FileHeader, nil
 }
 
 func checkIfValidSamLine(lineBytes []byte) bool {
@@ -458,7 +458,7 @@ func NewParser(r io.Reader, maxLineSize int) (*Parser, Header, error) {
 }
 
 // Next parsers the next read from a parser. Returns an `io.EOF` upon EOF.
-func (p *Parser) Next() (*Alignment, error) {
+func (p *Parser) Next() (Alignment, error) {
 	var alignment Alignment
 	var finalLine bool
 	var line string
@@ -480,7 +480,7 @@ func (p *Parser) Next() (*Alignment, error) {
 		}
 		if !finalLine {
 			if err != nil {
-				return nil, err
+				return alignment, err
 			}
 		}
 		line = strings.TrimSpace(string(lineBytes))
@@ -488,35 +488,35 @@ func (p *Parser) Next() (*Alignment, error) {
 	p.line++
 	values := strings.Split(line, "\t")
 	if len(values) < 11 {
-		return nil, fmt.Errorf("Line %d had error: must have at least 11 tab-delimited values. Had %d", p.line, len(values))
+		return alignment, fmt.Errorf("Line %d had error: must have at least 11 tab-delimited values. Had %d", p.line, len(values))
 	}
 	alignment.QNAME = values[0]
 	flag64, err := strconv.ParseUint(values[1], 10, 16) // convert string to uint16
 	if err != nil {
-		return nil, fmt.Errorf("Line %d had error: %s", p.line, err)
+		return alignment, fmt.Errorf("Line %d had error: %s", p.line, err)
 	}
 	alignment.FLAG = uint16(flag64)
 	alignment.RNAME = values[2]
 	pos64, err := strconv.ParseInt(values[3], 10, 32) // convert string to int32
 	if err != nil {
-		return nil, fmt.Errorf("Line %d had error: %s", p.line, err)
+		return alignment, fmt.Errorf("Line %d had error: %s", p.line, err)
 	}
 	alignment.POS = int32(pos64)
 	mapq64, err := strconv.ParseUint(values[4], 10, 8) // convert string to uint8 (otherwise known as byte)
 	if err != nil {
-		return nil, fmt.Errorf("Line %d had error: %s", p.line, err)
+		return alignment, fmt.Errorf("Line %d had error: %s", p.line, err)
 	}
 	alignment.MAPQ = uint8(mapq64)
 	alignment.CIGAR = values[5]
 	alignment.RNEXT = values[6]
 	pnext64, err := strconv.ParseInt(values[7], 10, 32)
 	if err != nil {
-		return nil, fmt.Errorf("Line %d had error: %s", p.line, err)
+		return alignment, fmt.Errorf("Line %d had error: %s", p.line, err)
 	}
 	alignment.PNEXT = int32(pnext64)
 	tlen64, err := strconv.ParseInt(values[8], 10, 32)
 	if err != nil {
-		return nil, fmt.Errorf("Line %d had error: %s", p.line, err)
+		return alignment, fmt.Errorf("Line %d had error: %s", p.line, err)
 	}
 	alignment.TLEN = int32(tlen64)
 	alignment.SEQ = values[9]
@@ -528,5 +528,21 @@ func (p *Parser) Next() (*Alignment, error) {
 		optionals = append(optionals, Optional{Tag: valueSplit[0], Type: rune(valueSplit[1][0]), Data: valueSplit[2]})
 	}
 	alignment.Optionals = optionals
-	return &alignment, nil
+	return alignment, nil
+}
+
+/******************************************************************************
+Jan 01, 2024
+
+Below are some helper functions that I've found are useful for when processing
+sam files.
+
+******************************************************************************/
+
+// Primary determines whether the Alignment is the primary line of the read.
+// This is useful for finding out if a particular read is the best aligned to
+// a certain fragment.
+func Primary(a Alignment) bool {
+	// Perform bitwise AND of FLAG with 0x900 and compare to 0
+	return (a.FLAG & 0x900) == 0
 }

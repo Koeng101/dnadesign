@@ -45,8 +45,8 @@ func (header *Header) WriteTo(w io.Writer) (int64, error) {
 }
 
 // Header returns nil,nil.
-func (p *Parser) Header() (*Header, error) {
-	return &Header{}, nil
+func (p *Parser) Header() (Header, error) {
+	return Header{}, nil
 }
 
 // Entry_WriteTo writes an entry to an io.Writer. It specifically writes a JSON
@@ -72,14 +72,14 @@ func NewParser(r io.Reader) *Parser {
 	return &Parser{decoder: decoder}
 }
 
-func (p *Parser) Next() (*Entry, error) {
+func (p *Parser) Next() (Entry, error) {
 	decoderToken, err := p.decoder.Token()
 
 	// Check decoding
 	if err != nil {
 		// If we are the end of the file, return io.EOF
 		if err.Error() == "EOF" {
-			return &Entry{}, io.EOF
+			return Entry{}, io.EOF
 		}
 	}
 
@@ -89,9 +89,9 @@ func (p *Parser) Next() (*Entry, error) {
 		var e Entry
 		err = p.decoder.DecodeElement(&e, &startElement)
 		if err != nil {
-			return &Entry{}, err
+			return Entry{}, err
 		}
-		return &e, nil
+		return e, nil
 	}
 	return p.Next()
 }
@@ -100,13 +100,13 @@ func (p *Parser) Next() (*Entry, error) {
 var BaseURL string = "https://rest.uniprot.org/uniprotkb/"
 
 // Get gets a uniprot from its accessionID
-func Get(ctx context.Context, accessionID string) (*Entry, error) {
+func Get(ctx context.Context, accessionID string) (Entry, error) {
 	var entry Entry
 
 	// Parse the base URL
 	baseURL, err := url.Parse(BaseURL)
 	if err != nil {
-		return &entry, err
+		return entry, err
 	}
 
 	// Resolve the full URL
@@ -120,13 +120,13 @@ func Get(ctx context.Context, accessionID string) (*Entry, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return &entry, err
+		return entry, err
 	}
 	defer resp.Body.Close()
 
 	// Check for HTTP errors
 	if resp.StatusCode != http.StatusOK {
-		return &entry, fmt.Errorf("Got http status code: %d", resp.StatusCode)
+		return entry, fmt.Errorf("Got http status code: %d", resp.StatusCode)
 	}
 
 	// Return the first parsed XML

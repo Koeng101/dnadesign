@@ -266,3 +266,33 @@ func TestValidateAllInOne(t *testing.T) {
 		})
 	}
 }
+
+func TestPrimary(t *testing.T) {
+	// Define test cases
+	tests := []struct {
+		name string
+		flag uint16
+		want bool
+	}{
+		{"No Flags", 0x0, true},
+		{"Secondary Alignment", 0x100, false},
+		{"Supplementary Alignment", 0x800, false},
+		{"Secondary and Supplementary", 0x900, false},
+		{"PCR or Optical Duplicate", 0x400, true},
+		{"Reverse Complemented", 0x10, true},
+		// ... other test cases
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			// Create an Alignment with the given FLAG
+			a := Alignment{FLAG: tc.flag}
+			// Call the Primary function
+			got := Primary(a)
+			// Assert that the result is as expected
+			if got != tc.want {
+				t.Errorf("Primary() with FLAG 0x%x = %v, want %v", tc.flag, got, tc.want)
+			}
+		})
+	}
+}

@@ -26,7 +26,7 @@ func TestParse(t *testing.T) {
 			}
 			break
 		}
-		pileupReads = append(pileupReads, *pileupRead)
+		pileupReads = append(pileupReads, pileupRead)
 	}
 	if pileupReads[2].ReadCount != 1401 {
 		t.Errorf("Expected 1401 read counts. Got: %d", pileupReads[2].ReadCount)
