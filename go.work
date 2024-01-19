@@ -3,5 +3,6 @@ go 1.21.5
 use (
     ./lib
     ./deployment
+    ./external
     ./api
-)
+    )

@@ -6,17 +6,13 @@ sequence and functional information. It is the best(1) protein database out ther
 
 Uniprot database dumps are available as gzipped FASTA files or gzipped XML files.
 The XML files have significantly more information than the FASTA files, and this
-parser specifically works on the gzipped XML files from Uniprot.
+parser specifically works on the XML files from Uniprot.
 
 Uniprot provides an XML schema of their data dumps(3), which is useful for
 autogeneration of Golang structs. xsdgen was used to automatically generate
 xml.go from uniprot.xsd.
 
 Each protein in Uniprot is known as an "Entry" (as defined in xml.go).
-
-The function Parse stream-reads Uniprot into an Entry channel, from which you
-can use the entries however you want. Read simplifies reading gzipped files
-from a disk into an Entry channel.
 
 (1) Opinion of Keoni Gandall as of May 18, 2021
 (2) https://www.uniprot.org/downloads
@@ -25,10 +21,13 @@ from a disk into an Entry channel.
 package uniprot
 
 import (
-	"compress/gzip"
+	"context"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"io"
+	"net/http"
+	"net/url"
 )
 
 // Decoder decodes XML elements2
@@ -46,8 +45,8 @@ func (header *Header) WriteTo(w io.Writer) (int64, error) {
 }
 
 // Header returns nil,nil.
-func (p *Parser) Header() (*Header, error) {
-	return &Header{}, nil
+func (p *Parser) Header() (Header, error) {
+	return Header{}, nil
 }
 
 // Entry_WriteTo writes an entry to an io.Writer. It specifically writes a JSON
@@ -67,25 +66,20 @@ type Parser struct {
 }
 
 // NewParser returns a Parser that uses r as the source
-// from which to parse fasta formatted sequences. It expects a gzipped file,
-// as the default uniprot dump is xml.gz
-func NewParser(r io.Reader) (*Parser, error) {
-	unzippedBytes, err := gzip.NewReader(r)
-	if err != nil {
-		return &Parser{}, err
-	}
-	decoder := xml.NewDecoder(unzippedBytes)
-	return &Parser{decoder: decoder}, nil
+// from which to parse fasta formatted sequences.
+func NewParser(r io.Reader) *Parser {
+	decoder := xml.NewDecoder(r)
+	return &Parser{decoder: decoder}
 }
 
-func (p *Parser) Next() (*Entry, error) {
+func (p *Parser) Next() (Entry, error) {
 	decoderToken, err := p.decoder.Token()
 
 	// Check decoding
 	if err != nil {
 		// If we are the end of the file, return io.EOF
 		if err.Error() == "EOF" {
-			return &Entry{}, io.EOF
+			return Entry{}, io.EOF
 		}
 	}
 
@@ -95,53 +89,46 @@ func (p *Parser) Next() (*Entry, error) {
 		var e Entry
 		err = p.decoder.DecodeElement(&e, &startElement)
 		if err != nil {
-			return &Entry{}, err
+			return Entry{}, err
 		}
-		return &e, nil
+		return e, nil
 	}
 	return p.Next()
 }
 
-//// Read reads a gzipped Uniprot XML dump. Failing to open the XML dump
-//// gives a single error, while errors encountered while decoding the XML dump
-//// are added to the errors channel.
-//func Read(path string) (chan Entry, chan error, error) {
-//	entries := make(chan Entry, 100) // if you don't have a buffered channel, nothing will be read in loops on the channel.
-//	decoderErrors := make(chan error, 100)
-//	xmlFile, err := os.Open(path)
-//	if err != nil {
-//		return entries, decoderErrors, err
-//	}
-//	unzippedBytes, err := gzip.NewReader(xmlFile)
-//	if err != nil {
-//		return entries, decoderErrors, err
-//	}
-//	decoder := xml.NewDecoder(unzippedBytes)
-//	go Parse(decoder, entries, decoderErrors)
-//	return entries, decoderErrors, nil
-//}
-//
-//// Parse parses Uniprot entries into a channel.
-//func Parse(decoder Decoder, entries chan<- Entry, errors chan<- error) {
-//	for {
-//		decoderToken, err := decoder.Token()
-//
-//		if err != nil {
-//			if err.Error() == "EOF" {
-//				break
-//			}
-//			errors <- err
-//		}
-//		startElement, ok := decoderToken.(xml.StartElement)
-//		if ok && startElement.Name.Local == "entry" {
-//			var e Entry
-//			err = decoder.DecodeElement(&e, &startElement)
-//			if err != nil {
-//				errors <- err
-//			}
-//			entries <- e
-//		}
-//	}
-//	close(entries)
-//	close(errors)
-//}
+// BaseURL encodes the base URL for the Uniprot REST API.
+var BaseURL string = "https://rest.uniprot.org/uniprotkb/"
+
+// Get gets a uniprot from its accessionID
+func Get(ctx context.Context, accessionID string) (Entry, error) {
+	var entry Entry
+
+	// Parse the base URL
+	baseURL, err := url.Parse(BaseURL)
+	if err != nil {
+		return entry, err
+	}
+
+	// Resolve the full URL
+	fullURL := baseURL.ResolveReference(&url.URL{Path: accessionID + ".xml"})
+
+	// Create NewRequestWithContext. Note: since url.Parse catches errors in
+	// the URL, no err is checked here.
+	req, _ := http.NewRequestWithContext(ctx, "GET", fullURL.String(), nil)
+
+	// Create a new HTTP client and send the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return entry, err
+	}
+	defer resp.Body.Close()
+
+	// Check for HTTP errors
+	if resp.StatusCode != http.StatusOK {
+		return entry, fmt.Errorf("Got http status code: %d", resp.StatusCode)
+	}
+
+	// Return the first parsed XML
+	return NewParser(resp.Body).Next()
+}

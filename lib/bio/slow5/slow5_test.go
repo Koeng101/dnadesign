@@ -40,7 +40,7 @@ func TestParse(t *testing.T) {
 			}
 			break
 		}
-		outputReads = append(outputReads, *read)
+		outputReads = append(outputReads, read)
 	}
 	if outputReads[0].RawSignal[0] != 430 {
 		t.Errorf("Expected first outputRead to have a raw_signal of 430. Got: %d", outputReads[0].RawSignal[0])
@@ -123,7 +123,7 @@ func TestParseReads(t *testing.T) {
 			}
 			break
 		}
-		outputReads = append(outputReads, *read)
+		outputReads = append(outputReads, read)
 	}
 	if outputReads[0].ReadID != "0026631e-33a3-49ab-aa22-3ab157d71f8b" {
 		t.Errorf("First read id should be 0026631e-33a3-49ab-aa22-3ab157d71f8b. Got: %s", outputReads[0].ReadID)
@@ -173,7 +173,7 @@ func TestWrite(t *testing.T) {
 				// Break at EOF
 				break
 			}
-			reads <- *read
+			reads <- read
 		}
 		close(reads)
 	}()
@@ -238,7 +238,7 @@ func TestSvb(t *testing.T) {
 			}
 			break
 		}
-		outputReads = append(outputReads, *read)
+		outputReads = append(outputReads, read)
 	}
 
 	for readNum, read := range outputReads {

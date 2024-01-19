@@ -72,8 +72,8 @@ type Parser struct {
 }
 
 // Header returns nil,nil.
-func (parser *Parser) Header() (*Header, error) {
-	return &Header{}, nil
+func (parser *Parser) Header() (Header, error) {
+	return Header{}, nil
 }
 
 // NewParser creates a parser from an io.Reader for pileup data.
@@ -85,15 +85,15 @@ func NewParser(r io.Reader, maxLineSize int) *Parser {
 
 // Next parses the next pileup row in a pileup file.
 // Next returns an EOF if encountered.
-func (parser *Parser) Next() (*Line, error) {
+func (parser *Parser) Next() (Line, error) {
 	if parser.atEOF {
-		return &Line{}, io.EOF
+		return Line{}, io.EOF
 	}
 	// Parse out a single line
 	lineBytes, err := parser.reader.ReadSlice('\n')
 	if err != nil {
 		if err != io.EOF {
-			return &Line{}, err
+			return Line{}, err
 		}
 		parser.atEOF = true
 	}
@@ -103,7 +103,7 @@ func (parser *Parser) Next() (*Line, error) {
 	// In this case, the file has ended on a newline. Just return
 	// with an io.EOF
 	if len(strings.TrimSpace(line)) == 0 && parser.atEOF {
-		return &Line{}, io.EOF
+		return Line{}, io.EOF
 	}
 
 	line = line[:len(line)-1] // Exclude newline delimiter.
@@ -111,17 +111,17 @@ func (parser *Parser) Next() (*Line, error) {
 	// Check that there are 6 values, as defined by the pileup format
 	values := strings.Split(line, "\t")
 	if len(values) != 6 {
-		return &Line{}, fmt.Errorf("Error on line %d: Got %d values, expected 6.", parser.line, len(values))
+		return Line{}, fmt.Errorf("Error on line %d: Got %d values, expected 6.", parser.line, len(values))
 	}
 
 	// Convert Position and ReadCount to integers
 	positionInteger, err := strconv.Atoi(strings.TrimSpace(values[1]))
 	if err != nil {
-		return &Line{}, fmt.Errorf("Error on line %d. Got error: %w", parser.line, err)
+		return Line{}, fmt.Errorf("Error on line %d. Got error: %w", parser.line, err)
 	}
 	readCountInteger, err := strconv.Atoi(strings.TrimSpace(values[3]))
 	if err != nil {
-		return &Line{}, fmt.Errorf("Error on line %d. Got error: %w", parser.line, err)
+		return Line{}, fmt.Errorf("Error on line %d. Got error: %w", parser.line, err)
 	}
 
 	// Parse ReadResults
@@ -169,18 +169,18 @@ func (parser *Parser) Next() (*Line, error) {
 				case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'T', 'G', 'C', 'N', 'a', 't', 'g', 'c', 'n', '-', '+':
 					continue
 				default:
-					return &Line{}, fmt.Errorf("Rune within +,- not found on line %d. Got %c: only runes allowed are: [0 1 2 3 4 5 6 7 8 9 A T G C N a t g c n - +]", parser.line, letter)
+					return Line{}, fmt.Errorf("Rune within +,- not found on line %d. Got %c: only runes allowed are: [0 1 2 3 4 5 6 7 8 9 A T G C N a t g c n - +]", parser.line, letter)
 				}
 			}
 			readResults = append(readResults, readResult)
 			skip = skip + regularExpressionInt + len(numberOfJumps) // The 1 makes sure to include the regularExpressionInt in readResult string
 		default:
-			return &Line{}, fmt.Errorf("Rune not found on line %d. Got %c: only runes allowed are: [^ $ . , * A T G C N a t g c n - +]", parser.line, resultRune)
+			return Line{}, fmt.Errorf("Rune not found on line %d. Got %c: only runes allowed are: [^ $ . , * A T G C N a t g c n - +]", parser.line, resultRune)
 		}
 		readCount = readCount + 1
 	}
 
-	return &Line{Sequence: values[0], Position: uint(positionInteger), ReferenceBase: values[2], ReadCount: uint(readCountInteger), ReadResults: readResults, Quality: values[5]}, nil
+	return Line{Sequence: values[0], Position: uint(positionInteger), ReferenceBase: values[2], ReadCount: uint(readCountInteger), ReadResults: readResults, Quality: values[5]}, nil
 }
 
 /******************************************************************************
