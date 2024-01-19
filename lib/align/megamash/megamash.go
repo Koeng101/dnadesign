@@ -17,7 +17,8 @@ import (
 	"github.com/koeng101/dnadesign/lib/transform"
 )
 
-// StandardizedDNA returns the a standard DNA string
+// StandardizedDNA returns the alphabetically lesser strand of a double
+// stranded DNA molecule.
 func StandardizedDNA(sequence string) string {
 	var deterministicSequence string
 	reverseComplement := transform.ReverseComplement(sequence)
@@ -43,6 +44,7 @@ type MegamashMap struct {
 	Threshold        float64
 }
 
+// NewMegamashMap creates a megamash map that can be searched against.
 func NewMegamashMap(sequences []fasta.Record, kmerSize uint, kmerMinimalCount uint, threshold float64) (MegamashMap, error) {
 	var megamashMap MegamashMap
 	megamashMap.KmerSize = kmerSize
@@ -95,11 +97,14 @@ func NewMegamashMap(sequences []fasta.Record, kmerSize uint, kmerMinimalCount ui
 	return megamashMap, nil
 }
 
+// Match contains the identifier and score of a potential match to the searched
+// sequence.
 type Match struct {
 	Identifier string
 	Score      float64
 }
 
+// Match matches a sequence to all the sequences in a megamash map.
 func (m *MegamashMap) Match(sequence string) []Match {
 	var scores []float64
 	// The algorithm is as follows:
@@ -146,6 +151,7 @@ out:
 	return matches
 }
 
+// FastqMatchChannel processes a channel of fastq.Read and pushes to a channel of matches.
 func (m *MegamashMap) FastqMatchChannel(ctx context.Context, sequences <-chan fastq.Read, matches chan<- []Match) error {
 	for {
 		select {
