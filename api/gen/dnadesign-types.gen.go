@@ -378,19 +378,19 @@ type PostPcrComplexPcrJSONBody struct {
 
 // PostPcrPrimersDebruijnBarcodesJSONBody defines parameters for PostPcrPrimersDebruijnBarcodes.
 type PostPcrPrimersDebruijnBarcodesJSONBody struct {
-	BannedSequences *[]string `json:"banned_sequences,omitempty"`
-	BarcodeLength   int       `json:"barcode_length"`
+	BannedSequences *[]string `json:"bannedSequences,omitempty"`
+	BarcodeLength   int       `json:"barcodeLength"`
 	GcRange         struct {
-		MaxGc *float32 `json:"max_gc,omitempty"`
-		MinGc *float32 `json:"min_gc,omitempty"`
-	} `json:"gc_range"`
-	MaxSubSequence int `json:"max_sub_sequence"`
+		MaxGc float32 `json:"maxGc"`
+		MinGc float32 `json:"minGc"`
+	} `json:"gcRange"`
+	MaxSubSequence int `json:"maxSubSequence"`
 }
 
 // PostPcrPrimersDesignPrimersJSONBody defines parameters for PostPcrPrimersDesignPrimers.
 type PostPcrPrimersDesignPrimersJSONBody struct {
-	ForwardOverhang *string `json:"forward_overhang,omitempty"`
-	ReverseOverhang *string `json:"reverse_overhang,omitempty"`
+	ForwardOverhang *string `json:"forwardOverhang,omitempty"`
+	ReverseOverhang *string `json:"reverseOverhang,omitempty"`
 	Sequence        string  `json:"sequence"`
 	TargetTm        float32 `json:"targetTm"`
 }

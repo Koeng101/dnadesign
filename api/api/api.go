@@ -22,6 +22,8 @@ import (
 	"github.com/koeng101/dnadesign/lib/bio/fasta"
 	"github.com/koeng101/dnadesign/lib/bio/fastq"
 	"github.com/koeng101/dnadesign/lib/bio/slow5"
+	"github.com/koeng101/dnadesign/lib/checks"
+	"github.com/koeng101/dnadesign/lib/primers"
 	"github.com/koeng101/dnadesign/lib/primers/pcr"
 	"github.com/koeng101/dnadesign/lib/synthesis/codon"
 	"github.com/koeng101/dnadesign/lib/synthesis/fix"
@@ -694,27 +696,60 @@ func (app *App) LuaPcrSimplePcr(L *lua.LState) int {
 }
 
 func (app *App) PostPcrPrimersDebruijnBarcodes(ctx context.Context, request gen.PostPcrPrimersDebruijnBarcodesRequestObject) (gen.PostPcrPrimersDebruijnBarcodesResponseObject, error) {
-	return nil, nil
+	input := *request.Body
+	barcodeLength := input.BarcodeLength
+	maxSubSequence := input.MaxSubSequence
+	var bannedSequences []string
+	if input.BannedSequences != nil {
+		bannedSequences = *input.BannedSequences
+	}
+	minGcContent := input.GcRange.MinGc
+	maxGcContent := input.GcRange.MaxGc
+
+	gcBarcodeFunc := func(barcodeToCheck string) bool {
+		gcContent := float32(checks.GcContent(barcodeToCheck))
+		if gcContent < minGcContent || gcContent > maxGcContent {
+			return false
+		}
+		return true
+	}
+	barcodes := primers.CreateBarcodesWithBannedSequences(barcodeLength, maxSubSequence, bannedSequences, []func(string) bool{gcBarcodeFunc})
+	return gen.PostPcrPrimersDebruijnBarcodes200JSONResponse(barcodes), nil
 }
 func (app *App) LuaPcrPrimersDebruijnBarcodes(L *lua.LState) int { return 0 }
 
 func (app *App) PostPcrPrimersMarmurDoty(ctx context.Context, request gen.PostPcrPrimersMarmurDotyRequestObject) (gen.PostPcrPrimersMarmurDotyResponseObject, error) {
-	return nil, nil
+	input := *request.Body
+	return gen.PostPcrPrimersMarmurDoty200JSONResponse(primers.MarmurDoty(input.Sequence)), nil
 }
 func (app *App) LuaPcrPrimersMarmurDoty(L *lua.LState) int { return 0 }
 
 func (app *App) PostPcrPrimersSantaLucia(ctx context.Context, request gen.PostPcrPrimersSantaLuciaRequestObject) (gen.PostPcrPrimersSantaLuciaResponseObject, error) {
-	return nil, nil
+	input := *request.Body
+	meltingTemp, dH, dS := primers.SantaLucia(input.Sequence, float64(input.PrimerConcentration), float64(input.SaltConcentration), float64(input.MagnesiumConcentration))
+	return gen.PostPcrPrimersSantaLucia200JSONResponse{MeltingTemp: float32(meltingTemp), DH: float32(dH), DS: float32(dS)}, nil
 }
 func (app *App) LuaPcrPrimersSantaLucia(L *lua.LState) int { return 0 }
 
 func (app *App) PostPcrPrimersMeltingTemperature(ctx context.Context, request gen.PostPcrPrimersMeltingTemperatureRequestObject) (gen.PostPcrPrimersMeltingTemperatureResponseObject, error) {
-	return nil, nil
+	input := *request.Body
+	return gen.PostPcrPrimersMeltingTemperature200JSONResponse(primers.MeltingTemp(input.Sequence)), nil
 }
 func (app *App) LuaPcrPrimersMeltingTemperature(L *lua.LState) int { return 0 }
 
 func (app *App) PostPcrPrimersDesignPrimers(ctx context.Context, request gen.PostPcrPrimersDesignPrimersRequestObject) (gen.PostPcrPrimersDesignPrimersResponseObject, error) {
-	return nil, nil
+	input := *request.Body
+	sequence := input.Sequence
+	targetTm := float64(input.TargetTm)
+	var forwardOverhang, reverseOverhang string
+	if input.ForwardOverhang != nil {
+		forwardOverhang = *input.ForwardOverhang
+	}
+	if input.ReverseOverhang != nil {
+		reverseOverhang = *input.ReverseOverhang
+	}
+	forward, reverse := pcr.DesignPrimersWithOverhangs(sequence, forwardOverhang, reverseOverhang, targetTm)
+	return gen.PostPcrPrimersDesignPrimers200JSONResponse{ForwardPrimer: forward, ReversePrimer: reverse}, nil
 }
 func (app *App) LuaPcrPrimersDesignPrimers(L *lua.LState) int { return 0 }
 

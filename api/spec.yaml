@@ -917,28 +917,37 @@ paths:
             schema:
               type: object
               properties:
-                barcode_length:
+                barcodeLength:
                   type: integer
-                max_sub_sequence:
+                maxSubSequence:
                   type: integer
-                banned_sequences:
+                bannedSequences:
                   type: array
                   items:
                     type: string
-                gc_range:
+                gcRange:
                   type: object
                   properties:
-                    max_gc:
+                    maxGc:
                       type: number
-                    min_gc:
+                    minGc:
                       type: number
+                  required:
+                    - maxGc
+                    - minGc
               required:
-                - barcode_length
-                - max_sub_sequence
-                - gc_range
+                - barcodeLength
+                - maxSubSequence
+                - gcRange
       responses:
         '200':
           description: Array of generated barcode sequences
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
   
   /pcr/primers/marmur_doty:
     post:
@@ -958,6 +967,10 @@ paths:
       responses:
         '200':
           description: Calculated melting temperature as float
+          content:
+            application/json:
+              schema:
+                type: number
   
   /pcr/primers/santa_lucia:
     post:
@@ -986,6 +999,21 @@ paths:
       responses:
         '200':
           description: Calculated melting temperature, dH, dS as floats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meltingTemp:
+                    type: number
+                  dH:
+                    type: number
+                  dS:
+                    type: number
+                required:
+                  - meltingTemp
+                  - dH
+                  - dS
 
   /pcr/primers/melting_temperature:
     post:
@@ -1005,6 +1033,10 @@ paths:
       responses:
         '200':
           description: Calculated melting temperature as float
+          content:
+            application/json:
+              schema:
+                type: number
   
   /pcr/complex_pcr:
     post:
@@ -1100,10 +1132,10 @@ paths:
                   type: string
                 targetTm:
                   type: number
-                forward_overhang:
+                forwardOverhang:
                   type: string
                   default: ""
-                reverse_overhang:
+                reverseOverhang:
                   type: string
                   default: ""
               required:
@@ -1117,10 +1149,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  forward_primer:
+                  forwardPrimer:
                     type: string
-                  reverse_primer:
+                  reversePrimer:
                     type: string
+                required:
+                  - forwardPrimer
+                  - reversePrimer
 
   
 
