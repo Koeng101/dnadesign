@@ -92,9 +92,9 @@ type Feature struct {
 
 // Fragment defines model for Fragment.
 type Fragment struct {
-	ForwardOverhang *string `json:"ForwardOverhang,omitempty"`
-	ReverseOverhang *string `json:"ReverseOverhang,omitempty"`
-	Sequence        string  `json:"Sequence"`
+	ForwardOverhang string `json:"forwardOverhang"`
+	ReverseOverhang string `json:"reverseOverhang"`
+	Sequence        string `json:"sequence"`
 }
 
 // GenbankRecord defines model for GenbankRecord.
@@ -259,8 +259,12 @@ type PostCloningFragmentJSONBody struct {
 
 // PostCloningGoldenGateJSONBody defines parameters for PostCloningGoldenGate.
 type PostCloningGoldenGateJSONBody struct {
-	Enzyme    *Enzyme   `json:"enzyme,omitempty"`
-	Sequences *[]string `json:"sequences,omitempty"`
+	Enzyme     Enzyme `json:"enzyme"`
+	Methylated bool   `json:"methylated"`
+	Sequences  []struct {
+		Circular bool   `json:"circular"`
+		Sequence string `json:"sequence"`
+	} `json:"sequences"`
 }
 
 // PostCloningLigateJSONBody defines parameters for PostCloningLigate.
@@ -268,8 +272,12 @@ type PostCloningLigateJSONBody = []Fragment
 
 // PostCloningRestrictionDigestJSONBody defines parameters for PostCloningRestrictionDigest.
 type PostCloningRestrictionDigestJSONBody struct {
-	Enzyme   *Enzyme `json:"enzyme,omitempty"`
-	Sequence *string `json:"sequence,omitempty"`
+	Enzyme     Enzyme `json:"enzyme"`
+	Methylated bool   `json:"methylated"`
+	Sequence   struct {
+		Circular bool   `json:"circular"`
+		Sequence string `json:"sequence"`
+	} `json:"sequence"`
 }
 
 // PostCodonTablesAddTablesJSONBody defines parameters for PostCodonTablesAddTables.

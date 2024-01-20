@@ -23,6 +23,7 @@ import (
 	"github.com/koeng101/dnadesign/lib/bio/fastq"
 	"github.com/koeng101/dnadesign/lib/bio/slow5"
 	"github.com/koeng101/dnadesign/lib/checks"
+	"github.com/koeng101/dnadesign/lib/clone"
 	"github.com/koeng101/dnadesign/lib/primers"
 	"github.com/koeng101/dnadesign/lib/primers/pcr"
 	"github.com/koeng101/dnadesign/lib/synthesis/codon"
@@ -762,15 +763,44 @@ func (app *App) LuaPcrPrimersDesignPrimers(L *lua.LState) int { return 0 }
 */
 
 func (app *App) PostCloningGoldenGate(ctx context.Context, request gen.PostCloningGoldenGateRequestObject) (gen.PostCloningGoldenGateResponseObject, error) {
-	return nil, nil
+	input := *request.Body
+	parts := make([]clone.Part, len(input.Sequences))
+	for i, sequence := range input.Sequences {
+		parts[i] = clone.Part{Sequence: sequence.Sequence, Circular: sequence.Circular}
+	}
+	enzymeManager := clone.NewEnzymeManager(clone.GetBaseRestrictionEnzymes())
+	enzyme, err := enzymeManager.GetEnzymeByName(string(input.Enzyme))
+	if err != nil {
+		return gen.PostCloningGoldenGate500TextResponse(fmt.Sprintf("Failed to get enzyme for GoldenGate. Got error: %s", err)), nil
+	}
+	clones, infiniteLoops := clone.GoldenGate(parts, enzyme, input.Methylated)
+	return gen.PostCloningGoldenGate200JSONResponse{Clones: clones, InfiniteLoops: infiniteLoops}, nil
 }
 func (app *App) LuaCloningGoldenGate(L *lua.LState) int { return 0 }
 func (app *App) PostCloningLigate(ctx context.Context, request gen.PostCloningLigateRequestObject) (gen.PostCloningLigateResponseObject, error) {
-	return nil, nil
+	input := *request.Body
+	fragments := make([]clone.Fragment, len(input))
+	for i, fragment := range input {
+		fragments[i] = clone.Fragment{Sequence: fragment.Sequence, ForwardOverhang: fragment.ForwardOverhang, ReverseOverhang: fragment.ReverseOverhang}
+	}
+	clones, infiniteLoops := clone.CircularLigate(fragments)
+	return gen.PostCloningLigate200JSONResponse{Clones: clones, InfiniteLoops: infiniteLoops}, nil
 }
 func (app *App) LuaCloningLigate(L *lua.LState) int { return 0 }
 func (app *App) PostCloningRestrictionDigest(ctx context.Context, request gen.PostCloningRestrictionDigestRequestObject) (gen.PostCloningRestrictionDigestResponseObject, error) {
-	return nil, nil
+	input := *request.Body
+	enzymeManager := clone.NewEnzymeManager(clone.GetBaseRestrictionEnzymes())
+	enzyme, err := enzymeManager.GetEnzymeByName(string(input.Enzyme))
+	if err != nil {
+		return gen.PostCloningRestrictionDigest500TextResponse(fmt.Sprintf("Failed to get enzyme. Got error: %s", err)), nil
+	}
+	directional := true // We only support GoldenGate enzymes right now, so this will be true.
+	fragments := clone.CutWithEnzyme(clone.Part{Sequence: input.Sequence.Sequence, Circular: input.Sequence.Circular}, directional, enzyme, input.Methylated)
+	output := make([]gen.Fragment, len(fragments))
+	for i, fragment := range fragments {
+		output[i] = gen.Fragment{Sequence: fragment.Sequence, ForwardOverhang: fragment.ForwardOverhang, ReverseOverhang: fragment.ReverseOverhang}
+	}
+	return gen.PostCloningRestrictionDigest200JSONResponse(output), nil
 }
 func (app *App) LuaCloningRestrictionDigest(L *lua.LState) int { return 0 }
 func (app *App) PostCloningFragment(ctx context.Context, request gen.PostCloningFragmentRequestObject) (gen.PostCloningFragmentResponseObject, error) {

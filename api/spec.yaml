@@ -337,14 +337,16 @@ components:
     Fragment:
       type: object
       properties:
-        Sequence:
+        sequence:
           type: string
-        ForwardOverhang:
+        forwardOverhang:
           type: string
-        ReverseOverhang:
+        reverseOverhang:
           type: string
       required:
-        - Sequence
+        - sequence
+        - forwardOverhang
+        - reverseOverhang
     Organism:
       type: string
       enum:
@@ -1174,6 +1176,22 @@ paths:
       responses:
         '200':
           description: Ligated product strings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clones:
+                    type: array
+                    items:
+                      type: string
+                  infiniteLoops:
+                    type: array
+                    items:
+                      type: string
+                required:
+                  - clones
+                  - infiniteLoops
   /cloning/restriction_digest:
     post:
       tags:
@@ -1186,12 +1204,33 @@ paths:
               type: object
               properties:
                 sequence:
-                  type: string
+                  type: object
+                  properties:
+                    sequence:
+                      type: string
+                    circular:
+                      type: boolean
+                  required:
+                    - sequence
+                    - circular
+                methylated:
+                  type: boolean
+                  default: false
                 enzyme:
                   $ref: '#/components/schemas/Enzyme'
+              required:
+                - sequence
+                - methylated
+                - enzyme
       responses:
         '200':
           description: Array of fragments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fragment'
         '500':
           description: Internal server error
           content:
@@ -1212,12 +1251,43 @@ paths:
                 sequences:
                   type: array
                   items:
-                    type: string
+                    type: object
+                    properties:
+                      sequence:
+                        type: string
+                      circular:
+                        type: boolean
+                    required:
+                      - sequence
+                      - circular
+                methylated:
+                  type: boolean
+                  default: false
                 enzyme:
                   $ref: '#/components/schemas/Enzyme'
+              required:
+                - sequences
+                - enzyme
+                - methylated
       responses:
         '200':
           description: GoldenGate assembly product strings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clones:
+                    type: array
+                    items:
+                      type: string
+                  infiniteLoops:
+                    type: array
+                    items:
+                      type: string
+                required:
+                  - clones
+                  - infiniteLoops
         '500':
           description: Internal server error
           content:
