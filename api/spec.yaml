@@ -546,6 +546,10 @@ paths:
       responses:
         '200':
           description: Genbank file written successfully
+          content:
+            text/plain:
+              schema:
+                type: string
   /io/fastq/parse:
     post:
       tags:
@@ -558,14 +562,19 @@ paths:
               type: string
       responses:
         '200':
-          description: Parsed FASTQ records
+          description: Parsed FASTA records
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/FastqRead'
-
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
   /io/fastq/write:
     post:
       tags:
@@ -591,16 +600,10 @@ paths:
       tags:
         - io
       requestBody:
-        required: true
         content:
-          application/json:
+          text/plain:
             schema:
-              type: object
-              properties:
-                data:
-                  type: string
-              required:
-                - data
+              type: string
       responses:
         '200':
           description: Array of Pileup Lines
@@ -610,6 +613,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PileupLine'
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
   /io/pileup/write:
     post:
       summary: Write Pileup Data
@@ -637,16 +646,10 @@ paths:
       tags:
         - io
       requestBody:
-        required: true
         content:
-          application/json:
+          text/plain:
             schema:
-              type: object
-              properties:
-                data:
-                  type: string
-              required:
-                - data
+              type: string
       responses:
         '200':
           description: Parsed slow5 data
@@ -661,6 +664,15 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Slow5Read'
+                required:
+                  - header
+                  - reads
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
   /io/slow5/write:
     post:
       summary: Write slow5 Data
@@ -679,6 +691,9 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/Slow5Read'
+              required:
+                - header
+                - reads
       responses:
         '200':
           description: slow5 data written successfully
@@ -702,6 +717,8 @@ paths:
                   type: array
                   items:
                     type: integer
+              required:
+                - rawSignal
       responses:
         '200':
           description: Compressed raw signal
@@ -714,6 +731,12 @@ paths:
                     type: string
                   data:
                     type: string
+                  lenRawSignal:
+                    type: integer
+                required:
+                  - mask
+                  - data
+                  - lenRawSignal
   /io/slow5/svb_decompress:
     post:
       summary: Decompress Raw Signal with SVB
@@ -732,6 +755,10 @@ paths:
                   type: string
                 data:
                   type: string
+              required:
+                - mask
+                - data
+                - lenRawSignal
       responses:
         '200':
           description: Decompressed raw signal
@@ -744,7 +771,14 @@ paths:
                     type: array
                     items:
                       type: integer
-
+                required:
+                  - rawSignal
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
   
   /cds/fix:
     post:

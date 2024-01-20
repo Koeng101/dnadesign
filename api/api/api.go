@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"embed"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -358,12 +359,27 @@ func (app *App) LuaIoGenbankParse(L *lua.LState) int {
 }
 
 func (app *App) PostIoGenbankWrite(ctx context.Context, request gen.PostIoGenbankWriteRequestObject) (gen.PostIoGenbankWriteResponseObject, error) {
-	return nil, nil
+	var w bytes.Buffer
+	for _, genbankRecord := range *request.Body {
+		genbankStruct := ConvertGenbankRecordToGenbank(genbankRecord)
+		_, _ = genbankStruct.WriteTo(&w)
+	}
+	return gen.PostIoGenbankWrite200TextResponse(w.String()), nil
 }
 func (app *App) LuaIoGenbankWrite(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoFastqParse(ctx context.Context, request gen.PostIoFastqParseRequestObject) (gen.PostIoFastqParseResponseObject, error) {
-	return nil, nil
+	fastqString := *request.Body
+	parser := bio.NewFastqParser(strings.NewReader(fastqString + "\n"))
+	fastqs, err := parser.Parse()
+	if err != nil {
+		return gen.PostIoFastqParse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
+	}
+	data := make([]gen.FastqRead, len(fastqs))
+	for i, fastqRead := range fastqs {
+		data[i] = gen.FastqRead{Identifier: fastqRead.Identifier, Optionals: &fastqRead.Optionals, Sequence: fastqRead.Sequence, Quality: fastqRead.Quality}
+	}
+	return gen.PostIoFastqParse200JSONResponse(data), nil
 }
 func (app *App) LuaIoFastqParse(L *lua.LState) int { return 0 }
 
@@ -378,7 +394,20 @@ func (app *App) PostIoFastqWrite(ctx context.Context, request gen.PostIoFastqWri
 func (app *App) LuaIoFastqWrite(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoSlow5Parse(ctx context.Context, request gen.PostIoSlow5ParseRequestObject) (gen.PostIoSlow5ParseResponseObject, error) {
-	return nil, nil
+	slow5String := *request.Body
+	parser, err := bio.NewSlow5Parser(strings.NewReader(slow5String))
+	if err != nil {
+		return gen.PostIoSlow5Parse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
+	}
+	reads, header, err := parser.ParseWithHeader()
+	if err != nil {
+		return gen.PostIoSlow5Parse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
+	}
+	data := make([]gen.Slow5Read, len(reads))
+	for i, read := range reads {
+		data[i] = ConvertReadToSlow5Read(read)
+	}
+	return gen.PostIoSlow5Parse200JSONResponse(gen.PostIoSlow5WriteJSONBody{Header: ConvertToGenSlow5Header(header), Reads: data}), nil
 }
 func (app *App) LuaIoSlow5Parse(L *lua.LState) int { return 0 }
 
@@ -392,7 +421,7 @@ func (app *App) PostIoSlow5Write(ctx context.Context, request gen.PostIoSlow5Wri
 	header := slow5.Header{HeaderValues: headerValues}
 	reads := request.Body.Reads
 	_, _ = header.WriteTo(&w)
-	for _, read := range *reads {
+	for _, read := range reads {
 		slow5Struct := ConvertSlow5ReadToRead(read)
 		_, _ = slow5Struct.WriteTo(&w)
 	}
@@ -401,17 +430,52 @@ func (app *App) PostIoSlow5Write(ctx context.Context, request gen.PostIoSlow5Wri
 func (app *App) LuaIoSlow5Write(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoSlow5SvbCompress(ctx context.Context, request gen.PostIoSlow5SvbCompressRequestObject) (gen.PostIoSlow5SvbCompressResponseObject, error) {
-	return nil, nil
+	input := *request.Body
+	rawSignal := make([]int16, len(input.RawSignal))
+	for i, integer := range input.RawSignal {
+		rawSignal[i] = int16(integer)
+	}
+	mask, data := slow5.SvbCompressRawSignal(rawSignal)
+	encodedMask := base64.StdEncoding.EncodeToString(mask)
+	encodedData := base64.StdEncoding.EncodeToString(data)
+
+	return gen.PostIoSlow5SvbCompress200JSONResponse{Mask: encodedMask, Data: encodedData, LenRawSignal: len(rawSignal)}, nil
 }
 func (app *App) LuaIoSlow5SvbCompress(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoSlow5SvbDecompress(ctx context.Context, request gen.PostIoSlow5SvbDecompressRequestObject) (gen.PostIoSlow5SvbDecompressResponseObject, error) {
-	return nil, nil
+	input := *request.Body
+	decodedMask, err := base64.StdEncoding.DecodeString(input.Mask)
+	if err != nil {
+		return gen.PostIoSlow5SvbDecompress500TextResponse(fmt.Sprintf("Failed to base64 decode mask. Got err: %s", err)), nil
+	}
+
+	decodedData, err := base64.StdEncoding.DecodeString(input.Data)
+	if err != nil {
+		return gen.PostIoSlow5SvbDecompress500TextResponse(fmt.Sprintf("Failed to base64 decode data. Got err: %s", err)), nil
+	}
+
+	rawSignal := slow5.SvbDecompressRawSignal(input.LenRawSignal, decodedMask, decodedData)
+	intRawSignal := make([]int, len(rawSignal))
+	for i, integer := range rawSignal {
+		intRawSignal[i] = int(integer)
+	}
+	return gen.PostIoSlow5SvbDecompress200JSONResponse{RawSignal: intRawSignal}, nil
 }
 func (app *App) LuaIoSlow5SvbDecompress(L *lua.LState) int { return 0 }
 
 func (app *App) PostIoPileupParse(ctx context.Context, request gen.PostIoPileupParseRequestObject) (gen.PostIoPileupParseResponseObject, error) {
-	return nil, nil
+	pileupString := *request.Body
+	parser := bio.NewPileupParser(strings.NewReader(pileupString))
+	pileups, err := parser.Parse()
+	if err != nil {
+		return gen.PostIoPileupParse500TextResponse(fmt.Sprintf("Got error: %s", err)), nil
+	}
+	data := make([]gen.PileupLine, len(pileups))
+	for i, pileupRead := range pileups {
+		data[i] = gen.PileupLine{Sequence: pileupRead.Sequence, Position: int(pileupRead.Position), ReferenceBase: pileupRead.ReferenceBase, ReadCount: int(pileupRead.ReadCount), ReadResults: pileupRead.ReadResults, Quality: pileupRead.Quality}
+	}
+	return gen.PostIoPileupParse200JSONResponse(data), nil
 }
 func (app *App) LuaIoPileupParse(L *lua.LState) int { return 0 }
 

@@ -341,35 +341,31 @@ type PostIoGenbankParseTextBody = string
 // PostIoGenbankWriteJSONBody defines parameters for PostIoGenbankWrite.
 type PostIoGenbankWriteJSONBody = []GenbankRecord
 
-// PostIoPileupParseJSONBody defines parameters for PostIoPileupParse.
-type PostIoPileupParseJSONBody struct {
-	Data string `json:"data"`
-}
+// PostIoPileupParseTextBody defines parameters for PostIoPileupParse.
+type PostIoPileupParseTextBody = string
 
 // PostIoPileupWriteJSONBody defines parameters for PostIoPileupWrite.
 type PostIoPileupWriteJSONBody = []PileupLine
 
-// PostIoSlow5ParseJSONBody defines parameters for PostIoSlow5Parse.
-type PostIoSlow5ParseJSONBody struct {
-	Data string `json:"data"`
-}
+// PostIoSlow5ParseTextBody defines parameters for PostIoSlow5Parse.
+type PostIoSlow5ParseTextBody = string
 
 // PostIoSlow5SvbCompressJSONBody defines parameters for PostIoSlow5SvbCompress.
 type PostIoSlow5SvbCompressJSONBody struct {
-	RawSignal *[]int `json:"rawSignal,omitempty"`
+	RawSignal []int `json:"rawSignal"`
 }
 
 // PostIoSlow5SvbDecompressJSONBody defines parameters for PostIoSlow5SvbDecompress.
 type PostIoSlow5SvbDecompressJSONBody struct {
-	Data         *string `json:"data,omitempty"`
-	LenRawSignal *int    `json:"lenRawSignal,omitempty"`
-	Mask         *string `json:"mask,omitempty"`
+	Data         string `json:"data"`
+	LenRawSignal int    `json:"lenRawSignal"`
+	Mask         string `json:"mask"`
 }
 
 // PostIoSlow5WriteJSONBody defines parameters for PostIoSlow5Write.
 type PostIoSlow5WriteJSONBody struct {
-	Header *Slow5Header `json:"header,omitempty"`
-	Reads  *[]Slow5Read `json:"reads,omitempty"`
+	Header Slow5Header `json:"header"`
+	Reads  []Slow5Read `json:"reads"`
 }
 
 // PostPcrComplexPcrJSONBody defines parameters for PostPcrComplexPcr.
@@ -550,14 +546,14 @@ type PostIoGenbankParseTextRequestBody = PostIoGenbankParseTextBody
 // PostIoGenbankWriteJSONRequestBody defines body for PostIoGenbankWrite for application/json ContentType.
 type PostIoGenbankWriteJSONRequestBody = PostIoGenbankWriteJSONBody
 
-// PostIoPileupParseJSONRequestBody defines body for PostIoPileupParse for application/json ContentType.
-type PostIoPileupParseJSONRequestBody PostIoPileupParseJSONBody
+// PostIoPileupParseTextRequestBody defines body for PostIoPileupParse for text/plain ContentType.
+type PostIoPileupParseTextRequestBody = PostIoPileupParseTextBody
 
 // PostIoPileupWriteJSONRequestBody defines body for PostIoPileupWrite for application/json ContentType.
 type PostIoPileupWriteJSONRequestBody = PostIoPileupWriteJSONBody
 
-// PostIoSlow5ParseJSONRequestBody defines body for PostIoSlow5Parse for application/json ContentType.
-type PostIoSlow5ParseJSONRequestBody PostIoSlow5ParseJSONBody
+// PostIoSlow5ParseTextRequestBody defines body for PostIoSlow5Parse for text/plain ContentType.
+type PostIoSlow5ParseTextRequestBody = PostIoSlow5ParseTextBody
 
 // PostIoSlow5SvbCompressJSONRequestBody defines body for PostIoSlow5SvbCompress for application/json ContentType.
 type PostIoSlow5SvbCompressJSONRequestBody PostIoSlow5SvbCompressJSONBody

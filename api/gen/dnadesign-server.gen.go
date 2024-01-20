@@ -1957,6 +1957,16 @@ func (response PostIoFastqParse200JSONResponse) VisitPostIoFastqParseResponse(w 
 	return json.NewEncoder(w).Encode(response)
 }
 
+type PostIoFastqParse500TextResponse string
+
+func (response PostIoFastqParse500TextResponse) VisitPostIoFastqParseResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(500)
+
+	_, err := w.Write([]byte(response))
+	return err
+}
+
 type PostIoFastqWriteRequestObject struct {
 	Body *PostIoFastqWriteJSONRequestBody
 }
@@ -2010,16 +2020,18 @@ type PostIoGenbankWriteResponseObject interface {
 	VisitPostIoGenbankWriteResponse(w http.ResponseWriter) error
 }
 
-type PostIoGenbankWrite200Response struct {
-}
+type PostIoGenbankWrite200TextResponse string
 
-func (response PostIoGenbankWrite200Response) VisitPostIoGenbankWriteResponse(w http.ResponseWriter) error {
+func (response PostIoGenbankWrite200TextResponse) VisitPostIoGenbankWriteResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(200)
-	return nil
+
+	_, err := w.Write([]byte(response))
+	return err
 }
 
 type PostIoPileupParseRequestObject struct {
-	Body *PostIoPileupParseJSONRequestBody
+	Body *PostIoPileupParseTextRequestBody
 }
 
 type PostIoPileupParseResponseObject interface {
@@ -2033,6 +2045,16 @@ func (response PostIoPileupParse200JSONResponse) VisitPostIoPileupParseResponse(
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
+}
+
+type PostIoPileupParse500TextResponse string
+
+func (response PostIoPileupParse500TextResponse) VisitPostIoPileupParseResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(500)
+
+	_, err := w.Write([]byte(response))
+	return err
 }
 
 type PostIoPileupWriteRequestObject struct {
@@ -2054,7 +2076,7 @@ func (response PostIoPileupWrite200TextResponse) VisitPostIoPileupWriteResponse(
 }
 
 type PostIoSlow5ParseRequestObject struct {
-	Body *PostIoSlow5ParseJSONRequestBody
+	Body *PostIoSlow5ParseTextRequestBody
 }
 
 type PostIoSlow5ParseResponseObject interface {
@@ -2062,8 +2084,8 @@ type PostIoSlow5ParseResponseObject interface {
 }
 
 type PostIoSlow5Parse200JSONResponse struct {
-	Header *Slow5Header `json:"header,omitempty"`
-	Reads  *[]Slow5Read `json:"reads,omitempty"`
+	Header Slow5Header `json:"header"`
+	Reads  []Slow5Read `json:"reads"`
 }
 
 func (response PostIoSlow5Parse200JSONResponse) VisitPostIoSlow5ParseResponse(w http.ResponseWriter) error {
@@ -2071,6 +2093,16 @@ func (response PostIoSlow5Parse200JSONResponse) VisitPostIoSlow5ParseResponse(w 
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
+}
+
+type PostIoSlow5Parse500TextResponse string
+
+func (response PostIoSlow5Parse500TextResponse) VisitPostIoSlow5ParseResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(500)
+
+	_, err := w.Write([]byte(response))
+	return err
 }
 
 type PostIoSlow5SvbCompressRequestObject struct {
@@ -2082,8 +2114,9 @@ type PostIoSlow5SvbCompressResponseObject interface {
 }
 
 type PostIoSlow5SvbCompress200JSONResponse struct {
-	Data *string `json:"data,omitempty"`
-	Mask *string `json:"mask,omitempty"`
+	Data         string `json:"data"`
+	LenRawSignal int    `json:"lenRawSignal"`
+	Mask         string `json:"mask"`
 }
 
 func (response PostIoSlow5SvbCompress200JSONResponse) VisitPostIoSlow5SvbCompressResponse(w http.ResponseWriter) error {
@@ -2102,7 +2135,7 @@ type PostIoSlow5SvbDecompressResponseObject interface {
 }
 
 type PostIoSlow5SvbDecompress200JSONResponse struct {
-	RawSignal *[]int `json:"rawSignal,omitempty"`
+	RawSignal []int `json:"rawSignal"`
 }
 
 func (response PostIoSlow5SvbDecompress200JSONResponse) VisitPostIoSlow5SvbDecompressResponse(w http.ResponseWriter) error {
@@ -2110,6 +2143,16 @@ func (response PostIoSlow5SvbDecompress200JSONResponse) VisitPostIoSlow5SvbDecom
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
+}
+
+type PostIoSlow5SvbDecompress500TextResponse string
+
+func (response PostIoSlow5SvbDecompress500TextResponse) VisitPostIoSlow5SvbDecompressResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(500)
+
+	_, err := w.Write([]byte(response))
+	return err
 }
 
 type PostIoSlow5WriteRequestObject struct {
@@ -3412,11 +3455,12 @@ func (sh *strictHandler) PostIoGenbankWrite(w http.ResponseWriter, r *http.Reque
 func (sh *strictHandler) PostIoPileupParse(w http.ResponseWriter, r *http.Request) {
 	var request PostIoPileupParseRequestObject
 
-	var body PostIoPileupParseJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+	data, err := io.ReadAll(r.Body)
+	if err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't read body: %w", err))
 		return
 	}
+	body := PostIoPileupParseTextRequestBody(data)
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
@@ -3474,11 +3518,12 @@ func (sh *strictHandler) PostIoPileupWrite(w http.ResponseWriter, r *http.Reques
 func (sh *strictHandler) PostIoSlow5Parse(w http.ResponseWriter, r *http.Request) {
 	var request PostIoSlow5ParseRequestObject
 
-	var body PostIoSlow5ParseJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+	data, err := io.ReadAll(r.Body)
+	if err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't read body: %w", err))
 		return
 	}
+	body := PostIoSlow5ParseTextRequestBody(data)
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
@@ -4079,28 +4124,28 @@ var swaggerSpec = []string{
 	"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",
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

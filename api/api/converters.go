@@ -282,3 +282,33 @@ func convertMetaGenToGenbank(meta gen.Meta) genbank.Meta {
 		Version:    meta.Version,
 	}
 }
+
+func ConvertToSlow5Header(genHeader gen.Slow5Header) slow5.Header {
+	var slow5HeaderValues []slow5.HeaderValue
+	for _, hv := range genHeader.HeaderValues {
+		slow5HV := slow5.HeaderValue{
+			ReadGroupID:        uint32(hv.ReadGroupID),
+			Slow5Version:       hv.Slow5Version,
+			Attributes:         hv.Attributes,
+			EndReasonHeaderMap: hv.EndReasonHeaderMap,
+		}
+		slow5HeaderValues = append(slow5HeaderValues, slow5HV)
+	}
+
+	return slow5.Header{HeaderValues: slow5HeaderValues}
+}
+
+func ConvertToGenSlow5Header(slow5Header slow5.Header) gen.Slow5Header {
+	var genHeaderValues []gen.HeaderValue
+	for _, hv := range slow5Header.HeaderValues {
+		genHV := gen.HeaderValue{
+			ReadGroupID:        int(hv.ReadGroupID),
+			Slow5Version:       hv.Slow5Version,
+			Attributes:         hv.Attributes,
+			EndReasonHeaderMap: hv.EndReasonHeaderMap,
+		}
+		genHeaderValues = append(genHeaderValues, genHV)
+	}
+
+	return gen.Slow5Header{HeaderValues: genHeaderValues}
+}
