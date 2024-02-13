@@ -38,7 +38,7 @@ ATGTTGCCTACCTACTTGGTTCAGTTACGTATTGCTAAGGTTAACACAAAGACACCCGACAACTTTCTTCAGCACCTGCC
 
 	var barcodes []string
 	for _, record := range records {
-		// Note: Nanopore has a score that requires a lower match (16) than the
+		// Note: Nanopore has a score that requires a lower match (~16) than the
 		// default ScoreMagicNumber (18).
 		barcode, _ := SingleBarcodeSequence(record.Sequence, primerSet)
 		if barcode != "" {
