@@ -11,8 +11,10 @@ package bio
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"math"
 
@@ -345,14 +347,25 @@ type Indexable interface {
 	Identifier() string
 }
 
-func GenbankFromIndex(r io.ReaderAt, StartPosition uint64, Length uint64) (genbank.Genbank, error) {
-	return genbank.Genbank{}, nil
-}
-
-func FastaFromIndex(r io.ReaderAt, StartPosition uint64, Length uint64) (fasta.Record, error) {
-	return fasta.Record{}, nil
-}
-
-func FastqFromIndex(r io.ReaderAt, StartPosition uint64, Length uint64) (fastq.Read, error) {
-	return fastq.Read{}, nil
+func FastqFromIndex(r io.ReaderAt, startPosition uint64, length uint64) (fastq.Read, error) {
+	dataBytes := make([]byte, length)
+	n, err := r.ReadAt(dataBytes, int64(startPosition))
+	if err != nil {
+		if !errors.Is(err, io.EOF) {
+			return fastq.Read{}, err
+		}
+		dataBytes = dataBytes[:len(dataBytes)-1]
+	}
+	if int(n) != len(dataBytes) {
+		return fastq.Read{}, fmt.Errorf("Failed to retrieve correct number of bytes Note expected may be off by 1 if at EOF. Expected: %d, Got: %d", len(dataBytes), n)
+	}
+	parser := NewFastqParserWithMaxLineLength(bytes.NewReader(dataBytes), n)
+	fastqRead, err := parser.Next()
+	if err != nil {
+		if errors.Is(err, io.EOF) {
+			err = nil // EOF not treated as parsing error.
+		}
+		return fastqRead, err
+	}
+	return fastqRead, nil
 }

@@ -161,7 +161,11 @@ func (parser *Parser) Next() (Read, error) {
 	if len(line) <= 1 { // newline delimiter - actually checking for empty line
 		return Read{}, fmt.Errorf("empty quality sequence for %q,  got to line %d: %w", seqIdentifier, parser.line, err)
 	}
-	quality = string(line[:len(line)-1])
+	if parser.atEOF {
+		quality = string(line)
+	} else {
+		quality = string(line[:len(line)-1])
+	}
 
 	// Parsing ended. Check for inconsistencies.
 	if lookingForIdentifier {
@@ -177,12 +181,6 @@ func (parser *Parser) Next() (Read, error) {
 	// We report this error to note the fastq may be incomplete/corrupt
 	// like in the case of using an io.LimitReader wrapping the underlying reader.
 	return fastq, nil
-}
-
-// Reset discards all data in buffer and resets state.
-func (parser *Parser) Reset(r io.Reader) {
-	parser.reader.Reset(r)
-	parser.line = 0
 }
 
 /******************************************************************************
