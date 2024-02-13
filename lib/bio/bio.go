@@ -325,3 +325,34 @@ func FilterData[Data DataTypes](ctx context.Context, input <-chan Data, output c
 		}
 	}
 }
+
+/*
+
+We have FromIndex parsers for data types that need it:
+- genbank
+- fasta
+- fastq
+- slow5
+- sam
+
+We do not have them for data types that do not need it:
+- pileup.Line [always small]
+- uniprot.Entry [file type too complex]
+*/
+
+// Indexable is an interface for DataTypes to satisfy if they are indexable.
+type Indexable interface {
+	Identifier() string
+}
+
+func GenbankFromIndex(r io.ReaderAt, StartPosition uint64, Length uint64) (genbank.Genbank, error) {
+	return genbank.Genbank{}, nil
+}
+
+func FastaFromIndex(r io.ReaderAt, StartPosition uint64, Length uint64) (fasta.Record, error) {
+	return fasta.Record{}, nil
+}
+
+func FastqFromIndex(r io.ReaderAt, StartPosition uint64, Length uint64) (fastq.Read, error) {
+	return fastq.Read{}, nil
+}
