@@ -127,8 +127,8 @@ func (m *MegamashMap) Match(sequence string) []Match {
 	return matches
 }
 
-// MatchesToJson converts a slice of Match structs to a JSON string.
-func MatchesToJson(matches []Match) (string, error) {
+// MatchesToJSON converts a slice of Match structs to a JSON string.
+func MatchesToJSON(matches []Match) (string, error) {
 	jsonData, err := json.Marshal(matches)
 	if err != nil {
 		return "", err // Return an empty string and the error
@@ -136,8 +136,8 @@ func MatchesToJson(matches []Match) (string, error) {
 	return string(jsonData), nil // Convert byte slice to string and return
 }
 
-// JsonToMatches converts a JSON string to a slice of Match structs.
-func JsonToMatches(jsonStr string) ([]Match, error) {
+// JSONToMatches converts a JSON string to a slice of Match structs.
+func JSONToMatches(jsonStr string) ([]Match, error) {
 	var matches []Match
 	err := json.Unmarshal([]byte(jsonStr), &matches)
 	if err != nil {
