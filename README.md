@@ -71,6 +71,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Added workers to bio as a way to process data [#62](https://github.com/Koeng101/dnadesign/pull/62)
 - Improved megamash efficiency and added []Match JSON conversion [#61](https://github.com/Koeng101/dnadesign/pull/61)
 - Added barcoding functionality for sequencing reads [#59](https://github.com/Koeng101/dnadesign/pull/59)
 - Added the megamash algorithm [#50](https://github.com/Koeng101/dnadesign/pull/50)
