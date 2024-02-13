@@ -1,9 +1,16 @@
 /*
 Package barcoding contains functions to help barcode sequencing data.
 
-Normally, external software handles barcoding for you (for example, Oxford
-Nanopore's MinKNOW app). However, specialized indexing strategies can be
-employed for custom barcoding methods.
+DNA barcoding is a strategy during DNA sequencing to correlate reads to certain
+samples. Modern DNA sequencers sequence a lot of DNA, and often you'll want to
+split up one DNA sequencer flow cell to sequence a bunch of different samples.
+However, you need a way to tell the samples apart. This is usually done with
+DNA barcodes - you attach a barcode to all the sequences from a certain sample,
+then use software after sequencing to sort out barcoded samples.
+
+Normally, vendor software handles barcoding for you (for example, Oxford
+Nanopore's MinKNOW app). However, specialized barcoding strategies can be used
+for more advanced sample processing.
 */
 
 package barcoding
@@ -20,8 +27,22 @@ import (
 	"github.com/koeng101/dnadesign/lib/transform"
 )
 
+// ScoreMagicNumber is the SmithWaterman score needed to match a barcode. 18 is
+// chosen as a magic number that fits pretty well with normal 20bp barcodes.
 var ScoreMagicNumber = 18
+
+// MinimalReadSize is the minimal size of reads needed to barcode. This is
+// mostly important for Nanopore reads, since amplicon Nanopore sequencing
+// tends to generate quite a few small reads from PCR products that we do not
+// want to barcode.
 var MinimalReadSize = 200
+
+// EdgeCheckSize is how long to check from the edge of both sides of a read.
+// This is important because SmithWaterman alignment, used for aligning
+// barcodes, is a quadratic algorithm. Nanopore sequencing prep, especially
+// ligation preparation, can add DNA to either end of an amplicon. The native
+// barcode (NB) and native adapter (NA) sequence may or may not be on both
+// sides, adding ~80bp to the read.
 var EdgeCheckSize = 120
 
 /******************************************************************************
@@ -39,6 +60,7 @@ Keoni
 type SingleBarcodePrimerSet struct {
 	BarcodeMap        map[string]string // barcode to sequence
 	ReverseBarcodeMap map[string]string // sequence to barcode
+	Barcodes          []string          // sorted for determinism
 }
 
 // ParseSinglePrimerSet parses a csv file with barcode primer pairs into a
@@ -47,6 +69,7 @@ func ParseSinglePrimerSet(csvFile io.Reader) (SingleBarcodePrimerSet, error) {
 	var result SingleBarcodePrimerSet
 	result.BarcodeMap = make(map[string]string)
 	result.ReverseBarcodeMap = make(map[string]string)
+	var barcodes []string
 
 	// Create a new CSV reader reading from the input io.Reader
 	reader := csv.NewReader(csvFile)
@@ -66,13 +89,19 @@ func ParseSinglePrimerSet(csvFile io.Reader) (SingleBarcodePrimerSet, error) {
 		if len(record) == 2 {
 			result.BarcodeMap[record[0]] = record[1]
 			result.ReverseBarcodeMap[record[1]] = record[0]
+			barcodes = append(barcodes, record[1])
 		}
 	}
+
+	// Sort the slices
+	sort.Strings(barcodes)
+	result.Barcodes = barcodes
+
 	return result, nil
 }
 
-// SingleBarcode barcodes a sequence with a single barcode.
-func SingleBarcode(sequence string, primerSet DualBarcodePrimerSet) (string, error) {
+// SingleBarcodeSequence barcodes a sequence with a single barcode.
+func SingleBarcodeSequence(sequence string, primerSet SingleBarcodePrimerSet) (string, error) {
 	m := [][]int{
 		/*       A C G T U */
 		/* A */ {1, -1, -1, -1, -1},
@@ -95,7 +124,7 @@ func SingleBarcode(sequence string, primerSet DualBarcodePrimerSet) (string, err
 	var topRanked string
 	var topRankedScore int
 	for _, sequence := range []string{sequenceForward, sequenceReverse} {
-		for _, barcodeSequence := range primerSet.ForwardBarcodes {
+		for _, barcodeSequence := range primerSet.Barcodes {
 			score, _, _, err := align.SmithWaterman(sequence, barcodeSequence, scoring)
 			if err != nil {
 				return "", err
@@ -107,10 +136,10 @@ func SingleBarcode(sequence string, primerSet DualBarcodePrimerSet) (string, err
 
 			switch {
 			case score > topRankedScore && score > ScoreMagicNumber:
-				topRanked = barcodeSequence
+				topRanked = primerSet.ReverseBarcodeMap[barcodeSequence]
 				topRankedScore = score
 			case complementScore > topRankedScore && complementScore > ScoreMagicNumber:
-				topRanked = barcodeSequence
+				topRanked = primerSet.ReverseBarcodeMap[barcodeSequence]
 				topRankedScore = complementScore
 			}
 		}
@@ -127,6 +156,8 @@ Feb 12, 2024
 When using Nanopore sequencing, I can barcode both sides of a given sequence.
 Dual barcodes can encode a combinatorial quantity of potential sequences, so
 are nice for barcoding lots of different DNA wells at once.
+
+I personally use this for plasmid sequencing.
 
 Keoni
 ******************************************************************************/
