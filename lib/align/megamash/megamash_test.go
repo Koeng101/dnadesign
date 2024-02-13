@@ -38,3 +38,33 @@ func BenchmarkMegamash(b *testing.B) {
 		}
 	}
 }
+
+func TestMatchesConversion(t *testing.T) {
+	// Initial slice of Match structs
+	matches := []Match{
+		{"match1", 90.1},
+		{"match2", 85.5},
+	}
+	// Convert matches to JSON string
+	jsonStr, err := MatchesToJson(matches)
+	if err != nil {
+		t.Fatalf("MatchesToJson failed with error: %v", err)
+	}
+
+	// Convert JSON string back to slice of Match structs
+	convertedMatches, err := JsonToMatches(jsonStr)
+	if err != nil {
+		t.Fatalf("JsonToMatches failed with error: %v", err)
+	}
+
+	// Convert the convertedMatches back to JSON to compare strings
+	convertedJsonStr, err := MatchesToJson(convertedMatches)
+	if err != nil {
+		t.Fatalf("MatchesToJson failed with error: %v", err)
+	}
+
+	// Compare the original JSON string with the converted JSON string
+	if jsonStr != convertedJsonStr {
+		t.Errorf("Conversion mismatch. Original JSON: %v, After Conversion: %v", jsonStr, convertedJsonStr)
+	}
+}

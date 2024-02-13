@@ -9,6 +9,7 @@ reaction.
 package megamash
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/koeng101/dnadesign/lib/bio/fasta"
@@ -97,8 +98,8 @@ func NewMegamashMap(sequences []fasta.Record, kmerSize uint, kmerMinimalCount ui
 // Match contains the identifier and score of a potential match to the searched
 // sequence.
 type Match struct {
-	Identifier string
-	Score      float64
+	Identifier string  `json:"identifier"`
+	Score      float64 `json:"score"`
 }
 
 // Match matches a sequence to all the sequences in a megamash map.
@@ -124,4 +125,23 @@ func (m *MegamashMap) Match(sequence string) []Match {
 		}
 	}
 	return matches
+}
+
+// MatchesToJson converts a slice of Match structs to a JSON string.
+func MatchesToJson(matches []Match) (string, error) {
+	jsonData, err := json.Marshal(matches)
+	if err != nil {
+		return "", err // Return an empty string and the error
+	}
+	return string(jsonData), nil // Convert byte slice to string and return
+}
+
+// JsonToMatches converts a JSON string to a slice of Match structs.
+func JsonToMatches(jsonStr string) ([]Match, error) {
+	var matches []Match
+	err := json.Unmarshal([]byte(jsonStr), &matches)
+	if err != nil {
+		return nil, err // Return nil and the error
+	}
+	return matches, nil // Return the slice of matches
 }
