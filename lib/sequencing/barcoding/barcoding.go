@@ -47,7 +47,7 @@ var EdgeCheckSize = 120
 
 /******************************************************************************
 Feb 12, 2024
-							Single barcodes
+                            Single barcodes
 
 This is code for detecting single barcodes. Hasn't been given as much love as
 dual barcoding code, and is mainly just copy pasted from there.
@@ -151,7 +151,7 @@ func SingleBarcodeSequence(sequence string, primerSet SingleBarcodePrimerSet) (s
 
 /******************************************************************************
 Feb 12, 2024
-							Dual barcodes
+                            Dual barcodes
 
 When using Nanopore sequencing, I can barcode both sides of a given sequence.
 Dual barcodes can encode a combinatorial quantity of potential sequences, so
