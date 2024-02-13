@@ -46,25 +46,25 @@ func TestMatchesConversion(t *testing.T) {
 		{"match2", 85.5},
 	}
 	// Convert matches to JSON string
-	jsonStr, err := MatchesToJson(matches)
+	jsonStr, err := MatchesToJSON(matches)
 	if err != nil {
-		t.Fatalf("MatchesToJson failed with error: %v", err)
+		t.Fatalf("MatchesToJSON failed with error: %v", err)
 	}
 
 	// Convert JSON string back to slice of Match structs
-	convertedMatches, err := JsonToMatches(jsonStr)
+	convertedMatches, err := JSONToMatches(jsonStr)
 	if err != nil {
-		t.Fatalf("JsonToMatches failed with error: %v", err)
+		t.Fatalf("JSONToMatches failed with error: %v", err)
 	}
 
 	// Convert the convertedMatches back to JSON to compare strings
-	convertedJsonStr, err := MatchesToJson(convertedMatches)
+	convertedJSONStr, err := MatchesToJSON(convertedMatches)
 	if err != nil {
-		t.Fatalf("MatchesToJson failed with error: %v", err)
+		t.Fatalf("MatchesToJSON failed with error: %v", err)
 	}
 
 	// Compare the original JSON string with the converted JSON string
-	if jsonStr != convertedJsonStr {
-		t.Errorf("Conversion mismatch. Original JSON: %v, After Conversion: %v", jsonStr, convertedJsonStr)
+	if jsonStr != convertedJSONStr {
+		t.Errorf("Conversion mismatch. Original JSON: %v, After Conversion: %v", jsonStr, convertedJSONStr)
 	}
 }
