@@ -32,7 +32,7 @@ func StandardizedDNA(sequence string) string {
 var (
 	DefaultKmerSize         uint    = 16
 	DefaultMinimalKmerCount uint    = 10
-	DefaultScoreThreshold   float64 = 0.2
+	DefaultScoreThreshold   float64 = 0.5
 )
 
 type MegamashMap struct {
