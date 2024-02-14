@@ -8,7 +8,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/bio/ddidx"
 	"github.com/koeng101/dnadesign/lib/bio/fasta"
@@ -502,7 +501,9 @@ $%&$$$$$#')+)+,<>@B?>==<>>;;<<<B??>?@DA@?=>==>??<>??7;<706=>=>CBCCB????@CCBDAGFF
 	var buffer bytes.Buffer
 	var startPosition uint64
 	for _, read := range reads {
-		uuidBytes, _ := uuid.Parse(read.Identifier)
+		// Normally, you would want to actually parse uuidBytes, but we don't care here.
+		var uuidBytes [16]byte
+		copy(uuidBytes[:], read.Identifier[:16])
 		length, _ := read.WriteTo(&buffer)
 		indexes = append(indexes, ddidx.Index{Identifier: uuidBytes, StartPosition: startPosition, Length: uint64(length)})
 		startPosition = startPosition + uint64(length)
