@@ -40,6 +40,17 @@ type Read struct {
 	Quality    string            `json:"quality"`
 }
 
+// DeepCopy deep copies a read. Used for when you want to modify optionals then
+// pipe elsewhere.
+func (r *Read) DeepCopy() Read {
+	newRead := Read{Identifier: r.Identifier, Sequence: r.Sequence, Quality: r.Quality}
+	newRead.Optionals = make(map[string]string)
+	for key, value := range r.Optionals {
+		newRead.Optionals[key] = value
+	}
+	return newRead
+}
+
 // Header is a blank struct, needed for compatibility with bio parsers. It contains nothing.
 type Header struct{}
 

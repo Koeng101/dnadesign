@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"syscall"
 
+	"github.com/koeng101/dnadesign/lib/bio/sam"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -123,5 +124,39 @@ func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) erro
 		return err
 	}
 
+	return nil
+}
+
+// PileupChanneled processes SAM alignments from a channel and sends pileup lines to another channel.
+func PileupChanneled(ctx context.Context, templateFastas io.Reader, samChan <-chan sam.Alignment, w io.Writer) error {
+	g, ctx := errgroup.WithContext(ctx)
+
+	// Create a pipe for writing SAM alignments and reading them as an io.Reader
+	samPr, samPw := io.Pipe()
+
+	// Goroutine to consume SAM alignments and write them to the PipeWriter
+	g.Go(func() error {
+		defer samPw.Close()
+		for alignment := range samChan {
+			// Assuming the sam.Alignment type has a WriteTo method or similar to serialize it to the writer
+			_, err := alignment.WriteTo(samPw)
+			if err != nil {
+				return err // return error to be handled by errgroup
+			}
+		}
+		return nil
+	})
+
+	// Run Pileup function in a goroutine
+	g.Go(func() error {
+		return Pileup(templateFastas, samPr, w) // Runs Pileup, writing output to pileupPw
+	})
+
+	// Wait for all goroutines in the group to finish
+	if err := g.Wait(); err != nil {
+		return err // This will return the first non-nil error from the group of goroutines
+	}
+
+	// At this point, all goroutines have finished successfully
 	return nil
 }
