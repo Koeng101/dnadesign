@@ -304,6 +304,31 @@ func ManyToChannel[Data DataTypes, Header HeaderTypes](ctx context.Context, chan
 	return err
 }
 
+// WorkerFunc defines the type of function that will be run by each worker.
+// It should take a context as its argument for cancellation and coordination.
+type WorkerFunc func(ctx context.Context) error
+
+// RunWorkers starts a specified number of workers, each executing the provided WorkerFunc.
+// It uses an errgroup.Group to manage the workers and handle errors.
+func RunWorkers[Data DataTypes](ctx context.Context, numWorkers int, output chan<- Data, work WorkerFunc) error {
+	g, ctx := errgroup.WithContext(ctx)
+
+	for i := 0; i < numWorkers; i++ {
+		g.Go(func() error {
+			return work(ctx)
+		})
+	}
+
+	// Start a separate goroutine to wait for all workers to finish and close the output channel.
+	go func() {
+		_ = g.Wait()
+		close(output)
+	}()
+
+	// Return immediately, allowing the caller to continue. Note that error handling from workers is asynchronous.
+	return nil
+}
+
 // FilterData is a generic function that implements a channel filter. Users
 // give an input and output channel, with a filtering function, and FilterData
 // filters data from the input into the output.
@@ -311,18 +336,18 @@ func FilterData[Data DataTypes](ctx context.Context, input <-chan Data, output c
 	for {
 		select {
 		case <-ctx.Done():
-			close(output)
 			return ctx.Err()
 
 		case data, ok := <-input:
 			if !ok {
-				// If the input channel is closed, we close the output channel and return
-				close(output)
-				return nil // returning nil as the input channel being closed is a normal completion signal
+				return nil
 			}
 			if filter(data) {
-				// Only send data through if it passes the filter.
-				output <- data
+				select {
+				case output <- data:
+				case <-ctx.Done():
+					return ctx.Err()
+				}
 			}
 		}
 	}

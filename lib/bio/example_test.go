@@ -413,7 +413,9 @@ func ExampleFilterData() {
 	ctx := context.Background()
 	errorGroup, ctx := errgroup.WithContext(ctx)
 	errorGroup.Go(func() error {
-		return bio.FilterData(ctx, inputChan, outputChan, func(data sam.Alignment) bool { return (data.FLAG & 0x900) == 0 })
+		return bio.RunWorkers(ctx, 1, outputChan, func(ctx context.Context) error {
+			return bio.FilterData(ctx, inputChan, outputChan, func(data sam.Alignment) bool { return (data.FLAG & 0x900) == 0 })
+		})
 	})
 
 	// Send some example Alignments to the input channel
@@ -467,7 +469,11 @@ $%&$$$$$#')+)+,<>@B?>==<>>;;<<<B??>?@DA@?=>==>??<>??7;<706=>=>CBCCB????@CCBDAGFF
 	// Filter the right barcode fastqs from channel
 	barcode := "barcode07"
 	errorGroup.Go(func() error {
-		return bio.FilterData(ctx, fastqReads, fastqBarcoded, func(data fastq.Read) bool { return data.Optionals["barcode"] == barcode })
+		// We're going to start multiple workers within this errorGroup. This
+		// helps when doing computationally intensive operations on channels.
+		return bio.RunWorkers(ctx, 2, fastqBarcoded, func(ctx context.Context) error {
+			return bio.FilterData(ctx, fastqReads, fastqBarcoded, func(data fastq.Read) bool { return data.Optionals["barcode"] == barcode })
+		})
 	})
 
 	// Now, check the outputs. We should have sorted only for barcode07
