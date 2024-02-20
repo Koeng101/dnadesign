@@ -381,7 +381,7 @@ func FastqFromIndex(r io.ReaderAt, startPosition uint64, length uint64) (fastq.R
 		}
 		dataBytes = dataBytes[:len(dataBytes)-1]
 	}
-	if int(n) != len(dataBytes) {
+	if n != len(dataBytes) {
 		return fastq.Read{}, fmt.Errorf("Failed to retrieve correct number of bytes Note expected may be off by 1 if at EOF. Expected: %d, Got: %d", len(dataBytes), n)
 	}
 	parser := NewFastqParserWithMaxLineLength(bytes.NewReader(dataBytes), n)
