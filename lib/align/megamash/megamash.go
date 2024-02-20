@@ -11,6 +11,7 @@ package megamash
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/koeng101/dnadesign/lib/bio/fasta"
 	"github.com/koeng101/dnadesign/lib/transform"
@@ -19,6 +20,7 @@ import (
 // StandardizedDNA returns the alphabetically lesser strand of a double
 // stranded DNA molecule.
 func StandardizedDNA(sequence string) string {
+	sequence = strings.ToUpper(sequence)
 	var deterministicSequence string
 	reverseComplement := transform.ReverseComplement(sequence)
 	if sequence > reverseComplement {

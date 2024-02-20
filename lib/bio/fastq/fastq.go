@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"sort"
 	"strings"
 )
 
@@ -209,8 +210,15 @@ func (read *Read) WriteTo(w io.Writer) (int64, error) {
 	if err != nil {
 		return writtenBytes, err
 	}
-	for key, val := range read.Optionals {
-		newWrittenBytes, err = fmt.Fprintf(w, " %s=%s", key, val)
+	keys := make([]string, len(read.Optionals))
+	i := 0
+	for key := range read.Optionals {
+		keys[i] = key
+		i++
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		newWrittenBytes, err = fmt.Fprintf(w, " %s=%s", key, read.Optionals[key])
 		writtenBytes += int64(newWrittenBytes)
 		if err != nil {
 			return writtenBytes, err
