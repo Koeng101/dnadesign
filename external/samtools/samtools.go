@@ -23,7 +23,7 @@ import (
 // The first samtools view removes unmapped sequences, the sort sorts the
 // sequences for piping into pileup, and the final command builds the pileup
 // file.
-func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) error {
+func Pileup(ctx context.Context, templateFastas io.Reader, samAlignments io.Reader, w io.Writer) error {
 	/*
 		Due to how os.exec works in Golang, we can't directly have pipes as if
 		the whole thing was a script. However, we can attach pipes to each
@@ -50,7 +50,7 @@ func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) erro
 	}
 	tmpFile.Close() // Close the file as it's no longer needed
 
-	g, ctx := errgroup.WithContext(context.Background())
+	g, ctx := errgroup.WithContext(ctx)
 
 	// Setup pipe connections between commands
 	viewSortReader, viewSortWriter := io.Pipe()
@@ -74,7 +74,7 @@ func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) erro
 
 		select {
 		case <-ctx.Done():
-			viewCmd.Process.Signal(syscall.SIGTERM)
+			_ = viewCmd.Process.Signal(syscall.SIGTERM)
 			return ctx.Err()
 		default:
 			return viewCmd.Wait()
@@ -94,7 +94,7 @@ func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) erro
 
 		select {
 		case <-ctx.Done():
-			sortCmd.Process.Signal(syscall.SIGTERM)
+			_ = sortCmd.Process.Signal(syscall.SIGTERM)
 			return ctx.Err()
 		default:
 			return sortCmd.Wait()
@@ -112,7 +112,7 @@ func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) erro
 
 		select {
 		case <-ctx.Done():
-			mpileupCmd.Process.Signal(syscall.SIGTERM)
+			_ = mpileupCmd.Process.Signal(syscall.SIGTERM)
 			return ctx.Err()
 		default:
 			return mpileupCmd.Wait()
@@ -149,7 +149,7 @@ func PileupChanneled(ctx context.Context, templateFastas io.Reader, samChan <-ch
 
 	// Run Pileup function in a goroutine
 	g.Go(func() error {
-		return Pileup(templateFastas, samPr, w) // Runs Pileup, writing output to pileupPw
+		return Pileup(ctx, templateFastas, samPr, w) // Runs Pileup, writing output to pileupPw
 	})
 
 	// Wait for all goroutines in the group to finish
