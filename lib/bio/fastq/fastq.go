@@ -43,10 +43,10 @@ type Read struct {
 
 // DeepCopy deep copies a read. Used for when you want to modify optionals then
 // pipe elsewhere.
-func (r *Read) DeepCopy() Read {
-	newRead := Read{Identifier: r.Identifier, Sequence: r.Sequence, Quality: r.Quality}
+func (read *Read) DeepCopy() Read {
+	newRead := Read{Identifier: read.Identifier, Sequence: read.Sequence, Quality: read.Quality}
 	newRead.Optionals = make(map[string]string)
-	for key, value := range r.Optionals {
+	for key, value := range read.Optionals {
 		newRead.Optionals[key] = value
 	}
 	return newRead
