@@ -31,9 +31,40 @@ func BenchmarkMegamash(b *testing.B) {
 		oligo3 := "CCGTGCGACAAGATTTCAAGGGTCTCTCTTCTATCGCAGCCAAGGAAGAAGGTGTATCTCTAGAGAAGCGTCGAGTGAGACCCGGATCGAACTTAGGTAGCCCCCTTCGAAGTGGCTCTGTCTGATCCTCCGCGGATGGCGACACCATCGGACTGAGGATATTGGCCACA"
 
 		samples := []string{"TTTTGTCTACTTCGTTCCGTTGCGTATTGCTAAGGTTAAGACTACTTTCTGCCTTTGCGAGACGGCGCCTCCGTGCGACGAGATTTCAAGGGTCTCTGTGCTATATTGCCGCTAGTTCCGCTCTAGCTGCTCCAGTTAATACTACTACTGAAGATGAATTGGAGGGTGACTTCGATGTTGCTGTTCTGCCTTTTTCCGCTTCTGAGACCCAGATCGACTTTTAGATTCCTCAGGTGCTGTTCTCGCAAAGGCAGAAAGTAGTCTTAACCTTAGCAATACGTGG", "TGTCCTTTACTTCGTTCAGTTACGTATTGCTAAGGTTAAGACTACTTTCTGCCTTTGCGAGAACAGCACCTCTGCTAGGGGCTACTTATCGGGTCTCTAGTTCCGCTCTAGCTGCTCCAGTTAATACTACTACTGAAGATGAATTGGAGGGTGACTTCGATGTTGCTGTTCTGCCTTTTTCCGCTTCTATCTGAGACCGAAGTGGTTTGCCTAAACGCAGGTGCTGTTGGCAAAGGCAGAAAGTAGTCTTAACCTTGACAATGAGTGGTA", "GTTATTGTCGTCTCCTTTGACTCAGCGTATTGCTAAGGTTAAGACTACTTTCTGCCTTTGCGAGAACAGCACCTCTGCTAGGGGCTGCTGGGTCTCTAGTTCCGCTCTAGCTGCTCCAGTTAATACTACTACTGAAGATGAATTGGAGGGTGACTTCGATGTTGCTGTTCTGCCTTTTCCGCTTCTATCTGAGACCGAAGTGGTTAT", "TGTTCTGTACTTCGTTCAGTTACGTATTGCTAAGGTTAAGACTACTTCTGCCTTAGAGACCACGCCTCCGTGCGACAAGATTCAAGGGTCTCTGTGCTCTGCCGCTAGTTCCGCTCTAGCTGCTCCGGTATGCATCTACTACTGAAGATGAATTGGAGGGTGACTTCGATGTTGCTGCTGTTCTGCCTTTTTCCGCTTCTGAGACCCGGATCGAACTTAGGTAGCCAGGTGCTGTTCTCGCAAAGGCAGAAAGTAGTCTTAACCTTAGCAACTGTTGGTT"}
-		m, _ := NewMegamashMap([]fasta.Record{{Sequence: oligo1, Identifier: "oligo1"}, {Sequence: oligo2, Identifier: "oligo2"}, {Sequence: oligo3, Identifier: "oligo3"}}, DefaultKmerSize, DefaultMinimalKmerCount, DefaultScoreThreshold)
+		m, _ := NewMegamashMap([]fasta.Record{{Sequence: oligo1, Identifier: "oligo1"}, {Sequence: oligo2, Identifier: "oligo2"}, {Sequence: oligo3, Identifier: "oligo3"}},
+			DefaultKmerSize, DefaultMinimalKmerCount, DefaultScoreThreshold)
 		for _, sample := range samples {
 			_ = m.Match(sample)
 		}
+	}
+}
+
+func TestMatchesConversion(t *testing.T) {
+	// Initial slice of Match structs
+	matches := []Match{
+		{"match1", 90.1},
+		{"match2", 85.5},
+	}
+	// Convert matches to JSON string
+	jsonStr, err := MatchesToJSON(matches)
+	if err != nil {
+		t.Fatalf("MatchesToJSON failed with error: %v", err)
+	}
+
+	// Convert JSON string back to slice of Match structs
+	convertedMatches, err := JSONToMatches(jsonStr)
+	if err != nil {
+		t.Fatalf("JSONToMatches failed with error: %v", err)
+	}
+
+	// Convert the convertedMatches back to JSON to compare strings
+	convertedJSONStr, err := MatchesToJSON(convertedMatches)
+	if err != nil {
+		t.Fatalf("MatchesToJSON failed with error: %v", err)
+	}
+
+	// Compare the original JSON string with the converted JSON string
+	if jsonStr != convertedJSONStr {
+		t.Errorf("Conversion mismatch. Original JSON: %v, After Conversion: %v", jsonStr, convertedJSONStr)
 	}
 }
