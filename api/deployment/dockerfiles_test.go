@@ -16,13 +16,11 @@ func TestApiDockerfile(t *testing.T) {
 	defer provider.Close()
 
 	cli := provider.Client()
-
 	ctx := context.Background()
-
 	tag, err := provider.BuildImage(ctx, &testcontainers.ContainerRequest{
 		FromDockerfile: testcontainers.FromDockerfile{
 			Context:    "../../.",
-			Dockerfile: "deployment/dockerfiles/api.Dockerfile",
+			Dockerfile: "api/Dockerfile",
 			Repo:       "dnadesignapi",
 			Tag:        "test",
 		},

@@ -118,6 +118,7 @@ func RequiredFunctions(ctx context.Context, client *openai.Client, model string,
 					Content: fmt.Sprintf(`USER REQUEST: %s`, userRequest),
 				},
 			},
+			Stop: []string{"}"}, // this stop token makes sure nothing else is generated.
 		},
 	)
 	if err != nil {
@@ -126,9 +127,10 @@ func RequiredFunctions(ctx context.Context, client *openai.Client, model string,
 	if len(resp.Choices) == 0 {
 		return resultMap, fmt.Errorf("Got zero responses")
 	}
-	err = json.Unmarshal([]byte(resp.Choices[0].Message.Content), &resultMap)
+	response := resp.Choices[0].Message.Content + "}" // add back stop token
+	err = json.Unmarshal([]byte(response), &resultMap)
 	if err != nil {
-		fmt.Println(resp.Choices[0].Message.Content)
+		fmt.Println(response)
 		return resultMap, err
 	}
 
