@@ -1,4 +1,6 @@
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+github.com/koeng101/dnadesign/external v0.0.0-20240213205901-f4998ef84117 h1:MLWgADbigSsAmDP3yG93ESlN0Ek9QLtH5uHigmWVXwg=
+github.com/koeng101/dnadesign/external v0.0.0-20240213205901-f4998ef84117/go.mod h1:nb80z/jm5HMCxfNZ50cBJa5TffkXxpY9okvqnBj8RrM=
 golang.org/x/sync v0.5.0 h1:60k92dhOjHxJkrqnwsfl8KuaHbn/5dl0lUPUklKo3qE=
 golang.org/x/sync v0.5.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=

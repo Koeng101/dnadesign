@@ -2,6 +2,7 @@ package samtools_test
 
 import (
 	"bytes"
+	"context"
 	"os"
 	"testing"
 
@@ -28,7 +29,8 @@ func TestPileup(t *testing.T) {
 	var buf bytes.Buffer
 
 	// Execute the pileup function
-	err = samtools.Pileup(templateFile, samFile, &buf)
+	ctx := context.Background()
+	err = samtools.Pileup(ctx, templateFile, samFile, &buf)
 	if err != nil {
 		t.Errorf("Pileup returned error: %s", err)
 	}

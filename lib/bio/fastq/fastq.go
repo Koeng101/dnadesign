@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"sort"
 	"strings"
 )
 
@@ -38,6 +39,17 @@ type Read struct {
 	Optionals  map[string]string `json:"optionals"` // Nanopore, for example, carries along data like: `read=13956 ch=53 start_time=2020-11-11T01:49:01Z`
 	Sequence   string            `json:"sequence"`
 	Quality    string            `json:"quality"`
+}
+
+// DeepCopy deep copies a read. Used for when you want to modify optionals then
+// pipe elsewhere.
+func (read *Read) DeepCopy() Read {
+	newRead := Read{Identifier: read.Identifier, Sequence: read.Sequence, Quality: read.Quality}
+	newRead.Optionals = make(map[string]string)
+	for key, value := range read.Optionals {
+		newRead.Optionals[key] = value
+	}
+	return newRead
 }
 
 // Header is a blank struct, needed for compatibility with bio parsers. It contains nothing.
@@ -161,7 +173,11 @@ func (parser *Parser) Next() (Read, error) {
 	if len(line) <= 1 { // newline delimiter - actually checking for empty line
 		return Read{}, fmt.Errorf("empty quality sequence for %q,  got to line %d: %w", seqIdentifier, parser.line, err)
 	}
-	quality = string(line[:len(line)-1])
+	if parser.atEOF {
+		quality = string(line)
+	} else {
+		quality = string(line[:len(line)-1])
+	}
 
 	// Parsing ended. Check for inconsistencies.
 	if lookingForIdentifier {
@@ -179,12 +195,6 @@ func (parser *Parser) Next() (Read, error) {
 	return fastq, nil
 }
 
-// Reset discards all data in buffer and resets state.
-func (parser *Parser) Reset(r io.Reader) {
-	parser.reader.Reset(r)
-	parser.line = 0
-}
-
 /******************************************************************************
 
 Start of  Write functions
@@ -200,8 +210,15 @@ func (read *Read) WriteTo(w io.Writer) (int64, error) {
 	if err != nil {
 		return writtenBytes, err
 	}
-	for key, val := range read.Optionals {
-		newWrittenBytes, err = fmt.Fprintf(w, " %s=%s", key, val)
+	keys := make([]string, len(read.Optionals))
+	i := 0
+	for key := range read.Optionals {
+		keys[i] = key
+		i++
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		newWrittenBytes, err = fmt.Fprintf(w, " %s=%s", key, read.Optionals[key])
 		writtenBytes += int64(newWrittenBytes)
 		if err != nil {
 			return writtenBytes, err
