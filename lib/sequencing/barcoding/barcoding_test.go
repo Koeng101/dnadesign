@@ -1,4 +1,4 @@
-package barcoding
+package barcoding_test
 
 import (
 	_ "embed"
@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/koeng101/dnadesign/lib/bio"
+	"github.com/koeng101/dnadesign/lib/sequencing/barcoding"
 	"github.com/koeng101/dnadesign/lib/sequencing/nanopore"
 )
 
@@ -33,7 +34,7 @@ ATGTTGCCTACCTACTTGGTTCAGTTACGTATTGCTAAGGTTAACACAAAGACACCCGACAACTTTCTTCAGCACCTGCC
 +
 %%%%%%####$%(*+,)&''));::80-''')0000BCFJOSNLQJKJKRSMSFKLSDHIMGJEHDABFCCHIJKSSISHGJMSKSSKSOLSJSJIOJMSMNRKJKSJQLISGHGIHSJHSLJKSMISJEEBBCBH>=:/---849000>@GEEEJOKJIJHGSISIOMHKKGFGFJMGHHROIPSIJSSJKSLSMMSKJSJIIIKNMMEISKMLSKSHJPHLMJNQLHGRJKKKSHKKOMISOSGFJIOSSLSOSSSSNMSIFH876'&'(....+++(%`
 
-	primerSet, _ := ParseSinglePrimerSet(strings.NewReader(primerSetCsv))
+	primerSet, _ := barcoding.ParseSinglePrimerSet(strings.NewReader(primerSetCsv))
 	parser := bio.NewFastqParser(strings.NewReader(reads))
 	records, _ := parser.Parse()
 
@@ -41,7 +42,7 @@ ATGTTGCCTACCTACTTGGTTCAGTTACGTATTGCTAAGGTTAACACAAAGACACCCGACAACTTTCTTCAGCACCTGCC
 	for _, record := range records {
 		// Note: Nanopore has a score that requires a lower match (~16) than the
 		// default ScoreMagicNumber (18).
-		barcode, _ := SingleBarcodeSequence(record.Sequence, primerSet)
+		barcode, _ := barcoding.SingleBarcodeSequence(record.Sequence, primerSet)
 		if barcode != "" {
 			barcodes = append(barcodes, barcode)
 		}
@@ -103,13 +104,13 @@ GTGTGTACTTCGTTCAGTTACGTATGCTTAGTTGTGAACACAAAGACACCGACAACTTCTTCAGCACCTTCTTGATCTTC
 +
 $$$%%%%&',*+,//;=:9771111,-+*&&%%%%%'.1389:987777844443553((50+,,88:;2///;6555597677764334578879999:977778888888;=;99888766534424551666688767644445776777:<;:998986652222378*9:::<;:99876322211//..,,,,-0667873333488('''122../
 `
-	primerSet, _ := ParseDualPrimerSet(strings.NewReader(primerSetCsv))
+	primerSet, _ := barcoding.ParseDualPrimerSet(strings.NewReader(primerSetCsv))
 	parser := bio.NewFastqParser(strings.NewReader(reads))
 	records, _ := parser.Parse()
 
 	var wells []string
 	for _, record := range records[0:10] {
-		well, _ := DualBarcodeSequence(record.Sequence, primerSet)
+		well, _ := barcoding.DualBarcodeSequence(record.Sequence, primerSet)
 		if well != "" {
 			wells = append(wells, well)
 		}
@@ -120,8 +121,8 @@ $$$%%%%&',*+,//;=:9771111,-+*&&%%%%%'.1389:987777844443553((50+,,88:;2///;655559
 }
 
 func TestDualBarcodesToPrimerSet(t *testing.T) {
-	dualBarcodes := []DualBarcode{DualBarcode{Name: "test", Forward: "ATG", Reverse: "TAA"}}
-	primerSet := DualBarcodesToPrimerSet(dualBarcodes)
+	dualBarcodes := []barcoding.DualBarcode{{Name: "test", Forward: "ATG", Reverse: "TAA"}}
+	primerSet := barcoding.DualBarcodesToPrimerSet(dualBarcodes)
 	if len(primerSet.ForwardBarcodes) != 1 || len(primerSet.ReverseBarcodes) != 1 {
 		t.Errorf("Should have gotten barcode length of 1.")
 	}
