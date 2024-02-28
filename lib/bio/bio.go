@@ -11,10 +11,8 @@ package bio
 
 import (
 	"bufio"
-	"bytes"
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"math"
 
@@ -351,46 +349,4 @@ func FilterData[Data DataTypes](ctx context.Context, input <-chan Data, output c
 			}
 		}
 	}
-}
-
-/*
-
-We have FromIndex parsers for data types that need it:
-- genbank
-- fasta
-- fastq
-- slow5
-- sam
-
-We do not have them for data types that do not need it:
-- pileup.Line [always small]
-- uniprot.Entry [file type too complex]
-*/
-
-// Indexable is an interface for DataTypes to satisfy if they are indexable.
-type Indexable interface {
-	Identifier() string
-}
-
-func FastqFromIndex(r io.ReaderAt, startPosition uint64, length uint64) (fastq.Read, error) {
-	dataBytes := make([]byte, length)
-	n, err := r.ReadAt(dataBytes, int64(startPosition))
-	if err != nil {
-		if !errors.Is(err, io.EOF) {
-			return fastq.Read{}, err
-		}
-		dataBytes = dataBytes[:len(dataBytes)-1]
-	}
-	if n != len(dataBytes) {
-		return fastq.Read{}, fmt.Errorf("Failed to retrieve correct number of bytes Note expected may be off by 1 if at EOF. Expected: %d, Got: %d", len(dataBytes), n)
-	}
-	parser := NewFastqParserWithMaxLineLength(bytes.NewReader(dataBytes), n)
-	fastqRead, err := parser.Next()
-	if err != nil {
-		if errors.Is(err, io.EOF) {
-			err = nil // EOF not treated as parsing error.
-		}
-		return fastqRead, err
-	}
-	return fastqRead, nil
 }
