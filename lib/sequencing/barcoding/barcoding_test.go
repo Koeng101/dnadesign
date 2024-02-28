@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"strings"
+	"testing"
 
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/sequencing/nanopore"
@@ -116,4 +117,12 @@ $$$%%%%&',*+,//;=:9771111,-+*&&%%%%%'.1389:987777844443553((50+,,88:;2///;655559
 
 	fmt.Println(wells)
 	// Output: [B15 O1 O1 J22 C22 E20 A15]
+}
+
+func TestDualBarcodesToPrimerSet(t *testing.T) {
+	dualBarcodes := []DualBarcode{DualBarcode{Name: "test", Forward: "ATG", Reverse: "TAA"}}
+	primerSet := DualBarcodesToPrimerSet(dualBarcodes)
+	if len(primerSet.ForwardBarcodes) != 1 || len(primerSet.ReverseBarcodes) != 1 {
+		t.Errorf("Should have gotten barcode length of 1.")
+	}
 }

@@ -173,8 +173,46 @@ type DualBarcodePrimerSet struct {
 
 // DualBarcode contains a forward and reverse barcode.
 type DualBarcode struct {
+	Name    string
 	Forward string
 	Reverse string
+}
+
+// DualBarcodesToPrimerSet parsers a list of dual barcodes into a dual barcode
+// primer set.
+func DualBarcodesToPrimerSet(dualBarcodes []DualBarcode) DualBarcodePrimerSet {
+	var result DualBarcodePrimerSet
+	result.BarcodeMap = make(map[string]DualBarcode)
+	result.ReverseBarcodeMap = make(map[DualBarcode]string)
+	forwardBarcodesMap := make(map[string]bool)
+	reverseBarcodesMap := make(map[string]bool)
+
+	for _, barcode := range dualBarcodes {
+		forwardBarcodesMap[barcode.Forward] = true
+		reverseBarcodesMap[barcode.Reverse] = true
+		newDualBarcode := DualBarcode{Forward: barcode.Forward, Reverse: barcode.Reverse}
+		result.BarcodeMap[barcode.Name] = newDualBarcode
+		result.ReverseBarcodeMap[newDualBarcode] = barcode.Name
+	}
+	// Convert maps to slices
+	forwardBarcodes := make([]string, 0, len(forwardBarcodesMap))
+	for barcode := range forwardBarcodesMap {
+		forwardBarcodes = append(forwardBarcodes, barcode)
+	}
+	reverseBarcodes := make([]string, 0, len(reverseBarcodesMap))
+	for barcode := range reverseBarcodesMap {
+		reverseBarcodes = append(reverseBarcodes, barcode)
+	}
+
+	// Sort the slices
+	sort.Strings(forwardBarcodes)
+	sort.Strings(reverseBarcodes)
+
+	// Append sorted barcodes to result
+	result.ForwardBarcodes = forwardBarcodes
+	result.ReverseBarcodes = reverseBarcodes
+
+	return result
 }
 
 // ParseDualPrimerSet parses a csv file into a DualBarcodePrimerSet.
