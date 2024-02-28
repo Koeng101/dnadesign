@@ -1,5 +1,7 @@
 /*
 Package sequencing contains functions associated with handling sequencing data.
+
+This is a work-in-progess, and not ready for production.
 */
 package sequencing
 
