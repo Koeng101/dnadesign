@@ -82,6 +82,7 @@ func InitializeApp() App {
 	app.Router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(subFS))))
 	app.Router.HandleFunc("/scalar/", scalarHandler(jsonSwagger))
 	app.Router.HandleFunc("/spec.json", func(w http.ResponseWriter, r *http.Request) { _, _ = w.Write(jsonSwagger) })
+	app.Router.HandleFunc("/chat", chatHandler)
 
 	// Lua handlers.
 	app.Router.HandleFunc("/api/execute_lua", appImpl.PostExecuteLua)

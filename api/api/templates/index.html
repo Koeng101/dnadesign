@@ -1,1 +1,105 @@
-<h1>DnaDesign</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DnaDesign</title>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ws = new WebSocket('ws://localhost:8080/chat');
+            var md = window.markdownit();
+            var messages = []; // Array to store message objects
+
+            ws.onopen = function() {
+                console.log('Connected to the chat server');
+            };
+
+            ws.onmessage = function(event) {
+              let lastMessage = messages[messages.length - 1];
+              lastMessage.content = lastMessage.content + event.data
+              renderMessages();
+            };
+
+            function renderMessages() {
+                var messagesContainer = document.getElementById('messages-container');
+                messagesContainer.innerHTML = '';
+                
+                messages.forEach(function(message) {
+                    var messageContainer = document.createElement('div');
+                    messageContainer.className = message.type + '-message';
+                    var messageContent = md.render(message.content);
+                    if(message.type === 'user'){
+                        messageContainer.style.color = 'blue';
+                    }
+                    messageContainer.innerHTML = messageContent;
+                    messagesContainer.appendChild(messageContainer);
+                  if (message.files.length > 0) {
+                    var attachmentContainer = document.createElement('div');
+                    attachmentContainer.style.color = 'red';
+                    var attachmentContent = "";
+                    for (let element of message.files) {
+                      attachmentContent = attachmentContent + "Attachment uploaded: `" + element.name + "`\n";
+                    }
+                    var attachmentContent = md.render(attachmentContent);
+                    attachmentContainer.innerHTML = attachmentContent;
+                    messagesContainer.appendChild(attachmentContainer);
+                  }
+                });
+            }
+
+            document.getElementById('send').onclick = function() {
+                var input = document.getElementById('message');
+                var fileInput = document.getElementById('file');
+                var files = fileInput.files;
+                var filesData = []; // Array to store the data of each file
+                
+                // Function to handle the final send operation
+                function sendMessagesWithFiles() {
+                    messages.push({
+                        type: 'user', 
+                        content: input.value, 
+                        timestamp: new Date().getTime(), 
+                        files: filesData.length > 0 ? filesData : []
+                    });
+                    messages.push({type: 'system', content: '', files: [], timestamp: new Date().getTime()});
+                    
+                    // Send JSON including the message and possibly files data
+                    ws.send(JSON.stringify(messages));
+                    renderMessages();
+                  // Clear the inputs after sending
+                  input.value = ''; // Clear the text input
+                  fileInput.value = null; // Clear the file input
+                }
+                if (files.length > 0) {
+                  // Convert each file to Base64
+                  Array.from(files).forEach((file, index) => {
+                      var reader = new FileReader();
+                      
+                      reader.onloadend = function() {
+                          // Store file data in array
+                          filesData.push({ name: file.name, data: reader.result });
+                          
+                          // Check if all files are processed
+                          if (filesData.length === files.length) {
+                              sendMessagesWithFiles();
+                          }
+                      };
+                      
+                      reader.readAsDataURL(file); // Read the file as DataURL (Base64)
+                  });
+              } else {
+                  // If no files are selected, just proceed to send the message as before
+                  sendMessagesWithFiles();
+              }
+          
+            };
+        });
+    </script>
+</head>
+<body>
+    <div id="messages-container"></div> <!-- Container for message pairs -->
+    <input id="message" type="text" placeholder="Your message...">
+    <input id="file" type="file" multiple placeholder="Attach files"> <!-- Updated for multiple files -->
+    <button id="send">Send</button>
+</body>
+</html>

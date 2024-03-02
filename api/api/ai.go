@@ -4,9 +4,15 @@ import (
 	"context"
 	_ "embed"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"os"
 	"regexp"
 
+	"github.com/gorilla/websocket"
 	"github.com/sashabaranov/go-openai"
 )
 
@@ -16,6 +22,97 @@ import (
 // OPENAI_API_KEY =""
 // MODEL="mistralai/Mixtral-8x7B-Instruct-v0.1"
 // BASE_URL="https://api.deepinfra.com/v1/openai"
+
+/*
+*****************************************************************************
+
+# Chat functions
+
+*****************************************************************************
+*/
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024 * 1024 * 16,
+	WriteBufferSize: 1024 * 1024 * 16,
+	CheckOrigin:     func(r *http.Request) bool { return true },
+}
+
+type Chat struct {
+	Type    string     `json:"type"`
+	Content string     `json:"content"`
+	Files   []ChatFile `json:"files"`
+}
+
+type ChatFile struct {
+	Name string `json:"name"`
+	Data string `json:"data"`
+}
+
+func chatHandler(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer conn.Close()
+
+	client := openai.NewClient(os.Getenv("OPENAI_API_KEY"))
+	for {
+		messageType, p, err := conn.ReadMessage()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		var chats []Chat
+		err = json.Unmarshal(p, &chats)
+		if err != nil {
+			log.Printf("Error unmarshalling JSON: %s", err)
+			return
+		}
+		var messages []openai.ChatCompletionMessage
+		for _, chat := range chats {
+			messages = append(messages, openai.ChatCompletionMessage{Role: chat.Type, Content: chat.Content})
+		}
+
+		stream, err := client.CreateChatCompletionStream(
+			context.Background(),
+			openai.ChatCompletionRequest{
+				Model:    openai.GPT3Dot5Turbo,
+				Messages: messages,
+				Stream:   true,
+			},
+		)
+		if err != nil {
+			fmt.Printf("ChatCompletionStream error: %v\n", err)
+			return
+		}
+		defer stream.Close()
+		for {
+			var response openai.ChatCompletionStreamResponse
+			response, err = stream.Recv()
+			if errors.Is(err, io.EOF) {
+				break
+			}
+
+			if err != nil {
+				fmt.Printf("\nStream error: %v\n", err)
+				break
+			}
+			fmt.Printf(response.Choices[0].Delta.Content)
+
+			_ = conn.WriteMessage(messageType, []byte(response.Choices[0].Delta.Content))
+		}
+
+	}
+}
+
+/*
+*****************************************************************************
+
+# Examples
+
+*****************************************************************************
+*/
 
 //go:embed examples.lua
 var examples string
