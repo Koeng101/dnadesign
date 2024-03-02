@@ -2,7 +2,6 @@ go 1.22.0
 
 use (
 	./api
-	./external
-	./fastz
+    ./external
 	./lib
 )
