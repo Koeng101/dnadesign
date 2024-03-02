@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"syscall"
 
+	"github.com/koeng101/dnadesign/lib/bio/sam"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -22,7 +23,7 @@ import (
 // The first samtools view removes unmapped sequences, the sort sorts the
 // sequences for piping into pileup, and the final command builds the pileup
 // file.
-func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) error {
+func Pileup(ctx context.Context, templateFastas io.Reader, samAlignments io.Reader, w io.Writer) error {
 	/*
 		Due to how os.exec works in Golang, we can't directly have pipes as if
 		the whole thing was a script. However, we can attach pipes to each
@@ -49,7 +50,7 @@ func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) erro
 	}
 	tmpFile.Close() // Close the file as it's no longer needed
 
-	g, ctx := errgroup.WithContext(context.Background())
+	g, ctx := errgroup.WithContext(ctx)
 
 	// Setup pipe connections between commands
 	viewSortReader, viewSortWriter := io.Pipe()
@@ -73,7 +74,7 @@ func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) erro
 
 		select {
 		case <-ctx.Done():
-			viewCmd.Process.Signal(syscall.SIGTERM)
+			_ = viewCmd.Process.Signal(syscall.SIGTERM)
 			return ctx.Err()
 		default:
 			return viewCmd.Wait()
@@ -93,7 +94,7 @@ func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) erro
 
 		select {
 		case <-ctx.Done():
-			sortCmd.Process.Signal(syscall.SIGTERM)
+			_ = sortCmd.Process.Signal(syscall.SIGTERM)
 			return ctx.Err()
 		default:
 			return sortCmd.Wait()
@@ -111,7 +112,7 @@ func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) erro
 
 		select {
 		case <-ctx.Done():
-			mpileupCmd.Process.Signal(syscall.SIGTERM)
+			_ = mpileupCmd.Process.Signal(syscall.SIGTERM)
 			return ctx.Err()
 		default:
 			return mpileupCmd.Wait()
@@ -123,5 +124,39 @@ func Pileup(templateFastas io.Reader, samAlignments io.Reader, w io.Writer) erro
 		return err
 	}
 
+	return nil
+}
+
+// PileupChanneled processes SAM alignments from a channel and sends pileup lines to another channel.
+func PileupChanneled(ctx context.Context, templateFastas io.Reader, samChan <-chan sam.Alignment, w io.Writer) error {
+	g, ctx := errgroup.WithContext(ctx)
+
+	// Create a pipe for writing SAM alignments and reading them as an io.Reader
+	samPr, samPw := io.Pipe()
+
+	// Goroutine to consume SAM alignments and write them to the PipeWriter
+	g.Go(func() error {
+		defer samPw.Close()
+		for alignment := range samChan {
+			// Assuming the sam.Alignment type has a WriteTo method or similar to serialize it to the writer
+			_, err := alignment.WriteTo(samPw)
+			if err != nil {
+				return err // return error to be handled by errgroup
+			}
+		}
+		return nil
+	})
+
+	// Run Pileup function in a goroutine
+	g.Go(func() error {
+		return Pileup(ctx, templateFastas, samPr, w) // Runs Pileup, writing output to pileupPw
+	})
+
+	// Wait for all goroutines in the group to finish
+	if err := g.Wait(); err != nil {
+		return err // This will return the first non-nil error from the group of goroutines
+	}
+
+	// At this point, all goroutines have finished successfully
 	return nil
 }

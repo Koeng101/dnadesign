@@ -82,8 +82,7 @@ func Minimap2(templateFastaInput io.Reader, fastqInput io.Reader, w io.Writer) e
 }
 
 // Minimap2Channeled uses channels rather than io.Reader and io.Writers.
-func Minimap2Channeled(fastaTemplates io.Reader, fastqChan <-chan fastq.Read, samChan chan<- sam.Alignment) error {
-	ctx := context.Background()
+func Minimap2Channeled(ctx context.Context, fastaTemplates io.Reader, fastqChan <-chan fastq.Read, samChan chan<- sam.Alignment) error {
 	g, ctx := errgroup.WithContext(ctx)
 
 	// Create a pipe for writing fastq reads and reading them as an io.Reader
