@@ -1,0 +1,144 @@
+Run #1
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	1.927s
+Run #2
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	2.593s
+Run #3
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	4.532s
+Run #4
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	4.747s
+Run #5
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	4.188s
+Run #6
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	3.908s
+Run #7
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	3.976s
+Run #8
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	3.692s
+Run #9
+ -- parse the FASTA data
+parsedFasta = fastaParse(">test\nATGC\n>test2\nGATC")
+
+-- initialize the CSV data as a table
+csvData = {}
+
+-- add headers to the CSV data
+table.insert(csvData, {"identifier", "sequence"})
+
+-- iterate over the parsed FASTA entries
+for _, entry in ipairs(parsedFasta) do
+    -- insert the identifier and sequence into the CSV data table
+    table.insert(csvData, {entry["identifier"], entry["sequence"]})
+end
+
+-- print the CSV data as a string
+print(table.concat(csvData, "\n"))
+--- FAIL: TestWriteCodeString (3.76s)
+    ai_test.go:68: No error should be found. Got err: <string>:17: invalid value (table) at index 1 in table for concat
+        stack traceback:
+        	[G]: in function 'concat'
+        	<string>:17: in main chunk
+        	[G]: ?
+    ai_test.go:74: Unexpected response. Expected: identifier,sequence
+        test,ATGC
+        test2,GATC
+        Got: 
+FAIL
+exit status 1
+FAIL	github.com/koeng101/dnadesign/api/api	4.265s
+Run #10
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	4.079s
+Run #11
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	4.629s
+Run #12
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	3.729s
+Run #13
+identifier,sequence
+test,ATGC
+test2,GATC
+ -- Function to convert parsedFasta to CSV
+function fastaToCsv(parsedFasta)
+    -- Add header
+    io.write("identifier,sequence\n")
+
+    -- Iterate over parsedFasta
+    for _, entry in ipairs(parsedFasta) do
+        -- Write identifier and sequence
+        io.write(entry.identifier .. "," .. entry.sequence .. "\n")
+    end
+end
+
+-- Parse FASTA data
+parsedFasta = fastaParse(">test\nATGC\n>test2\nGATC")
+
+-- Generate CSV
+fastaToCsv(parsedFasta)
+--- FAIL: TestWriteCodeString (3.97s)
+    ai_test.go:74: Unexpected response. Expected: identifier,sequence
+        test,ATGC
+        test2,GATC
+        Got: 
+FAIL
+exit status 1
+FAIL	github.com/koeng101/dnadesign/api/api	4.469s
+Run #14
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	4.452s
+Run #15
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	2.891s
+Run #16
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	4.669s
+Run #17
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	3.621s
+Run #18
+ -- Parse the FASTA data
+parsedFasta = fastaParse(">test\nATGC\n>test2\nGATC")
+
+-- Initialize CSV data
+csvData = {"identifier,sequence\n"}
+
+-- Iterate through the parsed FASTA data
+for _, entry in ipairs(parsedFasta) do
+    identifier = entry.identifier
+    sequence = entry.sequence
+
+    -- Add the current entry to the CSV data
+    table.insert(csvData, identifier .. "," .. sequence .. "\n")
+end
+
+-- Print the CSV data
+for _, line in ipairs(csvData) do
+    print(line)
+end
+--- FAIL: TestWriteCodeString (3.26s)
+    ai_test.go:74: Unexpected response. Expected: identifier,sequence
+        test,ATGC
+        test2,GATC
+        Got: identifier,sequence
+        
+        test,ATGC
+        
+        test2,GATC
+        
+FAIL
+exit status 1
+FAIL	github.com/koeng101/dnadesign/api/api	3.764s
+Run #19
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	2.826s
+Run #20
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	3.176s

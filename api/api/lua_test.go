@@ -1,16 +1,30 @@
-package api
+package api_test
 
 import (
 	"testing"
 
+	"github.com/koeng101/dnadesign/api/api"
 	"github.com/koeng101/dnadesign/api/gen"
 )
 
+func TestApp_Examples(t *testing.T) {
+	output, err := app.ExecuteLua(api.Examples, []gen.Attachment{})
+	if err != nil {
+		t.Errorf("No error should be found. Got err: %s", err)
+	}
+	expectedOutput := `test
+GATC
+`
+	if output != expectedOutput {
+		t.Errorf("Unexpected response. Expected: " + expectedOutput + "\nGot: " + output)
+	}
+}
+
 func TestApp_LuaIoFastaParse(t *testing.T) {
 	luaScript := `
-parsed_fasta = fasta_parse(attachments["input.fasta"])
+parsedFasta = fastaParse(attachments["input.fasta"])
 
-print(parsed_fasta[1].identifier)
+print(parsedFasta[1].identifier)
 `
 	inputFasta := `>AAD44166.1
 LCLYTHIGRNIYYGSYLYSETWNTGIMLLLITMATAFMGYVLPWGQMSFWGATVITNLFSAIPYIGTNLV

@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/gorilla/websocket"
 	"github.com/sashabaranov/go-openai"
@@ -19,9 +20,13 @@ import (
 // To test multiple times:
 // for i in {1..20}; do echo "Run #$i"; go test; done
 
-// OPENAI_API_KEY =""
+// API_KEY=""
 // MODEL="mistralai/Mixtral-8x7B-Instruct-v0.1"
 // BASE_URL="https://api.deepinfra.com/v1/openai"
+
+// API_KEY=""
+// MODEL="gpt-4-0125-preview"
+// BASE_URL="https://api.openai.com/v1"
 
 /*
 *****************************************************************************
@@ -116,13 +121,89 @@ func chatHandler(w http.ResponseWriter, r *http.Request) {
 /*
 *****************************************************************************
 
+# Question asker
+
+*****************************************************************************
+*/
+
+// MagicJSONIncantation contains text that somehow consistently gets AI models to return valid JSON.
+var MagicJSONIncantation = "Please respond ONLY with valid json that conforms to this json_schema: %s\n. Do not include additional text other than the object json as we will load this object with json.loads()."
+
+func AskQuestions(ctx context.Context, client *openai.Client, model string, jsonSchema string, messages []openai.ChatCompletionMessage) (map[string]bool, error) {
+	var resultMap map[string]bool
+	messages = append(messages, openai.ChatCompletionMessage{
+		Role:    openai.ChatMessageRoleSystem,
+		Content: fmt.Sprintf(MagicJSONIncantation, jsonSchema),
+	})
+	resp, err := client.CreateChatCompletion(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model:    model,
+			Messages: messages,
+			Stop:     []string{"}"}, // this stop token makes sure nothing else is generated.
+		},
+	)
+	if err != nil {
+		return resultMap, err
+	}
+	if len(resp.Choices) == 0 {
+		return resultMap, fmt.Errorf("Got zero responses")
+	}
+	response := resp.Choices[0].Message.Content + "}" // add back stop token
+	err = json.Unmarshal([]byte(response), &resultMap)
+	if err != nil {
+		return resultMap, err
+	}
+
+	return resultMap, nil
+}
+
+func toolJSONSchema() string {
+	type tool struct {
+		Name     string
+		Question string
+	}
+
+	tools := []tool{
+		tool{Name: "code", Question: "The user is asking for code to be written"},
+	}
+
+	properties := make(map[string]interface{})
+	required := []string{}
+
+	for _, ex := range tools {
+		// Generating each property's schema
+		properties[ex.Name] = map[string]interface{}{
+			"type":        "boolean",
+			"description": ex.Question,
+		}
+		// Accumulating required properties
+		required = append(required, ex.Name)
+	}
+
+	// Putting together the final schema
+	schema := map[string]interface{}{
+		"$schema":              "http://json-schema.org/draft-07/schema#", // Assuming draft-07; adjust if necessary
+		"type":                 "object",
+		"properties":           properties,
+		"required":             required,
+		"additionalProperties": false,
+	}
+
+	jsonBytes, _ := json.Marshal(schema)
+	return string(jsonBytes)
+}
+
+/*
+*****************************************************************************
+
 # Examples
 
 *****************************************************************************
 */
 
 //go:embed examples.lua
-var examples string
+var Examples string
 
 type Example struct {
 	Name     string
@@ -130,11 +211,8 @@ type Example struct {
 	Text     string
 }
 
-// MagicJSONIncantation contains text that somehow consistently gets AI models to return valid JSON.
-var MagicJSONIncantation = "Please respond ONLY with valid json that conforms to this json_schema: %s\n. Do not include additional text other than the object json as we will load this object with json.loads()."
-
 // FunctionExamples is a complete list of DnaDesign lua examples.
-var FunctionExamples = parseExamples(examples)
+var FunctionExamples = parseExamples(Examples)
 
 // FunctionExamplesJSONSchema is a JSON schema containing questions of whether
 // or not a given user request requires a
@@ -205,38 +283,101 @@ func generateJSONSchemaFromExamples(examples []Example) string {
 
 // RequiredFunctions takes in a userRequest and returns a map of the examples
 // that should be inserted along with that request to generate lua code.
-func RequiredFunctions(ctx context.Context, client *openai.Client, model string, userRequest string) (map[string]bool, error) {
-	var resultMap map[string]bool
-	resp, err := client.CreateChatCompletion(
-		context.Background(),
-		openai.ChatCompletionRequest{
-			Model: model,
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role: openai.ChatMessageRoleSystem,
-					// You will be answering questions about a user request, but not directly answering the user request
-					Content: fmt.Sprintf(MagicJSONIncantation, FunctionExamplesJSONSchema),
-				},
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: fmt.Sprintf(`USER REQUEST: %s`, userRequest),
-				},
-			},
-			Stop: []string{"}"}, // this stop token makes sure nothing else is generated.
-		},
-	)
+func RequiredFunctions(ctx context.Context, client *openai.Client, model string, messages []openai.ChatCompletionMessage) (map[string]bool, error) {
+	return AskQuestions(ctx, client, model, generateJSONSchemaFromExamples(parseExamples(Examples)), messages)
+}
+
+/*
+*****************************************************************************
+
+# Code writing
+
+*****************************************************************************
+*/
+
+// MagicLuaIncantation contains text that gets the AI models to return valid lua.
+var MagicLuaIncantation = "Please respond ONLY with valid lua. The lua will be run inside of a sandbox, so do not write or read files: only print data out. Be as concise as possible. The following functions are preloaded in the sandbox, but you must apply them to the user's problem: \n```lua\n%s\n```"
+
+// WriteCode takes in user messages and writes code to accomplish the specific tasks.
+func WriteCode(ctx context.Context, client *openai.Client, model string, messages []openai.ChatCompletionMessage) (*openai.ChatCompletionStream, error) {
+	// If we need to write code, first get the required functions
+	examplesToInject, err := RequiredFunctions(ctx, client, model, messages)
 	if err != nil {
-		return resultMap, err
-	}
-	if len(resp.Choices) == 0 {
-		return resultMap, fmt.Errorf("Got zero responses")
-	}
-	response := resp.Choices[0].Message.Content + "}" // add back stop token
-	err = json.Unmarshal([]byte(response), &resultMap)
-	if err != nil {
-		fmt.Println(response)
-		return resultMap, err
+		return nil, err
 	}
 
-	return resultMap, nil
+	// Now that we have the required functions, get their content
+	exampleText := ``
+	examples := parseExamples(Examples)
+	for _, example := range examples {
+		_, ok := examplesToInject[example.Name]
+		if ok {
+			exampleText = exampleText + example.Text + "\n"
+		}
+	}
+
+	// Now, we create the stream
+	messages = append(messages, openai.ChatCompletionMessage{
+		Role:    openai.ChatMessageRoleSystem,
+		Content: fmt.Sprintf(MagicLuaIncantation, exampleText),
+	})
+	return client.CreateChatCompletionStream(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model:    model,
+			Messages: messages,
+			Stream:   true,
+		},
+	)
+}
+
+func WriteCodeString(ctx context.Context, client *openai.Client, model string, messages []openai.ChatCompletionMessage) (string, error) {
+	stream, err := WriteCode(ctx, client, model, messages)
+	if err != nil {
+		return "", err
+	}
+	defer stream.Close()
+	var buffer strings.Builder
+	for {
+		var response openai.ChatCompletionStreamResponse
+		response, err = stream.Recv()
+		if errors.Is(err, io.EOF) {
+			err = nil
+			break
+		}
+
+		if err != nil {
+			break
+		}
+		buffer.WriteString(response.Choices[0].Delta.Content)
+	}
+
+	return ParseLuaFromLLM(buffer.String()), err
+}
+
+func ParseLuaFromLLM(input string) string {
+	luaPrefix := "```lua"
+	codePrefix := "```"
+	codeSuffix := "```"
+
+	// Check for ```lua ... ```
+	luaStartIndex := strings.Index(input, luaPrefix)
+	if luaStartIndex != -1 {
+		luaEndIndex := strings.Index(input[luaStartIndex+len(luaPrefix):], codeSuffix)
+		if luaEndIndex != -1 {
+			return input[luaStartIndex+len(luaPrefix) : luaStartIndex+len(luaPrefix)+luaEndIndex]
+		}
+	}
+
+	// Check for ``` ... ```
+	codeStartIndex := strings.Index(input, codePrefix)
+	if codeStartIndex != -1 {
+		codeEndIndex := strings.Index(input[codeStartIndex+len(codePrefix):], codeSuffix)
+		if codeEndIndex != -1 {
+			return input[codeStartIndex+len(codePrefix) : codeStartIndex+len(codePrefix)+codeEndIndex]
+		}
+	}
+
+	// Return original if no markers found
+	return input
 }

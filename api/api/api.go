@@ -149,7 +149,7 @@ func (app *App) ExecuteLua(data string, attachments []gen.Attachment) (string, e
 	L.SetGlobal("print", L.NewFunction(customPrint(&buffer)))
 
 	// Add IO functions
-	L.SetGlobal("fasta_parse", L.NewFunction(app.LuaIoFastaParse))
+	L.SetGlobal("fastaParse", L.NewFunction(app.LuaIoFastaParse))
 
 	// Execute the Lua script
 	if err := L.DoString(data); err != nil {

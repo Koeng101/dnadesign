@@ -64,7 +64,7 @@
                         timestamp: new Date().getTime(), 
                         files: filesData.length > 0 ? filesData : []
                     });
-                    messages.push({type: 'system', content: '', files: [], timestamp: new Date().getTime()});
+                    messages.push({type: 'assistant', content: '', files: [], timestamp: new Date().getTime()});
                     
                     // Send JSON including the message and possibly files data
                     ws.send(JSON.stringify(messages));

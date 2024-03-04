@@ -1,16 +1,18 @@
-package api
+package api_test
 
 import (
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/koeng101/dnadesign/api/api"
 )
 
-var app App
+var app api.App
 
 func TestMain(m *testing.M) {
-	app = InitializeApp()
+	app = api.InitializeApp()
 	code := m.Run()
 	os.Exit(code)
 }
