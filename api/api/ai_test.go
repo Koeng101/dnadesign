@@ -11,7 +11,7 @@ import (
 )
 
 func TestAiFastaParse(t *testing.T) {
-	apiKey := os.Getenv("OPENAI_API_KEY")
+	apiKey := os.Getenv("API_KEY")
 	if apiKey == "" {
 		return
 	}

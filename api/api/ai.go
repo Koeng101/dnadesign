@@ -56,7 +56,14 @@ func chatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	client := openai.NewClient(os.Getenv("OPENAI_API_KEY"))
+	apiKey := os.Getenv("API_KEY")
+	baseUrl := os.Getenv("BASE_URL")
+	model := os.Getenv("MODEL")
+	config := openai.DefaultConfig(apiKey)
+	if baseUrl != "" {
+		config.BaseURL = baseUrl
+	}
+	client := openai.NewClientWithConfig(config)
 	for {
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
@@ -77,7 +84,7 @@ func chatHandler(w http.ResponseWriter, r *http.Request) {
 		stream, err := client.CreateChatCompletionStream(
 			context.Background(),
 			openai.ChatCompletionRequest{
-				Model:    openai.GPT3Dot5Turbo,
+				Model:    model,
 				Messages: messages,
 				Stream:   true,
 			},
