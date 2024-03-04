@@ -48,18 +48,23 @@ func TestWriteCodeString(t *testing.T) {
 		return
 	}
 	baseUrl := os.Getenv("BASE_URL")
-	model := os.Getenv("MODEL")
+	model := os.Getenv("CODE_MODEL")
 	config := openai.DefaultConfig(apiKey)
 	if baseUrl != "" {
 		config.BaseURL = baseUrl
 	}
 	client := openai.NewClientWithConfig(config)
 	ctx := context.Background()
-	userRequest := "Please parse the following FASTA and return me a csv. Add headers identifier and sequence to the top of the csv. Data:\n```>test\nATGC\n>test2\nGATC\n"
+	userRequest := "Please parse the following FASTA and return me a csv. Add headers identifier and sequence to the top of the csv. Do not add quotation marks. Data:\n```>test\nATGC\n>test2\nGATC\n"
 
 	message := openai.ChatCompletionMessage{Role: "user", Content: userRequest}
-	code, err := api.WriteCodeString(ctx, client, model, []openai.ChatCompletionMessage{message})
+	exampleText, err := api.RequiredFunctionsTextWithRetry(ctx, client, model, []openai.ChatCompletionMessage{message}, 3)
 	if err != nil {
+		t.Errorf("Got error: %s", err)
+	}
+	code, err := api.WriteCodeString(ctx, client, model, []openai.ChatCompletionMessage{message}, exampleText)
+	if err != nil {
+		fmt.Println(code)
 		t.Errorf("Got error: %s", err)
 	}
 	// run the code

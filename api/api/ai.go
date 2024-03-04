@@ -15,6 +15,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/sashabaranov/go-openai"
+	"github.com/xeipuuv/gojsonschema"
 )
 
 // To test multiple times:
@@ -23,6 +24,7 @@ import (
 // API_KEY=""
 // MODEL="mistralai/Mixtral-8x7B-Instruct-v0.1"
 // BASE_URL="https://api.deepinfra.com/v1/openai"
+// CODE_MODEL="Phind/Phind-CodeLlama-34B-v2"
 
 // API_KEY=""
 // MODEL="gpt-4-0125-preview"
@@ -130,19 +132,24 @@ func chatHandler(w http.ResponseWriter, r *http.Request) {
 var MagicJSONIncantation = "Please respond ONLY with valid json that conforms to this json_schema: %s\n. Do not include additional text other than the object json as we will load this object with json.loads()."
 
 func AskQuestions(ctx context.Context, client *openai.Client, model string, jsonSchema string, messages []openai.ChatCompletionMessage) (map[string]bool, error) {
+	schemaLoader := gojsonschema.NewStringLoader(jsonSchema)
+
 	var resultMap map[string]bool
 	messages = append(messages, openai.ChatCompletionMessage{
 		Role:    openai.ChatMessageRoleSystem,
 		Content: fmt.Sprintf(MagicJSONIncantation, jsonSchema),
 	})
-	resp, err := client.CreateChatCompletion(
-		context.Background(),
-		openai.ChatCompletionRequest{
-			Model:    model,
-			Messages: messages,
-			Stop:     []string{"}"}, // this stop token makes sure nothing else is generated.
-		},
-	)
+	createJson := func(messages []openai.ChatCompletionMessage, model string) (openai.ChatCompletionResponse, error) {
+		return client.CreateChatCompletion(
+			context.Background(),
+			openai.ChatCompletionRequest{
+				Model:    model,
+				Messages: messages,
+				Stop:     []string{"}"}, // this stop token makes sure nothing else is generated.
+			},
+		)
+	}
+	resp, err := createJson(messages, model)
 	if err != nil {
 		return resultMap, err
 	}
@@ -150,12 +157,21 @@ func AskQuestions(ctx context.Context, client *openai.Client, model string, json
 		return resultMap, fmt.Errorf("Got zero responses")
 	}
 	response := resp.Choices[0].Message.Content + "}" // add back stop token
-	err = json.Unmarshal([]byte(response), &resultMap)
+	response = ParseFromLLM(response)
+	documentLoader := gojsonschema.NewStringLoader(response)
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
 		return resultMap, err
 	}
-
-	return resultMap, nil
+	if result.Valid() {
+		err = json.Unmarshal([]byte(response), &resultMap)
+		if err != nil {
+			fmt.Printf("Failed to parse this response: ```json\n%s\n```\n", response)
+			return resultMap, err
+		}
+		return resultMap, nil
+	}
+	return resultMap, fmt.Errorf("response not valid to schema")
 }
 
 func toolJSONSchema() string {
@@ -287,6 +303,36 @@ func RequiredFunctions(ctx context.Context, client *openai.Client, model string,
 	return AskQuestions(ctx, client, model, generateJSONSchemaFromExamples(parseExamples(Examples)), messages)
 }
 
+func RequiredFunctionsText(ctx context.Context, client *openai.Client, model string, messages []openai.ChatCompletionMessage) (string, error) {
+	resultMap, err := RequiredFunctions(ctx, client, model, messages)
+	if err != nil {
+		return "", err
+	}
+
+	// Now that we have the required functions, get their content
+	exampleText := ``
+	examples := parseExamples(Examples)
+	for _, example := range examples {
+		_, ok := resultMap[example.Name]
+		if ok {
+			exampleText = exampleText + example.Text + "\n"
+		}
+	}
+	return exampleText, nil
+}
+
+func RequiredFunctionsTextWithRetry(ctx context.Context, client *openai.Client, model string, messages []openai.ChatCompletionMessage, maxAttempts int) (string, error) {
+	var lastErr error
+	for attempts := 0; attempts < maxAttempts; attempts++ {
+		exampleText, err := RequiredFunctionsText(ctx, client, model, messages)
+		if err == nil {
+			return exampleText, err
+		}
+		lastErr = err
+	}
+	return "", lastErr
+}
+
 /*
 *****************************************************************************
 
@@ -296,27 +342,10 @@ func RequiredFunctions(ctx context.Context, client *openai.Client, model string,
 */
 
 // MagicLuaIncantation contains text that gets the AI models to return valid lua.
-var MagicLuaIncantation = "Please respond ONLY with valid lua. The lua will be run inside of a sandbox, so do not write or read files: only print data out. Be as concise as possible. The following functions are preloaded in the sandbox, but you must apply them to the user's problem: \n```lua\n%s\n```"
+var MagicLuaIncantation = "Please response ONLY with valid lua. The following functions are loaded into the sandbox: \n```lua\n%s\n```\n. Do not use any values from the examples except the functions. Do not write or read files, only print data."
 
 // WriteCode takes in user messages and writes code to accomplish the specific tasks.
-func WriteCode(ctx context.Context, client *openai.Client, model string, messages []openai.ChatCompletionMessage) (*openai.ChatCompletionStream, error) {
-	// If we need to write code, first get the required functions
-	examplesToInject, err := RequiredFunctions(ctx, client, model, messages)
-	if err != nil {
-		return nil, err
-	}
-
-	// Now that we have the required functions, get their content
-	exampleText := ``
-	examples := parseExamples(Examples)
-	for _, example := range examples {
-		_, ok := examplesToInject[example.Name]
-		if ok {
-			exampleText = exampleText + example.Text + "\n"
-		}
-	}
-
-	// Now, we create the stream
+func WriteCode(ctx context.Context, client *openai.Client, model string, messages []openai.ChatCompletionMessage, exampleText string) (*openai.ChatCompletionStream, error) {
 	messages = append(messages, openai.ChatCompletionMessage{
 		Role:    openai.ChatMessageRoleSystem,
 		Content: fmt.Sprintf(MagicLuaIncantation, exampleText),
@@ -331,8 +360,8 @@ func WriteCode(ctx context.Context, client *openai.Client, model string, message
 	)
 }
 
-func WriteCodeString(ctx context.Context, client *openai.Client, model string, messages []openai.ChatCompletionMessage) (string, error) {
-	stream, err := WriteCode(ctx, client, model, messages)
+func WriteCodeString(ctx context.Context, client *openai.Client, model string, messages []openai.ChatCompletionMessage, exampleText string) (string, error) {
+	stream, err := WriteCode(ctx, client, model, messages, exampleText)
 	if err != nil {
 		return "", err
 	}
@@ -352,11 +381,12 @@ func WriteCodeString(ctx context.Context, client *openai.Client, model string, m
 		buffer.WriteString(response.Choices[0].Delta.Content)
 	}
 
-	return ParseLuaFromLLM(buffer.String()), err
+	return ParseFromLLM(buffer.String()), err
 }
 
-func ParseLuaFromLLM(input string) string {
+func ParseFromLLM(input string) string {
 	luaPrefix := "```lua"
+	jsonPrefix := "```json"
 	codePrefix := "```"
 	codeSuffix := "```"
 
@@ -366,6 +396,15 @@ func ParseLuaFromLLM(input string) string {
 		luaEndIndex := strings.Index(input[luaStartIndex+len(luaPrefix):], codeSuffix)
 		if luaEndIndex != -1 {
 			return input[luaStartIndex+len(luaPrefix) : luaStartIndex+len(luaPrefix)+luaEndIndex]
+		}
+	}
+
+	// Check for ```json ... ```
+	jsonStartIndex := strings.Index(input, jsonPrefix)
+	if jsonStartIndex != -1 {
+		jsonEndIndex := strings.Index(input[jsonStartIndex+len(jsonPrefix):], codeSuffix)
+		if jsonEndIndex != -1 {
+			return input[jsonStartIndex+len(jsonPrefix) : jsonStartIndex+len(jsonPrefix)+jsonEndIndex]
 		}
 	}
 
