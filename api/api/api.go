@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"io/fs"
 	"log"
 	"log/slog"
@@ -103,17 +104,33 @@ func InitializeApp() App {
 func (app *App) PostExecuteLua(ctx context.Context, request gen.PostExecuteLuaRequestObject) (gen.PostExecuteLuaResponseObject, error) {
 	script := request.Body.Script
 	attachments := *request.Body.Attachments
-	output, log, err := app.ExecuteLua(script, attachments)
+	output, err := app.ExecuteLua(script, attachments)
 	if err != nil {
 		return gen.PostExecuteLua500TextResponse(fmt.Sprintf("Got internal server error: %s", err)), nil
 	}
-	return gen.PostExecuteLua200JSONResponse{Output: output, Log: log}, nil
+	return gen.PostExecuteLua200JSONResponse{Output: output}, nil
 }
 
 //go:embed json/json.lua
 var luaJSON string
 
-func (app *App) ExecuteLua(data string, attachments []gen.Attachment) (string, string, error) {
+// customPrint is a function that mimics Lua's print function but writes to an io.Writer.
+func customPrint(writer io.Writer) func(L *lua.LState) int {
+	return func(L *lua.LState) int {
+		top := L.GetTop()
+		for i := 1; i <= top; i++ {
+			str := L.ToString(i) // Convert each argument to a string as Lua's print does.
+			if i > 1 {
+				io.WriteString(writer, "\t")
+			}
+			io.WriteString(writer, str)
+		}
+		io.WriteString(writer, "\n")
+		return 0 // Number of results.
+	}
+}
+
+func (app *App) ExecuteLua(data string, attachments []gen.Attachment) (string, error) {
 	L := lua.NewState()
 	defer L.Close()
 	if err := L.DoString(luaJSON); err != nil {
@@ -127,26 +144,19 @@ func (app *App) ExecuteLua(data string, attachments []gen.Attachment) (string, s
 	}
 	L.SetGlobal("attachments", luaAttachments)
 
+	// Add stdout
+	var buffer strings.Builder
+	L.SetGlobal("print", L.NewFunction(customPrint(&buffer)))
+
 	// Add IO functions
 	L.SetGlobal("fasta_parse", L.NewFunction(app.LuaIoFastaParse))
 
 	// Execute the Lua script
 	if err := L.DoString(data); err != nil {
-		return "", "", err
+		return "", err
 	}
 
-	// Extract log and output
-	var logBuffer, outputBuffer string
-	log := L.GetGlobal("log")
-	if str, ok := log.(lua.LString); ok {
-		logBuffer = string(str)
-	}
-	output := L.GetGlobal("output")
-	if str, ok := output.(lua.LString); ok {
-		outputBuffer = string(str)
-	}
-
-	return logBuffer, outputBuffer, nil
+	return buffer.String(), nil
 }
 
 // luaResponse wraps the core of the lua data -> API calls -> lua data pipeline

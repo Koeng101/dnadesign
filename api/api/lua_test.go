@@ -10,7 +10,7 @@ func TestApp_LuaIoFastaParse(t *testing.T) {
 	luaScript := `
 parsed_fasta = fasta_parse(attachments["input.fasta"])
 
-output = parsed_fasta[1].identifier
+print(parsed_fasta[1].identifier)
 `
 	inputFasta := `>AAD44166.1
 LCLYTHIGRNIYYGSYLYSETWNTGIMLLLITMATAFMGYVLPWGQMSFWGATVITNLFSAIPYIGTNLV
@@ -25,11 +25,11 @@ IENY
 		Content: inputFasta,
 	}
 
-	_, output, err := app.ExecuteLua(luaScript, []gen.Attachment{fastaAttachment})
+	output, err := app.ExecuteLua(luaScript, []gen.Attachment{fastaAttachment})
 	if err != nil {
 		t.Errorf("No error should be found. Got err: %s", err)
 	}
-	expectedOutput := "AAD44166.1"
+	expectedOutput := "AAD44166.1\n"
 	if output != expectedOutput {
 		t.Errorf("Unexpected response. Expected: " + expectedOutput + "\nGot: " + output)
 	}
