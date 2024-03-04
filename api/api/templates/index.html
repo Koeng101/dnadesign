@@ -6,7 +6,10 @@
     <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var ws = new WebSocket('ws://localhost:8080/chat');
+          var protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+          var wsUrl = protocol + window.location.host + '/chat';
+          var ws = new WebSocket(wsUrl);
+
             var md = window.markdownit();
             var messages = []; // Array to store message objects
 
@@ -97,6 +100,14 @@
     </script>
 </head>
 <body>
+  <!--
+    Color codes:
+    - black: system
+    - blue: user
+    - red: files
+    - purple: code
+    - orange: code results
+  -->
     <div id="messages-container"></div> <!-- Container for message pairs -->
     <input id="message" type="text" placeholder="Your message...">
     <input id="file" type="file" multiple placeholder="Attach files"> <!-- Updated for multiple files -->
