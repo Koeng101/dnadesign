@@ -2,6 +2,7 @@ package seqhash
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"testing"
@@ -34,35 +35,83 @@ func TestHash2(t *testing.T) {
 
 	// Test circular double stranded hashing
 	seqhash, _ := EncodeHash2(Hash2("TTAGCCCAT", "DNA", true, true))
-	if seqhash != "A_LGxts7bxq55Uiq+E94pcYg==" {
-		t.Errorf("Circular double stranded hashing failed. Expected A_LGxts7bxq55Uiq+E94pcYg==, got: " + seqhash)
+	if seqhash != "A_6VAbBfXD8BSZh2HJZqgGgR" {
+		t.Errorf("Circular double stranded hashing failed. Expected A_6VAbBfXD8BSZh2HJZqgGgR, got: " + seqhash)
 	}
 	// Test circular single stranded hashing
 	seqhash, _ = EncodeHash2(Hash2("TTAGCCCAT", "DNA", true, false))
-	if seqhash != "B_KB3s/EXx/C9wJvVE/gzw7Q==" {
-		t.Errorf("Circular single stranded hashing failed. Expected B_KB3s/EXx/C9wJvVE/gzw7Q==, got: " + seqhash)
+	if seqhash != "B_5xKbuHELJCCQWJwQi7W1ak" {
+		t.Errorf("Circular single stranded hashing failed. Expected B_5xKbuHELJCCQWJwQi7W1ak, got: " + seqhash)
 	}
 	// Test linear double stranded hashing
 	seqhash, _ = EncodeHash2(Hash2("TTAGCCCAT", "DNA", false, true))
-	if seqhash != "C_JN15Uk5YpkXcKaJt0ozLRQ==" {
-		t.Errorf("Linear double stranded hashing failed. Expected C_JN15Uk5YpkXcKaJt0ozLRQ==, got: " + seqhash)
+	if seqhash != "C_5Z2pHCXbxWUPYiZj6J1Nag" {
+		t.Errorf("Linear double stranded hashing failed. Expected C_5Z2pHCXbxWUPYiZj6J1Nag, got: " + seqhash)
 	}
 	// Test linear single stranded hashing
 	seqhash, _ = EncodeHash2(Hash2("TTAGCCCAT", "DNA", false, false))
-	if seqhash != "D_IC0pLlPHC/zPQpSqU6hy0A==" {
-		t.Errorf("Linear single stranded hashing failed. Expected D_IC0pLlPHC/zPQpSqU6hy0A==, got: " + seqhash)
+	if seqhash != "D_4yT7etihWZHHNXUpbM5tUf" {
+		t.Errorf("Linear single stranded hashing failed. Expected D_4yT7etihWZHHNXUpbM5tUf, got: " + seqhash)
 	}
 
 	// Test RNA Seqhash
 	seqhash, _ = EncodeHash2(Hash2("TTAGCCCAT", "RNA", false, false))
-	if seqhash != "H_IS0pLlPHC/zPQpSqU6hy0A==" {
-		t.Errorf("Linear single stranded hashing failed. Expected H_IS0pLlPHC/zPQpSqU6hy0A==, got: " + seqhash)
+	if seqhash != "H_56cWv4dacvRJxUUcXYsdP5" {
+		t.Errorf("Linear single stranded hashing failed. Expected H_56cWv4dacvRJxUUcXYsdP5, got: " + seqhash)
 	}
 	// Test Protein Seqhash
 	seqhash, _ = EncodeHash2(Hash2("MGC*", "PROTEIN", false, false))
-	if seqhash != "I_IiAwHj+EfYcQCf6Ty64wUg==" {
-		t.Errorf("Linear single stranded hashing failed. Expected I_IiAwHj+EfYcQCf6Ty64wUg==, got: " + seqhash)
+	if seqhash != "I_5DQsEyDHLh2r4njCcupAuF" {
+		t.Errorf("Linear single stranded hashing failed. Expected I_5DQsEyDHLh2r4njCcupAuF, got: " + seqhash)
 	}
+}
+
+func TestEncodeAndDecode(t *testing.T) {
+	rawBytes, err := Hash2("ATGC", "DNA", false, true)
+	if err != nil {
+		t.Errorf("Got bad hash: %s", err)
+	}
+	encoded, err := EncodeHash2(rawBytes, err)
+	if err != nil {
+		t.Errorf("Failed to encode: %s", err)
+	}
+	decoded, err := DecodeHash2(encoded)
+	if err != nil {
+		t.Errorf("Failed to decode: %s", err)
+	}
+	for i := range rawBytes {
+		if rawBytes[i] != decoded[i] {
+			t.Errorf("Failed to decode properly.")
+		}
+	}
+	_, err = EncodeHash2([16]byte{}, errors.New("test"))
+	if err == nil {
+		t.Errorf("should fail on test error")
+	}
+
+	// Test no metadata
+	_, err = DecodeHash2("")
+	if err == nil {
+		t.Errorf("should fail on no metadata")
+	}
+	// Test empty decode
+	_, err = DecodeHash2("A_")
+	if err == nil {
+		t.Errorf("should fail on empty data")
+	}
+	// Test bad char
+	_, err = DecodeHash2("A_/")
+	if err == nil {
+		t.Errorf("should fail on bad character")
+	}
+	// Test 1s
+	_, err = DecodeHash2("A_11111")
+	if err == nil {
+		t.Errorf("should fail on 1s because length is wrong.")
+	}
+
+	// just to make sure gocov goes through
+	_ = encodeToBase58([]byte{0, 0, 0, 0})
 }
 
 func TestLeastRotation(t *testing.T) {
@@ -110,7 +159,14 @@ func TestHash2Fragment(t *testing.T) {
 	}
 	// Test actual hash
 	sqHash, _ := EncodeHash2(Hash2Fragment("ATGGGCTAA", 4, 4))
-	expectedHash := "K_IwQE3XlSTlimRdwpom3SjA=="
+	expectedHash := "K_5KnZQEnPRzJSYPkbPwLCJF"
+	if sqHash != expectedHash {
+		t.Errorf("Expected %s, Got: %s", expectedHash, sqHash)
+	}
+
+	// Test another hash
+	sqHash, _ = EncodeHash2(Hash2Fragment("TTAGCCCAT", 4, 4))
+	expectedHash = "K_5KnZQEnPRzJSYPkbPwLCJF"
 	if sqHash != expectedHash {
 		t.Errorf("Expected %s, Got: %s", expectedHash, sqHash)
 	}

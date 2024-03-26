@@ -17,7 +17,7 @@ func Example_basic() {
 
 	sequenceSeqhash, _ := seqhash.EncodeHash2(seqhash.Hash2(sequence, sequenceType, circular, doubleStranded))
 	fmt.Println(sequenceSeqhash)
-	// Output: C_JJgg9ahMxAQzDm2XveE7WA==
+	// Output: C_5X6Hudy3K8ht7r4mvu9Gco
 }
 
 func ExampleRotateSequence() {
