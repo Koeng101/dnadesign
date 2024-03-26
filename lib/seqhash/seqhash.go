@@ -48,18 +48,18 @@ much shorter. The intended use case are for handling sequences with LLM systems
 since these system's context window is a value resource, and smaller references
 allows the system to be more focused. Seqhash version 2 are approximately 3x
 smaller than version 1 seqhashes. Officially, they are [16]byte arrays, but can
-be also encoded with base64 to get a hash that can be used as a string across
+be also encoded with base58 to get a hash that can be used as a string across
 different systems. Here is a length comparison:
 
-	version 1: v1_DLD_f4028f93e08c5c23cbb8daa189b0a9802b378f1a1c919dcbcf1608a615f46350
-	version 2: C_JPQCj5PgjFwjy7jaoYmwqQ==
+	version 1: v1_DLD_f4028f93e08c5c23cbb8daa189b0a9802b378f1a1c919dcbcf1508a615f46350
+	version 2: C_5X6Hudy3K8ht7r4mvu9Gco
 
 The metadata is now encoded in a 1 byte flag rather than a metadata string,
 instead of 7 rune like in version 1. Rather than use 256 bits for encoding
 the hash, we use 120 bits. Since seqhashes are not meant for security, this
 is good enough (50% collision with 1.3x10^18 hashes), while making them
 conveniently only 16 btyes long. Additionally, encoded prefixes are added
-to the front of the base64 encoded hash as a heuristic device for LLMs while
+to the front of the base58 encoded hash as a heuristic device for LLMs while
 processing batches of seqhashes.
 
 In addition, seqhashes can now encode fragments. Fragments are double stranded
@@ -68,12 +68,17 @@ overhangs flanking both sides. These fragments can encode genetic parts - and
 an important part of any vector containing these parts would be the part
 seqhash, rather than the vector seqhash. This enhancement allows you to
 identify genetic parts irregardless of their context.
+
+Base58 is used rather than base64 so that seqhashes can easily be added into
+urls without a "/" in the identifier. Ironically, it also makes smaller hashes
+than base64 due to base64 chunking 3 bytes at a time - at 16 bytes, 2 blank
+bytes are added to make the seqhash divisible by 3. Base58 chunks differently,
+and so doesn't encounter this problem.
 */
 package seqhash
 
 import (
 	"crypto/sha256"
-	"encoding/base64"
 	"errors"
 	"sort"
 	"strings"
@@ -190,7 +195,7 @@ var (
 func EncodeFlag(version int, sequenceType SequenceType, circularity bool, doubleStranded bool) byte {
 	var flag byte
 
-	// Encode the version (assuming version is in the range 0-15)
+	// Encode the version (assuming version is in the range 0-16)
 	flag |= (byte(version) << hash2versionShift)
 
 	// Encode the circularity
@@ -285,9 +290,9 @@ func Hash2(sequence string, sequenceType SequenceType, circular bool, doubleStra
 	flag := EncodeFlag(2, sequenceType, circular, doubleStranded)
 	result[0] = flag
 
-	// Compute BLAKE3, then copy those to the remaining 15 bytes
+	// Compute BLAKE3, then copy those to the remaining 16 bytes
 	newhash := sha256.Sum256([]byte(deterministicSequence))
-	copy(result[1:], newhash[:15])
+	copy(result[1:], newhash[:16])
 
 	return result, nil
 }
@@ -305,7 +310,7 @@ func Hash2(sequence string, sequenceType SequenceType, circular bool, doubleStra
 // enzymes.
 //
 // In order to make sure fwdOverhangLength and revOverhangLength fit in the
-// hash, the hash is truncated at 13 bytes rather than 15, and both int8 are
+// hash, the hash is truncated at 13 bytes rather than 16, and both int8 are
 // inserted. So the bytes would be:
 //
 //	flag + fwdOverhangLength + revOverhangLength + [13]byte(hash)
@@ -387,12 +392,40 @@ var Hash2Metadata = map[Hash2MetadataKey]rune{
 	{FRAGMENT, true, true}:   'N',
 }
 
-// EncodeHash2 encodes Hash2 as a base64 string. It also adds a single
+// EncodeHash2 encodes Hash2 as a base58 string. It also adds a single
 // letter metadata tag that can be used as an easy heuristic for an LLM to
 // identify misbehaving code.
 func EncodeHash2(hash [16]byte, err error) (string, error) {
+	if err != nil {
+		return "", err
+	}
 	_, sequenceType, circularity, doubleStranded := DecodeFlag(hash[0])
-	encoded := base64.StdEncoding.EncodeToString(hash[:])
+	encoded := encodeToBase58(hash[:])
 
-	return string(Hash2Metadata[Hash2MetadataKey{sequenceType, circularity, doubleStranded}]) + "_" + encoded, err
+	return string(Hash2Metadata[Hash2MetadataKey{sequenceType, circularity, doubleStranded}]) + "_" + encoded, nil
+}
+
+// DecodeHash2 decodes a seqhash into a [16]byte, including the metadata tag.
+func DecodeHash2(encodedString string) ([16]byte, error) {
+	// First, we need to decompose the the string into the metadata and the
+	// seqhash.
+	parts := strings.SplitN(encodedString, "_", 2)
+	if len(parts) != 2 {
+		return [16]byte{}, errors.New("invalid encoded string format")
+	}
+
+	// Decode the Base58 encoded part
+	decodedBytes, err := decodeFromBase58(parts[1])
+	if err != nil {
+		return [16]byte{}, err
+	}
+
+	// Ensure decoded bytes fit into a [16]byte array
+	if len(decodedBytes) != 16 {
+		return [16]byte{}, errors.New("decoded hash does not match expected length")
+	}
+
+	var hash [16]byte
+	copy(hash[:], decodedBytes)
+	return hash, nil
 }
