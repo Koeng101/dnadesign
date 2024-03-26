@@ -112,7 +112,6 @@ func TestEncodeAndDecode(t *testing.T) {
 
 	// just to make sure gocov goes through
 	_ = encodeToBase58([]byte{0, 0, 0, 0})
-
 }
 
 func TestLeastRotation(t *testing.T) {
