@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/koeng101/dnadesign/external/minimap2"
+	"github.com/koeng101/dnadesign/lib/bio"
 )
 
 // TestMinimap2 tests the Minimap2Raw function
@@ -17,6 +18,10 @@ func TestMinimap2(t *testing.T) {
 		t.Fatalf("Failed to open template FASTA file: %v", err)
 	}
 	defer templateFile.Close()
+	templateFastas, err := bio.NewFastaParser(templateFile).Parse()
+	if err != nil {
+		t.Fatalf("Failed to parse fasta file: %v", err)
+	}
 
 	// Open the FASTQ file
 	fastqFile, err := os.Open("./data/reads.fastq")
@@ -29,7 +34,7 @@ func TestMinimap2(t *testing.T) {
 	var buf bytes.Buffer
 
 	// Execute the Minimap2 function
-	err = minimap2.Minimap2(templateFile, fastqFile, &buf)
+	err = minimap2.Minimap2(templateFastas, fastqFile, &buf)
 	if err != nil {
 		t.Errorf("Minimap2Raw returned an error: %v", err)
 	}

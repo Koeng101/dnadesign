@@ -1,2 +1,6 @@
+github.com/brentp/irelate v0.0.1 h1:uVK5yw9XaDzi+04zbob4q9K6u2e5dcdqH7UO1+6Keo0=
+github.com/brentp/irelate v0.0.1/go.mod h1:Ct+JzyZC+JSi9WUkw3IGWc/j0yYEt4235wKCfLOKN54=
+github.com/brentp/vcfgo v0.0.0-20221128230736-759c0d32541e h1:avisDYVz0QNxMvmcicpnzBNsTeTWDiSZOT2bIWSdq1M=
+github.com/brentp/vcfgo v0.0.0-20221128230736-759c0d32541e/go.mod h1:nN0Qx/D3CzwA4yLg2N7jbtSfJ7AUFU2I3J7gq/CmNfc=
 golang.org/x/sync v0.5.0 h1:60k92dhOjHxJkrqnwsfl8KuaHbn/5dl0lUPUklKo3qE=
 golang.org/x/sync v0.5.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=

@@ -16,6 +16,8 @@ func TestPileup(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to open template FASTA file: %v", err)
 	}
+	fastaRecords, _ := bio.NewFastaParser(templateFile).Parse()
+	fastaRecord := fastaRecords[0]
 	defer templateFile.Close()
 
 	// Open the sam file
@@ -30,7 +32,7 @@ func TestPileup(t *testing.T) {
 
 	// Execute the pileup function
 	ctx := context.Background()
-	err = samtools.Pileup(ctx, templateFile, samFile, &buf)
+	err = samtools.Pileup(ctx, fastaRecord, samFile, &buf)
 	if err != nil {
 		t.Errorf("Pileup returned error: %s", err)
 	}
