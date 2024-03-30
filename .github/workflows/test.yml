@@ -59,7 +59,7 @@ jobs:
         git clone https://github.com/samtools/bcftools.git
         cd bcftools
         make
-        make install
+        sudo make install
     - name: Test external
       run: go test -v ./external/...
   openbsd-test:

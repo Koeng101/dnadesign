@@ -71,6 +71,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Added bcftools to external [#72](https://github.com/Koeng101/dnadesign/pull/72)
 - Fixed bug in PCR where certain matching primers wouldn't create any amplicons [#71](https://github.com/Koeng101/dnadesign/pull/71)
 - Updated seqhash2 to use base58 rather than base64 [#69](https://github.com/Koeng101/dnadesign/pull/69)
 - Updated dual barcodes primer sets to be created without csv files [#67](https://github.com/Koeng101/dnadesign/pull/67)
