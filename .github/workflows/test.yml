@@ -55,6 +55,7 @@ jobs:
         echo "$HOME/samtools/bin" >> $GITHUB_PATH
     - name: Download and install bcftools
       run: |
+        sudo apt-get install -y libcurl-dev
         git clone --recurse-submodules https://github.com/samtools/htslib.git
         git clone https://github.com/samtools/bcftools.git
         cd bcftools
