@@ -53,6 +53,13 @@ jobs:
         make
         make install
         echo "$HOME/samtools/bin" >> $GITHUB_PATH
+    - name: Download and install bcftools
+      run: |
+        git clone --recurse-submodules https://github.com/samtools/htslib.git
+        git clone https://github.com/samtools/bcftools.git
+        cd bcftools
+        make
+        make install
     - name: Test external
       run: go test -v ./external/...
   openbsd-test:
