@@ -10,20 +10,21 @@ import (
 	"os/exec"
 	"syscall"
 
+	"github.com/koeng101/dnadesign/lib/bio/fasta"
 	"github.com/koeng101/dnadesign/lib/bio/sam"
 	"golang.org/x/sync/errgroup"
 )
 
 // Pileup generates a pileup file from sam alignments.
 // Specifically, it runs the following commands, with the sam alignments in
-// stdin and the templateFastas written to a temporary file:
+// stdin and the templateFasta written to a temporary file:
 //
 //	`samtools view -bF 4 | samtools sort - | samtools mpileup -f tmpFile.fasta -`
 //
 // The first samtools view removes unmapped sequences, the sort sorts the
 // sequences for piping into pileup, and the final command builds the pileup
 // file.
-func Pileup(ctx context.Context, templateFastas io.Reader, samAlignments io.Reader, w io.Writer) error {
+func Pileup(ctx context.Context, templateFasta fasta.Record, samAlignments io.Reader, w io.Writer) error {
 	/*
 		Due to how os.exec works in Golang, we can't directly have pipes as if
 		the whole thing was a script. However, we can attach pipes to each
@@ -45,7 +46,8 @@ func Pileup(ctx context.Context, templateFastas io.Reader, samAlignments io.Read
 	defer os.Remove(tmpFile.Name()) // Clean up file afterwards
 
 	// Write template fasta data to the temporary file
-	if _, err := io.Copy(tmpFile, templateFastas); err != nil {
+	_, err = templateFasta.WriteTo(tmpFile)
+	if err != nil {
 		return err
 	}
 	tmpFile.Close() // Close the file as it's no longer needed
@@ -128,7 +130,7 @@ func Pileup(ctx context.Context, templateFastas io.Reader, samAlignments io.Read
 }
 
 // PileupChanneled processes SAM alignments from a channel and sends pileup lines to another channel.
-func PileupChanneled(ctx context.Context, templateFastas io.Reader, samChan <-chan sam.Alignment, w io.Writer) error {
+func PileupChanneled(ctx context.Context, templateFasta fasta.Record, samChan <-chan sam.Alignment, w io.Writer) error {
 	g, ctx := errgroup.WithContext(ctx)
 
 	// Create a pipe for writing SAM alignments and reading them as an io.Reader
@@ -149,7 +151,7 @@ func PileupChanneled(ctx context.Context, templateFastas io.Reader, samChan <-ch
 
 	// Run Pileup function in a goroutine
 	g.Go(func() error {
-		return Pileup(ctx, templateFastas, samPr, w) // Runs Pileup, writing output to pileupPw
+		return Pileup(ctx, templateFasta, samPr, w) // Runs Pileup, writing output to pileupPw
 	})
 
 	// Wait for all goroutines in the group to finish

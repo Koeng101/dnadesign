@@ -26,6 +26,7 @@ import (
 	"os/exec"
 
 	"github.com/koeng101/dnadesign/lib/bio"
+	"github.com/koeng101/dnadesign/lib/bio/fasta"
 	"github.com/koeng101/dnadesign/lib/bio/fastq"
 	"github.com/koeng101/dnadesign/lib/bio/sam"
 	"golang.org/x/sync/errgroup"
@@ -34,10 +35,7 @@ import (
 // Minimap2 aligns sequences using minimap2 over the command line. Right
 // now, only nanopore (map-ont) is supported. If you need others enabled,
 // please put in an issue.
-//
-// Rarely Minimap2 will stall while reading in fastqInput. See examples of
-// how to get around this problem.
-func Minimap2(templateFastaInput io.Reader, fastqInput io.Reader, w io.Writer) error {
+func Minimap2(templateFastas []fasta.Record, fastqInput io.Reader, w io.Writer) error {
 	/*
 		Generally, this is how the function works:
 		1. Create a temporary file for templates. Templates are rather small,
@@ -65,8 +63,11 @@ func Minimap2(templateFastaInput io.Reader, fastqInput io.Reader, w io.Writer) e
 	defer os.Remove(tmpFile.Name()) // Clean up file afterwards
 
 	// Write template fasta data to the temporary file
-	if _, err := io.Copy(tmpFile, templateFastaInput); err != nil {
-		return err
+	for _, templateFasta := range templateFastas {
+		_, err = templateFasta.WriteTo(tmpFile)
+		if err != nil {
+			return err
+		}
 	}
 	tmpFile.Close() // Close the file as it's no longer needed
 
@@ -82,7 +83,7 @@ func Minimap2(templateFastaInput io.Reader, fastqInput io.Reader, w io.Writer) e
 }
 
 // Minimap2Channeled uses channels rather than io.Reader and io.Writers.
-func Minimap2Channeled(ctx context.Context, fastaTemplates io.Reader, fastqChan <-chan fastq.Read, samChan chan<- sam.Alignment) error {
+func Minimap2Channeled(ctx context.Context, fastaTemplates []fasta.Record, fastqChan <-chan fastq.Read, samChan chan<- sam.Alignment) error {
 	g, ctx := errgroup.WithContext(ctx)
 
 	// Create a pipe for writing fastq reads and reading them as an io.Reader
