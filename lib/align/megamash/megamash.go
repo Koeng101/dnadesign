@@ -33,20 +33,20 @@ func StandardizedDNA(sequence string) string {
 
 var (
 	DefaultKmerSize         uint    = 16
-	DefaultMinimalKmerCount uint    = 10
+	DefaultMinimalKmerCount int     = 10
 	DefaultScoreThreshold   float64 = 0.5
 )
 
 type MegamashMap struct {
 	Kmers                 map[string]string
-	IdentifierToKmerCount map[string]uint
+	IdentifierToKmerCount map[string]int
 	KmerSize              uint
-	KmerMinimalCount      uint
+	KmerMinimalCount      int
 	Threshold             float64
 }
 
 // NewMegamashMap creates a megamash map that can be searched against.
-func NewMegamashMap(sequences []fasta.Record, kmerSize uint, kmerMinimalCount uint, threshold float64) (MegamashMap, error) {
+func NewMegamashMap(sequences []fasta.Record, kmerSize uint, kmerMinimalCount int, threshold float64) (MegamashMap, error) {
 	var megamashMap MegamashMap
 	megamashMap.KmerSize = kmerSize
 	megamashMap.KmerMinimalCount = kmerMinimalCount
@@ -81,7 +81,7 @@ func NewMegamashMap(sequences []fasta.Record, kmerSize uint, kmerMinimalCount ui
 		}
 	}
 	// Check for minimal kmerCount
-	identifierToCount := make(map[string]uint)
+	identifierToCount := make(map[string]int)
 	for _, fastaRecord := range sequences {
 		identifierToCount[fastaRecord.Identifier] = 0
 	}
