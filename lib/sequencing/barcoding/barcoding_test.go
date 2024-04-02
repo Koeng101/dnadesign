@@ -8,49 +8,7 @@ import (
 
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/sequencing/barcoding"
-	"github.com/koeng101/dnadesign/lib/sequencing/nanopore"
 )
-
-func ExampleSingleBarcodeSequence() {
-	// Add in our barcode set. These barcodes are Nanopore native barcode
-	// sequences.
-	primerSetCsv := fmt.Sprintf("barcode01,%s\nbarcode02,%s", nanopore.NativeBarcodeMap["barcode01"].Forward, nanopore.NativeBarcodeMap["barcode02"].Forward)
-	// Add in reads. The following are real reads from a Nanopore sequencing
-	// run, barcoded with barcode01
-	reads := `@ed433f97-a7e9-4b95-be59-2e18bda14fc2 runid=599e6407c739adc4ecb3169cea4c881b04635ea8 read=18 ch=90 start_time=2024-02-06T15:59:33.914899-08:00 flow_cell_id=ARF133 protocol_group_id=nseq30 sample_id=u12-u13-u14-u15-u16-u17-u18-u19-B4-B5 barcode=barcode01 barcode_alias=barcode01 parent_read_id=ed433f97-a7e9-4b95-be59-2e18bda14fc2 basecall_model_version_id=dna_r10.4.1_e8.2_400bps_sup@v4.2.0
-TGTCCCTGTACTTCGTTCAGTTACGTATTGCTAAGGTTAACACAAAGACACCGACAACTTTCTTCAGCACCTGCGGAAGCGCAAGCCTAAGCGTAAAACGACGGCCAGTGAATCCGTAATCATGGTCATAGCTGTTTCCTGACTGGGTCTCGGTCTAGGTCAGGTGCTGAAGTTGTCGGTGTTGCTTGTGTTAACCTTTACGATGGT
-+
-'(*()(''*--.6+***+6---+,-./=CBDFIKSSGHFCHB@886797777ABCKICGDCAEFCBFDFSIHLSSGSSJSJISFMKSISJSOGSBA@??...--4?IFMRGSPGSRHLJGLEB(((18::=KMSGSJNSSGRGKSHGCCCECLSJRKIKHKJNHMJGH6.,)))((((())//---//0=8756:8892+&%%'((+
-@8c5cf4e3-2595-4e1e-b014-9a6f9998b3d3 runid=599e6407c739adc4ecb3169cea4c881b04635ea8 read=31 ch=12 start_time=2024-02-06T15:59:35.914899-08:00 flow_cell_id=ARF133 protocol_group_id=nseq30 sample_id=u12-u13-u14-u15-u16-u17-u18-u19-B4-B5 barcode=barcode01 barcode_alias=barcode01 parent_read_id=8c5cf4e3-2595-4e1e-b014-9a6f9998b3d3 basecall_model_version_id=dna_r10.4.1_e8.2_400bps_sup@v4.2.0
-TTGTCCTCTGCTTGGTTTCATTACGTATTGCTAACCAGCACAGAAGACACCGACAACTTTCTTCAGCACCTAGGCGAAGGCCAGCGTAAACGACGGCCAGTGGCTAAGGCGAAGGCCAGCGTAAAACAACACCCATGATCATCATCATCGTCATCACTCTTCCTCCGAGTCTGGC
-+
-%%%%$###$%&&'%''))))*-,,....0446-,*(('(()()()'((''(//123441,'',--/21112/..-.14457=>;;220-*()),-.234=?>>?=64443//001<34**+3/-,,*())'&(''))))*)*,++,,,*&&&&(((**%%%%(,)'&%%%%&%'&
-@30119e9e-19a0-4174-be00-bc61117ce8d6 runid=599e6407c739adc4ecb3169cea4c881b04635ea8 read=57 ch=65 start_time=2024-02-06T16:00:40.914899-08:00 flow_cell_id=ARF133 protocol_group_id=nseq30 sample_id=u12-u13-u14-u15-u16-u17-u18-u19-B4-B5 barcode=barcode01 barcode_alias=barcode01 parent_read_id=30119e9e-19a0-4174-be00-bc61117ce8d6 basecall_model_version_id=dna_r10.4.1_e8.2_400bps_sup@v4.2.0
-GTGTAACCTACTGGTTCAGTTACGTATTGCTAAGGTTAACACAAAGACACCGACAACTTTCTTCAGCACCTGTGAAGGTCAAGGGTAAGGGTAAAACGACGGCCAGTCACCAACCATAACCAGAACCATTAAAACGACGGCCAGTGAATCCGTAATCATGGTCATAGCTTTCCTGACTAACACTGTCACTGGAACATGGTCTAGCTGTTTCCTGGTGATAGGTG
-+
-$$$((45;=@GG7778454446889:AABCFSSOKPIDESGISSGJJSFSHBBB@>??EFBEJKGHGSSQNJJSKMSSOFFDFELFMSSNMHSOMNSIOHSNSSQSLLJSEHHGSISISKSHSHKDC/---,-47?@@ABSGFJICESNFKHSJIJSJSGHJKSKKRF?:7(<70111PKLSKSJSLHPNMFSOSJSLSLHIOGQSHFHA<@F<<<;:=)('''
-@a931cb47-d99e-43e0-b6e1-7a52777ab1a2 runid=599e6407c739adc4ecb3169cea4c881b04635ea8 read=39 ch=70 start_time=2024-02-06T16:00:43.914899-08:00 flow_cell_id=ARF133 protocol_group_id=nseq30 sample_id=u12-u13-u14-u15-u16-u17-u18-u19-B4-B5 barcode=barcode01 barcode_alias=barcode01 parent_read_id=a931cb47-d99e-43e0-b6e1-7a52777ab1a2 basecall_model_version_id=dna_r10.4.1_e8.2_400bps_sup@v4.2.0
-ATGTTGCCTACCTACTTGGTTCAGTTACGTATTGCTAAGGTTAACACAAAGACACCCGACAACTTTCTTCAGCACCTGCCAAGCGTAAAACGACGGCCAGTGGAAAAGCAAAACTAAAACGGTAAAACGACGGCCAGTGGAAAAGCAAAACTAAAACGGTAAACGACGGCCAGTTACGTTATTTGCTTTTCATGGTCATAGCTGTTTCCTGACTGGGTCTCGGTCTAGGTCAGGTGCTGAAGAAAGTTGTCGGTGTCTTTGTGTTAACCACGATGCGTTGT
-+
-%%%%%%####$%(*+,)&''));::80-''')0000BCFJOSNLQJKJKRSMSFKLSDHIMGJEHDABFCCHIJKSSISHGJMSKSSKSOLSJSJIOJMSMNRKJKSJQLISGHGIHSJHSLJKSMISJEEBBCBH>=:/---849000>@GEEEJOKJIJHGSISIOMHKKGFGFJMGHHROIPSIJSSJKSLSMMSKJSJIIIKNMMEISKMLSKSHJPHLMJNQLHGRJKKKSHKKOMISOSGFJIOSSLSOSSSSNMSIFH876'&'(....+++(%`
-
-	primerSet, _ := barcoding.ParseSinglePrimerSet(strings.NewReader(primerSetCsv))
-	parser := bio.NewFastqParser(strings.NewReader(reads))
-	records, _ := parser.Parse()
-
-	var barcodes []string
-	for _, record := range records {
-		// Note: Nanopore has a score that requires a lower match (~16) than the
-		// default ScoreMagicNumber (18).
-		barcode, _ := barcoding.SingleBarcodeSequence(record.Sequence, primerSet)
-		if barcode != "" {
-			barcodes = append(barcodes, barcode)
-		}
-	}
-
-	fmt.Println(barcodes)
-	// Output: [barcode01 barcode01 barcode01]
-}
 
 func ExampleDualBarcodeSequence() {
 	// Add in our barcode set. This is an abrdiged version of a full
@@ -109,15 +67,15 @@ $$$%%%%&',*+,//;=:9771111,-+*&&%%%%%'.1389:987777844443553((50+,,88:;2///;655559
 	records, _ := parser.Parse()
 
 	var wells []string
-	for _, record := range records[0:10] {
-		well, _ := barcoding.DualBarcodeSequence(record.Sequence, primerSet)
+	for _, record := range records {
+		well, _ := barcoding.DualBarcodeSequence(record.Sequence, "gtaaaacgacggccagt", "caggaaacagctatgaccatg", primerSet)
 		if well != "" {
 			wells = append(wells, well)
 		}
 	}
 
 	fmt.Println(wells)
-	// Output: [B15 O1 O1 J22 C22 E20 A15]
+	// Output: [B15 O1 O1 J22 C22 E20]
 }
 
 func TestDualBarcodesToPrimerSet(t *testing.T) {
@@ -125,5 +83,15 @@ func TestDualBarcodesToPrimerSet(t *testing.T) {
 	primerSet := barcoding.DualBarcodesToPrimerSet(dualBarcodes)
 	if len(primerSet.ForwardBarcodes) != 1 || len(primerSet.ReverseBarcodes) != 1 {
 		t.Errorf("Should have gotten barcode length of 1.")
+	}
+}
+
+func TestPrimerEdgeRegression(t *testing.T) {
+	// This is handling a case we commonly see where the barcode is hanging off the edge of the sequence.
+	barcoding.ScoreMagicNumber = 25
+	seq := "TATGTGTAACCTACTTCGTTCAGTTACGTATTGCTAAGGTTAACACAAAGACACCGACAACTTTCTTCAGCACCTTGGATATGCATATCTATATCGGGGTTATTGTCTCATGAGCGGATACATATTTGAATGTATTTAGAAAAATAAACAAATAGGCGTTCTCGCGCACCTGCACCAGTCAGTAAAACGACGGCCAGTGACTTGGTCTCAAAGAAGGCACTGATGCGCTACGAGGACGTGTACATGCCGGAGGTGTACAAGGCAATCAACATCGCACAGAACACGGCATGGAAGATCAACAAGAAGGTGCTGGCAGTGGCAAACGTGATCACGAAGTGGAAGCACTGCCCGGTGGAGGACATCCCGGCAATCATCCGCGAGGAGCTGCCGATGAAGCCGGAGGACATCGACATGAACCCGGAGGCACTGACGGCATGGAAGCGCGCAGCAGCAGCAGTGTACCGCAAGGACGTGGCACGCAAGGCACAGCGCATCTCGCTGGAGTTCATGCTGGAGCAGGCAAACAAGTTCGCAAACTCGAAGAAGATGGTTCCCGTACAACATGGACTGGCGCGGTCGCGTGTACGCAGTGTCGGAGTTCAACCCGCAGGGTAACGACATGACGAAGGGTCTGCTGACGCTGGCAAAGTTCAAGCCGATCGGTGGTGAGGGTGACTACTGGCTGAAGATCCACGGTGCAGACTGCGCAGGTGTGCCGAAGTTCATGCGAGCGCATCAAGTTCATCGAGGAAAACCGCAGAACATCATGGCATGCGCAAAGTCGCCGCTGGAGGCAACGTGGTGGGCAGAGCAGGACTCGCCGTTCTGCTTCAACGCATTCTGCTTCGGTGCGCAGGTCGCAGAACCACGGTCTGTCGTACAACTGCTCGCTGCCGCCGGCATCGACGGTTCGTGCTCGGGTATCCAGCACTTCTCGGCAATGCTGACGGACGAGGTGGGTGGTCGCGCAGTGAACCTGCTGCCGTCGGAGACGGTGCAGGACATCTACGGTATCGTGGCAAAGAAGGTGAACGAGATCCTGCAGGCAGACGCAATCAACGGTACGGACAACGAGGTGGTGACGGTGACGGACGAGAACACGGGTGAGACGAGACCAAGTCGTCATAGCTGTTTCCTGAGAGCTTGGCAGGTGATGACTGTGCTTCTG"
+	well, _ := barcoding.DualBarcodeSequence(seq, "gtcatcacctgccaagctct", "gggttattgtctcatgagcgg", barcoding.DefaultBarcodes)
+	if well != "K5" {
+		t.Errorf("Should have matched K5")
 	}
 }
