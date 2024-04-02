@@ -27,9 +27,10 @@ import (
 	"github.com/koeng101/dnadesign/lib/transform"
 )
 
-// ScoreMagicNumber is the SmithWaterman score needed to match a barcode. 18 is
-// chosen as a magic number that fits pretty well with normal 20bp barcodes.
-var ScoreMagicNumber = 18
+// ScoreMagicNumber is the SmithWaterman score needed to match a barcode. 28 is
+// chosen as a magic number that fits pretty well with normal 40bp barcodes.
+// (20bp primer + 20bp barcode)
+var ScoreMagicNumber = 28
 
 // MinimalReadSize is the minimal size of reads needed to barcode. This is
 // mostly important for Nanopore reads, since amplicon Nanopore sequencing
@@ -44,110 +45,6 @@ var MinimalReadSize = 200
 // barcode (NB) and native adapter (NA) sequence may or may not be on both
 // sides, adding ~80bp to the read.
 var EdgeCheckSize = 120
-
-/******************************************************************************
-Feb 12, 2024
-                            Single barcodes
-
-This is code for detecting single barcodes. Hasn't been given as much love as
-dual barcoding code, and is mainly just copy pasted from there.
-
-Keoni
-******************************************************************************/
-
-// SingleBarcodePrimerSet is a list of single barcode-to-sequence pairs in a
-// convenient format for barcoding.
-type SingleBarcodePrimerSet struct {
-	BarcodeMap        map[string]string // barcode to sequence
-	ReverseBarcodeMap map[string]string // sequence to barcode
-	Barcodes          []string          // sorted for determinism
-}
-
-// ParseSinglePrimerSet parses a csv file with barcode primer pairs into a
-// SingleBarcodePrimerSet.
-func ParseSinglePrimerSet(csvFile io.Reader) (SingleBarcodePrimerSet, error) {
-	var result SingleBarcodePrimerSet
-	result.BarcodeMap = make(map[string]string)
-	result.ReverseBarcodeMap = make(map[string]string)
-	var barcodes []string
-
-	// Create a new CSV reader reading from the input io.Reader
-	reader := csv.NewReader(csvFile)
-
-	for {
-		// Read each record from csv
-		record, err := reader.Read()
-		// Break the loop at the end of the file
-		if err == io.EOF {
-			break
-		}
-		// Handle any other error
-		if err != nil {
-			return result, err
-		}
-
-		if len(record) == 2 {
-			result.BarcodeMap[record[0]] = record[1]
-			result.ReverseBarcodeMap[record[1]] = record[0]
-			barcodes = append(barcodes, record[1])
-		}
-	}
-
-	// Sort the slices
-	sort.Strings(barcodes)
-	result.Barcodes = barcodes
-
-	return result, nil
-}
-
-// SingleBarcodeSequence barcodes a sequence with a single barcode.
-func SingleBarcodeSequence(sequence string, primerSet SingleBarcodePrimerSet) (string, error) {
-	m := [][]int{
-		/*       A C G T U */
-		/* A */ {1, -1, -1, -1, -1},
-		/* C */ {-1, 1, -1, -1, -1},
-		/* G */ {-1, -1, 1, -1, -1},
-		/* T */ {-1, -1, -1, 1, -1},
-		/* U */ {-1, -1, -1, -1, 1},
-	}
-
-	alphabet := alphabet.NewAlphabet([]string{"A", "C", "G", "T", "U"})
-	subMatrix, _ := matrix.NewSubstitutionMatrix(alphabet, alphabet, m)
-	scoring, _ := align.NewScoring(subMatrix, -1)
-
-	if len(sequence) < MinimalReadSize {
-		return "", nil
-	}
-	sequence = strings.ToUpper(sequence) // make sure sequence is upper case for the purposes of barcoding
-	sequenceForward := sequence[:EdgeCheckSize]
-	sequenceReverse := sequence[len(sequence)-EdgeCheckSize:]
-	var topRanked string
-	var topRankedScore int
-	for _, sequence := range []string{sequenceForward, sequenceReverse} {
-		for _, barcodeSequence := range primerSet.Barcodes {
-			score, _, _, err := align.SmithWaterman(sequence, barcodeSequence, scoring)
-			if err != nil {
-				return "", err
-			}
-			complementScore, _, _, err := align.SmithWaterman(sequence, transform.ReverseComplement(barcodeSequence), scoring)
-			if err != nil {
-				return "", err
-			}
-
-			switch {
-			case score > topRankedScore && score > ScoreMagicNumber:
-				topRanked = primerSet.ReverseBarcodeMap[barcodeSequence]
-				topRankedScore = score
-			case complementScore > topRankedScore && complementScore > ScoreMagicNumber:
-				topRanked = primerSet.ReverseBarcodeMap[barcodeSequence]
-				topRankedScore = complementScore
-			}
-		}
-	}
-	_ = topRanked
-
-	return topRanked, nil
-}
 
 /******************************************************************************
 Feb 12, 2024
@@ -273,7 +170,7 @@ func ParseDualPrimerSet(csvFile io.Reader) (DualBarcodePrimerSet, error) {
 
 // DualBarcodeSequence analyzes a sequence for both a forward and reverse
 // barcode pair and returns their well.
-func DualBarcodeSequence(sequence string, primerSet DualBarcodePrimerSet) (string, error) {
+func DualBarcodeSequence(sequence string, forwardPrimer string, reversePrimer string, primerSet DualBarcodePrimerSet) (string, error) {
 	m := [][]int{
 		/*       A C G T U */
 		/* A */ {1, -1, -1, -1, -1},
@@ -290,6 +187,8 @@ func DualBarcodeSequence(sequence string, primerSet DualBarcodePrimerSet) (strin
 	if len(sequence) < MinimalReadSize {
 		return "", nil
 	}
+	forwardPrimer = strings.ToUpper(forwardPrimer)
+	reversePrimer = strings.ToUpper(reversePrimer)
 	sequence = strings.ToUpper(sequence) // make sure sequence is upper case for the purposes of barcoding
 	sequenceForward := sequence[:EdgeCheckSize]
 	sequenceReverse := sequence[len(sequence)-EdgeCheckSize:]
@@ -301,11 +200,11 @@ func DualBarcodeSequence(sequence string, primerSet DualBarcodePrimerSet) (strin
 	for _, sequence := range []string{sequenceForward, sequenceReverse} {
 		for _, forwardBarcode := range primerSet.ForwardBarcodes {
 			// We check both the barcode's sequence and its reverse complement.
-			scoreFwd, _, _, err := align.SmithWaterman(sequence, forwardBarcode, scoring)
+			scoreFwd, _, _, err := align.SmithWaterman(sequence, forwardBarcode+forwardPrimer, scoring)
 			if err != nil {
 				return "", err
 			}
-			complementScoreFwd, _, _, err := align.SmithWaterman(sequence, transform.ReverseComplement(forwardBarcode), scoring)
+			complementScoreFwd, _, _, err := align.SmithWaterman(sequence, transform.ReverseComplement(forwardBarcode+forwardPrimer), scoring)
 			if err != nil {
 				return "", err
 			}
@@ -320,14 +219,15 @@ func DualBarcodeSequence(sequence string, primerSet DualBarcodePrimerSet) (strin
 				topRankedForward = forwardBarcode
 				topRankedForwardScore = complementScoreFwd
 			}
+
 		}
 		for _, reverseBarcode := range primerSet.ReverseBarcodes {
-			scoreRev, _, _, err := align.SmithWaterman(sequence, reverseBarcode, scoring)
+			scoreRev, _, _, err := align.SmithWaterman(sequence, reverseBarcode+reversePrimer, scoring)
 			if err != nil {
 				return "", err
 			}
 
-			complementScoreRev, _, _, err := align.SmithWaterman(sequence, transform.ReverseComplement(reverseBarcode), scoring)
+			complementScoreRev, _, _, err := align.SmithWaterman(sequence, transform.ReverseComplement(reverseBarcode+reversePrimer), scoring)
 			if err != nil {
 				return "", err
 			}
@@ -342,6 +242,7 @@ func DualBarcodeSequence(sequence string, primerSet DualBarcodePrimerSet) (strin
 			}
 		}
 	}
+	// This is to handle the case that we did not find a barcode
 	// Finally, get the well from the barcode map.
 	well := primerSet.ReverseBarcodeMap[DualBarcode{Forward: topRankedForward, Reverse: topRankedReverse}]
 	return well, nil
