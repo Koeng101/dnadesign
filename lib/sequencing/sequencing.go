@@ -35,7 +35,7 @@ func MegamashFastq(ctx context.Context, megamashMap megamash.MegamashMap, input 
 	}
 }
 
-func DualBarcodeFastq(ctx context.Context, primerSet barcoding.DualBarcodePrimerSet, input <-chan fastq.Read, output chan<- fastq.Read) error {
+func DualBarcodeFastq(ctx context.Context, forwardPrimer string, reversePrimer string, primerSet barcoding.DualBarcodePrimerSet, input <-chan fastq.Read, output chan<- fastq.Read) error {
 	for {
 		select {
 		case <-ctx.Done():
@@ -44,7 +44,7 @@ func DualBarcodeFastq(ctx context.Context, primerSet barcoding.DualBarcodePrimer
 			if !ok {
 				return nil
 			}
-			well, err := barcoding.DualBarcodeSequence(data.Sequence, primerSet)
+			well, err := barcoding.DualBarcodeSequence(data.Sequence, forwardPrimer, reversePrimer, primerSet)
 			if err != nil {
 				return err
 			}
