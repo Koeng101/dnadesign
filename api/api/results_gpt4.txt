@@ -1,0 +1,91 @@
+Run #1
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	4.847s
+Run #2
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	5.550s
+Run #3
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	5.599s
+Run #4
+
+--- FAIL: TestWriteCodeString (1.73s)
+    ai_test.go:63: Got error: invalid character '`' looking for beginning of value
+    ai_test.go:74: Unexpected response. Expected: identifier,sequence
+        test,ATGC
+        test2,GATC
+        Got: 
+FAIL
+exit status 1
+FAIL	github.com/koeng101/dnadesign/api/api	2.476s
+Run #5
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	6.391s
+Run #6
+
+--- FAIL: TestWriteCodeString (1.24s)
+    ai_test.go:63: Got error: invalid character '`' looking for beginning of value
+    ai_test.go:74: Unexpected response. Expected: identifier,sequence
+        test,ATGC
+        test2,GATC
+        Got: 
+FAIL
+exit status 1
+FAIL	github.com/koeng101/dnadesign/api/api	2.311s
+Run #7
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	6.068s
+Run #8
+--- FAIL: TestAiFastaParse (1.30s)
+    ai_test.go:35: Got err: invalid character '`' looking for beginning of value
+    ai_test.go:38: fastaParse != true.
+
+--- FAIL: TestWriteCodeString (1.45s)
+    ai_test.go:63: Got error: invalid character '`' looking for beginning of value
+    ai_test.go:74: Unexpected response. Expected: identifier,sequence
+        test,ATGC
+        test2,GATC
+        Got: 
+FAIL
+exit status 1
+FAIL	github.com/koeng101/dnadesign/api/api	2.755s
+Run #9
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	3.742s
+Run #10
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	5.298s
+Run #11
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	5.956s
+Run #12
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	5.336s
+Run #13
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	6.391s
+Run #14
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	5.174s
+Run #15
+--- FAIL: TestAiFastaParse (1.84s)
+    ai_test.go:35: Got err: invalid character '`' looking for beginning of value
+    ai_test.go:38: fastaParse != true.
+FAIL
+exit status 1
+FAIL	github.com/koeng101/dnadesign/api/api	5.649s
+Run #16
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	6.213s
+Run #17
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	3.586s
+Run #18
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	5.682s
+Run #19
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	4.093s
+Run #20
+PASS
+ok  	github.com/koeng101/dnadesign/api/api	3.320s

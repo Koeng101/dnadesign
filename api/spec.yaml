@@ -1,0 +1,97 @@
+openapi: 3.0.0
+info:
+  title: DNA design API
+  version: 0.0.1
+servers:
+  - url: https://dnadesign.bio/api
+  - url: http://localhost:8080/api
+components:
+  schemas:
+    Attachment:
+      type: object
+      properties:
+        name:
+          type: string
+        content:
+          type: string
+      required:
+        - name
+        - content
+    FastaRecord:
+      type: object
+      properties:
+        identifier:
+          type: string
+        sequence:
+          type: string
+      required:
+        - identifier
+        - sequence
+    
+
+paths:
+  /execute_lua:
+    post:
+      tags:
+        - lua
+      summary: Run a lua script
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                script:
+                  type: string
+                attachments:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Attachment'
+              required:
+                - script
+      responses:
+        '200':
+          description: Successful output
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  output:
+                    type: string
+                  log:
+                    type: string
+                required:
+                  - output
+                  - log
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /io/fasta/parse:
+    post:
+      tags:
+        - io
+      summary: Parse FASTA data
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Parsed FASTA records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FastaRecord'
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
