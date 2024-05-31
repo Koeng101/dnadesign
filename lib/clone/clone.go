@@ -53,7 +53,6 @@ import (
 	"strings"
 
 	"github.com/koeng101/dnadesign/lib/checks"
-	"github.com/koeng101/dnadesign/lib/seqhash"
 	"github.com/koeng101/dnadesign/lib/transform"
 )
 
@@ -281,73 +280,46 @@ func CutWithEnzyme(part Part, directional bool, enzyme Enzyme, methylated bool) 
 	return fragments
 }
 
-func recurseLigate(seedFragment Fragment, fragmentList []Fragment, usedFragments []Fragment, existingSeqhashes map[string]struct{}) (openConstructs []string, infiniteConstructs []string) {
-	// Recurse ligate simulates all possible ligations of a series of fragments. Each possible combination begins with a "seed" that fragments from the pool can be added to.
-	// If the seed ligates to itself, we can call it done with a successful circularization!
-	if seedFragment.ForwardOverhang == seedFragment.ReverseOverhang {
-		construct := seedFragment.ForwardOverhang + seedFragment.Sequence
-		seqhash, _ := seqhash.EncodeHash2(seqhash.Hash2(construct, "DNA", true, true))
-		if _, ok := existingSeqhashes[seqhash]; ok {
-			return nil, nil
-		}
-		existingSeqhashes[seqhash] = struct{}{}
-		return []string{construct}, nil
+// Ligate simulates ligations. It assumes that fragments can only be ligated
+// in a single way (no 2 fragments with the same overhangs), and also assumes
+// the first fragment WILL be used in the ligation reaction. This function
+// is a massive simplification of the original ligation code which can do more.
+// If this does not fulfill your needs, please leave an issue in git.
+func Ligate(fragments []Fragment) (string, error) {
+	if len(fragments) == 0 {
+		return "", errors.New("no fragments to ligate")
 	}
 
-	// If the seed ligates to another fragment, we can recurse and add that fragment to the seed
-	for _, newFragment := range fragmentList {
-		// If the seedFragment's reverse overhang is ligates to a fragment's forward overhang, we can ligate those together and seed another ligation reaction
-		var newSeed Fragment
-		var fragmentAttached bool
-		if seedFragment.ReverseOverhang == newFragment.ForwardOverhang {
-			fragmentAttached = true
-			newSeed = Fragment{seedFragment.Sequence + seedFragment.ReverseOverhang + newFragment.Sequence, seedFragment.ForwardOverhang, newFragment.ReverseOverhang}
-		}
-		// This checks if we can ligate the next fragment in its reverse direction. We have to be careful though - if our seed has a palindrome, it will ligate to itself
-		// like [-> <- -> <- -> ...] infinitely. We check for that case here as well.
-		if (seedFragment.ReverseOverhang == transform.ReverseComplement(newFragment.ReverseOverhang)) && (seedFragment.ReverseOverhang != transform.ReverseComplement(seedFragment.ReverseOverhang)) { // If the second statement isn't there, program will crash on palindromes
-			fragmentAttached = true
-			newSeed = Fragment{seedFragment.Sequence + seedFragment.ReverseOverhang + transform.ReverseComplement(newFragment.Sequence), seedFragment.ForwardOverhang, transform.ReverseComplement(newFragment.ForwardOverhang)}
-		}
-
-		// If fragment is actually attached, move to some checks
-		if fragmentAttached {
-			// If the newFragment's reverse complement already exists in the used fragment list, we need to cancel the recursion.
-			for _, usedFragment := range usedFragments {
-				if usedFragment.Sequence == newFragment.Sequence {
-					infiniteConstruct := usedFragment.ForwardOverhang + usedFragment.Sequence + usedFragment.ReverseOverhang
-					seqhash, _ := seqhash.EncodeHash2(seqhash.Hash2(infiniteConstruct, "DNA", false, true))
-					if _, ok := existingSeqhashes[seqhash]; ok {
-						return nil, nil
-					}
-					existingSeqhashes[seqhash] = struct{}{}
-					return nil, []string{infiniteConstruct}
-				}
+	finalFragment := fragments[0]
+	used := make(map[int]bool)
+	used[0] = true
+	matchFound := true
+	// iterate until no fragments are found
+	for matchFound {
+		matchFound = false
+		for i, fragment := range fragments {
+			if !used[i] && finalFragment.ReverseOverhang == fragment.ForwardOverhang {
+				finalFragment.Sequence += finalFragment.ReverseOverhang + fragment.Sequence
+				finalFragment.ReverseOverhang = fragment.ReverseOverhang
+				used[i] = true
+				matchFound = true
+				break
 			}
-			// If everything is clear, append fragment to usedFragments and recurse.
-			usedFragments = append(usedFragments, newFragment)
-			openconstructs, infiniteconstructs := recurseLigate(newSeed, fragmentList, usedFragments, existingSeqhashes)
-
-			openConstructs = append(openConstructs, openconstructs...)
-			infiniteConstructs = append(infiniteConstructs, infiniteconstructs...)
+			if !used[i] && finalFragment.ReverseOverhang == transform.ReverseComplement(fragment.ReverseOverhang) {
+				finalFragment.Sequence += finalFragment.ReverseOverhang + transform.ReverseComplement(fragment.Sequence)
+				finalFragment.ReverseOverhang = transform.ReverseComplement(fragment.ForwardOverhang)
+				used[i] = true
+				matchFound = true
+				break
+			}
 		}
 	}
 
-	return openConstructs, infiniteConstructs
-}
-
-// CircularLigate simulates ligation of all possible fragment combinations into circular plasmids.
-func CircularLigate(fragments []Fragment) ([]string, []string) {
-	var outputConstructs []string
-	var outputInfiniteLoopingConstructs []string
-	existingSeqhashes := make(map[string]struct{})
-	for _, fragment := range fragments {
-		openConstructs, infiniteConstructs := recurseLigate(fragment, fragments, []Fragment{}, existingSeqhashes)
-
-		outputConstructs = append(outputConstructs, openConstructs...)
-		outputInfiniteLoopingConstructs = append(outputInfiniteLoopingConstructs, infiniteConstructs...)
+	// attempt circularization
+	if finalFragment.ForwardOverhang != finalFragment.ReverseOverhang {
+		return "", errors.New("does not circularize")
 	}
-	return outputConstructs, outputInfiniteLoopingConstructs
+	return finalFragment.ForwardOverhang + finalFragment.Sequence, nil
 }
 
 /******************************************************************************
@@ -359,14 +331,13 @@ Specific cloning functions begin here.
 // GoldenGate simulates a GoldenGate cloning reaction. As of right now, we only
 // support BsaI, BbsI, BtgZI, and BsmBI. Set methylated flag to true if there
 // is lowercase methylated DNA as part of the sequence.
-func GoldenGate(sequences []Part, cuttingEnzyme Enzyme, methylated bool) (openConstructs []string, infiniteLoops []string) {
+func GoldenGate(sequences []Part, cuttingEnzyme Enzyme, methylated bool) (string, error) {
 	var fragments []Fragment
 	for _, sequence := range sequences {
 		newFragments := CutWithEnzyme(sequence, true, cuttingEnzyme, methylated)
 		fragments = append(fragments, newFragments...)
 	}
-	openconstructs, infiniteloops := CircularLigate(fragments)
-	return openconstructs, infiniteloops
+	return Ligate(fragments)
 }
 
 // GetBaseRestrictionEnzymes return a basic slice of common enzymes used in Golden Gate Assembly. Eventually, we want to get the data for this map from ftp://ftp.neb.com/pub/rebase
