@@ -140,16 +140,14 @@ func TestCutWithEnzymeRegression(t *testing.T) {
 }
 
 func TestCircularLigate(t *testing.T) {
-	// The following tests for complementing overhangs. Specific, this line:
-	// newSeed := Fragment{seedFragment.Sequence + seedFragment.ReverseOverhang + ReverseComplement(newFragment.Sequence), seedFragment.ForwardOverhang, ReverseComplement(newFragment.ForwardOverhang)}
 	fragment1 := Fragment{"AAAAAA", "GTTG", "CTAT"}
 	fragment2 := Fragment{"AAAAAA", "CAAC", "ATAG"}
-	outputConstructs, infiniteLoops := CircularLigate([]Fragment{fragment1, fragment2})
-	if len(outputConstructs) != 1 {
-		t.Errorf("Circular ligation with complementing overhangs should only output 1 valid rotated sequence.")
+	output, err := Ligate([]Fragment{fragment1, fragment2})
+	if err != nil {
+		t.Errorf("Got error on ligation: %s", err)
 	}
-	if len(infiniteLoops) != 0 {
-		t.Errorf("Circular ligation should have no loops")
+	if output != "GTTGAAAAAACTATTTTTTT" {
+		t.Errorf("Ligation with complementing overhangs should only output 1 valid rotated sequence.")
 	}
 }
 
@@ -164,34 +162,37 @@ func TestEnzymeManage_GetEnzymeByName_NotFound(t *testing.T) {
 	}
 }
 
-func TestSignalKilledGoldenGate(t *testing.T) {
-	enzymeManager := NewEnzymeManager(GetBaseRestrictionEnzymes())
-	// This previously would crash from using too much RAM.
-	fragment1 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATGGAGGGTCTCAAGGTGATCAAAGGATCTTCTTGAGATCCTTTTTTTCTGCGCGTAATCTTTTGCCCTGTAAACGAAAAAACCACCTGGGTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
-	fragment2 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATTGGGGAGGTGGTTTGATCGAAGGTTAAGTCAGTTGGGGAACTGCTTAACCGTGGTAACTGGCTTTCGCAGAGCACAGCAACCAAATCTGTTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
-	fragment3 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATCTGTCCTTCCAGTGTAGCCGGACTTTGGCGCACACTTCAAGAGCAACCGCGTGTTTAGCTAAACAAATCCTCTGCGAACTCCCAGTTACCTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
-	fragment4 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATTACCAATGGCTGCTGCCAGTGGCGTTTTACCGTGCTTTTCCGGGTTGGACTCAAGTGAACAGTTACCGGATAAGGCGCAGCAGTCGGGCTTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
-	fragment5 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATGGCTGAACGGGGAGTTCTTGCTTACAGCCCAGCTTGGAGCGAACGACCTACACCGAGCCGAGATACCAGTGTGTGAGCTATGAGAAAGCGTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
-	fragment6 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATAGCGCCACACTTCCCGTAAGGGAGAAAGGCGGAACAGGTATCCGGTAAACGGCAGGGTCGGAACAGGAGAGCGCAAGAGGGAGCGACCCGTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
-	fragment7 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATCCCGCCGGAAACGGTGGGGATCTTTAAGTCCTGTCGGGTTTCGCCCGTACTGTCAGATTCATGGTTGAGCCTCACGGCTCCCACAGATGTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
-	fragment8 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATGATGCACCGGAAAAGCGTCTGTTTATGTGAACTCTGGCAGGAGGGCGGAGCCTATGGAAAAACGCCACCGGCGCGGCCCTGCTGTTTTGCCTCACATGTTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
-	fragment9 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATATGTTAGTCCCCTGCTTATCCACGGAATCTGTGGGTAACTTTGTATGTGTCCGCAGCGCAAAAAGAGACCCGCTTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
-	fragments := []Part{popen, fragment1, fragment2, fragment3, fragment4, fragment5, fragment6, fragment7, fragment8, fragment9}
-
-	bbsI, err := enzymeManager.GetEnzymeByName("BbsI")
-	if err != nil {
-		t.Errorf("Error when getting Enzyme. Got error: %s", err)
-	}
-
-	clones, loopingClones := GoldenGate(fragments, bbsI, false)
-	if len(clones) != 1 {
-		t.Errorf("There should be 1 output  Got: %d", len(clones))
-	}
-	// This should be changed later when we have a better way of informing user of reused overhangs
-	if len(loopingClones) != 4 {
-		t.Errorf("Should be only 4 looping sequences. Got: %d", len(loopingClones))
-	}
-}
+// This was a previous regression test. However, now ligate only outputs a
+// single construct as an output. If we change in the future for multiple
+// ligations, we should revive this function.
+//func TestSignalKilledGoldenGate(t *testing.T) {
+//	enzymeManager := NewEnzymeManager(GetBaseRestrictionEnzymes())
+//	// This previously would crash from using too much RAM.
+//	fragment1 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATGGAGGGTCTCAAGGTGATCAAAGGATCTTCTTGAGATCCTTTTTTTCTGCGCGTAATCTTTTGCCCTGTAAACGAAAAAACCACCTGGGTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
+//	fragment2 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATTGGGGAGGTGGTTTGATCGAAGGTTAAGTCAGTTGGGGAACTGCTTAACCGTGGTAACTGGCTTTCGCAGAGCACAGCAACCAAATCTGTTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
+//	fragment3 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATCTGTCCTTCCAGTGTAGCCGGACTTTGGCGCACACTTCAAGAGCAACCGCGTGTTTAGCTAAACAAATCCTCTGCGAACTCCCAGTTACCTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
+//	fragment4 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATTACCAATGGCTGCTGCCAGTGGCGTTTTACCGTGCTTTTCCGGGTTGGACTCAAGTGAACAGTTACCGGATAAGGCGCAGCAGTCGGGCTTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
+//	fragment5 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATGGCTGAACGGGGAGTTCTTGCTTACAGCCCAGCTTGGAGCGAACGACCTACACCGAGCCGAGATACCAGTGTGTGAGCTATGAGAAAGCGTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
+//	fragment6 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATAGCGCCACACTTCCCGTAAGGGAGAAAGGCGGAACAGGTATCCGGTAAACGGCAGGGTCGGAACAGGAGAGCGCAAGAGGGAGCGACCCGTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
+//	fragment7 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATCCCGCCGGAAACGGTGGGGATCTTTAAGTCCTGTCGGGTTTCGCCCGTACTGTCAGATTCATGGTTGAGCCTCACGGCTCCCACAGATGTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
+//	fragment8 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATGATGCACCGGAAAAGCGTCTGTTTATGTGAACTCTGGCAGGAGGGCGGAGCCTATGGAAAAACGCCACCGGCGCGGCCCTGCTGTTTTGCCTCACATGTTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
+//	fragment9 := Part{"AAAGCACTCTTAGGCCTCTGGAAGACATATGTTAGTCCCCTGCTTATCCACGGAATCTGTGGGTAACTTTGTATGTGTCCGCAGCGCAAAAAGAGACCCGCTTAGTCTTCGCATTTCTTAATCGGTGCCC", false}
+//	fragments := []Part{popen, fragment1, fragment2, fragment3, fragment4, fragment5, fragment6, fragment7, fragment8, fragment9}
+//
+//	bbsI, err := enzymeManager.GetEnzymeByName("BbsI")
+//	if err != nil {
+//		t.Errorf("Error when getting Enzyme. Got error: %s", err)
+//	}
+//
+//	clones, loopingClones := GoldenGate(fragments, bbsI, false)
+//	if len(clones) != 1 {
+//		t.Errorf("There should be 1 output  Got: %d", len(clones))
+//	}
+//	// This should be changed later when we have a better way of informing user of reused overhangs
+//	if len(loopingClones) != 4 {
+//		t.Errorf("Should be only 4 looping sequences. Got: %d", len(loopingClones))
+//	}
+//}
 
 func TestPanicGoldenGate(t *testing.T) {
 	enzymeManager := NewEnzymeManager(GetBaseRestrictionEnzymes())
@@ -238,8 +239,8 @@ func TestMethylatedGoldenGate(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error when getting Enzyme. Got error: %s", err)
 	}
-	clones, _ := GoldenGate([]Part{pOpenV3Methylated, frag1, frag2, frag3}, bsai, true)
-	if len(clones) != 1 {
+	_, err = GoldenGate([]Part{pOpenV3Methylated, frag1, frag2, frag3}, bsai, true)
+	if err != nil {
 		t.Errorf("Should have gotten a single clone")
 	}
 }
