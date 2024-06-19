@@ -39,7 +39,7 @@ sentence to find out the meaning, or the way each amino acid in a protein
 interacts with each other amino acid.
 
 Transformers are a specific deep learning model architecture that depends on
-self-attention plus feed-forward neural networks, layed on top of each other.
+self-attention plus feed-forward neural networks, laid on top of each other.
 Because of the multiple layers of self-attention, transformers are very good
 at figuring out the context of information, and how it relates to other
 information in a sequence. These have found their way into biotechnology
