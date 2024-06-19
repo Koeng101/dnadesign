@@ -76,18 +76,6 @@ import (
 	"github.com/koeng101/dnadesign/lib/bio"
 )
 
-// init initializes default tokenizers. This is run when importing the package
-// to generate the desired lists.
-func init() {
-	// Init DefaultAminoAcidTokenizer
-	chars := "ACDEFGHIKLMNPQRSTVWYUO*BXZ"
-	tokenValue := uint16(1)
-	for _, char := range chars {
-		DefaultAminoAcidTokenizer.TokenMap[string(char)] = tokenValue
-		tokenValue++
-	}
-}
-
 // Tokenizer is a struct defining a tokenizer. Start and End tokens are
 // specially encoded, while normal tokens reside in TokenMap.
 type Tokenizer struct {
@@ -98,26 +86,37 @@ type Tokenizer struct {
 	EndTokenText   string
 }
 
-// DefaultAminoAcidTokenizer is a default Tokenizer that can encode amino acid
-// data as tokens.
-var DefaultAminoAcidTokenizer = Tokenizer{
-	TokenMap:     map[string]uint16{}, // initialized with init()
-	EndToken:     0,
-	EndTokenText: "<|endoftext|>",
+// DefaultAminoAcidTokenizer returns a default Tokenizer that can encode amino
+// acid data as tokens. It is a function rather than just directly encoded so
+// modifications can be made to it as an application runs.
+func DefaultAminoAcidTokenizer() Tokenizer {
+	var tokenizer = Tokenizer{
+		TokenMap:     map[string]uint16{}, // initialized with init()
+		EndToken:     0,
+		EndTokenText: "<|endoftext|>",
+	}
+	chars := "ACDEFGHIKLMNPQRSTVWYUO*BXZ"
+	tokenValue := uint16(1)
+	for _, char := range chars {
+		tokenizer.TokenMap[string(char)] = tokenValue
+		tokenValue++
+	}
+	return tokenizer
 }
 
 // TokenizeProteins converts a protein sequence into a list of tokens.
 func TokenizeProtein(proteinSequence string) ([]uint16, error) {
 	// We know how long the protein should be, so we can pre-allocate space
+	tokenizer := DefaultAminoAcidTokenizer()
 	tokens := make([]uint16, 0, 2+len(proteinSequence)) // add start+end to len
 	for _, aminoAcid := range proteinSequence {
-		tokenInteger, ok := DefaultAminoAcidTokenizer.TokenMap[string(aminoAcid)]
+		tokenInteger, ok := tokenizer.TokenMap[string(aminoAcid)]
 		if !ok {
 			return tokens, errors.New("Only letters ACDEFGHIKLMNPQRSTVWYUO*BXZ are allowed for Proteins. Got letter: " + string(aminoAcid))
 		}
 		tokens = append(tokens, tokenInteger)
 	}
-	tokens = append(tokens, DefaultAminoAcidTokenizer.EndToken)
+	tokens = append(tokens, tokenizer.EndToken)
 	return tokens, nil
 }
 
