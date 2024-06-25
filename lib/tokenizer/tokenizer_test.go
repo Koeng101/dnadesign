@@ -109,6 +109,9 @@ func TestWriteTokensToShards(t *testing.T) {
 		// fmt.Println(file) // uncomment this to read the two files generated
 	}
 	if count != 2 {
+		for _, file := range files {
+			fmt.Println(file)
+		}
 		t.Error("Expected 2 generated files. Got: ", count)
 	}
 	dir.Close()
