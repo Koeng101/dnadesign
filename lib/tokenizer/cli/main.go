@@ -14,7 +14,7 @@ import (
 
 func main() {
 	// Define flags
-	shardSize := flag.Int("shardSize", int(math.Pow(10, 7))*2, "Size of each shard")
+	shardSize := flag.Int("shardSize", int(math.Pow(10, 7)), "Size of each shard") // uniprot sprot splits into 40 files, so 2.5% is retained for validation
 	outputDir := flag.String("outputDir", "", "Output directory path")
 
 	// Parse the command line flags
