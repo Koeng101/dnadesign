@@ -4,7 +4,6 @@ import (
 	"compress/gzip"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -34,7 +33,7 @@ func TestTokenizeProtein(t *testing.T) {
 
 func TestWriteTokensToShards(t *testing.T) {
 	// temporary directory
-	tempDir, err := ioutil.TempDir("", "example")
+	tempDir, err := os.MkdirTemp("", "example")
 	if err != nil {
 		fmt.Println("Error creating a temporary directory:", err)
 		return
@@ -105,7 +104,7 @@ func TestWriteTokensToShards(t *testing.T) {
 
 	// Iterate over the files and print them
 	count := 0
-	for _, _ = range files {
+	for range files {
 		count++
 		// fmt.Println(file) // uncomment this to read the two files generated
 	}
