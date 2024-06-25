@@ -44,11 +44,10 @@ func TestWriteTokensToShards(t *testing.T) {
 	tokenizer := DefaultAminoAcidTokenizer()
 	inputChannel := make(chan []uint16)
 	shardSize := 2000
-	contextLength := 1024
 	ctx := context.Background()
 	errorGroup, ctx := errgroup.WithContext(ctx)
 	errorGroup.Go(func() error {
-		return tokenizer.WriteTokensToShards(ctx, inputChannel, shardSize, contextLength, tempDir)
+		return tokenizer.WriteTokensToShards(ctx, inputChannel, shardSize, tempDir)
 	})
 	uniprotFile, _ := os.Open("data/gfp_rfp_lacZ.xml.gz")
 	file, _ := gzip.NewReader(uniprotFile)

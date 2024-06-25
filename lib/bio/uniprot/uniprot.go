@@ -28,6 +28,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+
+	"golang.org/x/net/html/charset"
 )
 
 // Decoder decodes XML elements2
@@ -69,31 +71,34 @@ type Parser struct {
 // from which to parse fasta formatted sequences.
 func NewParser(r io.Reader) *Parser {
 	decoder := xml.NewDecoder(r)
+	decoder.CharsetReader = charset.NewReaderLabel
 	return &Parser{decoder: decoder}
 }
 
 func (p *Parser) Next() (Entry, error) {
-	decoderToken, err := p.decoder.Token()
+	for {
+		decoderToken, err := p.decoder.Token()
 
-	// Check decoding
-	if err != nil {
-		// If we are the end of the file, return io.EOF
-		if err.Error() == "EOF" {
-			return Entry{}, io.EOF
-		}
-	}
-
-	// Actual parsing
-	startElement, ok := decoderToken.(xml.StartElement)
-	if ok && startElement.Name.Local == "entry" {
-		var e Entry
-		err = p.decoder.DecodeElement(&e, &startElement)
+		// Check decoding
 		if err != nil {
+			// If we are the end of the file, return io.EOF
+			if err.Error() == "EOF" {
+				return Entry{}, io.EOF
+			}
 			return Entry{}, err
 		}
-		return e, nil
+
+		// Actual parsing
+		startElement, ok := decoderToken.(xml.StartElement)
+		if ok && startElement.Name.Local == "entry" {
+			var e Entry
+			err = p.decoder.DecodeElement(&e, &startElement)
+			if err != nil {
+				return Entry{}, err
+			}
+			return e, nil
+		}
 	}
-	return p.Next()
 }
 
 // BaseURL encodes the base URL for the Uniprot REST API.

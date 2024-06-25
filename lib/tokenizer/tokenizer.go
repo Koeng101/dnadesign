@@ -133,11 +133,11 @@ func (t *Tokenizer) TokenizeProtein(proteinSequence string) ([]uint16, error) {
 // ShardSize is the number of tokens per file. ContextLength is the context
 // length of the model. OutputDir is where the training / validation shards get
 // written to.
-func (t *Tokenizer) WriteTokensToShards(ctx context.Context, tokenChannel <-chan []uint16, shardSize int, contextLength int, outputDir string) error {
+func (t *Tokenizer) WriteTokensToShards(ctx context.Context, tokenChannel <-chan []uint16, shardSize int, outputDir string) error {
 	var err error
 	tokenCount := 0
 	shardCount := 0
-	currentShard := make([]uint16, 0, shardSize+contextLength+1) // shardSize + max protein length + end token
+	currentShard := make([]uint16, 0, shardSize*2) // shardSize*2 is preallocated
 	for {
 		select {
 		case <-ctx.Done():
