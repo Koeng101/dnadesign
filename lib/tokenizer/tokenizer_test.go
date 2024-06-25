@@ -4,7 +4,8 @@ import "testing"
 
 func TestTokenizeProtein(t *testing.T) {
 	proteinSequence := "ACDEFGHIKLMNPQRSTVWYUO*BXZ"
-	tokens, err := TokenizeProtein(proteinSequence)
+	tokenizer := DefaultAminoAcidTokenizer()
+	tokens, err := tokenizer.TokenizeProtein(proteinSequence)
 	if err != nil {
 		t.Errorf("Should have successfully tokenized. Got error: %s", err)
 	}
@@ -15,7 +16,7 @@ func TestTokenizeProtein(t *testing.T) {
 		}
 	}
 	badProtein := "J" // should fail
-	_, err = TokenizeProtein(badProtein)
+	_, err = tokenizer.TokenizeProtein(badProtein)
 	if err == nil {
 		t.Errorf("Should have failed on J")
 	}

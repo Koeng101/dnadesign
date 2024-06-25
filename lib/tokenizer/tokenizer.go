@@ -65,21 +65,19 @@ package tokenizer
 
 import (
 	"bufio"
-	"compress/gzip"
+	"context"
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
-
-	"github.com/koeng101/dnadesign/lib/bio"
+	"sync"
 )
 
 // Tokenizer is a struct defining a tokenizer. Start and End tokens are
 // specially encoded, while normal tokens reside in TokenMap.
 type Tokenizer struct {
-	TokenMap       map[string]uint16
+	TokenMap       sync.Map // concurrent safe
 	StartToken     uint16
 	StartTokenText string
 	EndToken       uint16
@@ -89,91 +87,84 @@ type Tokenizer struct {
 // DefaultAminoAcidTokenizer returns a default Tokenizer that can encode amino
 // acid data as tokens. It is a function rather than just directly encoded so
 // modifications can be made to it as an application runs.
-func DefaultAminoAcidTokenizer() Tokenizer {
+func DefaultAminoAcidTokenizer() *Tokenizer {
 	var tokenizer = Tokenizer{
-		TokenMap:     map[string]uint16{}, // initialized with init()
+		TokenMap:     *new(sync.Map),
 		EndToken:     0,
 		EndTokenText: "<|endoftext|>",
 	}
 	chars := "ACDEFGHIKLMNPQRSTVWYUO*BXZ"
 	tokenValue := uint16(1)
 	for _, char := range chars {
-		tokenizer.TokenMap[string(char)] = tokenValue
+		tokenizer.TokenMap.Store(string(char), tokenValue)
 		tokenValue++
 	}
-	return tokenizer
+	return &tokenizer
 }
 
 // TokenizeProteins converts a protein sequence into a list of tokens.
-func TokenizeProtein(proteinSequence string) ([]uint16, error) {
+func (t *Tokenizer) TokenizeProtein(proteinSequence string) ([]uint16, error) {
 	// We know how long the protein should be, so we can pre-allocate space
-	tokenizer := DefaultAminoAcidTokenizer()
-	tokens := make([]uint16, 0, 2+len(proteinSequence)) // add start+end to len
+	tokens := make([]uint16, 0, 1+len(proteinSequence)) // add end to len
 	for _, aminoAcid := range proteinSequence {
-		tokenInteger, ok := tokenizer.TokenMap[string(aminoAcid)]
+		tokenInteger, ok := t.TokenMap.Load(string(aminoAcid))
 		if !ok {
 			return tokens, errors.New("Only letters ACDEFGHIKLMNPQRSTVWYUO*BXZ are allowed for Proteins. Got letter: " + string(aminoAcid))
 		}
-		tokens = append(tokens, tokenInteger)
+		tokenIntegerTyped, ok := tokenInteger.(uint16)
+		if ok {
+			tokens = append(tokens, tokenIntegerTyped)
+		} else {
+			return tokens, errors.New("Failed to uint16 type. HINT: Are you adding custom tokens?")
+		}
 	}
-	tokens = append(tokens, tokenizer.EndToken)
+	tokens = append(tokens, t.EndToken)
 	return tokens, nil
 }
 
-// https://ftp.uniprot.org/pub/databases/uniprot/uniref/uniref90/uniref90.fasta.gz
-func TokenizeFastaFile(r io.Reader, shardSize int, contextLength int, outputDir string) error {
-	// Create a gzip reader
-	gzReader, err := gzip.NewReader(r)
-	if err != nil {
-		return err
-	}
-	defer gzReader.Close()
-
-	// Create a buffered reader
-	reader := bufio.NewReader(gzReader)
-
-	// Initialize shard variables
-	currentShard := make([]uint16, 0, shardSize+contextLength+1) // shardSize + max protein length + end token
+// WriteTokensToShards is a function that takes in a tokenChannel and writes to
+// shards. The idea is that, normally, you will be reading a very large
+// quantity of data, so you want to have a concurrent process writing those
+// shards to disk. Unlike many functions which use `io.Writer`, these shards
+// are intended to be larger than a single file can hold, and thus they are
+// written to a directory. The first shard is retained as a validation set,
+// and the remaining shards are written as training sets.
+//
+// ShardSize is the number of tokens per file. ContextLength is the context
+// length of the model. OutputDir is where the training / validation shards get
+// written to.
+func (t *Tokenizer) WriteTokensToShards(ctx context.Context, tokenChannel <-chan []uint16, shardSize int, contextLength int, outputDir string) error {
+	var err error
 	tokenCount := 0
 	shardCount := 0
-
-	// Parse the fasta file
-	parser := bio.NewFastaParser(reader)
+	currentShard := make([]uint16, 0, shardSize+contextLength+1) // shardSize + max protein length + end token
 	for {
-		record, err := parser.Next()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return err
-		}
-
-		tokens, err := TokenizeProtein(record.Sequence)
-		if err != nil {
-			return err
-		}
-		currentShard = append(currentShard, tokens...)
-		tokenCount += len(tokens)
-
-		// If the current shard is full, write it to a file
-		if tokenCount >= shardSize {
-			err = writeShardToFile(currentShard[:tokenCount], shardCount, outputDir)
-			if err != nil {
-				return err
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case tokens, ok := <-tokenChannel:
+			if !ok {
+				// Write any remaining tokens to a final shard
+				if len(currentShard) > 0 {
+					return writeShardToFile(currentShard, shardCount, outputDir)
+				}
 			}
-			currentShard = currentShard[:0] // slice is cleared, but the memory is still allocated.
-			tokenCount = 0
-			shardCount++
+			// Write data
+			currentShard = append(currentShard, tokens...)
+			tokenCount += len(tokens)
+
+			// If the current shard is full, write it to a file
+			if tokenCount >= shardSize {
+				err = writeShardToFile(currentShard[:tokenCount], shardCount, outputDir)
+				if err != nil {
+					return err
+				}
+				currentShard = currentShard[:0] // slice is cleared, but the memory is still allocated.
+				tokenCount = 0
+				shardCount++
+			}
 		}
 	}
-	// Write any remaining tokens to a final shard
-	if len(currentShard) > 0 {
-		err = writeShardToFile(currentShard, shardCount, outputDir)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 // writeShardToFile is a helper function that wries a shard to a file.
