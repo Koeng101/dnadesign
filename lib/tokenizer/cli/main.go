@@ -6,6 +6,7 @@ import (
 	"crypto/md5"
 	"flag"
 	"fmt"
+	"io"
 	"math"
 	"os"
 	"strings"
@@ -21,6 +22,8 @@ func main() {
 	outputDir := flag.String("outputDir", "", "Output directory path")
 	tremblInput := flag.String("tremblInput", "", "Trembl input directory")
 	unirefInput := flag.String("unirefInput", "", "Uniref input directory")
+	refFileFlag := flag.Bool("refFile", true, "use uniref file")
+	refFile := *refFileFlag
 
 	// Parse the command line flags
 	flag.Parse()
@@ -44,22 +47,24 @@ func main() {
 		fmt.Println("Error creating gzip reader:", err)
 		return
 	}
-	defer trembl.Close()
 
-	// Open and decompress uniref file
-	unirefFile, err := os.Open(*unirefInput)
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer unirefFile.Close()
+	var uniref io.Reader
+	if refFile {
+		// Open and decompress uniref file
+		unirefFile, err := os.Open(*unirefInput)
+		if err != nil {
+			fmt.Println("Error opening file:", err)
+			return
+		}
+		defer unirefFile.Close()
 
-	uniref, err := gzip.NewReader(unirefFile)
-	if err != nil {
-		fmt.Println("Error creating gzip reader:", err)
-		return
+		uniref, err := gzip.NewReader(unirefFile)
+		if err != nil {
+			fmt.Println("Error creating gzip reader:", err)
+			return
+		}
+		defer uniref.Close()
 	}
-	defer uniref.Close()
 
 	// Get a default tokenizer
 	tokenizer := tokenizer.DefaultAminoAcidTokenizer()
@@ -109,6 +114,8 @@ func main() {
 		}
 		count++
 	}
+	trembl.Close()
+
 	// Write pfams to tokenizer
 	var pfamCount uint16
 	tokenizer.TokenMap.Range(func(_, _ interface{}) bool {
@@ -126,39 +133,88 @@ func main() {
 		fmt.Println("Err: ", err)
 	}
 	fmt.Println(tokenizerJSON)
-	refParser := bio.NewFastaParser(uniref)
-	count = 0
-	for {
-		if (count % 10000) == 0 {
-			fmt.Printf("Processed sequence: %d\n", count)
-		}
-		protein, err := refParser.Next()
-		if err != nil {
-			break
-		}
-		sequence := strings.ToUpper(protein.Sequence)
-		if sequence[len(sequence)-1] == '*' {
-			sequence = sequence[:len(sequence)-1]
-		}
-		checkSum := fmt.Sprintf("%x", md5.Sum([]byte(sequence)))
-		// Now that the pfam is in the token map, get it.
-		pfams, ok := pfamMap[checkSum]
-		if !ok {
-			fmt.Println("Skipping: ", protein)
-			continue
-		}
-		for _, pfam := range pfams {
-			pfamTokenUntyped, _ := tokenizer.TokenMap.Load(pfam)
-			pfamToken, _ := pfamTokenUntyped.(uint16)
-			tokens, _ := tokenizer.TokenizeProtein(sequence)
 
-			// Append tokens together
-			allTokens := make([]uint16, 0, 1+len(tokens))
-			allTokens = append(allTokens, pfamToken)
-			allTokens = append(allTokens, tokens...)
-			inputChannel <- allTokens
+	if refFile {
+		refParser := bio.NewFastaParser(uniref)
+		count = 0
+		for {
+			if (count % 10000) == 0 {
+				fmt.Printf("Processed sequence: %d\n", count)
+			}
+			protein, err := refParser.Next()
+			if err != nil {
+				break
+			}
+			sequence := strings.ToUpper(protein.Sequence)
+			if sequence[len(sequence)-1] == '*' {
+				sequence = sequence[:len(sequence)-1]
+			}
+			checkSum := fmt.Sprintf("%x", md5.Sum([]byte(sequence)))
+			// Now that the pfam is in the token map, get it.
+			pfams, ok := pfamMap[checkSum]
+			if !ok {
+				fmt.Println("Skipping: ", protein)
+				continue
+			}
+			for _, pfam := range pfams {
+				pfamTokenUntyped, _ := tokenizer.TokenMap.Load(pfam)
+				pfamToken, _ := pfamTokenUntyped.(uint16)
+				tokens, _ := tokenizer.TokenizeProtein(sequence)
+
+				// Append tokens together
+				allTokens := make([]uint16, 0, 1+len(tokens))
+				allTokens = append(allTokens, pfamToken)
+				allTokens = append(allTokens, tokens...)
+				inputChannel <- allTokens
+			}
+			count++
 		}
-		count++
+	} else {
+		// Open and decompress trembl file
+		tremblFile, err := os.Open(*tremblInput)
+		if err != nil {
+			fmt.Println("Error opening file:", err)
+			return
+		}
+		defer tremblFile.Close()
+
+		trembl, err := gzip.NewReader(tremblFile)
+		if err != nil {
+			fmt.Println("Error creating gzip reader:", err)
+			return
+		}
+		count = 0
+		parser := bio.NewUniprotParser(trembl)
+		for {
+			if (count % 100000) == 0 {
+				fmt.Printf("Processed pfam: %d\n", count)
+			}
+			entry, err := parser.Next()
+			if err != nil {
+				break
+			}
+			// Read uniprot trembl.
+			var pfam string
+			for _, reference := range entry.DbReference {
+				if reference.Type == "Pfam" {
+					pfam = reference.Id
+					sequence := strings.ToUpper(entry.Sequence.Value)
+					if sequence[len(sequence)-1] == '*' {
+						sequence = sequence[:len(sequence)-1]
+					}
+					pfamTokenUntyped, _ := tokenizer.TokenMap.Load(pfam)
+					pfamToken, _ := pfamTokenUntyped.(uint16)
+					tokens, _ := tokenizer.TokenizeProtein(sequence)
+
+					// Append tokens together
+					allTokens := make([]uint16, 0, 1+len(tokens))
+					allTokens = append(allTokens, pfamToken)
+					allTokens = append(allTokens, tokens...)
+					inputChannel <- allTokens
+				}
+			}
+			count++
+		}
 	}
 	close(inputChannel)
 }
