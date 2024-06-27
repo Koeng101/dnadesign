@@ -1,6 +1,7 @@
 package main
 
 import (
+	"compress/gzip"
 	"context"
 	"crypto/md5"
 	"flag"
@@ -30,16 +31,32 @@ func main() {
 		os.Exit(1)
 	}
 
-	trembl, err := os.Open(*tremblInput)
+	// Open and decompress trembl file
+	tremblFile, err := os.Open(*tremblInput)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return
 	}
+	defer tremblFile.Close()
+
+	trembl, err := gzip.NewReader(tremblFile)
+	if err != nil {
+		fmt.Println("Error creating gzip reader:", err)
+		return
+	}
 	defer trembl.Close()
 
-	uniref, err := os.Open(*unirefInput)
+	// Open and decompress uniref file
+	unirefFile, err := os.Open(*unirefInput)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer unirefFile.Close()
+
+	uniref, err := gzip.NewReader(unirefFile)
+	if err != nil {
+		fmt.Println("Error creating gzip reader:", err)
 		return
 	}
 	defer uniref.Close()
