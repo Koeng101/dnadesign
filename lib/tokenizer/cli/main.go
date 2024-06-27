@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"crypto/md5"
 	"flag"
 	"fmt"
 	"math"
 	"os"
+	"strings"
 
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/tokenizer"
@@ -16,6 +18,8 @@ func main() {
 	// Define flags
 	shardSize := flag.Int("shardSize", int(math.Pow(10, 7)), "Size of each shard") // uniprot sprot splits into 40 files, so 2.5% is retained for validation
 	outputDir := flag.String("outputDir", "", "Output directory path")
+	tremblInput := flag.String("tremblInput", "", "Trembl input directory")
+	unirefInput := flag.String("uniprefInput", "", "Uniref input directory")
 
 	// Parse the command line flags
 	flag.Parse()
@@ -26,6 +30,20 @@ func main() {
 		os.Exit(1)
 	}
 
+	trembl, err := os.Open(*tremblInput)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer trembl.Close()
+
+	uniref, err := os.Open(*unirefInput)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer uniref.Close()
+
 	// Get a default tokenizer
 	tokenizer := tokenizer.DefaultAminoAcidTokenizer()
 	inputChannel := make(chan []uint16)
@@ -35,50 +53,94 @@ func main() {
 		return tokenizer.WriteTokensToShards(ctx, inputChannel, *shardSize, *outputDir)
 	})
 	fmt.Println("initializing parser")
-	parser := bio.NewUniprotParser(os.Stdin)
+	parser := bio.NewUniprotParser(trembl)
 	count := 0
+	pfamMap := make(map[string][]string) // hash -> pfam
 	for {
 		if (count % 10000) == 0 {
-			fmt.Println("Processed: ", count)
+			fmt.Printf("Processed pfam: %d\n", count)
 		}
 		entry, err := parser.Next()
 		if err != nil {
 			break
 		}
-		// If the pfam is not in the tokenizer, add it
+		// Read uniprot trembl.
 		var id string
 		for _, reference := range entry.DbReference {
 			if reference.Type == "Pfam" {
 				id = reference.Id
-				// First, check if the key already exists
-				if _, ok := tokenizer.TokenMap.Load(id); !ok {
-					// Key doesn't exist, count the entries.
-					var count uint16
-					tokenizer.TokenMap.Range(func(_, _ interface{}) bool {
-						count++
-						return true
-					})
-					// Add the new key with its value as the current count.
-					tokenizer.TokenMap.Store(id, count)
+				sequence := strings.ToUpper(entry.Sequence.Value)
+				if sequence[len(sequence)-1] == '*' {
+					sequence = sequence[:len(sequence)-1]
 				}
-				// Now that the pfam is in the token map, get it.
-				pfamTokenUntyped, _ := tokenizer.TokenMap.Load(id)
-				pfamToken, _ := pfamTokenUntyped.(uint16)
-				tokens, _ := tokenizer.TokenizeProtein(entry.Sequence.Value)
-
-				// Append tokens together
-				allTokens := make([]uint16, 0, 1+len(tokens))
-				allTokens = append(allTokens, pfamToken)
-				allTokens = append(allTokens, tokens...)
-				inputChannel <- allTokens
+				checkSum := fmt.Sprintf("%x", md5.Sum([]byte(sequence)))
+				_, ok := pfamMap[checkSum]
+				if !ok {
+					pfamMap[checkSum] = []string{id}
+				} else {
+					found := false
+					for _, pfam := range pfamMap[checkSum] {
+						if pfam == id {
+							found = true
+						}
+					}
+					if !found {
+						pfamMap[checkSum] = append(pfamMap[checkSum], id)
+					}
+				}
 			}
 		}
-		count++
+	}
+	// Write pfams to tokenizer
+	var pfamCount uint16
+	tokenizer.TokenMap.Range(func(_, _ interface{}) bool {
+		pfamCount++
+		return true
+	})
+	for _, values := range pfamMap {
+		for _, pfam := range values {
+			pfamCount++
+			tokenizer.TokenMap.Store(pfam, pfamCount)
+		}
 	}
 	tokenizerJSON, err := tokenizer.ToJSON()
 	if err != nil {
 		fmt.Println("Err: ", err)
 	}
 	fmt.Println(tokenizerJSON)
+	refParser := bio.NewFastaParser(uniref)
+	count = 0
+	for {
+		if (count % 10000) == 0 {
+			fmt.Printf("Processed sequence: %d\n", count)
+		}
+		protein, err := refParser.Next()
+		if err != nil {
+			break
+		}
+		sequence := strings.ToUpper(protein.Sequence)
+		if sequence[len(sequence)-1] == '*' {
+			sequence = sequence[:len(sequence)-1]
+		}
+		checkSum := fmt.Sprintf("%x", md5.Sum([]byte(sequence)))
+		// Now that the pfam is in the token map, get it.
+		pfams, ok := pfamMap[checkSum]
+		if !ok {
+			fmt.Println("Skipping: ", protein)
+			continue
+		}
+		for _, pfam := range pfams {
+			pfamTokenUntyped, _ := tokenizer.TokenMap.Load(pfam)
+			pfamToken, _ := pfamTokenUntyped.(uint16)
+			tokens, _ := tokenizer.TokenizeProtein(sequence)
+
+			// Append tokens together
+			allTokens := make([]uint16, 0, 1+len(tokens))
+			allTokens = append(allTokens, pfamToken)
+			allTokens = append(allTokens, tokens...)
+			inputChannel <- allTokens
+		}
+		count++
+	}
 	close(inputChannel)
 }
