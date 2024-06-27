@@ -20,7 +20,7 @@ func main() {
 	shardSize := flag.Int("shardSize", int(math.Pow(10, 8)), "Size of each shard") // uniprot sprot splits into 40 files, so 2.5% is retained for validation
 	outputDir := flag.String("outputDir", "", "Output directory path")
 	tremblInput := flag.String("tremblInput", "", "Trembl input directory")
-	unirefInput := flag.String("uniprefInput", "", "Uniref input directory")
+	unirefInput := flag.String("unirefInput", "", "Uniref input directory")
 
 	// Parse the command line flags
 	flag.Parse()
@@ -74,7 +74,7 @@ func main() {
 	count := 0
 	pfamMap := make(map[string][]string) // hash -> pfam
 	for {
-		if (count % 10000) == 0 {
+		if (count % 100000) == 0 {
 			fmt.Printf("Processed pfam: %d\n", count)
 		}
 		entry, err := parser.Next()
@@ -107,6 +107,7 @@ func main() {
 				}
 			}
 		}
+		count++
 	}
 	// Write pfams to tokenizer
 	var pfamCount uint16
