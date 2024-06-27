@@ -22,7 +22,7 @@ func main() {
 	outputDir := flag.String("outputDir", "", "Output directory path")
 	tremblInput := flag.String("tremblInput", "", "Trembl input directory")
 	unirefInput := flag.String("unirefInput", "", "Uniref input directory")
-	refFileFlag := flag.Bool("refFile", true, "use uniref file")
+	refFileFlag := flag.Bool("refFile", false, "use uniref file")
 	refFile := *refFileFlag
 
 	// Parse the command line flags
