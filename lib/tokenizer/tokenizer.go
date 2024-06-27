@@ -67,6 +67,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -77,11 +78,37 @@ import (
 // Tokenizer is a struct defining a tokenizer. Start and End tokens are
 // specially encoded, while normal tokens reside in TokenMap.
 type Tokenizer struct {
-	TokenMap       sync.Map // concurrent safe
-	StartToken     uint16
-	StartTokenText string
-	EndToken       uint16
-	EndTokenText   string
+	TokenMap     sync.Map // concurrent safe
+	EndToken     uint16
+	EndTokenText string
+}
+
+// ToJSON converts the Tokenizer struct to JSON.
+func (t *Tokenizer) ToJSON() (string, error) {
+	// Convert sync.Map to a regular map
+	tokenMap := make(map[string]uint16)
+	t.TokenMap.Range(func(key, value interface{}) bool {
+		tokenMap[key.(string)] = value.(uint16)
+		return true
+	})
+
+	// Create a temporary struct for JSON marshalling
+	temp := struct {
+		TokenMap     map[string]uint16 `json:"token_map"`
+		EndToken     uint16            `json:"end_token"`
+		EndTokenText string            `json:"end_token_text"`
+	}{
+		TokenMap:     tokenMap,
+		EndToken:     t.EndToken,
+		EndTokenText: t.EndTokenText,
+	}
+
+	// Marshal to JSON
+	jsonData, err := json.Marshal(temp)
+	if err != nil {
+		return "", err
+	}
+	return string(jsonData), nil
 }
 
 // DefaultAminoAcidTokenizer returns a default Tokenizer that can encode amino

@@ -75,5 +75,10 @@ func main() {
 		}
 		count++
 	}
+	tokenizerJSON, err := tokenizer.ToJSON()
+	if err != nil {
+		fmt.Println("Err: ", err)
+	}
+	fmt.Println(tokenizerJSON)
 	close(inputChannel)
 }
