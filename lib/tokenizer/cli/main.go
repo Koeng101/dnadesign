@@ -130,9 +130,9 @@ func main() {
 			if !ok {
 				pfamCount++
 				tokenizer.TokenMap.Store(pfam, pfamCount)
-			}
-			if pfamCount%10 == 0 {
-				fmt.Println(pfamCount)
+				if pfamCount%10 == 0 {
+					fmt.Println(pfamCount)
+				}
 			}
 		}
 	}
