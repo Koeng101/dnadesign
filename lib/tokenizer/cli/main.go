@@ -122,6 +122,7 @@ func main() {
 		pfamCount++
 		return true
 	})
+	fmt.Println(pfamCount)
 	pfamCountMap := make(map[string]bool)
 	for _, values := range pfamMap {
 		for _, pfam := range values {
@@ -129,6 +130,9 @@ func main() {
 			if !ok {
 				pfamCount++
 				tokenizer.TokenMap.Store(pfam, pfamCount)
+			}
+			if pfamCount%10 == 0 {
+				fmt.Println(pfamCount)
 			}
 		}
 	}
