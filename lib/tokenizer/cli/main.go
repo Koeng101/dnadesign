@@ -133,7 +133,7 @@ func main() {
 				if pfamCount%10 == 0 {
 					fmt.Println(pfamCount)
 				}
-				pfamMap[pfam] = true
+				pfamCountMap[pfam] = true
 			}
 		}
 	}
