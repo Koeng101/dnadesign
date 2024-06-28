@@ -75,4 +75,12 @@ func main() {
 		count++
 	}
 	close(inputChannel)
+	// Wait for all goroutines to complete
+	if err := errorGroup.Wait(); err != nil {
+		// Handle error
+		fmt.Println("Error:", err)
+	} else {
+		// All goroutines completed successfully
+		fmt.Println("All tasks completed successfully")
+	}
 }
