@@ -18,7 +18,7 @@ import (
 
 func main() {
 	// Define flags
-	shardSize := flag.Int("shardSize", int(math.Pow(10, 8)), "Size of each shard") // uniprot sprot splits into 40 files, so 2.5% is retained for validation
+	shardSize := flag.Int("shardSize", int(math.Pow(10, 7)), "Size of each shard") // uniprot sprot splits into 40 files, so 2.5% is retained for validation
 	outputDir := flag.String("outputDir", "", "Output directory path")
 	tremblInput := flag.String("tremblInput", "", "Trembl input directory")
 	unirefInput := flag.String("unirefInput", "", "Uniref input directory")
@@ -122,10 +122,14 @@ func main() {
 		pfamCount++
 		return true
 	})
+	pfamCount := make(map[string]bool)
 	for _, values := range pfamMap {
 		for _, pfam := range values {
-			pfamCount++
-			tokenizer.TokenMap.Store(pfam, pfamCount)
+			_, ok := pfamCount[pfam]
+			if !ok {
+				pfamCount++
+				tokenizer.TokenMap.Store(pfam, pfamCount)
+			}
 		}
 	}
 	tokenizerJSON, err := tokenizer.ToJSON()
