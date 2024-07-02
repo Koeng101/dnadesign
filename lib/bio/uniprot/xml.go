@@ -129,6 +129,7 @@ type DbReferenceType struct {
 	Molecule string         `xml:"http://uniprot.org/uniprot molecule,omitempty"`
 	Property []PropertyType `xml:"http://uniprot.org/uniprot property,omitempty"`
 	Type     string         `xml:"type,attr"`
+	Id       string         `xml:"id,attr"`
 	Evidence IntListType    `xml:"evidence,attr,omitempty"`
 }
 

@@ -110,4 +110,11 @@ func TestGet(t *testing.T) {
 	if err == nil {
 		t.Errorf("Expected an error for invalid URL, but got none")
 	}
+	for _, reference := range entry.DbReference {
+		if reference.Type == "Pfam" {
+			if reference.Id != "PF01353" {
+				t.Errorf("Expected Pfam ID PF01353")
+			}
+		}
+	}
 }
