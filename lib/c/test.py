@@ -14,6 +14,11 @@ else:
 
 # Define the FastqRead struct and the function signature for ParseFastqFromCFile
 ffi.cdef("""
+typedef struct FILE FILE;
+FILE *fopen(const char *path, const char *mode);
+int fclose(FILE *fp);
+
+
 typedef struct {
     char* identifier;
     char* sequence;
@@ -34,8 +39,9 @@ FastqResult ParseFastqFromCFile(void* cfile);
 # Load the shared library compiled from Go
 lib = ffi.dlopen("./libawesome.so")
 
-# Use ffi to open a file that can be passed to the Go function
-cfile = ffi.cast("void*", ffi.dlopen("./example.fastq", ffi.RTLD_LAZY))
+file_path = "example.fastq".encode('utf-8')  # Convert the string to bytes
+mode = "r".encode('utf-8')  # Convert the mode to bytes as well
+cfile = lib.fopen(file_path, mode)
 
 # Call the function from the shared library
 result = lib.ParseFastqFromCFile(cfile)
