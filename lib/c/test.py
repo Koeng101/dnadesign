@@ -12,29 +12,9 @@ if is_64b:
 else:
     ffi.cdef("typedef int GoInt;\n")
 
-# Define the FastqRead struct and the function signature for ParseFastqFromCFile
-ffi.cdef("""
-typedef struct FILE FILE;
-FILE *fopen(const char *path, const char *mode);
-int fclose(FILE *fp);
-
-
-typedef struct {
-    char* identifier;
-    char* sequence;
-    char* quality;
-    char* optionals;  // Serialized JSON string of the map.
-} FastqRead;
-
-typedef struct {
-    FastqRead* reads;
-    GoInt numReads;
-    char* error;
-} FastqResult;
-
-FastqResult ParseFastqFromCFile(void* cfile);
-""")
-
+# Read the C declarations from the external file
+with open('definitions.h', 'r') as f:
+    ffi.cdef(f.read())
 
 # Load the shared library compiled from Go
 lib = ffi.dlopen("./libawesome.so")
