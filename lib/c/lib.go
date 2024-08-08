@@ -62,7 +62,7 @@ func ParseFastqFromCFile(cfile *C.FILE) (*C.FastqRead, int, *C.char) {
 		slice[i].optionals = C.CString(string(optionalsJSON))
 	}
 
-	return cReads, int(len(reads)), nil
+	return cReads, len(reads), nil
 }
 
 func main() {
