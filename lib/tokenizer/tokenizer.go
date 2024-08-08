@@ -75,6 +75,77 @@ import (
 	"sync"
 )
 
+func TokenizeProtein(sequence string) ([]uint8, error) {
+	// Switch statements are faster than maps
+	// https://adayinthelifeof.nl/2021/03/04/go-map-vs-switch.html
+	// https://www.reddit.com/r/golang/comments/lxju7f/benchmarking_maps_vs_switches/
+	tokens := make([]uint8, len(sequence)+1) // +1 for end token, which is the default 0
+	var token uint8
+
+	// Tokens: end_token, "ACDEFGHIKLMNPQRSTVWYUO*BXZ"
+	// {"A":1,"C":2,"D":3,"E":4,"F":5,"G":6,"H":7,"I":8,"K":9,"L":10,"M":11,"N":12,"P":13,"Q":14,"R":15,"S":16,"T":17,"V":18,"W":19,"Y":20,"U":21,"O":22,"*":23,"B":24,"X":25,"Z":26}
+	for i, aminoAcid := range sequence {
+		switch aminoAcid {
+		case 'A':
+			token = 1
+		case 'C':
+			token = 2
+		case 'D':
+			token = 3
+		case 'E':
+			token = 4
+		case 'F':
+			token = 5
+		case 'G':
+			token = 6
+		case 'H':
+			token = 7
+		case 'I':
+			token = 8
+		case 'K':
+			token = 9
+		case 'L':
+			token = 10
+		case 'M':
+			token = 11
+		case 'N':
+			token = 12
+		case 'P':
+			token = 13
+		case 'Q':
+			token = 14
+		case 'R':
+			token = 15
+		case 'S':
+			token = 16
+		case 'T':
+			token = 17
+		case 'V':
+			token = 18
+		case 'W':
+			token = 19
+		case 'Y':
+			token = 20
+		case 'U': // Selenocysteine
+			token = 21
+		case 'O': // Pyrrolysine
+			token = 22
+		case '*': // Stop codon
+			token = 23
+		case 'B': // Aspartic acid or Asparagine
+			token = 24
+		case 'X': // Any amino acid
+			token = 25
+		case 'Z': // Glutamic acid or Glutamine
+			token = 26
+		default:
+			return tokens, fmt.Errorf("Got unknown amino acid. Must be in list of ACDEFGHIKLMNPQRSTVWYUO*BXZ. Got: %c", aminoAcid)
+		}
+		tokens[i] = token
+	}
+	return tokens, nil
+}
+
 // Tokenizer is a struct defining a tokenizer. Start and End tokens are
 // specially encoded, while normal tokens reside in TokenMap.
 type Tokenizer struct {

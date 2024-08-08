@@ -4,7 +4,7 @@ import numpy as np
 from tqdm import tqdm
 
 # Connection to your database
-db_path = "path/to/your/sequence.db"
+db_path = "./sequences.db"
 conn = sqlite3.connect(db_path)
 
 # Calculate split index for training and validation
@@ -32,7 +32,8 @@ def fetch_data(val_percentage=0.01):
 
 # Function to convert blob bytes to uint16 array
 def bytes_to_uint16(buf):
-    return np.frombuffer(buf, dtype=np.uint16)
+    arr = np.frombuffer(buf, dtype=np.uint16)
+    return np.append(arr, 0)  # Append 0 as the EOT token
 
 if __name__ == '__main__':
     train_filename = os.path.join(os.path.dirname(__file__), 'train.bin')

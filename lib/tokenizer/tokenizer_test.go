@@ -11,21 +11,20 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func TestTokenizeProtein(t *testing.T) {
+func TestTokenizeProtein2(t *testing.T) {
 	proteinSequence := "ACDEFGHIKLMNPQRSTVWYUO*BXZ"
-	tokenizer := DefaultAminoAcidTokenizer()
-	tokens, err := tokenizer.TokenizeProtein(proteinSequence)
+	tokens, err := TokenizeProtein(proteinSequence)
 	if err != nil {
 		t.Errorf("Should have successfully tokenized. Got error: %s", err)
 	}
-	for i, token := range tokens[1 : len(tokens)-1] {
+	for i, token := range tokens[:len(tokens)-1] {
 		// The first amino acid token is 3
-		if token != uint16(i+2) {
-			t.Errorf("Expected %d, got: %d", i+2, token)
+		if token != uint8(i+1) {
+			t.Errorf("Expected %d, got: %d", i+1, token)
 		}
 	}
 	badProtein := "J" // should fail
-	_, err = tokenizer.TokenizeProtein(badProtein)
+	_, err = TokenizeProtein(badProtein)
 	if err == nil {
 		t.Errorf("Should have failed on J")
 	}
