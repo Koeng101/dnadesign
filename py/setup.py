@@ -25,9 +25,11 @@ def get_platform_tag():
     else:
         return 'any'
 
+platform_tag = list(tags.sys_tags())[0]
+
 setup(
     name='dnadesign',
-    version='0.1.1',
+    version='0.1.2',
     packages=find_packages(),
     package_data={'dnadesign': ['definitions.h', 'libdnadesign.h', "libdnadesign" + get_shared_lib_ext()]},
     install_requires=[
