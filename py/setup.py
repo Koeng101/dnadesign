@@ -17,14 +17,14 @@ def get_platform_tag():
     tag = next(tags.sys_tags())
     
     if sys.platform.startswith('linux'):
-        return f'manylinux_2_17_{tag.arch}'
+        return f'manylinux_2_17_{platform.machine()}'
     elif sys.platform.startswith('darwin'):
         if platform.machine() == 'arm64':
-            return f'macosx_11_0_{tag.arch}'
+            return f'macosx_11_0_arm64'
         else:
-            return f'macosx_10_9_{tag.arch}'
+            return f'macosx_10_9_x86_64'
     elif sys.platform.startswith('win'):
-        return f'win_{tag.arch}'
+        return f'win_amd64'
     else:
         return 'any'
 
