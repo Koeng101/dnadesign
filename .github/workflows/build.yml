@@ -79,9 +79,10 @@ jobs:
         python -m venv test_env
         source test_env/bin/activate
         pip install ./py/dist/*.whl
-        #python -c "from dnadesign import fasta_parser; print('Library loaded successfully')"
+        python -c "from dnadesign import fasta_parser; print('Library loaded successfully')"
         pip install pytest
-        pytest ./py/tests -v
+        #pytest ./py/tests -v
+        gdb -ex "run" -ex "bt full" -ex "quit" --args python -m pytest ./py/tests -
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
