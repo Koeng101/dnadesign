@@ -9,9 +9,15 @@ on:
 jobs:
   build:
     strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        arch: [amd64, arm64]
+      include:
+          - os: ubuntu-latest
+            arch: amd64
+          - os: ubuntu-latest
+            arch: arm64
+          - os: macos-latest  # This will be ARM64
+            arch: arm64
+          - os: macos-13  # This will be AMD64
+            arch: amd64
 
     runs-on: ${{ matrix.os }}
 
