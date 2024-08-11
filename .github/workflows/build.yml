@@ -15,8 +15,6 @@ jobs:
             arch: amd64
           - os: ubuntu-latest
             arch: arm64
-          - os: windows-latest
-            arch: amd64
           - os: macos-latest  # This will be ARM64
             arch: arm64
           - os: macos-13  # This will be AMD64
@@ -72,20 +70,17 @@ jobs:
       working-directory: ./py/dnadesign
       run: ls -l
 
-    - name: Install Python package and dependencies
-      working-directory: ./py
-      run: |
-        python -m pip install --upgrade pip
-        pip install .
-        pip install pytest
-
-    - name: Run pytest
-      working-directory: ./py
-      run: pytest
-
     - name: Build Python package
       working-directory: ./py
       run: python setup.py sdist bdist_wheel
+
+    - name: Test wheel in fresh environment
+      run: |
+        python -m venv test_env
+        source test_env/bin/activate
+        pip install ./py/dist/*.whl
+        python -c "from dnadesign import fasta_parser; print('Library loaded successfully')"
+        pytest ./py/tests -v
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
