@@ -1,7 +1,7 @@
-To deploy your package:
-1. Run `make` to build the shared libraries for all supported platforms.
-2. Run `python3 setup.py sdist bdist_wheel` to create the distribution files.
-3. Use `twine` to upload the distribution files to PyPI.
+# DnaDesign (Python)
+This directory contains code for allowing python users to use dnadesign through a shared C library.
 
-Simple compilation: `go build -o dnadesign/libdnadesign.so -buildmode=c-shared lib.go`
-`python3 setup.py bdist_wheel --plat-name manylinux1_x86_64`
+This is a work-in-progress. Right now, we have only ported the fasta parser. 
+
+### Other platforms
+If you have interest in other platforms, like openbsd or freebsd, please add an issue! I'd be happy to add automatic packaging for these alternative platforms if I know someone will use them.
