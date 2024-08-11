@@ -1,4 +1,5 @@
 from cffi import FFI
+import platform
 import os
 import sys
 
