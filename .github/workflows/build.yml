@@ -80,6 +80,7 @@ jobs:
         source test_env/bin/activate
         pip install ./py/dist/*.whl
         python -c "from dnadesign import fasta_parser; print('Library loaded successfully')"
+        pip install pytest
         pytest ./py/tests -v
 
     - name: Upload artifacts
