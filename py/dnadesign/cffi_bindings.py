@@ -16,11 +16,14 @@ current_dir = os.path.dirname(__file__)
 # Build the path to definitions.h and libdnadesign relative to the current script
 definitions_path = os.path.join(current_dir, 'definitions.h')
 
-# Determine the correct library name based on the operating system
+# Determine the correct library name based on the operating system and architecture
 if sys.platform.startswith('win'):
     lib_name = 'libdnadesign.dll'
 elif sys.platform.startswith('darwin'):
-    lib_name = 'libdnadesign.dylib'
+    if platform.machine() == 'arm64':
+        lib_name = 'libdnadesign_arm64.dylib'
+    else:
+        lib_name = 'libdnadesign_amd64.dylib'
 else:
     lib_name = 'libdnadesign.so'
 

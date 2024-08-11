@@ -51,13 +51,10 @@ jobs:
           CC="zig cc -target aarch64-linux-gnu" CGO_ENABLED=1 GOOS=linux GOARCH=arm64 go build -o dnadesign/libdnadesign.so -buildmode=c-shared lib.go
         elif [ "${{ runner.os }}" = "Linux" ] && [ "${{ matrix.arch }}" = "amd64" ]; then
           CC="zig cc -target x86_64-linux-gnu" GOOS=linux GOARCH=amd64 go build -o dnadesign/libdnadesign.so -buildmode=c-shared lib.go
-        elif [ "${{ runner.os }}" = "macOS" ]; then
-          SDK_PATH=$(xcrun --show-sdk-path)
-          if [ "${{ matrix.arch }}" = "arm64" ]; then
-            CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 go build -o dnadesign/libdnadesign.dylib -buildmode=c-shared lib.go
-          else
-            CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -o dnadesign/libdnadesign.dylib -buildmode=c-shared lib.go
-          fi
+        elif [ "${{ runner.os }}" = "macOS" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
+          CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 go build -o dnadesign/libdnadesign_arm64.dylib -buildmode=c-shared lib.go
+        elif [ "${{ runner.os }}" = "macOS" ] && [ "${{ matrix.arch }}" = "amd64" ]; then
+          CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -o dnadesign/libdnadesign_amd64.dylib -buildmode=c-shared lib.go
         fi
       env:
         CGO_ENABLED: 1
