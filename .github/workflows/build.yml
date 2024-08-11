@@ -70,9 +70,24 @@ jobs:
       working-directory: ./py/dnadesign
       run: ls -l
 
-    - name: Build Python package
+    - name: Build wheel
       working-directory: ./py
-      run: python setup.py sdist bdist_wheel
+      run: |
+        pip install wheel packaging
+        python setup.py sdist
+        if [ "${{ runner.os }}" = "Linux" ] && [ "${{ matrix.arch }}" = "amd64" ]; then
+          python setup.py bdist_wheel --plat-name manylinux2014_x86_64
+        elif [ "${{ runner.os }}" = "Linux" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
+          python setup.py bdist_wheel --plat-name manylinux2014_aarch64
+        elif [ "${{ runner.os }}" = "macOS" ] && [ "${{ matrix.arch }}" = "amd64" ]; then
+          python setup.py bdist_wheel --plat-name macosx_10_9_x86_64
+        elif [ "${{ runner.os }}" = "macOS" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
+          python setup.py bdist_wheel --plat-name macosx_11_0_arm64
+        elif [ "${{ runner.os }}" = "Windows" ]; then
+          python setup.py bdist_wheel --plat-name win_amd64
+        else
+          python setup.py bdist_wheel
+        fi
 
     - name: Test wheel in fresh environment
       run: |
