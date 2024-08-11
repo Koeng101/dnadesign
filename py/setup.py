@@ -1,4 +1,5 @@
 import os
+import sys
 import platform
 from packaging import tags
 from setuptools import setup, find_packages
