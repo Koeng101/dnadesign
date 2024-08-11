@@ -21,10 +21,7 @@ definitions_path = os.path.join(current_dir, 'definitions.h')
 if sys.platform.startswith('win'):
     lib_name = 'libdnadesign.dll'
 elif sys.platform.startswith('darwin'):
-    if platform.machine() == 'arm64':
-        lib_name = 'libdnadesign_arm64.dylib'
-    else:
-        lib_name = 'libdnadesign_amd64.dylib'
+    lib_name = 'libdnadesign.dylib'
 else:
     lib_name = 'libdnadesign.so'
 
