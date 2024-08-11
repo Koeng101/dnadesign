@@ -73,6 +73,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Added minimal python packaging [#81](https://github.com/Koeng101/dnadesign/pull/81)
 - Greatly simplified the Ligate function [#77](https://github.com/Koeng101/dnadesign/pull/77)
 - Updated barcoding functions to handle edge case of hanging-edge barcodes [#74](https://github.com/Koeng101/dnadesign/pull/74)
 - Updated megamash to use int instead of uint for minimal Kmer counts (so you can use -1) [#73](https://github.com/Koeng101/dnadesign/pull/73)
