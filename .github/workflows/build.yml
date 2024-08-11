@@ -10,11 +10,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
         arch: [amd64, arm64]
-        exclude:
-          - os: windows-latest
-            arch: arm64
 
     runs-on: ${{ matrix.os }}
 
@@ -36,13 +33,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install setuptools wheel
 
+    - name: Install Zig
+      uses: goto-bus-stop/setup-zig@v2
+      with:
+        version: 0.11.0
+
     - name: Build Go shared library
       working-directory: ./py
       run: |
         if [ "${{ runner.os }}" = "Linux" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
-          CGO_ENABLED=1 GOOS=${{ runner.os }} GOARCH=${{ matrix.arch }} go build -o dnadesign/libdnadesign.so -buildmode=pie lib.go
+          CC="zig cc -target aarch64-linux-gnu" CGO_ENABLED=1 GOOS=linux GOARCH=arm64 go build -o dnadesign/libdnadesign.so -buildmode=c-shared lib.go
+        elif [ "${{ runner.os }}" = "Linux" ] && [ "${{ matrix.arch }}" = "amd64" ]; then
+          CC="zig cc -target x86_64-linux-gnu" GOOS=linux GOARCH=amd64 go build -o dnadesign/libdnadesign.so -buildmode=c-shared lib.go
+        elif [ "${{ runner.os }}" = "macOS" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
+          CC="zig cc -target aarch64-macos" CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 go build -o dnadesign/libdnadesign.dylib -buildmode=c-shared lib.go
         else
-          CGO_ENABLED=1 GOOS=${{ runner.os }} GOARCH=${{ matrix.arch }} go build -o dnadesign/libdnadesign.so -buildmode=c-shared lib.go
+          CC="zig cc -target x86_64-macos" CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -o dnadesign/libdnadesign.dylib -buildmode=c-shared lib.go
         fi
       env:
         CGO_ENABLED: 1
