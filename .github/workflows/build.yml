@@ -66,6 +66,17 @@ jobs:
       working-directory: ./py
       run: python setup.py sdist bdist_wheel
 
+    - name: Install Python package and dependencies
+      working-directory: ./py
+      run: |
+        python -m pip install --upgrade pip
+        pip install .
+        pip install pytest
+
+    - name: Run pytest
+      working-directory: ./py
+      run: pytest
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
