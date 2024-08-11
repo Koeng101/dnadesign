@@ -15,6 +15,13 @@ setup(
     version='0.1.0',
     packages=find_packages(),
     package_data={'dnadesign': ['definitions.h', 'libdnadesign.h', "libdnadesign" + get_shared_lib_ext()]},
+    install_requires=[
+        "cffi>=1.0.0",
+    ],
+    setup_requires=[
+        "cffi>=1.0.0",
+    ],
+
     include_package_data=True,
     zip_safe=False,
     author='Keoni Gandall',
