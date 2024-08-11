@@ -38,7 +38,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install setuptools wheel cffi
+        pip install setuptools wheel cffi packaging
 
     - name: Install Zig
       uses: goto-bus-stop/setup-zig@v2
@@ -133,6 +133,8 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        for wheel in dist/**/*.whl; do
-          twine upload "$wheel"
+        for file in dist/**/*; do
+          if [[ $file == *.whl ]] || [[ $file == *.tar.gz ]]; then
+            twine upload "$file"
+          fi
         done
