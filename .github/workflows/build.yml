@@ -125,8 +125,14 @@ jobs:
       with:
         path: dist
 
+    - name: List directory structure
+      run: find dist -type f
+
     - name: Publish to PyPI
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: twine upload dist/**/*/dist/*
+      run: |
+        for wheel in dist/**/*.whl; do
+          twine upload "$wheel"
+        done
