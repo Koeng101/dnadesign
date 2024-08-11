@@ -11,21 +11,21 @@ def get_shared_lib_ext():
     else:
         return ".so"
 
-
 def get_platform_tag():
+    # Get the most specific tag for this platform
+    tag = next(tags.sys_tags())
+    
     if sys.platform.startswith('linux'):
-        return f'manylinux_2_17_{platform.machine()}'
+        return f'manylinux_2_17_{tag.arch}'
     elif sys.platform.startswith('darwin'):
         if platform.machine() == 'arm64':
-            return f'macosx_11_0_{platform.machine()}'
+            return f'macosx_11_0_{tag.arch}'
         else:
-            return f'macosx_10_9_{platform.machine()}'
+            return f'macosx_10_9_{tag.arch}'
     elif sys.platform.startswith('win'):
-        return 'win_amd64'
+        return f'win_{tag.arch}'
     else:
         return 'any'
-
-platform_tag = list(tags.sys_tags())[0]
 
 setup(
     name='dnadesign',
@@ -39,7 +39,7 @@ setup(
         "cffi>=1.0.0",
     ],
 
-    plat_name=f"{platform_tag.platform}_{platform_tag.abi}_{platform_tag.interpreter}_{platform_tag.implementation}",
+    plat_name=get_platform_tag(),
     include_package_data=True,
     zip_safe=False,
     author='Keoni Gandall',
