@@ -40,9 +40,9 @@ jobs:
       working-directory: ./py
       run: |
         if [ "${{ runner.os }}" = "Linux" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
-          GOOS=${{ runner.os }} GOARCH=${{ matrix.arch }} go build -o dnadesign/libdnadesign.so -buildmode=pie lib.go
+          CGO_ENABLED=1 GOOS=${{ runner.os }} GOARCH=${{ matrix.arch }} go build -o dnadesign/libdnadesign.so -buildmode=pie lib.go
         else
-          GOOS=${{ runner.os }} GOARCH=${{ matrix.arch }} go build -o dnadesign/libdnadesign.so -buildmode=c-shared lib.go
+          CGO_ENABLED=1 GOOS=${{ runner.os }} GOARCH=${{ matrix.arch }} go build -o dnadesign/libdnadesign.so -buildmode=c-shared lib.go
         fi
       env:
         CGO_ENABLED: 1
