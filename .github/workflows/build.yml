@@ -81,8 +81,20 @@ jobs:
         pip install ./py/dist/*.whl
         python -c "from dnadesign import fasta_parser; print('Library loaded successfully')"
         pip install pytest
-        #pytest ./py/tests -v
-        gdb -ex "run" -ex "bt full" -ex "quit" --args python -m pytest ./py/tests -
+        pytest ./py/tests -v --capture=no
+      continue-on-error: true
+
+    - name: Debug segmentation fault (macOS)
+      if: failure() && runner.os == 'macOS'
+      run: |
+        lldb -o "run" -o "bt all" -o "quit" -- python -m pytest ./py/tests -v
+
+    - name: Debug segmentation fault (Linux)
+      if: failure() && runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gdb
+        gdb -ex "run" -ex "bt full" -ex "quit" --args python -m pytest ./py/tests -v
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
