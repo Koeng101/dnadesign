@@ -59,6 +59,10 @@ jobs:
       env:
         CGO_ENABLED: 1
 
+    - name: List directory contents
+      working-directory: ./py/dnadesign
+      run: ls -l
+
     - name: Install Python package and dependencies
       working-directory: ./py
       run: |

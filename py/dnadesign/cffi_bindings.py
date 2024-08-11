@@ -27,6 +27,11 @@ else:
 
 lib_path = os.path.join(current_dir, lib_name)
 
+print(f"Platform: {sys.platform}")
+print(f"Machine: {platform.machine()}")
+print(f"Looking for library: {lib_path}")
+print(f"Directory contents: {os.listdir(os.path.dirname(__file__))}")
+
 # Read the C declarations from an external file
 with open(definitions_path, 'r') as f:
     ffi.cdef(f.read())
