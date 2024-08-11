@@ -42,6 +42,9 @@ On the highest level:
     * [external/minimap2](https://pkg.go.dev/github.com/koeng101/dnadesign/external/minimap2) contains a function for working with [minimap2](https://github.com/lh3/minimap2) with Go.
     * [external/samtools](https://pkg.go.dev/github.com/koeng101/dnadesign/external/samtools) contains a function for generating pileup files using [samtools](https://github.com/samtools/samtools) with Go.
 
+## Python
+
+We have python package, `dnadesign`, which allows python users to use dnadesign. This is a work-in-progress: more documentation coming soon!
 
 ## Contributing
 
