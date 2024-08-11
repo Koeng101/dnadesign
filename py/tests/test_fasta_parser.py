@@ -1,6 +1,6 @@
 import pytest
 import os
-from .fasta_parser import parse_fasta_from_c_file, parse_fasta_from_c_string, FastaRecord
+from dnadesign.fasta_parser import parse_fasta_from_c_file, parse_fasta_from_c_string, FastaRecord
 
 def test_parse_fasta_from_c_file():
     current_dir = os.path.dirname(__file__)

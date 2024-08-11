@@ -4,3 +4,4 @@ To deploy your package:
 3. Use `twine` to upload the distribution files to PyPI.
 
 Simple compilation: `go build -o dnadesign/libdnadesign.so -buildmode=c-shared lib.go`
+`python3 setup.py bdist_wheel --plat-name manylinux1_x86_64`

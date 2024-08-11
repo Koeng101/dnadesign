@@ -1,26 +1,24 @@
-from setuptools import setup, find_packages
-from setuptools.command.install import install
-import platform
 import os
+import platform
+from setuptools import setup, find_packages
 
-class CustomInstall(install):
-    def run(self):
-        # Install the appropriate shared library based on the user's platform
-        system = platform.system().lower()
-        arch = 'amd64' if platform.machine() in ['x86_64', 'AMD64'] else 'arm64'
-        lib_file = f'dnadesign/lib/libdnadesign_{system}_{arch}.so'
-        if not os.path.exists(lib_file):
-            raise FileNotFoundError(f"Could not find required library: {lib_file}")
-        os.rename(lib_file, 'dnadesign/libdnadesign.so')
-        install.run(self)
+def get_shared_lib_ext():
+    if platform.system() == "Darwin":
+        return ".dylib"
+    elif platform.system() == "Windows":
+        return ".dll"
+    else:
+        return ".so"
 
 setup(
     name='dnadesign',
     version='0.1.0',
     packages=find_packages(),
-    cmdclass={'install': CustomInstall},
-    package_data={'dnadesign': ['libdnadesign_*.so']},
+    package_data={'dnadesign': ['definitions.h', 'libdnadesign.h', "libdnadesign" + get_shared_lib_ext()]},
     include_package_data=True,
-    zip_safe=False
+    zip_safe=False,
+    author='Keoni Gandall',
+    author_email='koeng101@gmail.com',
+    description='Python bindings for dnadesign',
+    url='https://github.com/koeng101/dnadesign'
 )
-
