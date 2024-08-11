@@ -18,19 +18,12 @@ current_dir = os.path.dirname(__file__)
 definitions_path = os.path.join(current_dir, 'definitions.h')
 
 # Determine the correct library name based on the operating system and architecture
-if sys.platform.startswith('win'):
-    lib_name = 'libdnadesign.dll'
-elif sys.platform.startswith('darwin'):
+if sys.platform.startswith('darwin'):
     lib_name = 'libdnadesign.dylib'
 else:
     lib_name = 'libdnadesign.so'
 
 lib_path = os.path.join(current_dir, lib_name)
-
-print(f"Platform: {sys.platform}")
-print(f"Machine: {platform.machine()}")
-print(f"Looking for library: {lib_path}")
-print(f"Directory contents: {os.listdir(os.path.dirname(__file__))}")
 
 # Read the C declarations from an external file
 with open(definitions_path, 'r') as f:

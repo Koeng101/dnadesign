@@ -9,11 +9,14 @@ on:
 jobs:
   build:
     strategy:
-      include:
+      matrix:
+        include:
           - os: ubuntu-latest
             arch: amd64
           - os: ubuntu-latest
             arch: arm64
+          - os: windows-latest
+            arch: amd64
           - os: macos-latest  # This will be ARM64
             arch: arm64
           - os: macos-13  # This will be AMD64
