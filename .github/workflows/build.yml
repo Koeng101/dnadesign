@@ -74,7 +74,6 @@ jobs:
       working-directory: ./py
       run: |
         pip install wheel packaging
-        python setup.py sdist
         if [ "${{ runner.os }}" = "Linux" ] && [ "${{ matrix.arch }}" = "amd64" ]; then
           python setup.py bdist_wheel --plat-name manylinux2014_x86_64
         elif [ "${{ runner.os }}" = "Linux" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
@@ -148,8 +147,4 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        for file in dist/**/*; do
-          if [[ $file == *.whl ]] || [[ $file == *.tar.gz ]]; then
-            twine upload "$file"
-          fi
-        done
+        twine upload dist/**/*.whl
