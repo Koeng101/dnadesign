@@ -15,7 +15,16 @@ current_dir = os.path.dirname(__file__)
 
 # Build the path to definitions.h and libdnadesign relative to the current script
 definitions_path = os.path.join(current_dir, 'definitions.h')
-lib_path = os.path.join(current_dir, 'libdnadesign.so')
+
+# Determine the correct library name based on the operating system
+if sys.platform.startswith('win'):
+    lib_name = 'libdnadesign.dll'
+elif sys.platform.startswith('darwin'):
+    lib_name = 'libdnadesign.dylib'
+else:
+    lib_name = 'libdnadesign.so'
+
+lib_path = os.path.join(current_dir, lib_name)
 
 # Read the C declarations from an external file
 with open(definitions_path, 'r') as f:
