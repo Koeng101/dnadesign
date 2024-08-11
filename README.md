@@ -21,8 +21,7 @@ DnaDesign is a Go project creating tools for automated genetic design, spanning 
 On the highest level:
 * `lib` contains core functionality as a go library.
 * `external` contains functions to work with external bioinformatics command-line interfaces.
-* `api` contains an OpenAPI exposing all the major functions of lib.
-* `deployment` contains full integration tests and yaml for deploying the DnaDesign API to a k3s cluster.
+* `py` contains code to use the dnadesign library in python using a C shared library.
 
 ### Detailed repo organization
 
