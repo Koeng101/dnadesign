@@ -59,10 +59,6 @@ jobs:
       env:
         CGO_ENABLED: 1
 
-    - name: Build Python package
-      working-directory: ./py
-      run: python setup.py sdist bdist_wheel
-
     - name: Install Python package and dependencies
       working-directory: ./py
       run: |
@@ -73,6 +69,10 @@ jobs:
     - name: Run pytest
       working-directory: ./py
       run: pytest
+
+    - name: Build Python package
+      working-directory: ./py
+      run: python setup.py sdist bdist_wheel
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
