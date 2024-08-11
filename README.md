@@ -21,8 +21,7 @@ DnaDesign is a Go project creating tools for automated genetic design, spanning 
 On the highest level:
 * `lib` contains core functionality as a go library.
 * `external` contains functions to work with external bioinformatics command-line interfaces.
-* `api` contains an OpenAPI exposing all the major functions of lib.
-* `deployment` contains full integration tests and yaml for deploying the DnaDesign API to a k3s cluster.
+* `py` contains code to use the dnadesign library in python using a C shared library.
 
 ### Detailed repo organization
 
@@ -43,6 +42,9 @@ On the highest level:
     * [external/minimap2](https://pkg.go.dev/github.com/koeng101/dnadesign/external/minimap2) contains a function for working with [minimap2](https://github.com/lh3/minimap2) with Go.
     * [external/samtools](https://pkg.go.dev/github.com/koeng101/dnadesign/external/samtools) contains a function for generating pileup files using [samtools](https://github.com/samtools/samtools) with Go.
 
+## Python
+
+We have python package, `dnadesign`, which allows python users to use dnadesign. This is a work-in-progress: more documentation coming soon!
 
 ## Contributing
 
@@ -71,6 +73,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Added minimal python packaging [#81](https://github.com/Koeng101/dnadesign/pull/81)
 - Greatly simplified the Ligate function [#77](https://github.com/Koeng101/dnadesign/pull/77)
 - Updated barcoding functions to handle edge case of hanging-edge barcodes [#74](https://github.com/Koeng101/dnadesign/pull/74)
 - Updated megamash to use int instead of uint for minimal Kmer counts (so you can use -1) [#73](https://github.com/Koeng101/dnadesign/pull/73)
