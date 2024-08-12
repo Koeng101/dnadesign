@@ -142,9 +142,20 @@ jobs:
     - name: List directory structure
       run: find dist -type f
 
-    - name: Publish to PyPI
+    - name: Check version and publish to PyPI
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        twine upload dist/**/*.whl
+        # Get the version from the wheel file name
+        WHEEL_FILE=$(find dist -name "*.whl" | head -n 1)
+        VERSION=$(echo $WHEEL_FILE | sed -E 's/.*dnadesign-([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+        echo "Package version: $VERSION"
+
+        # Check if the version exists on PyPI
+        if ! pip index versions dnadesign | grep -q "$VERSION"; then
+          echo "Version $VERSION not found on PyPI. Uploading..."
+          twine upload dist/**/*.whl
+        else
+          echo "Version $VERSION already exists on PyPI. Skipping upload."
+        fi
