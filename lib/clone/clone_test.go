@@ -142,12 +142,24 @@ func TestCutWithEnzymeRegression(t *testing.T) {
 func TestCircularLigate(t *testing.T) {
 	fragment1 := Fragment{"AAAAAA", "GTTG", "CTAT"}
 	fragment2 := Fragment{"AAAAAA", "CAAC", "ATAG"}
-	output, err := Ligate([]Fragment{fragment1, fragment2})
+	output, err := Ligate([]Fragment{fragment1, fragment2}, true)
 	if err != nil {
 		t.Errorf("Got error on ligation: %s", err)
 	}
 	if output != "GTTGAAAAAACTATTTTTTT" {
 		t.Errorf("Ligation with complementing overhangs should only output 1 valid rotated sequence.")
+	}
+}
+
+func TestLinearLigate(t *testing.T) {
+	fragment1 := Fragment{"AAAAAA", "GTTG", "CTAT"}
+	fragment2 := Fragment{"AAAAAA", "ATGC", "ATAG"}
+	output, err := Ligate([]Fragment{fragment1, fragment2}, false)
+	if err != nil {
+		t.Errorf("Got error on ligation: %s", err)
+	}
+	if output != "GTTGAAAAAACTATTTTTTTGCAT" {
+		t.Errorf("Ligation with complementing overhangs should only output 1 valid rotated sequence. Got: %s", output)
 	}
 }
 
