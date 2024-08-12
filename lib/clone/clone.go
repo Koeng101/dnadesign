@@ -285,7 +285,7 @@ func CutWithEnzyme(part Part, directional bool, enzyme Enzyme, methylated bool) 
 // the first fragment WILL be used in the ligation reaction. This function
 // is a massive simplification of the original ligation code which can do more.
 // If this does not fulfill your needs, please leave an issue in git.
-func Ligate(fragments []Fragment) (string, error) {
+func Ligate(fragments []Fragment, circular bool) (string, error) {
 	if len(fragments) == 0 {
 		return "", errors.New("no fragments to ligate")
 	}
@@ -316,10 +316,13 @@ func Ligate(fragments []Fragment) (string, error) {
 	}
 
 	// attempt circularization
-	if finalFragment.ForwardOverhang != finalFragment.ReverseOverhang {
-		return "", errors.New("does not circularize")
+	if circular {
+		if finalFragment.ForwardOverhang != finalFragment.ReverseOverhang {
+			return "", errors.New("does not circularize")
+		}
+		return finalFragment.ForwardOverhang + finalFragment.Sequence, nil
 	}
-	return finalFragment.ForwardOverhang + finalFragment.Sequence, nil
+	return finalFragment.ForwardOverhang + finalFragment.Sequence + finalFragment.ReverseOverhang, nil
 }
 
 /******************************************************************************
@@ -337,7 +340,7 @@ func GoldenGate(sequences []Part, cuttingEnzyme Enzyme, methylated bool) (string
 		newFragments := CutWithEnzyme(sequence, true, cuttingEnzyme, methylated)
 		fragments = append(fragments, newFragments...)
 	}
-	return Ligate(fragments)
+	return Ligate(fragments, true)
 }
 
 // GetBaseRestrictionEnzymes return a basic slice of common enzymes used in Golden Gate Assembly. Eventually, we want to get the data for this map from ftp://ftp.neb.com/pub/rebase
