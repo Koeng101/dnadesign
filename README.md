@@ -41,6 +41,7 @@ On the highest level:
 * [external](https://pkg.go.dev/github.com/koeng101/dnadesign/external) contains integrations with external bioinformatics software, usually operating on the command line.
     * [external/minimap2](https://pkg.go.dev/github.com/koeng101/dnadesign/external/minimap2) contains a function for working with [minimap2](https://github.com/lh3/minimap2) with Go.
     * [external/samtools](https://pkg.go.dev/github.com/koeng101/dnadesign/external/samtools) contains a function for generating pileup files using [samtools](https://github.com/samtools/samtools) with Go.
+    * [external/bcftools](https://pkg.go.dev/github.com/koeng101/dnadesign/external/bcftools) contains GenerateVCF to generate a VCF file from sam alignments using [bcftools](https://samtools.github.io/bcftools/) with Go.
 
 ## Python
 
@@ -60,6 +61,7 @@ There are a few pieces of "complete" software that we have directly integrated i
 - [svb](https://github.com/rleiwang/svb) in `lib/bio/slow5/svb`
 - [intel-cpuid](https://github.com/aregm/cpuid) in `lib/bio/slow5/svb/intel-cpuid`
 - [wordwrap](https://github.com/mitchellh/go-wordwrap) in `lib/bio/genbank`
+- [errgroup](https://cs.opensource.google/go/x/sync/+/master:errgroup/) in `lib/bio/`
 
 ## Other
 
@@ -73,6 +75,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Integrated errgroup into source tree [#84](https://github.com/Koeng101/dnadesign/pull/84)
 - Added kmer detection for ligation events in cloning and removed enzyme manager [#83](https://github.com/Koeng101/dnadesign/pull/83)
 - Added option for linear ligations [#82](https://github.com/Koeng101/dnadesign/pull/82)
 - Added minimal python packaging [#81](https://github.com/Koeng101/dnadesign/pull/81)

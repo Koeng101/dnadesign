@@ -16,6 +16,7 @@ import (
 	"io"
 	"math"
 
+	"github.com/koeng101/dnadesign/lib/bio/errgroup"
 	"github.com/koeng101/dnadesign/lib/bio/fasta"
 	"github.com/koeng101/dnadesign/lib/bio/fastq"
 	"github.com/koeng101/dnadesign/lib/bio/genbank"
@@ -23,7 +24,6 @@ import (
 	"github.com/koeng101/dnadesign/lib/bio/sam"
 	"github.com/koeng101/dnadesign/lib/bio/slow5"
 	"github.com/koeng101/dnadesign/lib/bio/uniprot"
-	"golang.org/x/sync/errgroup"
 )
 
 // Format is a enum of different parser formats.
