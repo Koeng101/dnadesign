@@ -8,7 +8,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
 	"os"
 	"sync/atomic"
 	"testing"
@@ -32,33 +31,34 @@ func fakeSearch(kind string) Search {
 	}
 }
 
-// JustErrors illustrates the use of a Group in place of a sync.WaitGroup to
-// simplify goroutine counting and error handling. This example is derived from
-// the sync.WaitGroup example at https://golang.org/pkg/sync/#example_WaitGroup.
-func ExampleGroup_justErrors() {
-	g := new(errgroup.Group)
-	var urls = []string{
-		"http://www.golang.org/",
-		"http://www.google.com/",
-		"http://www.somestupidname.com/",
-	}
-	for _, url := range urls {
-		// Launch a goroutine to fetch the URL.
-		url := url // https://golang.org/doc/faq#closures_and_goroutines
-		g.Go(func() error {
-			// Fetch the URL.
-			resp, err := http.Get(url)
-			if err == nil {
-				resp.Body.Close()
-			}
-			return err
-		})
-	}
-	// Wait for all HTTP fetches to complete.
-	if err := g.Wait(); err == nil {
-		fmt.Println("Successfully fetched all URLs.")
-	}
-}
+// This calls the actual internet. Removing it because why would you do that.
+//// JustErrors illustrates the use of a Group in place of a sync.WaitGroup to
+//// simplify goroutine counting and error handling. This example is derived from
+//// the sync.WaitGroup example at https://golang.org/pkg/sync/#example_WaitGroup.
+//func ExampleGroup_justErrors() {
+//	g := new(errgroup.Group)
+//	var urls = []string{
+//		"http://www.golang.org/",
+//		"http://www.google.com/",
+//		"http://www.somestupidname.com/",
+//	}
+//	for _, url := range urls {
+//		// Launch a goroutine to fetch the URL.
+//		url := url // https://golang.org/doc/faq#closures_and_goroutines
+//		g.Go(func() error {
+//			// Fetch the URL.
+//			resp, err := http.Get(url) //nolint:all
+//			if err == nil {
+//				resp.Body.Close()
+//			}
+//			return err
+//		})
+//	}
+//	// Wait for all HTTP fetches to complete.
+//	if err := g.Wait(); err == nil {
+//		fmt.Println("Successfully fetched all URLs.")
+//	}
+//}
 
 // Parallel illustrates the use of a Group for synchronizing a simple parallel
 // task: the "Google Search 2.0" function from
@@ -199,13 +199,13 @@ func TestTryGo(t *testing.T) {
 			<-ch
 		}
 	}()
-	g.Wait()
+	_ = g.Wait()
 
 	if !g.TryGo(fn) {
 		t.Fatalf("TryGo should success but got fail after all goroutines.")
 	}
 	go func() { <-ch }()
-	g.Wait()
+	_ = g.Wait()
 
 	// Switch limit.
 	g.SetLimit(1)
@@ -216,16 +216,16 @@ func TestTryGo(t *testing.T) {
 		t.Fatalf("TryGo should fail but succeeded.")
 	}
 	go func() { <-ch }()
-	g.Wait()
+	_ = g.Wait()
 
 	// Block all calls.
 	g.SetLimit(0)
 	for i := 0; i < 1<<10; i++ {
 		if g.TryGo(fn) {
-			t.Fatalf("TryGo should fail but got succeded.")
+			t.Fatalf("TryGo should fail but got succeeded.")
 		}
 	}
-	g.Wait()
+	_ = g.Wait()
 }
 
 func TestGoLimit(t *testing.T) {
@@ -258,5 +258,5 @@ func BenchmarkGo(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		g.Go(func() error { fn(); return nil })
 	}
-	g.Wait()
+	_ = g.Wait()
 }
