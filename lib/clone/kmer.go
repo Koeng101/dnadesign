@@ -9,27 +9,26 @@ import (
 	"github.com/koeng101/dnadesign/lib/transform"
 )
 
-/*
-This includes code to create and check kmers from ligation reactions.
-
-Here is the problem: You have sequenced a GoldenGate or ligation you've run
-to assemble some DNA. How do you quantify the efficiency of the ligation from
-this raw data? You may want to do this to make sure your ligations are working
-properly in a way that simple controls wouldn't: you can *directly* observe
-single molecules of interest that are ligated and ones which are not.
-
-How would you do this? The simplest version, which we implement here, is to
-check whether or not kmers indicative of ligation exist within the sequenced
-fragments. This is simple and computationally inexpensive.
-*/
-
-// KmerOverlap represents the overlap between two fragments
+// KmerOverlap represents the overlap between two fragments indicative of a
+// ligation event.
 type KmerOverlap struct {
 	Kmer      string
 	Fragment1 Fragment
 	Fragment2 Fragment
 }
 
+// FindKmerOverlaps finds kmerOverlaps from ligation reactions. It can be used
+// with FindKmers to find ligation events in sequence data.
+//
+// Here is the problem: You have sequenced a GoldenGate or ligation you've run
+// to assemble some DNA. How do you quantify the efficiency of the ligation
+// from this raw data? You may want to do this to make sure your ligations are
+// working properly in a way that simple controls wouldn't: you can *directly*
+// observe single molecules of interest that are ligated and ones which aren't.
+//
+// How would you do this? The simplest version, which we implement here, is to
+// check whether or not kmers indicative of ligation exist within the sequenced
+// fragments. This is simple and computationally inexpensive.
 func FindKmerOverlaps(fragments []Fragment, ligationProduct string, ligationPattern []int, kmerSize int) ([]KmerOverlap, error) {
 	if len(fragments) < 2 {
 		return []KmerOverlap{}, errors.New("need at least two fragments to find overlaps")
@@ -60,6 +59,9 @@ func FindKmerOverlaps(fragments []Fragment, ligationProduct string, ligationPatt
 	return kmerOverlaps, nil
 }
 
+// FindKmers finds kmers indicative of ligation events within fastq sequencing
+// reads. If you need to just search raw sequence and not fastq reads, you can
+// simply fake a fastq: we only use sequence data from it in this function.
 func FindKmers(kmerOverlaps []KmerOverlap, read fastq.Read) []KmerOverlap {
 	var outputKmerOverlaps []KmerOverlap
 	sequence := strings.ToUpper(read.Sequence)
