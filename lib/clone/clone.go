@@ -90,23 +90,12 @@ type Enzyme struct {
 	RecognitionSite string
 }
 
-// EnzymeManager manager for Enzymes. Allows for management of enzymes throughout the lifecyle of your
-// program. EnzymeManager is not safe for concurrent use.
-type EnzymeManager struct {
-	// enzymeMap Map of enzymes that exist for the lifetime of the manager. Not safe for concurrent use.
-	enzymeMap map[string]Enzyme
-}
-
-// NewEnzymeManager creates a new EnzymeManager given some enzymes.
-func NewEnzymeManager(enzymes []Enzyme) EnzymeManager {
-	enzymeMap := make(map[string]Enzyme)
-	for enzymeIndex := range enzymes {
-		enzymeMap[enzymes[enzymeIndex].Name] = enzymes[enzymeIndex]
-	}
-
-	return EnzymeManager{
-		enzymeMap: enzymeMap,
-	}
+var DefaultEnzymes = map[string]Enzyme{
+	"BsaI":  {"BsaI", regexp.MustCompile("GGTCTC"), regexp.MustCompile("GAGACC"), 1, 4, "GGTCTC"},
+	"BbsI":  {"BbsI", regexp.MustCompile("GAAGAC"), regexp.MustCompile("GTCTTC"), 2, 4, "GAAGAC"},
+	"BtgZI": {"BtgZI", regexp.MustCompile("GCGATG"), regexp.MustCompile("CATCGC"), 10, 4, "GCGATG"},
+	"PaqCI": {"PaqCI", regexp.MustCompile("CACCTGC"), regexp.MustCompile("GCAGGTG"), 4, 4, "CACCTGC"},
+	"BsmBI": {"BsmBI", regexp.MustCompile("CGTCTC"), regexp.MustCompile("GAGACG"), 1, 4, "CGTCTC"},
 }
 
 /******************************************************************************
@@ -119,24 +108,15 @@ Base cloning functions begin here.
 // enzyme's name. It is a convenience wrapper around CutWithEnzyme that
 // allows us to specify the enzyme by name. Set methylated flag to true if
 // there is lowercase methylated DNA as part of the sequence.
-func (enzymeManager EnzymeManager) CutWithEnzymeByName(part Part, directional bool, name string, methylated bool) ([]Fragment, error) {
+func CutWithEnzymeByName(part Part, directional bool, name string, methylated bool) ([]Fragment, error) {
 	// Get the enzyme from the enzyme map
-	enzyme, err := enzymeManager.GetEnzymeByName(name)
-	if err != nil {
+	enzyme, ok := DefaultEnzymes[name]
+	if ok == false {
 		// Return an error if there was an error
-		return []Fragment{}, err
+		return []Fragment{}, errors.New("enzyme not found")
 	}
 	// Cut the sequence with the enzyme
 	return CutWithEnzyme(part, directional, enzyme, methylated), nil
-}
-
-// GetEnzymeByName gets the enzyme by it's name. If the enzyme manager does not
-// contain an enzyme with the provided name, an error will be returned
-func (enzymeManager EnzymeManager) GetEnzymeByName(name string) (Enzyme, error) {
-	if enzyme, ok := enzymeManager.enzymeMap[name]; ok {
-		return enzyme, nil
-	}
-	return Enzyme{}, errors.New("Enzyme " + name + " not found")
 }
 
 // CutWithEnzyme cuts a given sequence with an enzyme represented by an Enzyme struct.
@@ -285,10 +265,14 @@ func CutWithEnzyme(part Part, directional bool, enzyme Enzyme, methylated bool) 
 // the first fragment WILL be used in the ligation reaction. This function
 // is a massive simplification of the original ligation code which can do more.
 // If this does not fulfill your needs, please leave an issue in git.
-func Ligate(fragments []Fragment, circular bool) (string, error) {
+func Ligate(fragments []Fragment, circular bool) (string, []int, error) {
 	if len(fragments) == 0 {
-		return "", errors.New("no fragments to ligate")
+		return "", []int{}, errors.New("no fragments to ligate")
 	}
+	// Ligation pattern is used in downstream functions for analyzing
+	// ligation patterns.
+	var ligationPattern []int
+	ligationPattern = append(ligationPattern, 0) // first fragment is the first ligation site
 
 	finalFragment := fragments[0]
 	used := make(map[int]bool)
@@ -303,6 +287,7 @@ func Ligate(fragments []Fragment, circular bool) (string, error) {
 				finalFragment.ReverseOverhang = fragment.ReverseOverhang
 				used[i] = true
 				matchFound = true
+				ligationPattern = append(ligationPattern, i)
 				break
 			}
 			if !used[i] && finalFragment.ReverseOverhang == transform.ReverseComplement(fragment.ReverseOverhang) {
@@ -310,6 +295,7 @@ func Ligate(fragments []Fragment, circular bool) (string, error) {
 				finalFragment.ReverseOverhang = transform.ReverseComplement(fragment.ForwardOverhang)
 				used[i] = true
 				matchFound = true
+				ligationPattern = append(ligationPattern, i)
 				break
 			}
 		}
@@ -318,11 +304,11 @@ func Ligate(fragments []Fragment, circular bool) (string, error) {
 	// attempt circularization
 	if circular {
 		if finalFragment.ForwardOverhang != finalFragment.ReverseOverhang {
-			return "", errors.New("does not circularize")
+			return "", ligationPattern, errors.New("does not circularize")
 		}
-		return finalFragment.ForwardOverhang + finalFragment.Sequence, nil
+		return finalFragment.ForwardOverhang + finalFragment.Sequence, ligationPattern, nil
 	}
-	return finalFragment.ForwardOverhang + finalFragment.Sequence + finalFragment.ReverseOverhang, nil
+	return finalFragment.ForwardOverhang + finalFragment.Sequence + finalFragment.ReverseOverhang, ligationPattern, nil
 }
 
 /******************************************************************************
@@ -334,22 +320,11 @@ Specific cloning functions begin here.
 // GoldenGate simulates a GoldenGate cloning reaction. As of right now, we only
 // support BsaI, BbsI, BtgZI, and BsmBI. Set methylated flag to true if there
 // is lowercase methylated DNA as part of the sequence.
-func GoldenGate(sequences []Part, cuttingEnzyme Enzyme, methylated bool) (string, error) {
+func GoldenGate(sequences []Part, cuttingEnzyme Enzyme, methylated bool) (string, []int, error) {
 	var fragments []Fragment
 	for _, sequence := range sequences {
 		newFragments := CutWithEnzyme(sequence, true, cuttingEnzyme, methylated)
 		fragments = append(fragments, newFragments...)
 	}
 	return Ligate(fragments, true)
-}
-
-// GetBaseRestrictionEnzymes return a basic slice of common enzymes used in Golden Gate Assembly. Eventually, we want to get the data for this map from ftp://ftp.neb.com/pub/rebase
-func GetBaseRestrictionEnzymes() []Enzyme {
-	return []Enzyme{
-		{"BsaI", regexp.MustCompile("GGTCTC"), regexp.MustCompile("GAGACC"), 1, 4, "GGTCTC"},
-		{"BbsI", regexp.MustCompile("GAAGAC"), regexp.MustCompile("GTCTTC"), 2, 4, "GAAGAC"},
-		{"BtgZI", regexp.MustCompile("GCGATG"), regexp.MustCompile("CATCGC"), 10, 4, "GCGATG"},
-		{"PaqCI", regexp.MustCompile("CACCTGC"), regexp.MustCompile("GCAGGTG"), 4, 4, "CACCTGC"},
-		{"BsmBI", regexp.MustCompile("CGTCTC"), regexp.MustCompile("GAGACG"), 1, 4, "CGTCTC"},
-	}
 }
