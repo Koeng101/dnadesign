@@ -17,9 +17,9 @@ import (
 	"github.com/koeng101/dnadesign/lib/transform"
 )
 
-// StandardizedDNA returns the alphabetically lesser strand of a double
+// StandardizeDNA returns the alphabetically lesser strand of a double
 // stranded DNA molecule.
-func StandardizedDNA(sequence string) string {
+func StandardizeDNA(sequence string) string {
 	sequence = strings.ToUpper(sequence)
 	var deterministicSequence string
 	reverseComplement := transform.ReverseComplement(sequence)
@@ -59,7 +59,7 @@ func NewMegamashMap(sequences []fasta.Record, kmerSize uint, kmerMinimalCount in
 		sequence := fastaRecord.Sequence
 		sequenceSpecificKmers := make(map[string]bool)
 		for i := 0; i <= len(sequence)-int(kmerSize); i++ {
-			kmerString := StandardizedDNA(sequence[i : i+int(kmerSize)])
+			kmerString := StandardizeDNA(sequence[i : i+int(kmerSize)])
 			kmerMap[kmerString] = fastaRecord.Identifier
 			sequenceSpecificKmers[kmerString] = true
 		}
@@ -111,7 +111,7 @@ func (m *MegamashMap) Match(sequence string) []Match {
 		identifierToCounts[identifier] = 0
 	}
 	for i := 0; i <= len(sequence)-int(m.KmerSize); i++ {
-		kmerString := StandardizedDNA(sequence[i : i+int(m.KmerSize)])
+		kmerString := StandardizeDNA(sequence[i : i+int(m.KmerSize)])
 		identifier, ok := m.Kmers[kmerString]
 		if ok {
 			identifierToCounts[identifier]++
