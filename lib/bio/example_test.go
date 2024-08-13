@@ -9,10 +9,10 @@ import (
 	"strings"
 
 	"github.com/koeng101/dnadesign/lib/bio"
+	"github.com/koeng101/dnadesign/lib/bio/errgroup"
 	"github.com/koeng101/dnadesign/lib/bio/fasta"
 	"github.com/koeng101/dnadesign/lib/bio/fastq"
 	"github.com/koeng101/dnadesign/lib/bio/sam"
-	"golang.org/x/sync/errgroup"
 )
 
 // Example_read shows an example of reading a file from disk.
