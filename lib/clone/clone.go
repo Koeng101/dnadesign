@@ -111,7 +111,7 @@ Base cloning functions begin here.
 func CutWithEnzymeByName(part Part, directional bool, name string, methylated bool) ([]Fragment, error) {
 	// Get the enzyme from the enzyme map
 	enzyme, ok := DefaultEnzymes[name]
-	if ok == false {
+	if !ok {
 		// Return an error if there was an error
 		return []Fragment{}, errors.New("enzyme not found")
 	}
