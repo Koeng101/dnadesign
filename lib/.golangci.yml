@@ -2,7 +2,6 @@ run:
   timeout: 1m
   skip-dirs:
     - data
-    - api/gen
     - lib/bio/slow5/svb
 linters:
   enable:
