@@ -47,3 +47,13 @@ $$&%&%#$)*59;/767C378411,***,('11<;:,0039/0&()&'2(/*((4.1.09751).601+'#&&&,-**/0
 		t.Errorf("Optionals not parsed properly")
 	}
 }
+
+func TestSequenceQualityLength(t *testing.T) {
+	file := strings.NewReader("@test\nATCG\n+\nII\n")
+	const maxLineSize = 2 * 32 * 1024
+	parser := NewParser(file, maxLineSize)
+	_, err := parser.Next()
+	if err == nil {
+		t.Errorf("Should have gotten error on quality vs sequence lengths")
+	}
+}

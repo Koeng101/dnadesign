@@ -115,7 +115,6 @@ func goFastqToCFastq(reader io.Reader) (*C.FastqRecord, int, *C.char) {
 	if err != nil {
 		return nil, 0, C.CString(err.Error())
 	}
-
 	cRecords := (*C.FastqRecord)(C.malloc(C.size_t(len(records)) * C.size_t(unsafe.Sizeof(C.FastqRecord{}))))
 	slice := (*[1<<30 - 1]C.FastqRecord)(unsafe.Pointer(cRecords))[:len(records):len(records)]
 

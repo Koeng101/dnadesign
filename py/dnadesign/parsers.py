@@ -1,5 +1,6 @@
 from typing import List, Optional, Dict
 from .cffi_bindings import ffi, lib
+import os
 
 class FastaRecord:
     def __init__(self, identifier: str, sequence: str):
@@ -13,11 +14,22 @@ class FastqRecord:
         self.quality = quality
         self.optionals = optionals
 
-def parse_fasta_from_c_file(file_path: str) -> List[FastaRecord]:
+def _safe_open_file(file_path: str):
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
     cfile = lib.fopen(file_path.encode('utf-8'), "r".encode('utf-8'))
-    result = lib.ParseFastaFromCFile(cfile)
-    lib.fclose(cfile)
-    return _process_fasta_result(result)
+    if cfile == ffi.NULL:
+        raise IOError(f"Failed to open the file {file_path}.")
+    return cfile
+
+def parse_fasta_from_c_file(file_path: str) -> List[FastaRecord]:
+    try:
+        cfile = _safe_open_file(file_path)
+        result = lib.ParseFastaFromCFile(cfile)
+        return _process_fasta_result(result)
+    finally:
+        if 'cfile' in locals() and cfile != ffi.NULL:
+            lib.fclose(cfile)
 
 def parse_fasta_from_c_string(cstring: str) -> List[FastaRecord]:
     result = lib.ParseFastaFromCString(cstring.encode('utf-8'))
@@ -34,10 +46,13 @@ def _process_fasta_result(result) -> List[FastaRecord]:
             for i in range(num_records)]
 
 def parse_fastq_from_c_file(file_path: str) -> List[FastqRecord]:
-    cfile = lib.fopen(file_path.encode('utf-8'), "r".encode('utf-8'))
-    result = lib.ParseFastqFromCFile(cfile)
-    lib.fclose(cfile)
-    return _process_fastq_result(result)
+    try:
+        cfile = _safe_open_file(file_path)
+        result = lib.ParseFastqFromCFile(cfile)
+        return _process_fastq_result(result)
+    finally:
+        if 'cfile' in locals() and cfile != ffi.NULL:
+            lib.fclose(cfile)
 
 def parse_fastq_from_c_string(cstring: str) -> List[FastqRecord]:
     result = lib.ParseFastqFromCString(cstring.encode('utf-8'))
