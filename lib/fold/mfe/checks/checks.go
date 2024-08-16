@@ -26,7 +26,7 @@ func checkRegexpMatchesFullString(str, regex, errMsg string) (bool, error) {
 	}
 
 	if !doCheckRegexpMatchesFullString(str, regexp) {
-		return false, fmt.Errorf(errMsg)
+		return false, fmt.Errorf("%s", errMsg)
 	}
 	return true, nil
 }

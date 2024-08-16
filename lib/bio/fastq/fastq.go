@@ -178,6 +178,9 @@ func (parser *Parser) Next() (Read, error) {
 	} else {
 		quality = string(line[:len(line)-1])
 	}
+	if len(sequence) != len(quality) {
+		return Read{}, fmt.Errorf("Got different lengths for sequence(%d) and quality(%d)", len(sequence), len(quality))
+	}
 
 	// Parsing ended. Check for inconsistencies.
 	if lookingForIdentifier {

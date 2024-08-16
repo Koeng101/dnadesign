@@ -305,8 +305,8 @@ func (alignment *Alignment) Validate() error {
 		return errors.New("Invalid RNAME: must match " + rnameRegex)
 	}
 
-	// 4. Validate POS
-	if alignment.POS < 0 || alignment.POS > 2147483647 { // 2^31 - 1
+	// 4. Validate POS.
+	if alignment.POS < 0 {
 		return errors.New("Invalid POS: must be in range [0, 2147483647]")
 	}
 
@@ -325,7 +325,7 @@ func (alignment *Alignment) Validate() error {
 	}
 
 	// 8. Validate PNEXT
-	if alignment.PNEXT < 0 || alignment.PNEXT > 2147483647 { // 2^31 - 1
+	if alignment.PNEXT < 0 { // 2^31 - 1
 		return errors.New("Invalid PNEXT: must be in range [0, 2147483647]")
 	}
 
