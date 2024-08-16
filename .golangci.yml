@@ -1,6 +1,7 @@
 run:
   timeout: 1m
-  skip-dirs:
+issues:
+  exclude:
     - data
     - lib/bio/slow5/svb
 linters:
