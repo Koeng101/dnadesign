@@ -36,33 +36,33 @@ func TestHash2(t *testing.T) {
 	// Test circular double stranded hashing
 	seqhash, _ := EncodeHash2(Hash2("TTAGCCCAT", "DNA", true, true))
 	if seqhash != "A_6VAbBfXD8BSZh2HJZqgGgR" {
-		t.Errorf("Circular double stranded hashing failed. Expected A_6VAbBfXD8BSZh2HJZqgGgR, got: " + seqhash)
+		t.Errorf("Circular double stranded hashing failed. Expected A_6VAbBfXD8BSZh2HJZqgGgR, got: %s", seqhash)
 	}
 	// Test circular single stranded hashing
 	seqhash, _ = EncodeHash2(Hash2("TTAGCCCAT", "DNA", true, false))
 	if seqhash != "B_5xKbuHELJCCQWJwQi7W1ak" {
-		t.Errorf("Circular single stranded hashing failed. Expected B_5xKbuHELJCCQWJwQi7W1ak, got: " + seqhash)
+		t.Errorf("Circular single stranded hashing failed. Expected B_5xKbuHELJCCQWJwQi7W1ak, got: %s", seqhash)
 	}
 	// Test linear double stranded hashing
 	seqhash, _ = EncodeHash2(Hash2("TTAGCCCAT", "DNA", false, true))
 	if seqhash != "C_5Z2pHCXbxWUPYiZj6J1Nag" {
-		t.Errorf("Linear double stranded hashing failed. Expected C_5Z2pHCXbxWUPYiZj6J1Nag, got: " + seqhash)
+		t.Errorf("Linear double stranded hashing failed. Expected C_5Z2pHCXbxWUPYiZj6J1Nag, got: %s", seqhash)
 	}
 	// Test linear single stranded hashing
 	seqhash, _ = EncodeHash2(Hash2("TTAGCCCAT", "DNA", false, false))
 	if seqhash != "D_4yT7etihWZHHNXUpbM5tUf" {
-		t.Errorf("Linear single stranded hashing failed. Expected D_4yT7etihWZHHNXUpbM5tUf, got: " + seqhash)
+		t.Errorf("Linear single stranded hashing failed. Expected D_4yT7etihWZHHNXUpbM5tUf, got: %s", seqhash)
 	}
 
 	// Test RNA Seqhash
 	seqhash, _ = EncodeHash2(Hash2("TTAGCCCAT", "RNA", false, false))
 	if seqhash != "H_56cWv4dacvRJxUUcXYsdP5" {
-		t.Errorf("Linear single stranded hashing failed. Expected H_56cWv4dacvRJxUUcXYsdP5, got: " + seqhash)
+		t.Errorf("Linear single stranded hashing failed. Expected H_56cWv4dacvRJxUUcXYsdP5, got: %s", seqhash)
 	}
 	// Test Protein Seqhash
 	seqhash, _ = EncodeHash2(Hash2("MGC*", "PROTEIN", false, false))
 	if seqhash != "I_5DQsEyDHLh2r4njCcupAuF" {
-		t.Errorf("Linear single stranded hashing failed. Expected I_5DQsEyDHLh2r4njCcupAuF, got: " + seqhash)
+		t.Errorf("Linear single stranded hashing failed. Expected I_5DQsEyDHLh2r4njCcupAuF, got: %s", seqhash)
 	}
 }
 
