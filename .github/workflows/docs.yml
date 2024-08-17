@@ -57,9 +57,12 @@ jobs:
         pip install pdoc
         pdoc ./py/dnadesign -o ./docs
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'  # Only deploy on the main branch
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
       with:
-        github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        publish_dir: ./docs/dnadesign
+        path: './docs/dnadesign'  # Adjust this to your build output directory
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      if: github.ref == 'refs/heads/main'
+      uses: actions/deploy-pages@v2
