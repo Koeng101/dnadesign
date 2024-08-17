@@ -14,7 +14,8 @@ DnaDesign is a Go project creating tools for automated genetic design, spanning 
 
 ## Documentation
 
-* **[Library](https://pkg.go.dev/github.com/koeng101/dnadesign)**
+* **[Python Documentation](https://py.dnadesign.bio)**
+* **[Go Library Documentation](https://pkg.go.dev/github.com/koeng101/dnadesign)**
 
 ## Repo organization
 
