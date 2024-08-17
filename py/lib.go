@@ -115,7 +115,6 @@ typedef struct {
 */
 import "C"
 import (
-	"fmt"
 	"io"
 	"strings"
 	"unsafe"
@@ -338,7 +337,6 @@ func goGenbankToCGenbank(gbs []genbank.Genbank) (*C.Genbank, int, *C.char) {
 		slice[i].feature_count = C.int(len(gb.Features))
 		featureSlice := (*[1 << 30]C.GenbankFeature)(unsafe.Pointer(slice[i].features))[:len(gb.Features):len(gb.Features)]
 		for j, feature := range gb.Features {
-			fmt.Println(feature.Type)
 			featureSlice[j] = C.GenbankFeature{
 				type_:                  C.CString(feature.Type),
 				description:            C.CString(feature.Description),

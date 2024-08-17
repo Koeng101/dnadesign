@@ -252,7 +252,7 @@ def _convert_location(loc) -> GenbankLocation:
     sub_locations = []
 
     if loc.sub_locations_count > 0:
-        sub_locations_array = ffi.cast("Location *", loc.sub_locations)
+        sub_locations_array = ffi.cast("GenbankLocation *", loc.sub_locations)
         for i in range(loc.sub_locations_count):
             sub_loc = sub_locations_array[i]
             sub_locations.append(_convert_location(sub_loc))
