@@ -55,7 +55,7 @@ jobs:
         pip install ./py/dist/*.whl
         python -c "from dnadesign import parsers; print('Library loaded successfully')"
         pip install pdoc
-        pdoc --html --output-dir docs ./py/dnadesign
+        pdoc ./py/dnadesign -o ./docs
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
