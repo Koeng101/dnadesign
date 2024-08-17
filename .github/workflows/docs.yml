@@ -61,5 +61,5 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main'  # Only deploy on the main branch
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         publish_dir: ./docs/dnadesign
