@@ -50,6 +50,11 @@ jobs:
 
     - name: Generate documentation
       run: |
+        python -m venv test_env
+        source test_env/bin/activate
+        pip install ./py/dist/*.whl
+        python -c "from dnadesign import fasta_parser; print('Library loaded successfully')"
+        pip install pdoc
         pdoc --html --output-dir docs ./py/dnadesign
 
     - name: Deploy to GitHub Pages
