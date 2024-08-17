@@ -12,6 +12,11 @@ on:
 jobs:
   build-docs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write  # This line is crucial
+
 
     steps:
     - uses: actions/checkout@v2
