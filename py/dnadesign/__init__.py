@@ -9,6 +9,7 @@ We're building a practical, modern, and ambitious library for engineering biolog
 
 # Required so that pdoc doesn't attempt to parse libdnadesign
 __all__ = [
+    "__init__",
     "cffi_bindings",
     "parsers"
     ]
