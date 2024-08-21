@@ -76,6 +76,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Updated megamash documentation to be more specific. [#91](https://github.com/Koeng101/dnadesign/pull/91)
 - Adds automatic python documentation generation. [#88](https://github.com/Koeng101/dnadesign/pull/88)
 - Adds genbank parsing to python package. Release version 0.1.5 of dnadesign python. [#87](https://github.com/Koeng101/dnadesign/pull/87)
 - Adds fastq parsing to python package. Releases version 0.1.4 of dnadesign python. [#86](https://github.com/Koeng101/dnadesign/pull/86)

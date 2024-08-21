@@ -5,6 +5,12 @@ Megamash is an algorithm developed by Keoni Gandall to find templates from
 sequencing reactions. For example, you may have a pool of amplicons, and need
 to get a count of how many times each amplicon shows up in a given sequencing
 reaction.
+
+Megamash takes all unique kmers of a given sequence among all other sequences
+in a pool, and uses those to distinguish how close a given target is to that
+particular sequence. This does not work if there are no unique kmers within a
+sequence: this can often happen in combinatorial libraries. For sequences like
+that, it is better to look to a different algorithm.
 */
 package megamash
 
