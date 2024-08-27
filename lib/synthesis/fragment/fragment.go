@@ -217,6 +217,9 @@ sub-fragments, then re-assembled from there.
 
 ******************************************************************************/
 
+// Assembly is a recursive fragmentation, where higher level assemblies are
+// created from lower level assemblies, until you get to the foundation, which
+// is a basic fragmentation.
 type Assembly struct {
 	Sequence      string
 	Fragments     []string
@@ -235,10 +238,9 @@ type Assembly struct {
 // The assemblyPattern should be for how the oligo should be fragmented up.
 // For example: []int{5,4,4,5} is a very reasonable standard if you have
 // oligos with a 1/2000 mutation rate that are approximately 174bp - you
-// would assmeble ~870bp fragments, which should have a 64.72% success rate,
+// would assemble ~870bp fragments, which should have a 64.72% success rate,
 // or a ~95% success rate over 3 colonies.
 func RecursiveFragment(sequence string, maxCodingSizeOligo int, assemblyPattern []int, excludeOverhangs []string, includeOverhangs []string) (Assembly, error) {
-
 	/*
 		Ok, so this is a note for you hackers out there: this algorithm can be
 		greatly improved. The optimal way to do this would be to do a continuous
