@@ -239,7 +239,10 @@ type Assembly struct {
 // For example: []int{5,4,4,5} is a very reasonable standard if you have
 // oligos with a 1/2000 mutation rate that are approximately 174bp - you
 // would assemble ~870bp fragments, which should have a 64.72% success rate,
-// or a ~95% success rate over 3 colonies.
+// or a ~95% success rate over 3 colonies. Assembly pattern is also just a
+// rough... recommendation. Often times the lowest level of oligo has +1 in
+// order to fit the right overhangs in. This doesn't matter that much because
+// the limiting factor in assemblies is typically mutation rate at that size.
 func RecursiveFragment(sequence string, maxCodingSizeOligo int, assemblyPattern []int, excludeOverhangs []string, includeOverhangs []string) (Assembly, error) {
 	/*
 		Ok, so this is a note for you hackers out there: this algorithm can be
