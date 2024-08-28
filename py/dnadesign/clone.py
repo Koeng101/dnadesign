@@ -6,39 +6,64 @@ class Part:
         self.sequence = sequence
         self.circular = circular
 
-    def to_c(self):
-        return ffi.new("Part*", [self.sequence.encode('utf-8'), int(self.circular)])
-
 class Fragment:
     def __init__(self, sequence: str, forward_overhang: str, reverse_overhang: str):
         self.sequence = sequence
         self.forward_overhang = forward_overhang
         self.reverse_overhang = reverse_overhang
 
-    @classmethod
-    def from_c(cls, c_fragment):
-        return cls(
-            ffi.string(c_fragment.sequence).decode('utf-8'),
-            ffi.string(c_fragment.forward_overhang).decode('utf-8'),
-            ffi.string(c_fragment.reverse_overhang).decode('utf-8')
-        )
+def _create_c_string(python_string: str):
+    return ffi.new("char[]", python_string.encode('utf-8'))
+
+def _create_c_part(part: Part):
+    return {"sequence": _create_c_string(part.sequence), "circular": ffi.cast("int", int(part.circular))}
+
+def _create_c_fragment(fragment: Fragment):
+    return {
+        "sequence": _create_c_string(fragment.sequence),
+        "forward_overhang": _create_c_string(fragment.forward_overhang),
+        "reverse_overhang": _create_c_string(fragment.reverse_overhang)
+    }
+
+def _fragment_from_c(c_fragment):
+    return Fragment(
+        ffi.string(c_fragment.sequence).decode('utf-8'),
+        ffi.string(c_fragment.forward_overhang).decode('utf-8'),
+        ffi.string(c_fragment.reverse_overhang).decode('utf-8')
+    )
 
 def cut_with_enzyme_by_name(part: Part, directional: bool, name: str, methylated: bool) -> List[Fragment]:
-    result = lib.CutWithEnzymeByName(part.to_c()[0], int(directional), name.encode('utf-8'), int(methylated))
+    c_part = ffi.new("Part*", _create_c_part(part))
+    c_name = _create_c_string(name)
+    c_directional = ffi.cast("int", int(directional))
+    c_methylated = ffi.cast("int", int(methylated))
+
+    result = lib.CutWithEnzymeByName(c_part[0], c_directional, c_name, c_methylated)
     if result.error != ffi.NULL:
         raise Exception(ffi.string(result.error).decode('utf-8'))
-    return [Fragment.from_c(result.fragments[i]) for i in range(result.size)]
+    
+    fragments = [_fragment_from_c(result.fragments[i]) for i in range(result.size)]
+    return fragments
 
 def ligate(fragments: List[Fragment], circular: bool) -> str:
-    c_fragments = ffi.new("Fragment[]", [ffi.new("Fragment*", [f.sequence.encode('utf-8'), f.forward_overhang.encode('utf-8'), f.reverse_overhang.encode('utf-8')]) for f in fragments])
-    result = lib.Ligate(c_fragments, len(fragments), int(circular))
+    c_fragments = ffi.new("Fragment[]", [_create_c_fragment(f) for f in fragments])
+    c_fragment_count = ffi.cast("int", len(fragments))
+    c_circular = ffi.cast("int", int(circular))
+
+    result = lib.Ligate(c_fragments, c_fragment_count, c_circular)
     if result.error != ffi.NULL:
         raise Exception(ffi.string(result.error).decode('utf-8'))
+    
     return ffi.string(result.ligation).decode('utf-8')
 
 def golden_gate(sequences: List[Part], cutting_enzyme_name: str, methylated: bool) -> str:
-    c_parts = ffi.new("Part[]", [part.to_c()[0] for part in sequences])
-    result = lib.GoldenGate(c_parts, len(sequences), cutting_enzyme_name.encode('utf-8'), int(methylated))
+    c_parts = ffi.new("Part[]", [_create_c_part(part) for part in sequences])
+    c_sequence_count = ffi.cast("int", len(sequences))
+    c_cutting_enzyme_name = _create_c_string(cutting_enzyme_name)
+    c_methylated = ffi.cast("int", int(methylated))
+
+    result = lib.GoldenGate(c_parts, c_sequence_count, c_cutting_enzyme_name, c_methylated)
     if result.error != ffi.NULL:
         raise Exception(ffi.string(result.error).decode('utf-8'))
+    
     return ffi.string(result.ligation).decode('utf-8')

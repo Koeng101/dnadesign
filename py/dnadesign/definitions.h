@@ -187,6 +187,11 @@ typedef struct {
     char* error;
 } FragmentSequenceResult;
 
+typedef struct {
+    Assembly* assembly;
+    char* error;
+} RecursiveFragmentSequenceResult;
+
 // Function declarations
 FragmentResult CutWithEnzymeByName(Part part, int directional, char* name,
                                    int methylated);
@@ -204,7 +209,7 @@ FragmentSequenceResult FragmentSequenceWithOverhangs(
     char* sequence, int minFragmentSize, int maxFragmentSize,
     char** excludeOverhangs, int excludeOverhangCount, char** includeOverhangs,
     int includeOverhangCount);
-Assembly* RecursiveFragmentSequence(char* sequence, int maxCodingSizeOligo,
-                                    int* assemblyPattern, int patternCount,
-                                    char** excludeOverhangs, int excludeCount,
-                                    char** includeOverhangs, int includeCount);
+RecursiveFragmentSequenceResult RecursiveFragmentSequence(
+    char* sequence, int maxCodingSizeOligo, int* assemblyPattern,
+    int patternCount, char** excludeOverhangs, int excludeCount,
+    char** includeOverhangs, int includeCount);
