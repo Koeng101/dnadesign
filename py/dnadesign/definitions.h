@@ -137,3 +137,74 @@ typedef struct {
 
 GenbankResult ParseGenbankFromCFile(void* cfile);
 GenbankResult ParseGenbankFromCString(char* cstring);
+
+// Part, Fragment, and Assembly definitions
+typedef struct {
+    char* sequence;
+    int circular;
+} Part;
+
+typedef struct {
+    char* sequence;
+    char* forward_overhang;
+    char* reverse_overhang;
+} Fragment;
+
+typedef struct {
+    char* sequence;
+    char** fragments;
+    int fragmentCount;
+    double efficiency;
+    void* subAssemblies;
+    int subAssemblyCount;
+} Assembly;
+
+// New struct definitions for function outputs
+typedef struct {
+    Fragment* fragments;
+    int size;
+    char* error;
+} FragmentResult;
+
+typedef struct {
+    char* ligation;
+    int* ligationPattern;
+    int ligationPatternSize;
+    char* error;
+} LigationResult;
+
+typedef struct {
+    char** overhangs;
+    double* efficiencies;
+    int size;
+    char* error;
+} OverhangResult;
+
+typedef struct {
+    char** fragments;
+    int size;
+    double efficiency;
+    char* error;
+} FragmentSequenceResult;
+
+// Function declarations
+FragmentResult CutWithEnzymeByName(Part part, int directional, char* name,
+                                   int methylated);
+LigationResult Ligate(Fragment* fragments, int fragmentCount, int circular);
+LigationResult GoldenGate(Part* sequences, int sequenceCount,
+                          char* cuttingEnzymeName, int methylated);
+double SetEfficiency(char** overhangs, int overhangCount);
+OverhangResult NextOverhangs(char** currentOverhangs, int overhangCount);
+char* NextOverhang(char** currentOverhangs, int overhangCount);
+FragmentSequenceResult FragmentSequence(char* sequence, int minFragmentSize,
+                                        int maxFragmentSize,
+                                        char** excludeOverhangs,
+                                        int excludeOverhangCount);
+FragmentSequenceResult FragmentSequenceWithOverhangs(
+    char* sequence, int minFragmentSize, int maxFragmentSize,
+    char** excludeOverhangs, int excludeOverhangCount, char** includeOverhangs,
+    int includeOverhangCount);
+Assembly* RecursiveFragmentSequence(char* sequence, int maxCodingSizeOligo,
+                                    int* assemblyPattern, int patternCount,
+                                    char** excludeOverhangs, int excludeCount,
+                                    char** includeOverhangs, int includeCount);
