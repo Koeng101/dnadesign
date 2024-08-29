@@ -1,0 +1,101 @@
+# Anderson
+BBa_J23119:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ttgacagctagctcagtcctaggtataatgctagc
+BBa_J23100:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ttgacggctagctcagtcctaggtacagtgctagc
+BBa_J23101:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: tttacagctagctcagtcctaggtattatgctagc
+BBa_J23102:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ttgacagctagctcagtcctaggtactgtgctagc
+BBa_J23103:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ctgatagctagctcagtcctagggattatgctagc
+BBa_J23104:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ttgacagctagctcagtcctaggtattgtgctagc
+BBa_J23105:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: tttacggctagctcagtcctaggtactatgctagc
+BBa_J23106:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: tttacggctagctcagtcctaggtatagtgctagc
+BBa_J23107:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: tttacggctagctcagccctaggtattatgctagc
+BBa_J23108:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ctgacagctagctcagtcctaggtataatgctagc
+BBa_J23109:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: tttacagctagctcagtcctagggactgtgctagc
+BBa_J23110:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: tttacggctagctcagtcctaggtacaatgctagc
+BBa_J23111:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ttgacggctagctcagtcctaggtatagtgctagc
+BBa_J23112:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ctgatagctagctcagtcctagggattatgctagc
+BBa_J23113:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ctgatggctagctcagtcctagggattatgctagc
+BBa_J23114:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: tttatggctagctcagtcctaggtacaatgctagc
+BBa_J23115:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: tttatagctagctcagcccttggtacaatgctagc
+BBa_J23116:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ttgacagctagctcagtcctagggactatgctagc
+BBa_J23117:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ttgacagctagctcagtcctagggattgtgctagc
+BBa_J23118:
+  prefix: TACA
+  suffix: AACT
+  tags: ['promoter', 'anderson_promoter']
+  sequence: ttgacggctagctcagtcctaggtattgtgctagc
