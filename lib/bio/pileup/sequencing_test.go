@@ -1,5 +1,7 @@
 package pileup
 
+import "testing"
+
 var sequencingResults = map[string]SequencingResult{
 	"2eZetMG1kKOW3Iba84G6CPuaadY": {Confirmed: true, MixedTemplate: false, MixedColony: false, Notes: "Confirmed\nConfirmed"},
 	"2eZetNv8fYHCM0DuBcLASMthXkp": {Confirmed: true, MixedTemplate: false, MixedColony: false, Notes: "Confirmed\nConfirmed"},
@@ -130,7 +132,7 @@ var sequencingResults = map[string]SequencingResult{
 	"2eZjDHhgmq7XYOgnBe4nROLOt4V": {Confirmed: false, MixedTemplate: true, MixedColony: false, Notes: "different template. non-mixed colony."},
 	"2eZjDY8dIpviNGYQU1QadTdRGuC": {Confirmed: false, MixedTemplate: false, MixedColony: false, Notes: "different template, but non-mixed."},
 	"2eZjFwDDFPwyxno4r8muJupMK95": {Confirmed: false, MixedTemplate: true, MixedColony: false, Notes: "different template, non-mixed colonies"},
-	"2eZjJLnsKC91WYcfwhXCev3HAwS": {Confirmed: false, MixedTemplate: true, MixedColony: false, Notes: "differente template, but not mixed colonies."},
+	"2eZjJLnsKC91WYcfwhXCev3HAwS": {Confirmed: false, MixedTemplate: true, MixedColony: false, Notes: "different template, but not mixed colonies."},
 	"2eZjRhAzuxdfJcgFK4Mrb8h711B": {Confirmed: false, MixedTemplate: false, MixedColony: false, Notes: "different template"},
 	"2eZjRrJ4VxhpnthQYsFnh1WLmk8": {Confirmed: false, MixedTemplate: false, MixedColony: false, Notes: "different template, non-mixed. Mutated."},
 	"2eZjV8QFDBc0ioBp8f925hQfV71": {Confirmed: true, MixedTemplate: false, MixedColony: false, Notes: "confirmed (human annotated)"},
@@ -147,4 +149,8 @@ var sequencingResults = map[string]SequencingResult{
 	"2eZkPU6OBMpQGTsVfqA7kRO8bJc": {Confirmed: true, MixedTemplate: false, MixedColony: false, Notes: "confirmed (human)"},
 	"2eZkQpl6amNF5DuhGIhFlXqIjoq": {Confirmed: false, MixedTemplate: false, MixedColony: false, Notes: "different template. non-mixed colonies."},
 	"2eZkRQ2FBDXz4BOiSNKQcZXFdGq": {Confirmed: false, MixedTemplate: false, MixedColony: false, Notes: "different template. mutated."},
+}
+
+func TestSequencingResults(t *testing.T) {
+	_ = sequencingResults
 }

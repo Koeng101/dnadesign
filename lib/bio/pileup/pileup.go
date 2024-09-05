@@ -270,7 +270,7 @@ func CallMutations(readResults []string, referenceBase string, minimalRatio floa
 		if len(readResults) == 0 {
 			return false
 		}
-		return float64(float64(mutation)/float64(len(readResults))) >= minimalRatio
+		return float64(mutation)/float64(len(readResults)) >= minimalRatio
 	}
 
 	// Next, let's check for point mutations.
@@ -306,7 +306,7 @@ func CallMutations(readResults []string, referenceBase string, minimalRatio floa
 			default:
 				panic(fmt.Sprintf("Unknown readResult! got: %s", key))
 			}
-			indelModification := float64(float64(value) / float64(len(readResults)))
+			indelModification := float64(value) / float64(len(readResults))
 			if indelModification >= minimalRatio {
 				// Let's get the length of the insertion / indel
 				re := regexp.MustCompile(`-?\d+`)
