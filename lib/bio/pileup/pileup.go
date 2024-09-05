@@ -230,6 +230,14 @@ type Mutation struct {
 	TotalAligned int
 }
 
+type SequencingResult struct {
+	Confirmed     bool
+	MixedTemplate bool
+	MixedColony   bool
+	Notes         string
+	Mutations     []Mutation
+}
+
 func CallMutations(readResults []string, referenceBase string, minimalRatio float64) Mutation {
 	reads := make(map[string]int)
 	for _, readResult := range readResults {
