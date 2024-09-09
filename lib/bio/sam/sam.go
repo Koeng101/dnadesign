@@ -525,7 +525,8 @@ func (p *Parser) Next() (Alignment, error) {
 	var optionals []Optional
 	for _, value := range values[11:] {
 		valueSplit := strings.Split(value, ":")
-		optionals = append(optionals, Optional{Tag: valueSplit[0], Type: rune(valueSplit[1][0]), Data: valueSplit[2]})
+		// tag+:+Type+: == len()+1+1+1
+		optionals = append(optionals, Optional{Tag: valueSplit[0], Type: rune(valueSplit[1][0]), Data: value[len(valueSplit[0])+1+1+1:]})
 	}
 	alignment.Optionals = optionals
 	return alignment, nil
