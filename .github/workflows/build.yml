@@ -111,7 +111,7 @@ jobs:
         gdb -ex "run" -ex "bt full" -ex "quit" --args python -m pytest ./py/tests -v
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: dist-${{ runner.os }}-${{ matrix.arch }}
         path: py/dist/
@@ -135,7 +135,7 @@ jobs:
         pip install twine
 
     - name: Download artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         path: dist
 
