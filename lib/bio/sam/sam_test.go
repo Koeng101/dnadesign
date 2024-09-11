@@ -297,7 +297,7 @@ func TestPrimary(t *testing.T) {
 	}
 }
 
-func ExampleCs() {
+func TestSamCS(t *testing.T) {
 	file := strings.NewReader(`@HD	VN:1.6	SO:unsorted	GO:query
 @SQ	SN:pOpen_V3_amplified	LN:2482
 @PG	ID:minimap2	PN:minimap2	VN:2.24-r1155-dirty	CL:minimap2 -acLx map-ont - APX814_pass_barcode17_e229f2c8_109f9b91_0.fastq.gz
@@ -305,11 +305,14 @@ a2e75729-6c94-44e1-a9a2-c84fbea683a4	16	amplicon	1	60	70S15M3I377M2I3M1D71M1D5M1
 	parser, _, _ := NewParser(file, DefaultMaxLineSize)
 	samLine, _ := parser.Next()
 
+	var output string
 	for _, optional := range samLine.Optionals {
 		if optional.Tag == "cs" && optional.Type == 'Z' {
-			fmt.Println(optional.Data)
+			output = optional.Data
 		}
 	}
-
-	// Output: :15+gaa:3*ct:74*ct:67*gc:230+gg:3-a:5*ct:65-g*ac:2*ac:1-g:2-g:224-g:274*cg:7+a:86
+	expectedOutput := ":15+gaa:3*ct:74*ct:67*gc:230+gg:3-a:5*ct:65-g*ac:2*ac:1-g:2-g:224-g:274*cg:7+a:86"
+	if output != expectedOutput {
+		t.Errorf("Got unexpected cs output: %s\nWanted: %s", output, expectedOutput)
+	}
 }

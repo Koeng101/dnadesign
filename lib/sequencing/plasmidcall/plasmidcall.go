@@ -109,7 +109,6 @@ func CallMutations(referenceSequence string, alignments []CsAlignment) ([]Mutati
 					CleanMutation: false,
 				})
 			}
-
 		}
 
 		// Count occurrences of each mutation type
@@ -137,14 +136,14 @@ func CallMutations(referenceSequence string, alignments []CsAlignment) ([]Mutati
 		// representation of mutations on only one strand, we believe this
 		// is a nanopore sequencing error, and treat it as such.
 		mutationalRatios := make(map[uint8]float64)
-		for k, _ := range forwardStrand {
+		for k := range forwardStrand {
 			mutationalRatios[k] = 0
 		}
-		for k, _ := range reverseStrand {
+		for k := range reverseStrand {
 			mutationalRatios[k] = 0
 		}
 		var foundNanoporeMutation bool
-		for k, _ := range mutationalRatios {
+		for k := range mutationalRatios {
 			if k != '.' {
 				forwardRatio := forwardStrand[k] / forwardStrand['.']
 				reverseRatio := reverseStrand[k] / reverseStrand['.']
