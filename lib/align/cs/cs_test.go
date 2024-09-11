@@ -28,18 +28,40 @@ func TestParseAndDigestCS(t *testing.T) {
 
 	// Test DigestCS
 	expectedDigestedCS := []DigestedCS{
-		{Position: 6, Type: '*'},
-		{Position: 7, Type: '*'},
-		{Position: 8, Type: '*'},
-		{Position: 19, Type: '+'},
-		{Position: 23, Type: 't'},
+		{Position: 0, Type: 46, Qual: 65, ReverseComplement: false},
+		{Position: 1, Type: 46, Qual: 66, ReverseComplement: false},
+		{Position: 2, Type: 46, Qual: 67, ReverseComplement: false},
+		{Position: 3, Type: 46, Qual: 68, ReverseComplement: false},
+		{Position: 4, Type: 46, Qual: 69, ReverseComplement: false},
+		{Position: 5, Type: 46, Qual: 70, ReverseComplement: false},
+		{Position: 6, Type: 42, Qual: 0, ReverseComplement: false},
+		{Position: 7, Type: 42, Qual: 0, ReverseComplement: false},
+		{Position: 8, Type: 42, Qual: 0, ReverseComplement: false},
+		{Position: 9, Type: 46, Qual: 71, ReverseComplement: false},
+		{Position: 10, Type: 46, Qual: 72, ReverseComplement: false},
+		{Position: 11, Type: 46, Qual: 73, ReverseComplement: false},
+		{Position: 12, Type: 46, Qual: 74, ReverseComplement: false},
+		{Position: 13, Type: 46, Qual: 75, ReverseComplement: false},
+		{Position: 14, Type: 46, Qual: 76, ReverseComplement: false},
+		{Position: 15, Type: 46, Qual: 77, ReverseComplement: false},
+		{Position: 16, Type: 46, Qual: 78, ReverseComplement: false},
+		{Position: 17, Type: 46, Qual: 79, ReverseComplement: false},
+		{Position: 18, Type: 46, Qual: 80, ReverseComplement: false},
+		{Position: 19, Type: 46, Qual: 84, ReverseComplement: false},
+		{Position: 20, Type: 46, Qual: 85, ReverseComplement: false},
+		{Position: 21, Type: 46, Qual: 86, ReverseComplement: false},
+		{Position: 22, Type: 46, Qual: 87, ReverseComplement: false},
+		{Position: 23, Type: 116, Qual: 88, ReverseComplement: false},
+		{Position: 24, Type: 46, Qual: 89, ReverseComplement: false},
+		{Position: 25, Type: 46, Qual: 90, ReverseComplement: false},
+		{Position: 26, Type: 46, Qual: 97, ReverseComplement: false},
 	}
 
 	expectedDigestedInsertions := []DigestedInsertion{
-		{Position: 19, Insertion: "gtc"},
+		{Position: 19, Insertion: "gtc", Qual: "QRS", ReverseComplement: false},
 	}
 
-	digestedCS, digestedInsertions := DigestCS(parsedCS)
+	digestedCS, digestedInsertions := DigestCS(parsedCS, "ABCDEFGHIJKLMNOPQRSTUVWXYZa", false)
 
 	if !reflect.DeepEqual(digestedCS, expectedDigestedCS) {
 		t.Errorf("DigestCS() digestedCS = %v, want %v", digestedCS, expectedDigestedCS)

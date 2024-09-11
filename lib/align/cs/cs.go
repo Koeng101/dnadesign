@@ -34,6 +34,8 @@ package cs
 import (
 	"strconv"
 	"unicode"
+
+	"github.com/koeng101/dnadesign/lib/transform"
 )
 
 // CS is a struct format of each element of a cs string. For example, the cs
@@ -66,15 +68,19 @@ in a DigestedInsertion struct.
 // DNA synthesis applications, this is mostly OK because insertions are very
 // rare.
 type DigestedCS struct {
-	Position uint64 // Position in the sequence with the change
-	Type     uint8  // The change type. Can only be [A T G C * +].
+	Position          uint64 // Position in the sequence with the change
+	Type              uint8  // The change type. Can only be [. A T G C * +]
+	Qual              byte   // The byte of the quality
+	ReverseComplement bool
 }
 
 // DigestedInsertion separately stores inserts from the DigestedCS, in case
 // this data is needed for analysis later.
 type DigestedInsertion struct {
-	Position  uint64 // Position in the sequence with an insertion
-	Insertion string // the insertion string
+	Position          uint64 // Position in the sequence with an insertion
+	Insertion         string // the insertion string
+	Qual              string // The string of the quality
+	ReverseComplement bool
 }
 
 // toCS is a function that properly adds size to CS. We use a function here
@@ -120,38 +126,50 @@ func ParseCS(csString string) []CS {
 }
 
 // DigestCS takes a slice of CS structs and returns slices of DigestedCS and DigestedInsertion
-func DigestCS(csSlice []CS) ([]DigestedCS, []DigestedInsertion) {
+func DigestCS(csSlice []CS, quality string, reverseComplement bool) ([]DigestedCS, []DigestedInsertion) {
+	if reverseComplement {
+		quality = transform.ReverseString(quality)
+	}
 	var digestedCS []DigestedCS
 	var digestedInsertions []DigestedInsertion
 	position := uint64(0)
+	// We want the quality of the fragment to follow the query, not the
+	// reference sequence.
+	var qualityPosition int
 
 	for _, cs := range csSlice {
 		switch cs.Type {
 		case ':':
-			position += uint64(cs.Size)
+			for i := 0; i < cs.Size; i++ {
+				digestedCS = append(digestedCS, DigestedCS{Position: position, Type: '.', ReverseComplement: reverseComplement, Qual: quality[qualityPosition]})
+				position++
+				qualityPosition++
+			}
 		case '*':
-			digestedCS = append(digestedCS, DigestedCS{Position: position, Type: cs.Change[1]}) // *at we need t
+			digestedCS = append(digestedCS, DigestedCS{Position: position, Type: cs.Change[1], ReverseComplement: reverseComplement, Qual: quality[qualityPosition]}) // *at we need t
 			position++
+			qualityPosition++
 		case '-':
 			for i := 0; i < cs.Size; i++ {
 				digestedCS = append(digestedCS, DigestedCS{
-					Position: position,
-					Type:     '*',
+					Position:          position,
+					Type:              '*',
+					ReverseComplement: reverseComplement,
+					// No quality for deletions mutations.
 				})
 				position++
 			}
 		case '+':
-			digestedCS = append(digestedCS, DigestedCS{
-				Position: position,
-				Type:     '+',
-			})
 			// Insertions are positioned at where they are inserted. For example,
 			// if we have it between 18 and 19, the insertion "Position" would be 19
 			digestedInsertions = append(digestedInsertions, DigestedInsertion{
-				Position:  position,
-				Insertion: cs.Change,
+				Position:          position,
+				Insertion:         cs.Change,
+				ReverseComplement: reverseComplement,
+				Qual:              quality[qualityPosition : qualityPosition+len(cs.Change)],
 			})
-			// Don't increment position for insertions
+			// Don't increment position for insertions, but increment qualityPosition
+			qualityPosition += len(cs.Change)
 		}
 	}
 

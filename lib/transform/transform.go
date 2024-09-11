@@ -199,3 +199,24 @@ var complementTableRNA = [256]byte{
 	'y': 'r',
 	'x': 'x',
 }
+
+// ReverseString reverses a string. Mostly takes from a solution by Russ Cox
+//
+//	http://groups.google.com/group/golang-nuts/browse_thread/thread/a0fb81698275eede
+//
+// This is mainly used for reverse quality scores on sequencing data.
+func ReverseString(input string) string {
+	n := 0
+	rune := make([]rune, len(input))
+	for _, r := range input {
+		rune[n] = r
+		n++
+	}
+	rune = rune[0:n]
+	// Reverse
+	for i := 0; i < n/2; i++ {
+		rune[i], rune[n-1-i] = rune[n-1-i], rune[i]
+	}
+	// Convert back to UTF-8.
+	return string(rune)
+}
