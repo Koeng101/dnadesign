@@ -16,6 +16,7 @@ There are a couple kinds of mutations:
 package plasmidcall
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/koeng101/dnadesign/lib/align/cs"
@@ -37,7 +38,7 @@ const (
 // Mutation contains mutation data at a certain location.
 type Mutation struct {
 	Position       int
-	MutatioNString string
+	MutationString string
 	MutationType   MutationType
 	Change         string
 	CleanMutation  bool // False if MixedMutation, True if CleanMutation
@@ -58,6 +59,12 @@ func CallMutations(referenceSequence string, alignments []CsAlignment) ([]Mutati
 		digestedCS, digestedInsertions := cs.DigestCS(alignment.CS, alignment.Read.Quality, alignment.ReverseComplement)
 		for i := range digestedCS {
 			totalDigestedCS[i] = append(totalDigestedCS[i], digestedCS[i])
+		}
+		if len(digestedCS) > 65 {
+			if digestedCS[64].Qual == 0 {
+				fmt.Println(digestedCS[64])
+				fmt.Println(alignment.Read.Identifier)
+			}
 		}
 		for i := range digestedInsertions {
 			totalDigestedInsertions[int(digestedInsertions[i].Position)] = append(totalDigestedInsertions[int(digestedInsertions[i].Position)], digestedInsertions[i])
@@ -145,11 +152,13 @@ func CallMutations(referenceSequence string, alignments []CsAlignment) ([]Mutati
 		var foundNanoporeMutation bool
 		for k := range mutationalRatios {
 			if k != '.' {
-				forwardRatio := forwardStrand[k] / forwardStrand['.']
-				reverseRatio := reverseStrand[k] / reverseStrand['.']
+				forwardRatio := float64(forwardStrand[k]) / float64(forwardStrand['.'])
+				reverseRatio := float64(reverseStrand[k]) / float64(reverseStrand['.'])
 				// This just runs the test where if a strands correct/incorrect ratio is 5x on one strand and has 5
-				// correct reads on the other strand, then we
-				if ((forwardRatio > reverseRatio*5) && (reverseStrand['.'] > 5)) || ((reverseRatio > forwardRatio*5) && (forwardStrand['.'] > 5)) {
+				// correct reads on the other strand, then we, and the incorrect
+				if (((forwardRatio > reverseRatio*5) && (reverseStrand['.'] > 5)) && forwardRatio > 0.25) || (((reverseRatio > forwardRatio*5) && (forwardStrand['.'] > 5)) && reverseRatio > 0.25) {
+					fmt.Println(i, k, forwardRatio, reverseRatio)
+					fmt.Println(forwardStrand[k], forwardStrand['.'], reverseStrand[k], reverseStrand['.'])
 					mutations = append(mutations, Mutation{Position: i, MutationType: NanoporeError, CleanMutation: true})
 					foundNanoporeMutation = true
 					break
@@ -166,9 +175,11 @@ func CallMutations(referenceSequence string, alignments []CsAlignment) ([]Mutati
 			var mostCommonMutation uint8
 			var maxCount int
 			for mut, count := range mutationCounts {
-				if count > maxCount {
-					mostCommonMutation = mut
-					maxCount = count
+				if mut != '.' {
+					if count > maxCount {
+						mostCommonMutation = mut
+						maxCount = count
+					}
 				}
 			}
 
@@ -196,6 +207,8 @@ func CallMutations(referenceSequence string, alignments []CsAlignment) ([]Mutati
 			for mut, count := range mutationCounts {
 				if mut != '.' {
 					if (float64(count)/float64(mutationCounts['.']) + math.SmallestNonzeroFloat64) > .25 { // we add epsilon to prevent divide by zero
+						fmt.Println(mut, count, mutationCounts['.'])
+						fmt.Println((float64(count)/float64(mutationCounts['.']) + math.SmallestNonzeroFloat64))
 						mutations = append(mutations, Mutation{
 							Position:      i,
 							MutationType:  mutationType,
