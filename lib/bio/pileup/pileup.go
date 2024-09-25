@@ -39,6 +39,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"regexp"
 	"strconv"
 	"strings"
 	"unicode"
@@ -196,4 +197,192 @@ func (line *Line) WriteTo(w io.Writer) (int64, error) {
 	}
 	written, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n", line.Sequence, strconv.FormatUint(uint64(line.Position), 10), line.ReferenceBase, strconv.FormatUint(uint64(line.ReadCount), 10), buffer.String(), line.Quality)
 	return int64(written), err
+}
+
+/******************************************************************************
+
+Sequencing
+
+The primary use of pileup files are to have a visual way of looking at
+SNP/indels in alignment data. In particular, it can be used analyze plasmid
+sequencing data to see if there any mutations in the DNA.
+
+******************************************************************************/
+
+type MutationType string
+
+const (
+	NanoporeError MutationType = "nanopore_error"
+	NoMutation    MutationType = "no_mutation"
+	Point         MutationType = "point"
+	PointIndel    MutationType = "point_indel"
+	Indel         MutationType = "indel"
+	Insertion     MutationType = "insertion"
+	Noisy         MutationType = "noisy"
+)
+
+type Mutation struct {
+	Type         MutationType
+	From         string
+	To           string
+	Length       int // Only for Indel and Insertions
+	TotalCorrect int
+	TotalMutated int
+	TotalAligned int
+}
+
+type SequencingResult struct {
+	Confirmed     bool
+	MixedTemplate bool
+	MixedColony   bool
+	Notes         string
+	Mutations     []Mutation
+}
+
+func CallMutations(readResults []string, referenceBase string, minimalRatio float64) Mutation {
+	reads := make(map[string]int)
+	for _, readResult := range readResults {
+		if len(readResult) == 1 {
+			// This will include simple point mutations and
+			// correct sequences.
+			reads[string(readResult[0])]++
+		} else {
+			// This includes more complicated Sequences
+			switch {
+			case strings.Contains(readResult, "$"):
+				// An "end" will always start with the base called
+				reads[string(readResult[0])]++
+			case strings.Contains(readResult, "^"):
+				// A "start" will end with the base called
+				reads[string(readResult[len(readResult)-1])]++
+			default:
+				// The default case would be a deletion or an insertion.
+				// We handle those by inserting the entire thing.
+				reads[readResult]++
+			}
+		}
+	}
+	// First, check how many correct alignments we have.
+	noMutation := reads["."] + reads[","]
+
+	// ratioFunction is a function that returns "true" if a mutation
+	// has a greater than or equal ratio than the minimalRatio.
+	ratioFunction := func(mutation int) bool {
+		if len(readResults) == 0 {
+			return false
+		}
+		return float64(mutation)/float64(len(readResults)) >= minimalRatio
+	}
+
+	// Next, let's check for point mutations.
+	aMutation := reads["A"] + reads["a"]
+	tMutation := reads["T"] + reads["t"]
+	gMutation := reads["G"] + reads["g"]
+	cMutation := reads["C"] + reads["c"]
+	pointIndel := reads["*"]
+
+	// First, let's check if the mutation is a point mutation
+	// Define constants for nanopore error detection
+	const (
+		nanoporeStrandRatio = 4
+		oppositeStrandReads = 5
+	)
+
+	// First, let's check if the mutation is a point mutation
+	switch {
+	case ratioFunction(aMutation):
+		// Check if a nanopore mutation
+		switch {
+		case reads["A"] > nanoporeStrandRatio*reads["a"]:
+			if reads[","] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "A", TotalCorrect: noMutation, TotalMutated: aMutation, TotalAligned: len(readResults)}
+			}
+		case reads["a"] > nanoporeStrandRatio*reads["A"]:
+			if reads["."] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "a", TotalCorrect: noMutation, TotalMutated: aMutation, TotalAligned: len(readResults)}
+			}
+		}
+		return Mutation{Type: Point, From: referenceBase, To: "A", TotalCorrect: noMutation, TotalMutated: aMutation, TotalAligned: len(readResults)}
+	case ratioFunction(tMutation):
+		// Check if a nanopore mutation
+		switch {
+		case reads["T"] > nanoporeStrandRatio*reads["t"]:
+			if reads[","] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "T", TotalCorrect: noMutation, TotalMutated: tMutation, TotalAligned: len(readResults)}
+			}
+		case reads["t"] > nanoporeStrandRatio*reads["T"]:
+			if reads["."] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "t", TotalCorrect: noMutation, TotalMutated: tMutation, TotalAligned: len(readResults)}
+			}
+		}
+		return Mutation{Type: Point, From: referenceBase, To: "T", TotalCorrect: noMutation, TotalMutated: tMutation, TotalAligned: len(readResults)}
+	case ratioFunction(gMutation):
+		// Check if a nanopore mutation
+		switch {
+		case reads["G"] > nanoporeStrandRatio*reads["g"]:
+			if reads[","] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "G", TotalCorrect: noMutation, TotalMutated: gMutation, TotalAligned: len(readResults)}
+			}
+		case reads["g"] > nanoporeStrandRatio*reads["G"]:
+			if reads["."] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "g", TotalCorrect: noMutation, TotalMutated: gMutation, TotalAligned: len(readResults)}
+			}
+		}
+		return Mutation{Type: Point, From: referenceBase, To: "G", TotalCorrect: noMutation, TotalMutated: gMutation, TotalAligned: len(readResults)}
+	case ratioFunction(cMutation):
+		// Check if a nanopore mutation
+		switch {
+		case reads["C"] > nanoporeStrandRatio*reads["c"]:
+			if reads[","] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "C", TotalCorrect: noMutation, TotalMutated: cMutation, TotalAligned: len(readResults)}
+			}
+		case reads["c"] > nanoporeStrandRatio*reads["C"]:
+			if reads["."] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "c", TotalCorrect: noMutation, TotalMutated: cMutation, TotalAligned: len(readResults)}
+			}
+		}
+		return Mutation{Type: Point, From: referenceBase, To: "C", TotalCorrect: noMutation, TotalMutated: cMutation, TotalAligned: len(readResults)}
+	case ratioFunction(pointIndel):
+		return Mutation{Type: PointIndel, From: referenceBase, To: "*", TotalCorrect: noMutation, TotalMutated: pointIndel, TotalAligned: len(readResults)}
+	}
+	// Ok, we know there is no point mutation. That means there is an insertion or indel. Let's call it.
+	for key, value := range reads {
+		if len(key) > 1 {
+			var mutationType MutationType
+			switch key[0] {
+			case '-':
+				mutationType = Indel
+			case '+':
+				mutationType = Insertion
+			default:
+				panic(fmt.Sprintf("Unknown readResult! got: %s", key))
+			}
+			indelModification := float64(value) / float64(len(readResults))
+			if indelModification >= minimalRatio {
+				// Let's get the length of the insertion / indel
+				re := regexp.MustCompile(`-?\d+`)
+				match := re.FindString(key)
+				if match == "" {
+					panic("no num found!")
+				}
+				// Given the regex, this will never fail
+				length, _ := strconv.Atoi(match)
+				return Mutation{Type: mutationType, To: key, TotalCorrect: noMutation, TotalMutated: value, TotalAligned: len(readResults), Length: length}
+			}
+		}
+	}
+
+	// Now we know it is not a point mutation, not an indel, and not an insertion. Maybe the read
+	// is just noisy though, so let's check that now
+	var noisyCount int
+	for key, value := range reads {
+		if key != "." && key != "," {
+			noisyCount += value
+		}
+	}
+	if ratioFunction(noisyCount) {
+		return Mutation{Type: Noisy, To: "?", TotalCorrect: noMutation, TotalMutated: noisyCount, TotalAligned: len(readResults)}
+	}
+
+	return Mutation{Type: NoMutation, To: ".", TotalCorrect: noMutation, TotalMutated: noisyCount, TotalAligned: len(readResults)}
 }
