@@ -272,7 +272,6 @@ func TestSequencingResults(t *testing.T) {
 					}
 				}
 			}
-
 		}
 	}
 }
