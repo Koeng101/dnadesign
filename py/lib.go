@@ -112,15 +112,41 @@ typedef struct {
     int feature_count;
     char* sequence;
 } Genbank;
+
+// Part
+typedef struct {
+    char* sequence;
+    int circular;
+} Part;
+
+// Fragment
+typedef struct {
+    char* sequence;
+    char* forward_overhang;
+    char* reverse_overhang;
+} Fragment;
+
+// Assembly
+typedef struct {
+    char* sequence;
+    char** fragments;
+    int fragmentCount;
+    double efficiency;
+    void* subAssemblies;
+    int subAssemblyCount;
+} Assembly;
 */
 import "C"
 import (
+	"fmt"
 	"io"
 	"strings"
 	"unsafe"
 
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/bio/genbank"
+	"github.com/koeng101/dnadesign/lib/clone"
+	"github.com/koeng101/dnadesign/lib/synthesis/fragment"
 )
 
 /******************************************************************************
@@ -431,6 +457,268 @@ func ParseGenbankFromCString(cstring *C.char) (*C.Genbank, int, *C.char) {
 		return nil, len(genbanks), C.CString(err.Error())
 	}
 	return goGenbankToCGenbank(genbanks)
+}
+
+/******************************************************************************
+Aug 28, 2024
+
+Clone Package Functions
+
+******************************************************************************/
+
+//export CutWithEnzymeByName
+func CutWithEnzymeByName(part C.Part, directional C.int, name *C.char, methylated C.int) (*C.Fragment, C.int, *C.char) {
+	goPart := clone.Part{
+		Sequence: C.GoString(part.sequence),
+		Circular: part.circular != 0,
+	}
+	fragments, err := clone.CutWithEnzymeByName(goPart, directional != 0, C.GoString(name), methylated != 0)
+	if err != nil {
+		return nil, 0, C.CString(err.Error())
+	}
+
+	cFragments := (*C.Fragment)(C.malloc(C.size_t(len(fragments)) * C.size_t(unsafe.Sizeof(C.Fragment{}))))
+	slice := (*[1<<30 - 1]C.Fragment)(unsafe.Pointer(cFragments))[:len(fragments):len(fragments)]
+
+	for i, frag := range fragments {
+		slice[i].sequence = C.CString(frag.Sequence)
+		slice[i].forward_overhang = C.CString(frag.ForwardOverhang)
+		slice[i].reverse_overhang = C.CString(frag.ReverseOverhang)
+	}
+
+	return cFragments, C.int(len(fragments)), nil
+}
+
+//export Ligate
+func Ligate(fragments *C.Fragment, fragmentCount C.int, circular C.int) (*C.char, *C.int, C.int, *C.char) {
+	goFragments := make([]clone.Fragment, int(fragmentCount))
+	slice := (*[1<<30 - 1]C.Fragment)(unsafe.Pointer(fragments))[:fragmentCount:fragmentCount]
+
+	for i := 0; i < int(fragmentCount); i++ {
+		goFragments[i] = clone.Fragment{
+			Sequence:        C.GoString(slice[i].sequence),
+			ForwardOverhang: C.GoString(slice[i].forward_overhang),
+			ReverseOverhang: C.GoString(slice[i].reverse_overhang),
+		}
+	}
+
+	ligation, ligationPattern, err := clone.Ligate(goFragments, circular != 0)
+	if err != nil {
+		return nil, nil, 0, C.CString(err.Error())
+	}
+
+	cLigation := C.CString(ligation)
+	cLigationPattern := (*C.int)(C.malloc(C.size_t(len(ligationPattern)) * C.sizeof_int))
+	cLigationPatternSlice := (*[1<<30 - 1]C.int)(unsafe.Pointer(cLigationPattern))[:len(ligationPattern):len(ligationPattern)]
+	for i, v := range ligationPattern {
+		cLigationPatternSlice[i] = C.int(v)
+	}
+
+	return cLigation, cLigationPattern, C.int(len(ligationPattern)), nil
+}
+
+//export GoldenGate
+func GoldenGate(sequences *C.Part, sequenceCount C.int, cuttingEnzymeName *C.char, methylated C.int) (*C.char, *C.int, C.int, *C.char) {
+	goParts := make([]clone.Part, int(sequenceCount))
+	slice := (*[1<<30 - 1]C.Part)(unsafe.Pointer(sequences))[:sequenceCount:sequenceCount]
+
+	for i := 0; i < int(sequenceCount); i++ {
+		goParts[i] = clone.Part{
+			Sequence: C.GoString(slice[i].sequence),
+			Circular: slice[i].circular != 0,
+		}
+	}
+
+	// Look up the cutting enzyme by name
+	enzymeName := C.GoString(cuttingEnzymeName)
+	cuttingEnzyme, ok := clone.DefaultEnzymes[enzymeName]
+	if !ok {
+		return nil, nil, 0, C.CString(fmt.Sprintf("Unknown enzyme: %s", enzymeName))
+	}
+
+	result, pattern, err := clone.GoldenGate(goParts, cuttingEnzyme, methylated != 0)
+	if err != nil {
+		return nil, nil, 0, C.CString(err.Error())
+	}
+
+	cResult := C.CString(result)
+	cPattern := (*C.int)(C.malloc(C.size_t(len(pattern)) * C.sizeof_int))
+	cPatternSlice := (*[1<<30 - 1]C.int)(unsafe.Pointer(cPattern))[:len(pattern):len(pattern)]
+	for i, v := range pattern {
+		cPatternSlice[i] = C.int(v)
+	}
+
+	return cResult, cPattern, C.int(len(pattern)), nil
+}
+
+/******************************************************************************
+Aug 28, 2024
+
+Fragment Package Functions
+
+******************************************************************************/
+
+//export SetEfficiency
+func SetEfficiency(overhangs **C.char, overhangCount C.int) C.double {
+	goOverhangs := make([]string, int(overhangCount))
+	slice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(overhangs))[:overhangCount:overhangCount]
+
+	for i := 0; i < int(overhangCount); i++ {
+		goOverhangs[i] = C.GoString(slice[i])
+	}
+
+	return C.double(fragment.SetEfficiency(goOverhangs))
+}
+
+//export NextOverhangs
+func NextOverhangs(currentOverhangs **C.char, overhangCount C.int) (**C.char, *C.double, C.int, *C.char) {
+	goCurrentOverhangs := make([]string, int(overhangCount))
+	slice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(currentOverhangs))[:overhangCount:overhangCount]
+
+	for i := 0; i < int(overhangCount); i++ {
+		goCurrentOverhangs[i] = C.GoString(slice[i])
+	}
+
+	nextOverhangs, efficiencies := fragment.NextOverhangs(goCurrentOverhangs)
+
+	cNextOverhangs := (**C.char)(C.malloc(C.size_t(len(nextOverhangs)) * C.size_t(unsafe.Sizeof(uintptr(0)))))
+	cNextOverhangsSlice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(cNextOverhangs))[:len(nextOverhangs):len(nextOverhangs)]
+
+	cEfficiencies := (*C.double)(C.malloc(C.size_t(len(efficiencies)) * C.sizeof_double))
+	cEfficienciesSlice := (*[1<<30 - 1]C.double)(unsafe.Pointer(cEfficiencies))[:len(efficiencies):len(efficiencies)]
+
+	for i, overhang := range nextOverhangs {
+		cNextOverhangsSlice[i] = C.CString(overhang)
+		cEfficienciesSlice[i] = C.double(efficiencies[i])
+	}
+
+	return cNextOverhangs, cEfficiencies, C.int(len(nextOverhangs)), nil
+}
+
+//export NextOverhang
+func NextOverhang(currentOverhangs **C.char, overhangCount C.int) *C.char {
+	goCurrentOverhangs := make([]string, int(overhangCount))
+	slice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(currentOverhangs))[:overhangCount:overhangCount]
+
+	for i := 0; i < int(overhangCount); i++ {
+		goCurrentOverhangs[i] = C.GoString(slice[i])
+	}
+
+	return C.CString(fragment.NextOverhang(goCurrentOverhangs))
+}
+
+//export FragmentSequence
+func FragmentSequence(sequence *C.char, minFragmentSize C.int, maxFragmentSize C.int, excludeOverhangs **C.char, excludeOverhangCount C.int) (**C.char, C.int, C.double, *C.char) {
+	goSequence := C.GoString(sequence)
+	goExcludeOverhangs := make([]string, int(excludeOverhangCount))
+	slice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(excludeOverhangs))[:excludeOverhangCount:excludeOverhangCount]
+
+	for i := 0; i < int(excludeOverhangCount); i++ {
+		goExcludeOverhangs[i] = C.GoString(slice[i])
+	}
+
+	fragments, efficiency, err := fragment.Fragment(goSequence, int(minFragmentSize), int(maxFragmentSize), goExcludeOverhangs)
+	if err != nil {
+		return nil, 0, 0, C.CString(err.Error())
+	}
+
+	cFragments := (**C.char)(C.malloc(C.size_t(len(fragments)) * C.size_t(unsafe.Sizeof(uintptr(0)))))
+	cFragmentsSlice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(cFragments))[:len(fragments):len(fragments)]
+
+	for i, frag := range fragments {
+		cFragmentsSlice[i] = C.CString(frag)
+	}
+
+	return cFragments, C.int(len(fragments)), C.double(efficiency), nil
+}
+
+//export FragmentSequenceWithOverhangs
+func FragmentSequenceWithOverhangs(sequence *C.char, minFragmentSize C.int, maxFragmentSize C.int, excludeOverhangs **C.char, excludeOverhangCount C.int, includeOverhangs **C.char, includeOverhangCount C.int) (**C.char, C.int, C.double, *C.char) {
+	goSequence := C.GoString(sequence)
+	goExcludeOverhangs := make([]string, int(excludeOverhangCount))
+	goIncludeOverhangs := make([]string, int(includeOverhangCount))
+
+	excludeSlice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(excludeOverhangs))[:excludeOverhangCount:excludeOverhangCount]
+	includeSlice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(includeOverhangs))[:includeOverhangCount:includeOverhangCount]
+
+	for i := 0; i < int(excludeOverhangCount); i++ {
+		goExcludeOverhangs[i] = C.GoString(excludeSlice[i])
+	}
+
+	for i := 0; i < int(includeOverhangCount); i++ {
+		goIncludeOverhangs[i] = C.GoString(includeSlice[i])
+	}
+
+	fragments, efficiency, err := fragment.FragmentWithOverhangs(goSequence, int(minFragmentSize), int(maxFragmentSize), goExcludeOverhangs, goIncludeOverhangs)
+	if err != nil {
+		return nil, 0, 0, C.CString(err.Error())
+	}
+
+	cFragments := (**C.char)(C.malloc(C.size_t(len(fragments)) * C.size_t(unsafe.Sizeof(uintptr(0)))))
+	cFragmentsSlice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(cFragments))[:len(fragments):len(fragments)]
+
+	for i, frag := range fragments {
+		cFragmentsSlice[i] = C.CString(frag)
+	}
+
+	return cFragments, C.int(len(fragments)), C.double(efficiency), nil
+}
+
+//export RecursiveFragmentSequence
+func RecursiveFragmentSequence(sequence *C.char, maxCodingSizeOligo C.int, assemblyPattern *C.int, patternCount C.int, excludeOverhangs **C.char, excludeCount C.int, includeOverhangs **C.char, includeCount C.int) (*C.Assembly, *C.char) {
+	goSequence := C.GoString(sequence)
+	goAssemblyPattern := make([]int, patternCount)
+	goExcludeOverhangs := make([]string, excludeCount)
+	goIncludeOverhangs := make([]string, includeCount)
+	patternSlice := (*[1<<30 - 1]C.int)(unsafe.Pointer(assemblyPattern))[:patternCount:patternCount]
+	excludeSlice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(excludeOverhangs))[:excludeCount:excludeCount]
+	includeSlice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(includeOverhangs))[:includeCount:includeCount]
+	for i := 0; i < int(patternCount); i++ {
+		goAssemblyPattern[i] = int(patternSlice[i])
+	}
+	for i := 0; i < int(excludeCount); i++ {
+		goExcludeOverhangs[i] = C.GoString(excludeSlice[i])
+	}
+	for i := 0; i < int(includeCount); i++ {
+		goIncludeOverhangs[i] = C.GoString(includeSlice[i])
+	}
+	assembly, err := fragment.RecursiveFragment(goSequence, int(maxCodingSizeOligo), goAssemblyPattern, goExcludeOverhangs, goIncludeOverhangs)
+	if err != nil {
+		return nil, C.CString(err.Error())
+	}
+	return convertAssemblyToC(assembly), nil
+}
+
+func convertAssemblyToC(assembly fragment.Assembly) *C.Assembly {
+	cAssembly := (*C.Assembly)(C.malloc(C.size_t(unsafe.Sizeof(C.Assembly{}))))
+	cAssembly.sequence = C.CString(assembly.Sequence)
+
+	// Convert fragments
+	cFragments := (**C.char)(C.malloc(C.size_t(len(assembly.Fragments)) * C.size_t(unsafe.Sizeof(uintptr(0)))))
+	cFragmentsSlice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(cFragments))[:len(assembly.Fragments):len(assembly.Fragments)]
+	for i, frag := range assembly.Fragments {
+		cFragmentsSlice[i] = C.CString(frag)
+	}
+	cAssembly.fragments = cFragments
+	cAssembly.fragmentCount = C.int(len(assembly.Fragments))
+
+	cAssembly.efficiency = C.double(assembly.Efficiency)
+
+	// Convert sub-assemblies recursively
+	if len(assembly.SubAssemblies) > 0 {
+		cSubAssemblies := (*C.Assembly)(C.malloc(C.size_t(len(assembly.SubAssemblies)) * C.size_t(unsafe.Sizeof(C.Assembly{}))))
+		cSubAssembliesSlice := (*[1<<30 - 1]C.Assembly)(unsafe.Pointer(cSubAssemblies))[:len(assembly.SubAssemblies):len(assembly.SubAssemblies)]
+		for i, subAssembly := range assembly.SubAssemblies {
+			cSubAssembliesSlice[i] = *convertAssemblyToC(subAssembly)
+		}
+		cAssembly.subAssemblies = unsafe.Pointer(cSubAssemblies)
+		cAssembly.subAssemblyCount = C.int(len(assembly.SubAssemblies))
+	} else {
+		cAssembly.subAssemblies = nil
+		cAssembly.subAssemblyCount = 0
+	}
+
+	return cAssembly
 }
 
 /******************************************************************************
