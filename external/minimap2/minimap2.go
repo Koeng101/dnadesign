@@ -72,7 +72,7 @@ func Minimap2(templateFastas []fasta.Record, fastqInput io.Reader, w io.Writer) 
 	tmpFile.Close() // Close the file as it's no longer needed
 
 	// Start minimap2 pointing to the temporary file and stdin for sequencing data
-	cmd := exec.Command("minimap2", "-K", "100", "-ax", "map-ont", tmpFile.Name(), "-")
+	cmd := exec.Command("minimap2", "--cs=short", "-K", "100", "-ax", "map-ont", tmpFile.Name(), "-")
 	cmd.Stdout = w
 	cmd.Stdin = fastqInput
 	if err := cmd.Start(); err != nil {
