@@ -39,7 +39,7 @@ def test_recursive_fragment():
     max_oligo_len = 174  # for Agilent oligo pools
     assembly_pattern = [5, 4, 4, 5]  # seems reasonable enough
 
-    result = recursive_fragment(gene, max_oligo_len, assembly_pattern, exclude_overhangs, default_overhangs)
+    result = recursive_fragment(gene, max_oligo_len, assembly_pattern, exclude_overhangs, default_overhangs, "GTCTCT", "CGAG")
     assert result is not None, "RecursiveFragment failed"
     # Add more specific assertions based on the expected structure of the result
     assert result.fragments == ['ATGACCATGATTACGCCAAGCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAG', 'CCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCCTGATGCGGTATTTTCTCCTTACGCATCTGTGCGGTATTTCACACCGCATATGGTGCACTCTCAGTACAATCTGCTCTGATGCCGCATAG']

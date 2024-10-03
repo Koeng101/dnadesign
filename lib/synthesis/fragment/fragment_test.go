@@ -112,7 +112,7 @@ func TestRecursiveFragment(t *testing.T) {
 	gene := records[0].Sequence
 	maxOligoLen := 174                   // for Agilent oligo pools
 	assemblyPattern := []int{5, 4, 4, 5} // seems reasonable enough
-	_, err := fragment.RecursiveFragment(gene, maxOligoLen, assemblyPattern, excludeOverhangs, defaultOverhangs)
+	_, err := fragment.RecursiveFragment(gene, maxOligoLen, assemblyPattern, excludeOverhangs, defaultOverhangs, "GTCTCT", "CGAG")
 	if err != nil {
 		t.Errorf("Failed to RecursiveFragment blue1. Got error: %s", err)
 	}
