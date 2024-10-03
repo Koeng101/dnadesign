@@ -96,7 +96,6 @@ jobs:
         python -c "from dnadesign import parsers; print('Library loaded successfully')"
         pip install pytest
         pytest ./py/tests -v --capture=no
-      continue-on-error: true
 
     - name: Debug segmentation fault (macOS)
       if: failure() && runner.os == 'macOS'
