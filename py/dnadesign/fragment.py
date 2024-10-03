@@ -74,15 +74,19 @@ def _assembly_from_c(c_assembly) -> Assembly:
     return Assembly(sequence, fragments, efficiency, sub_assemblies)
 
 def recursive_fragment(sequence: str, max_coding_size_oligo: int, assembly_pattern: List[int],
-                       exclude_overhangs: List[str], include_overhangs: List[str]) -> Assembly:
+                       exclude_overhangs: List[str], include_overhangs: List[str],
+                       forward_flank: str, reverse_flank: str) -> Assembly:
     c_sequence = ffi.new("char[]", sequence.encode('utf-8'))
+    c_forward_flank = ffi.new("char[]", forward_flank.encode('utf-8'))
+    c_reverse_flank = ffi.new("char[]", reverse_flank.encode('utf-8'))
     c_assembly_pattern = ffi.new("int[]", assembly_pattern)
     c_exclude_overhangs, _ = _create_c_string_array(exclude_overhangs)
     c_include_overhangs, _ = _create_c_string_array(include_overhangs)
     
     result = lib.RecursiveFragmentSequence(c_sequence, max_coding_size_oligo, c_assembly_pattern, len(assembly_pattern),
                                            c_exclude_overhangs, len(exclude_overhangs),
-                                           c_include_overhangs, len(include_overhangs))
+                                           c_include_overhangs, len(include_overhangs),
+                                           c_forward_flank, c_reverse_flank)
     
     if result.error != ffi.NULL:
         raise Exception(ffi.string(result.error).decode('utf-8'))

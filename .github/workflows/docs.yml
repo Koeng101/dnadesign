@@ -63,7 +63,7 @@ jobs:
         pdoc ./py/dnadesign -o ./docs
 
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v4
+      uses: actions/upload-pages-artifact@v2
       with:
         path: './docs'  # Adjust this to your build output directory
 

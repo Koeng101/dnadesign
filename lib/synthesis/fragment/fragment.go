@@ -243,7 +243,12 @@ type Assembly struct {
 // rough... recommendation. Often times the lowest level of oligo has +1 in
 // order to fit the right overhangs in. This doesn't matter that much because
 // the limiting factor in assemblies is typically mutation rate at that size.
-func RecursiveFragment(sequence string, maxCodingSizeOligo int, assemblyPattern []int, excludeOverhangs []string, includeOverhangs []string) (Assembly, error) {
+//
+// The forwardFlank and reverseFlank are for preparing the sequences for
+// recursive assembly. Generally, this involves appending a certain sequence
+// to each oligo, and also to the edges of each subassembly. Do not add these
+// to the maxCodingSizeOligo: that is done within the function.
+func RecursiveFragment(sequence string, maxCodingSizeOligo int, assemblyPattern []int, excludeOverhangs []string, includeOverhangs []string, forwardFlank string, reverseFlank string) (Assembly, error) {
 	/*
 		Ok, so this is a note for you hackers out there: this algorithm can be
 		greatly improved. The optimal way to do this would be to do a continuous
@@ -271,8 +276,9 @@ func RecursiveFragment(sequence string, maxCodingSizeOligo int, assemblyPattern 
 	sequenceLen := len(sequence)
 
 	// get size pattern. This size pattern maps how we need to fragment the sequences
+	appendLength := len(forwardFlank) + len(reverseFlank)
 	sizes := make([]int, len(assemblyPattern))
-	maxSize := maxCodingSizeOligo * assemblyPattern[0]
+	maxSize := (maxCodingSizeOligo - appendLength) * assemblyPattern[0]
 	for i := range assemblyPattern {
 		if i == 0 {
 			sizes[i] = maxSize
@@ -281,23 +287,27 @@ func RecursiveFragment(sequence string, maxCodingSizeOligo int, assemblyPattern 
 		sizes[i] = sizes[i-1]*assemblyPattern[i] - smallestMinFragmentSizeSubtraction // subtract approx 60bp to give room for finding overhangs
 	}
 	if sequenceLen <= sizes[0] {
-		fragments, efficiency, err := FragmentWithOverhangs(sequence, maxCodingSizeOligo-60, maxCodingSizeOligo, excludeOverhangs, includeOverhangs)
+		fragments, efficiency, err := FragmentWithOverhangs(forwardFlank+sequence+reverseFlank, maxCodingSizeOligo-60, maxCodingSizeOligo, excludeOverhangs, includeOverhangs)
 		if err != nil {
 			return assembly, err
 		}
-		return Assembly{Sequence: sequence, Fragments: fragments, Efficiency: efficiency}, nil
+		var fragmentsAppended []string
+		for _, fragment := range fragments {
+			fragmentsAppended = append(fragmentsAppended, forwardFlank+fragment+reverseFlank)
+		}
+		return Assembly{Sequence: sequence, Fragments: fragmentsAppended, Efficiency: efficiency}, nil
 	}
 	// After the smallest possible block, begin iterating for each size.
 	for i, size := range sizes[1:] {
 		if sequenceLen <= size {
-			fragments, efficiency, err := FragmentWithOverhangs(sequence, sizes[i]-minFragmentSizeSubtraction, sizes[i], excludeOverhangs, includeOverhangs)
+			fragments, efficiency, err := FragmentWithOverhangs(forwardFlank+sequence+reverseFlank, sizes[i]-minFragmentSizeSubtraction, sizes[i], excludeOverhangs, includeOverhangs)
 			if err != nil {
 				return assembly, err
 			}
 			// Now we need to get the derived fragments from this overall construction
 			var subAssemblies []Assembly
 			for _, fragment := range fragments {
-				subAssembly, err := RecursiveFragment(fragment, maxCodingSizeOligo, assemblyPattern, excludeOverhangs, includeOverhangs)
+				subAssembly, err := RecursiveFragment(fragment, maxCodingSizeOligo, assemblyPattern, excludeOverhangs, includeOverhangs, forwardFlank, reverseFlank)
 				if err != nil {
 					return subAssembly, err
 				}

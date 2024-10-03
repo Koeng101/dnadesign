@@ -212,4 +212,5 @@ FragmentSequenceResult FragmentSequenceWithOverhangs(
 RecursiveFragmentSequenceResult RecursiveFragmentSequence(
     char* sequence, int maxCodingSizeOligo, int* assemblyPattern,
     int patternCount, char** excludeOverhangs, int excludeCount,
-    char** includeOverhangs, int includeCount);
+    char** includeOverhangs, int includeCount, char* forwardFlank,
+    char* reverseFlank);

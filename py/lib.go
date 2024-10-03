@@ -665,8 +665,10 @@ func FragmentSequenceWithOverhangs(sequence *C.char, minFragmentSize C.int, maxF
 }
 
 //export RecursiveFragmentSequence
-func RecursiveFragmentSequence(sequence *C.char, maxCodingSizeOligo C.int, assemblyPattern *C.int, patternCount C.int, excludeOverhangs **C.char, excludeCount C.int, includeOverhangs **C.char, includeCount C.int) (*C.Assembly, *C.char) {
+func RecursiveFragmentSequence(sequence *C.char, maxCodingSizeOligo C.int, assemblyPattern *C.int, patternCount C.int, excludeOverhangs **C.char, excludeCount C.int, includeOverhangs **C.char, includeCount C.int, forwardFlank *C.char, reverseFlank *C.char) (*C.Assembly, *C.char) {
 	goSequence := C.GoString(sequence)
+	goForwardFlank := C.GoString(forwardFlank)
+	goReverseFlank := C.GoString(reverseFlank)
 	goAssemblyPattern := make([]int, patternCount)
 	goExcludeOverhangs := make([]string, excludeCount)
 	goIncludeOverhangs := make([]string, includeCount)
@@ -682,7 +684,7 @@ func RecursiveFragmentSequence(sequence *C.char, maxCodingSizeOligo C.int, assem
 	for i := 0; i < int(includeCount); i++ {
 		goIncludeOverhangs[i] = C.GoString(includeSlice[i])
 	}
-	assembly, err := fragment.RecursiveFragment(goSequence, int(maxCodingSizeOligo), goAssemblyPattern, goExcludeOverhangs, goIncludeOverhangs)
+	assembly, err := fragment.RecursiveFragment(goSequence, int(maxCodingSizeOligo), goAssemblyPattern, goExcludeOverhangs, goIncludeOverhangs, goForwardFlank, goReverseFlank)
 	if err != nil {
 		return nil, C.CString(err.Error())
 	}
