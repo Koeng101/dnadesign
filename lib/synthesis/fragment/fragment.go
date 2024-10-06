@@ -291,11 +291,7 @@ func RecursiveFragment(sequence string, maxCodingSizeOligo int, assemblyPattern 
 		if err != nil {
 			return assembly, err
 		}
-		var fragmentsAppended []string
-		for _, fragment := range fragments {
-			fragmentsAppended = append(fragmentsAppended, fragment)
-		}
-		return Assembly{Sequence: sequence, Fragments: fragmentsAppended, Efficiency: efficiency}, nil
+		return Assembly{Sequence: sequence, Fragments: fragments, Efficiency: efficiency}, nil
 	}
 	// After the smallest possible block, begin iterating for each size.
 	for i, size := range sizes[1:] {

@@ -13,7 +13,7 @@ def get_shared_lib_ext():
 
 setup(
     name='dnadesign',
-    version='0.1.7',
+    version='0.1.8',
     packages=find_packages(),
     package_data={'dnadesign': ['definitions.h', 'libdnadesign.h', "libdnadesign" + get_shared_lib_ext()]},
     install_requires=[
