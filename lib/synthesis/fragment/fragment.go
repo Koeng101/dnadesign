@@ -293,7 +293,7 @@ func RecursiveFragment(sequence string, maxCodingSizeOligo int, assemblyPattern 
 		}
 		var fragmentsAppended []string
 		for _, fragment := range fragments {
-			fragmentsAppended = append(fragmentsAppended, forwardFlank+fragment+reverseFlank)
+			fragmentsAppended = append(fragmentsAppended, fragment)
 		}
 		return Assembly{Sequence: sequence, Fragments: fragmentsAppended, Efficiency: efficiency}, nil
 	}
