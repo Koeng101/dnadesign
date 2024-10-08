@@ -140,5 +140,4 @@ func TestRecursiveFragmentPy(t *testing.T) {
 	if !reflect.DeepEqual(result.Fragments, expectedFragments) {
 		t.Errorf("Unexpected fragments. Got %v, want %v", result.Fragments, expectedFragments)
 	}
-
 }
