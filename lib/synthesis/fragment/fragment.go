@@ -247,8 +247,14 @@ type Assembly struct {
 // The forwardFlank and reverseFlank are for preparing the sequences for
 // recursive assembly. Generally, this involves appending a certain sequence
 // to each oligo, and also to the edges of each subassembly. Do not add these
-// to the maxCodingSizeOligo: that is done within the function.
+// to the maxCodingSizeOligo: that is done within the function. The flanks are
+// NOT added to the first iteration of the sequence: if they are desired there,
+// add them manually.
 func RecursiveFragment(sequence string, maxCodingSizeOligo int, assemblyPattern []int, excludeOverhangs []string, includeOverhangs []string, forwardFlank string, reverseFlank string) (Assembly, error) {
+	return recursiveFragmentIteration(sequence, maxCodingSizeOligo, assemblyPattern, excludeOverhangs, includeOverhangs, forwardFlank, reverseFlank, 0)
+}
+
+func recursiveFragmentIteration(sequence string, maxCodingSizeOligo int, assemblyPattern []int, excludeOverhangs []string, includeOverhangs []string, forwardFlank string, reverseFlank string, iteration int) (Assembly, error) {
 	/*
 		Ok, so this is a note for you hackers out there: this algorithm can be
 		greatly improved. The optimal way to do this would be to do a continuous
@@ -296,14 +302,18 @@ func RecursiveFragment(sequence string, maxCodingSizeOligo int, assemblyPattern 
 	// After the smallest possible block, begin iterating for each size.
 	for i, size := range sizes[1:] {
 		if sequenceLen <= size {
-			fragments, efficiency, err := FragmentWithOverhangs(forwardFlank+sequence+reverseFlank, sizes[i]-minFragmentSizeSubtraction, sizes[i], excludeOverhangs, includeOverhangs)
+			targetSequence := sequence
+			if iteration != 0 {
+				targetSequence = forwardFlank + sequence + reverseFlank
+			}
+			fragments, efficiency, err := FragmentWithOverhangs(targetSequence, sizes[i]-minFragmentSizeSubtraction, sizes[i], excludeOverhangs, includeOverhangs)
 			if err != nil {
 				return assembly, err
 			}
 			// Now we need to get the derived fragments from this overall construction
 			var subAssemblies []Assembly
 			for _, fragment := range fragments {
-				subAssembly, err := RecursiveFragment(fragment, maxCodingSizeOligo, assemblyPattern, excludeOverhangs, includeOverhangs, forwardFlank, reverseFlank)
+				subAssembly, err := recursiveFragmentIteration(fragment, maxCodingSizeOligo, assemblyPattern, excludeOverhangs, includeOverhangs, forwardFlank, reverseFlank, iteration+1)
 				if err != nil {
 					return subAssembly, err
 				}
