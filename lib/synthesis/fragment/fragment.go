@@ -292,8 +292,12 @@ func recursiveFragmentIteration(sequence string, maxCodingSizeOligo int, assembl
 		}
 		sizes[i] = sizes[i-1]*assemblyPattern[i] - smallestMinFragmentSizeSubtraction // subtract approx 60bp to give room for finding overhangs
 	}
+	targetSequence := sequence
+	if iteration != 0 {
+		targetSequence = forwardFlank + sequence + reverseFlank
+	}
 	if sequenceLen <= sizes[0] {
-		fragments, efficiency, err := FragmentWithOverhangs(forwardFlank+sequence+reverseFlank, maxCodingSizeOligo-60, maxCodingSizeOligo, excludeOverhangs, includeOverhangs)
+		fragments, efficiency, err := FragmentWithOverhangs(targetSequence, maxCodingSizeOligo-60, maxCodingSizeOligo, excludeOverhangs, includeOverhangs)
 		if err != nil {
 			return assembly, err
 		}
@@ -302,10 +306,6 @@ func recursiveFragmentIteration(sequence string, maxCodingSizeOligo int, assembl
 	// After the smallest possible block, begin iterating for each size.
 	for i, size := range sizes[1:] {
 		if sequenceLen <= size {
-			targetSequence := sequence
-			if iteration != 0 {
-				targetSequence = forwardFlank + sequence + reverseFlank
-			}
 			fragments, efficiency, err := FragmentWithOverhangs(targetSequence, sizes[i]-minFragmentSizeSubtraction, sizes[i], excludeOverhangs, includeOverhangs)
 			if err != nil {
 				return assembly, err

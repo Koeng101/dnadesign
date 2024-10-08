@@ -2,6 +2,7 @@ package fragment_test
 
 import (
 	_ "embed"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -116,4 +117,28 @@ func TestRecursiveFragment(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to RecursiveFragment blue1. Got error: %s", err)
 	}
+}
+
+func TestRecursiveFragmentPy(t *testing.T) {
+	// These are the 46 possible overhangs I personally use, plus the two identity overhangs CGAG+GTCT
+	defaultOverhangs := []string{"GGGG", "AAAA", "AACT", "AATG", "ATCC", "CGCT", "TTCT", "AAGC", "ATAG", "ATTA", "ATGT", "ACTC", "ACGA", "TATC", "TAGG", "TACA", "TTAC", "TTGA", "TGGA", "GAAG", "GACC", "GCCG", "TCTG", "GTTG", "GTGC", "TGCC", "CTGG", "TAAA", "TGAG", "AAGA", "AGGT", "TTCG", "ACTA", "TTAG", "TCTC", "TCGG", "ATAA", "ATCA", "TTGC", "CACG", "AATA", "ACAA", "ATGG", "TATG", "AAAT", "TCAC"}
+	excludeOverhangs := []string{"CGAG", "GTCT"} // These are the recursive BsaI definitions, and must be excluded from all builds.
+	gene := "ATGACCATGATTACGCCAAGCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCCTGATGCGGTATTTTCTCCTTACGCATCTGTGCGGTATTTCACACCGCATATGGTGCACTCTCAGTACAATCTGCTCTGATGCCGCATAG"
+	maxOligoLen := 174                   // for Agilent oligo pools
+	assemblyPattern := []int{5, 4, 4, 5} // seems reasonable enough
+	result, err := fragment.RecursiveFragment(gene, maxOligoLen, assemblyPattern, excludeOverhangs, defaultOverhangs, "GTCTCT", "CGAG")
+	if err != nil {
+		t.Errorf("Failed to RecursiveFragment blue1. Got error: %s", err)
+	}
+
+	// Add more specific assertions based on the expected structure of the result
+	expectedFragments := []string{
+		"ATGACCATGATTACGCCAAGCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAG",
+		"CCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCCTGATGCGGTATTTTCTCCTTACGCATCTGTGCGGTATTTCACACCGCATATGGTGCACTCTCAGTACAATCTGCTCTGATGCCGCATAG",
+	}
+
+	if !reflect.DeepEqual(result.Fragments, expectedFragments) {
+		t.Errorf("Unexpected fragments. Got %v, want %v", result.Fragments, expectedFragments)
+	}
+
 }
