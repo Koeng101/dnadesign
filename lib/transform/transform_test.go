@@ -164,3 +164,12 @@ func TestReverseComplementRNA(t *testing.T) {
 		}
 	}
 }
+
+func TestReverseString(t *testing.T) {
+	alphabet := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	reverseAlphabet := ReverseString(alphabet)
+	expectedAlphabet := "ZYXWVUTSRQPONMLKJIHGFEDCBA" // put something here
+	if reverseAlphabet != expectedAlphabet {
+		t.Errorf("Expected %s, got %s", expectedAlphabet, reverseAlphabet)
+	}
+}
