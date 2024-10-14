@@ -196,6 +196,42 @@ tTDH1_terminator:
   prefix: ATCCTAA
   suffix: CGCT
   sequence: ataaagcaatcttgatgaggataatgatttttttttgaatatacataaatactaccgtttttctgctagattttgtgatgacgtaaataagtacatattactttttaagccaagacaagattaagcattaactttacccttttctttctaagtttcaatattagttatcactgtttaaaagttatggcgagaacgtcggcggttaaaatatattaccctgaacg
+tENO1_terminator_ctag:
+  description: placeholder
+  tags: [terminator_ctag]
+  prefix: ATGT
+  suffix: CGCT
+  sequence: agcttttgattaagccttctagtccaaaaaacacgtttttttgtcatttatttcattttcttagaatagtttagtttattcattttatagtcacgaatgttttatgattctatatagggttgcaaacaagcatttttcattttatgttaaaacaatttcaggtttaccttttattctgcttgtggtgacgcgtgtatccgcccgctcttttggtcacccatgtat
+tSSA1_terminator_ctag:
+  description: placeholder
+  tags: [terminator_ctag]
+  prefix: ATGT
+  suffix: CGCT
+  sequence: gccaattggtgcggcaattgataataacgaaaatgtcttttaatgatctgggtataatgaggaattttccgaacgtttttactttatatatatatatacatgtaacatatattctatacgctatagagaaaggaaatttttcaattaaaaaaaaaatagagaaagagtttcacttcttgattatcgctaacactaatggttgaagtactgctactttaattttat
+tADH1_terminator_ctag:
+  description: placeholder
+  tags: [terminator_ctag]
+  prefix: ATGT
+  suffix: CGCT
+  sequence: gcgaatttcttatgatttatgatttttattattaaataagttataaaaaaaataagtgtatacaaattttaaagtgactcttaggttttaaaacgaaaattcttattcttgagtaactctttcctgtaggtcaggttgctttctcaggtatagcatgaggtcgctcttattgaccacacctctaccggcatgccgagcaaatgcctgcaaatcgctccccatttc
+tPGK1_terminator_ctag:
+  description: placeholder
+  tags: [terminator_ctag]
+  prefix: ATGT
+  suffix: CGCT
+  sequence: attgaattgaattgaaatcgatagatcaatttttttcttttctctttccccatcctttacgctaaaataatagtttattttattttttgaatattttttatttatatacgtatatatagactattatttatcttttaatgattattaagatttttattaaaaaaaaattcgctcctcttttaatgcctttatgcagtttttttttcccattcgatatttctatgt
+tENO2_terminator_ctag:
+  description: placeholder
+  tags: [terminator_ctag]
+  prefix: ATGT
+  suffix: CGCT
+  sequence: agtgcttttaactaagaattattagtcttttctgcttattttttcatcatagtttagaacactttatattaacgaatagtttatgaatctatttaggtttaaaaattgatacagttttataagttactttttcaaagactcgtgctgtctattgcataatgcactggaaggggaaaaaaaaggtgcacacgcgtggctttttcttgaatttgcagtttgaaaaat
+tTDH1_terminator_ctag:
+  description: placeholder
+  tags: [terminator_ctag]
+  prefix: ATGT
+  suffix: CGCT
+  sequence: ataaagcaatcttgatgaggataatgatttttttttgaatatacataaatactaccgtttttctgctagattttgtgatgacgtaaataagtacatattactttttaagccaagacaagattaagcattaactttacccttttctttctaagtttcaatattagttatcactgtttaaaagttatggcgagaacgtcggcggttaaaatatattaccctgaacg
 URA3:
   description: placeholder
   tags: [selection_marker]
