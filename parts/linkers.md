@@ -109,8 +109,8 @@ Often, users will want to move transcription units to new organisms of interest.
 * [C]   AATG - ATCC (cds)
 * [T]   ATCC - CGCT (terminator)
 * [B]   CGCT - GTCT (linker suffix)
-* [D]   GTCT - AAGC (target origin of replication)
-* [S]   AAGC - ATAG (target selective marker)
+* [S]   GTCT - AAGC (target selective marker)
+* [D]   AAGC - ATAG (target origin of replication)
 * [E2]  ATAG - CGAG (e coli vector 2)
 
 ```
@@ -125,10 +125,10 @@ Instead of shuttle vectors, users will sometimes want to integrate sections of D
 * [P]   TACA - AACT (promoter)
 * [R]   AACT - AATG (rbs)
 * [C]   AATG - ATCC (cds)
-* [T]   ATCC - GTCT (terminator)
-* [B]   GTCT - ATAG (linker suffix)
-* [D]   GTCT - AAGC (target ori / downstream homology)
-* [S]   AAGC - ATAG (target selective marker)
+* [T]   ATCC - CGCT (terminator)
+* [B]   CGCT - GTCT (linker suffix)
+* [S]   GTCT - AAGC (target selective marker)
+* [D]   AAGC - ATAG (target upstream homology)
 * [EC3] ATAG - ATTA (e coli vector 3)
 * [U]   ATTA - CGAG (upstream homology)
 ```
@@ -240,5 +240,4 @@ This collection has 384 linkers. There are 96 linkers for building independent t
 
 Each overhang is assigned a number. The reverse complement of each overhang is represented as the negative version of its number, which is also how we are able to flip constructs.
 
-Linkers are named with a 1 letter + 3 number scheme, separated by underscores ( _ ) in the format `Y_X_X_X`. Y describes the direction (F, or forward, for prefix, and R, or reverse, for suffix) of the linker. The first 2 numbers describe the two overhangs which the linker itself will be cut out with, the third number describes the overhang which the linker will introduce to the construct. After a GoldenGate assembly and transformation, anything between the prefix and suffix lin
-kers can be cut out with BsaI and used in another assembly.
+Linkers are named with a 1 letter + 3 number scheme, separated by underscores ( _ ) in the format `Y_X_X_X`. Y describes the direction (F, or forward, for prefix, and R, or reverse, for suffix) of the linker. The first 2 numbers describe the two overhangs which the linker itself will be cut out with, the third number describes the overhang which the linker will introduce to the construct. After a GoldenGate assembly and transformation, anything between the prefix and suffix linkers can be cut out with BsaI and used in another assembly.
