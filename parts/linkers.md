@@ -30,15 +30,14 @@ overhangs with numbers:
 14. ACGA
 15. TATC
 16. TAGG
-17. TACA
-18. TTAC
-19. TTGA
-20. TGGA
-21. GAAG
-22. GACC
-23. GCCG
-24. AAAA
-25. GGGG
+17. TTAC
+18. TTGA
+19. TGGA
+20. GAAG
+21. GACC
+22. GCCG
+23. AAAA
+24. GGGG
 
 Once a plasmid cloned using a linker, its new definition is derived from the particular linkers used to construct it. For example, an assembly with A1(2) + B1(4) creates a new plasmid with a fragment defined with the overhangs 2 and 4.
 
