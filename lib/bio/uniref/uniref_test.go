@@ -107,10 +107,6 @@ func TestUniRefVersions(t *testing.T) {
 			if entry.ID != expectedID {
 				t.Errorf("Expected ID %s, got %s", expectedID, entry.ID)
 			}
-
-			if parser.uniref.GetUniRefVersion() != tt.version {
-				t.Errorf("Expected version %s, got %s", tt.version, parser.uniref.GetUniRefVersion())
-			}
 		})
 	}
 }

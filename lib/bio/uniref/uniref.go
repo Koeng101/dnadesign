@@ -94,8 +94,6 @@ func (u *UniRef) GetUniRefVersion() string {
 
 type Parser struct {
 	decoder *xml.Decoder
-	uniref  *UniRef
-	current int
 }
 
 func NewParser(r io.Reader) (*Parser, error) {
@@ -109,7 +107,6 @@ func NewParser(r io.Reader) (*Parser, error) {
 
 	return &Parser{
 		decoder: decoder,
-		current: -1,
 	}, nil
 }
 
@@ -120,25 +117,26 @@ func (p *Parser) Header() (Header, error) {
 
 // Next returns the next Entry from the UniRef file
 func (p *Parser) Next() (Entry, error) {
-	// First time reading
-	if p.uniref == nil {
-		p.uniref = &UniRef{}
-		if err := p.decoder.Decode(p.uniref); err != nil {
+	for {
+		token, err := p.decoder.Token()
+		if err == io.EOF {
+			return Entry{}, io.EOF
+		}
+		if err != nil {
 			return Entry{}, err
 		}
-		p.current = 0
+
+		// Look for start element of an entry
+		if startElement, ok := token.(xml.StartElement); ok {
+			if startElement.Name.Local == "entry" {
+				var entry Entry
+				if err := p.decoder.DecodeElement(&entry, &startElement); err != nil {
+					return Entry{}, err
+				}
+				return entry, nil
+			}
+		}
 	}
-
-	// Check if we've reached the end of entries
-	if p.current >= len(p.uniref.Entries) {
-		return Entry{}, io.EOF
-	}
-
-	// Get current entry and increment counter
-	entry := p.uniref.Entries[p.current]
-	p.current++
-
-	return entry, nil
 }
 
 // ToXML converts an Entry back to its XML representation
