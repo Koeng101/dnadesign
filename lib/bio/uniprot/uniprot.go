@@ -28,6 +28,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 // Decoder decodes XML elements2
@@ -67,6 +68,14 @@ type Parser struct {
 
 func NewParser(r io.Reader) *Parser {
 	decoder := xml.NewDecoder(r)
+	// Oddly enough, the uniref datasets use iso-8859-1, not UTF-8. So we need
+	// to incorporate this decoder charset reader.
+	decoder.CharsetReader = func(charset string, input io.Reader) (io.Reader, error) {
+		if strings.ToLower(charset) == "iso-8859-1" {
+			return input, nil // ISO-8859-1 bytes can be read directly as UTF-8
+		}
+		return nil, fmt.Errorf("unsupported charset: %s", charset)
+	}
 	return &Parser{decoder: decoder}
 }
 
