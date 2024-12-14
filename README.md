@@ -76,6 +76,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Adds uniref parser [#107](https://github.com/Koeng101/dnadesign/pull/107)
+- Fixes iso-8859-1 error in reading uniref data dumps [#106](https://github.com/Koeng101/dnadesign/pull/106)
 - Updates uniprot parser to read IDs [#104](https://github.com/Koeng101/dnadesign/pull/104)
 - Fixes RecursiveFragment to not add flanks to the initial input [#102](https://github.com/Koeng101/dnadesign/pull/102)
 - Fixes add flank bug, releases new version of python lib [#101](https://github.com/Koeng101/dnadesign/pull/101)
