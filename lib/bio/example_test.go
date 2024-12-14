@@ -389,6 +389,45 @@ func ExampleNewUniprotParser() {
 	// Output: P0C9F0
 }
 
+func ExampleNewUnirefParser() {
+	// The following is the first gene of UniRef50 with the sequence truncated.
+	// We're going to gzip it and put the gzipped text as an io.Reader to mock
+	// a file. You can edit the text here to see how the parser works.
+	//
+	// Note: Unlike the uniprot parser, the uniref parser expects that the file is
+	// properly terminated with </UniRef50>.
+	uniprotEntryText := strings.NewReader(`<?xml version="1.0" encoding="ISO-8859-1" ?>
+<UniRef50 xmlns="http://uniprot.org/uniref" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://uniprot.org/uniref http://www.uniprot.org/support/docs/uniref.xsd" 
+ releaseDate="2024-11-27" version="2024_06"> 
+<entry id="UniRef50_UPI002E2621C6" updated="2024-05-29">
+<name>Cluster: uncharacterized protein LOC134193701</name>
+<property type="member count" value="1"/>
+<property type="common taxon" value="Corticium candelabrum"/>
+<property type="common taxon ID" value="121492"/>
+<representativeMember>
+<dbReference type="UniParc ID" id="UPI002E2621C6">
+<property type="UniRef100 ID" value="UniRef100_UPI002E2621C6"/>
+<property type="UniRef90 ID" value="UniRef90_UPI002E2621C6"/>
+<property type="protein name" value="uncharacterized protein LOC134193701"/>
+<property type="source organism" value="Corticium candelabrum"/>
+<property type="NCBI taxonomy" value="121492"/>
+<property type="length" value="49499"/>
+<property type="isSeed" value="true"/>
+</dbReference>
+<sequence length="49499" checksum="428270C7C0D6A56C">MGR</sequence>
+</representativeMember>
+</entry>
+</UniRef50>`)
+	// Now we load the parser, and get the first entry out.
+	parser, _ := bio.NewUnirefParser(uniprotEntryText)
+	entry, _ := parser.Next()
+
+	fmt.Println(entry.ID)
+	// Output: UniRef50_UPI002E2621C6
+}
+
 func ExampleNewSamParser() {
 	// The following can be replaced with a any io.Reader. For example,
 	// `file, err := os.Open(path)` for file would also work.

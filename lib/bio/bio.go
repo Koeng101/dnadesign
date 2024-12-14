@@ -24,6 +24,7 @@ import (
 	"github.com/koeng101/dnadesign/lib/bio/sam"
 	"github.com/koeng101/dnadesign/lib/bio/slow5"
 	"github.com/koeng101/dnadesign/lib/bio/uniprot"
+	"github.com/koeng101/dnadesign/lib/bio/uniref"
 )
 
 // Format is a enum of different parser formats.
@@ -63,12 +64,12 @@ Lower level interfaces
 
 // DataTypes defines the possible data types returned by every parser.
 type DataTypes interface {
-	genbank.Genbank | fasta.Record | fastq.Read | slow5.Read | sam.Alignment | pileup.Line | uniprot.Entry
+	genbank.Genbank | fasta.Record | fastq.Read | slow5.Read | sam.Alignment | pileup.Line | uniprot.Entry | uniref.Entry
 }
 
 // HeaderTypes defines the possible header types returned by every parser.
 type HeaderTypes interface {
-	genbank.Header | fasta.Header | fastq.Header | slow5.Header | sam.Header | pileup.Header | uniprot.Header
+	genbank.Header | fasta.Header | fastq.Header | slow5.Header | sam.Header | pileup.Header | uniprot.Header | uniref.Header
 }
 
 // ParserInterface is a generic interface that all parsers must support. It is
@@ -169,6 +170,13 @@ func NewPileupParserWithMaxLineLength(r io.Reader, maxLineLength int) *Parser[pi
 // maxLineLength is necessary.
 func NewUniprotParser(r io.Reader) *Parser[uniprot.Entry, uniprot.Header] {
 	return &Parser[uniprot.Entry, uniprot.Header]{ParserInterface: uniprot.NewParser(r)}
+}
+
+// NewUnirefParser initiates a new Uniref parser from an io.Reader. No
+// maxLineLength is necessary.
+func NewUnirefParser(r io.Reader) (*Parser[uniref.Entry, uniref.Header], error) {
+	parser, err := uniref.NewParser(r)
+	return &Parser[uniref.Entry, uniref.Header]{ParserInterface: parser}, err
 }
 
 /******************************************************************************

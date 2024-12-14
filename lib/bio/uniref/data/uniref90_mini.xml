@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<UniRef50 xmlns="http://uniprot.org/uniref" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://uniprot.org/uniref http://www.uniprot.org/support/docs/uniref.xsd" 
+ releaseDate="2024-11-27" version="2024_06"> 
+<entry id="UniRef50_UPI002E2621C6" updated="2024-05-29">
+<name>Cluster: uncharacterized protein LOC134193701</name>
+<property type="member count" value="1"/>
+<property type="common taxon" value="Corticium candelabrum"/>
+<property type="common taxon ID" value="121492"/>
+<representativeMember>
+<dbReference type="UniParc ID" id="UPI002E2621C6">
+<property type="UniRef100 ID" value="UniRef100_UPI002E2621C6"/>
+<property type="UniRef90 ID" value="UniRef90_UPI002E2621C6"/>
+<property type="protein name" value="uncharacterized protein LOC134193701"/>
+<property type="source organism" value="Corticium candelabrum"/>
+<property type="NCBI taxonomy" value="121492"/>
+<property type="length" value="49499"/>
+<property type="isSeed" value="true"/>
+</dbReference>
+<sequence length="49499" checksum="428270C7C0D6A56C">MGR</sequence>
+</representativeMember>
+</entry>
+<entry id="UniRef50_UPI00358F51CD" updated="2024-11-27">
+<name>Cluster: LOW QUALITY PROTEIN: titin</name>
+<property type="member count" value="1"/>
+<property type="common taxon" value="Myxine glutinosa"/>
+<property type="common taxon ID" value="7769"/>
+<representativeMember>
+<dbReference type="UniParc ID" id="UPI00358F51CD">
+<property type="UniRef100 ID" value="UniRef100_UPI00358F51CD"/>
+<property type="UniRef90 ID" value="UniRef90_UPI00358F51CD"/>
+<property type="protein name" value="LOW QUALITY PROTEIN: titin"/>
+<property type="source organism" value="Myxine glutinosa"/>
+<property type="NCBI taxonomy" value="7769"/>
+<property type="length" value="47063"/>
+<property type="isSeed" value="true"/>
+</dbReference>
+<sequence length="47063" checksum="48729625616C010E">MSEQ</sequence>
+</representativeMember>
+</entry>
+</UniRef50>
