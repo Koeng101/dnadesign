@@ -16,6 +16,11 @@ while hiding redundant sequences (but not their descriptions) from view.
 (taken from uniref reference https://www.uniprot.org/help/uniref)
 
 Download uniref data dumps here: https://www.uniprot.org/downloads
+
+UniRef comes in three formats:
+- UniRef100: Clusters of sequences that have 100% sequence identity and same length
+- UniRef90: Clusters of sequences with at least 90% sequence identity and 80% overlap
+- UniRef50: Clusters of sequences with at least 50% sequence identity and 80% overlap
 */
 package uniref
 
@@ -70,12 +75,21 @@ type Member struct {
 // RepresentativeMember represents the representative member
 type RepresentativeMember Member
 
-// UniRef represents the root element
+// UniRef represents the root element which can be UniRef50, UniRef90, or UniRef100
 type UniRef struct {
-	XMLName     xml.Name `xml:"UniRef50"`
+	XMLName     xml.Name // This will automatically match the root element name
 	ReleaseDate string   `xml:"releaseDate,attr"`
 	Version     string   `xml:"version,attr"`
 	Entries     []Entry  `xml:"entry"`
+}
+
+// GetUniRefVersion returns "50", "90", or "100" based on the XML root element name
+func (u *UniRef) GetUniRefVersion() string {
+	name := u.XMLName.Local
+	if strings.HasPrefix(name, "UniRef") {
+		return strings.TrimPrefix(name, "UniRef")
+	}
+	return ""
 }
 
 type Parser struct {
