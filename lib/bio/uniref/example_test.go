@@ -10,7 +10,7 @@ import (
 
 func Example() {
 	// Open the gzipped UniRef file
-	file, _ := os.Open(filepath.Join("data", "uniref300.xml"))
+	file, _ := os.Open(filepath.Join("data", "uniref90_mini.xml"))
 	defer file.Close()
 
 	// Create new parser
