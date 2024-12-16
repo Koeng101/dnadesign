@@ -128,7 +128,7 @@ func TestRecursiveFragmentPy(t *testing.T) {
 	assemblyPattern := []int{5, 4, 4, 5} // seems reasonable enough
 	result, err := fragment.RecursiveFragment(gene, maxOligoLen, assemblyPattern, excludeOverhangs, defaultOverhangs, "GTCTCT", "CGAG")
 	if err != nil {
-		t.Errorf("Failed to RecursiveFragment blue1. Got error: %s", err)
+		t.Errorf("Failed to RecursiveFragment gene. Got error: %s", err)
 	}
 
 	// Add more specific assertions based on the expected structure of the result
@@ -139,5 +139,25 @@ func TestRecursiveFragmentPy(t *testing.T) {
 
 	if !reflect.DeepEqual(result.Fragments, expectedFragments) {
 		t.Errorf("Unexpected fragments. Got %v, want %v", result.Fragments, expectedFragments)
+	}
+}
+
+func TestBlockFragment(t *testing.T) {
+	availableOverhangs := []string{"CGAG", "GTCT", "GGGG", "AAAA", "AACT", "AATG", "ATCC", "CGCT", "TTCT", "AAGC", "ATAG", "ATTA"} //, "ATGT", "ACTC", "ACGA", "TATC", "TAGG", "TACA", "TTAC", "TTGA", "TGGA", "GAAG", "GACC", "GCCG"}
+	gene := "ATGACCATGATTACGCCAAGCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCCTGATGCGGTATTTTCTCCTTACGCATCTGTGCGGTATTTCACACCGCATATGGTGCACTCTCAGTACAATCTGCTCTGATGCCGCATAG"
+	maxLen := 180
+	minLen := 110
+	result, err := fragment.BlockFragment(gene, minLen, maxLen, 8, 0.5, availableOverhangs)
+	if err != nil {
+		t.Errorf("Failed to BlockFragment gene. Got error: %s", err)
+	}
+	// Add more specific assertions based on the expected structure of the result
+	expectedFragments := []string{
+		"ATGACCATGATTACGCCAAGCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCC",
+		"CCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCCTGATGCGGTATTTTCTCCTTACGCATCTGTGCGGTATTTCACACCGCATATGGTGCACTCTCAGTACAATCTGCTCTGATGCCGCATAG",
+	}
+
+	if !reflect.DeepEqual(result, expectedFragments) {
+		t.Errorf("Unexpected fragments. Got %v, want %v", result, expectedFragments)
 	}
 }
