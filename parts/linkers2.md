@@ -12,6 +12,7 @@ overhangs: `CGAG,GTCT,GGGG,AAAA,AACT,AATG,ATCC,CGCT,TTCT,AAGC,ATAG,ATTA,ATGT,ACT
 overhangs with numbers:
 X. GTCT
 Y. CGAG
+
 2. TACA
 3. AACT
 4. AATG
@@ -46,6 +47,26 @@ This document is techincal reference material, not a how-to guide or tutorial. I
 5. Cache blocks
 
 # Assembly
+
+Standard assemblies are with the following overhangs: `[GTCT] TACA AACT AATG ATCC CGCT [CGAG]`. A basic build is as follows:
+
+```
+GTCT    connector1  TACA
+TACA    promoter    AACT
+AACT    RBS         AATG
+AATG    CDS         ATCC
+ATCC    terminator  CGCT
+CGCT    connector2  CGAG
+```
+
+These sites are considered special and privileged. Each site has a connector which, after assembly, redefines the part. Connectors are defined as such:
+
+```
+direction/primer - new overhang - old overhang
+===
+f158.AACT.TACA
+r159.AATG.CGCT
+```
 
 ## Special overhangs: GTCT and CGAG
 
