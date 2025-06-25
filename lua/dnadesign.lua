@@ -9425,6 +9425,7 @@ local errEmptySequenceString = "empty sequence string"
 
 
 
+
 function codon.copy_translation_table(t)
    local new_t = {
       start_codons = {},
@@ -9434,6 +9435,7 @@ function codon.copy_translation_table(t)
       start_codon_table = {},
       translate = t.translate,
       optimize = t.optimize,
+      standardize_last_codon = t.standardize_last_codon,
    }
 
 
@@ -9586,6 +9588,42 @@ local function optimize(self, aas)
 end
 
 
+local standard_codons = {
+   K = "AAA", L = "TTA", R = "CGA", F = "TTT", Q = "CAA", W = "TGG",
+   H = "CAC", P = "CCG", V = "GTG", C = "TGC", T = "ACA", S = "TCC",
+   Y = "TAC", I = "ATA", G = "GGT", N = "AAC", A = "GCC", M = "ATG",
+   D = "GAC", E = "GAA",
+}
+
+
+local function standardize_last_codon(self, dna_seq)
+   if dna_seq == "" then
+      return "", errEmptySequenceString
+   end
+
+   dna_seq = string.upper(dna_seq)
+   local seq_len = #dna_seq
+
+   if seq_len < 3 then
+      return dna_seq, nil
+   end
+
+   local last_codon = dna_seq:sub(seq_len - 2, seq_len)
+   local aa = self.translation_map[last_codon]
+
+   if not aa then
+      return dna_seq, string.format('unknown codon "%s"', last_codon)
+   end
+
+   local standard_codon = standard_codons[aa]
+   if not standard_codon then
+      return dna_seq, string.format('no standard codon for amino acid "%s"', aa)
+   end
+
+   return dna_seq:sub(1, seq_len - 3) .. standard_codon, nil
+end
+
+
 function codon.generate_codon_table(amino_acids, starts)
 
    local base1 = "TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG"
@@ -9648,6 +9686,7 @@ function codon.generate_codon_table(amino_acids, starts)
       start_codon_table = start_codon_table,
       translate = translate,
       optimize = optimize,
+      standardize_last_codon = standardize_last_codon,
    }
 end
 
@@ -9924,6 +9963,7 @@ local function init_translation_maps(t)
    end
    t.translate = translate
    t.optimize = optimize
+   t.standardize_last_codon = standardize_last_codon
 
    return
 end

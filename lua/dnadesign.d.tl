@@ -1333,6 +1333,7 @@ local record TranslationTable
     start_codon_table: {string:string}  -- maps start codons to their amino acids
 	translate: function(self: TranslationTable, dna_seq: string): (string, string)
     optimize: function(self: TranslationTable, amino_acids: string): (string, string)
+    standardize_last_codon: function(self: TranslationTable, dna_seq: string): (string, string)
 end
 
 --[[ Module fix

@@ -9422,6 +9422,7 @@ local record TranslationTable
     start_codon_table: {string:string}  -- maps start codons to their amino acids
 	translate: function(self: TranslationTable, dna_seq: string): (string, string)
     optimize: function(self: TranslationTable, amino_acids: string): (string, string)
+    standardize_last_codon: function(self: TranslationTable, dna_seq: string): (string, string)
 end
 
 -- Copy method for TranslationTable
@@ -9433,7 +9434,8 @@ function codon.copy_translation_table(t: TranslationTable): TranslationTable
         translation_map = {},
         start_codon_table = {},
 		translate = t.translate,
-        optimize = t.optimize
+        optimize = t.optimize,
+        standardize_last_codon = t.standardize_last_codon
     }
     
     -- Copy arrays
@@ -9585,6 +9587,42 @@ local function optimize(self: TranslationTable, aas: string): (string, string)
     return table.concat(codons), nil
 end
 
+-- Standardized codon mapping
+local standard_codons: {string:string} = {
+    K = "AAA", L = "TTA", R = "CGA", F = "TTT", Q = "CAA", W = "TGG",
+    H = "CAC", P = "CCG", V = "GTG", C = "TGC", T = "ACA", S = "TCC", 
+    Y = "TAC", I = "ATA", G = "GGT", N = "AAC", A = "GCC", M = "ATG", 
+    D = "GAC", E = "GAA"
+}
+
+-- Standardize last codon function
+local function standardize_last_codon(self: TranslationTable, dna_seq: string): (string, string)
+    if dna_seq == "" then
+        return "", errEmptySequenceString
+    end
+    
+    dna_seq = string.upper(dna_seq)
+    local seq_len = #dna_seq
+    
+    if seq_len < 3 then
+        return dna_seq, nil
+    end
+    
+    local last_codon = dna_seq:sub(seq_len - 2, seq_len)
+    local aa = self.translation_map[last_codon]
+    
+    if not aa then
+        return dna_seq, string.format('unknown codon "%s"', last_codon)
+    end
+    
+    local standard_codon = standard_codons[aa]
+    if not standard_codon then
+        return dna_seq, string.format('no standard codon for amino acid "%s"', aa)
+    end
+    
+    return dna_seq:sub(1, seq_len - 3) .. standard_codon, nil
+end
+
 -- Function to generate default codon tables from NCBI
 function codon.generate_codon_table(amino_acids: string, starts: string): TranslationTable
     -- Define base sequences for codon generation
@@ -9647,7 +9685,8 @@ function codon.generate_codon_table(amino_acids: string, starts: string): Transl
         translation_map = translation_map,
         start_codon_table = start_codon_table,
 		translate = translate,
-		optimize = optimize
+		optimize = optimize,
+        standardize_last_codon = standardize_last_codon
 	    }
 end
 
@@ -9924,6 +9963,7 @@ local function init_translation_maps(t: TranslationTable)
     end
 	t.translate = translate
 	t.optimize = optimize
+    t.standardize_last_codon = standardize_last_codon
 
 	return
 end
