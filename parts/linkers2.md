@@ -6,6 +6,13 @@ DnaDesign Assembly (shortened as dd assembly) is a GoldenGate DNA assembly metho
 
 From the simplest user perspective, dd assembly has genetic parts. These parts can be put together in a modular fashion into much larger genetic designs. Synthesis and assembly time is minimized, while allowing the user to do almost anything they want - from creating fusion proteins, transcriptional units, operons, and shuttle vectors. If they do not require novel synthesis, the goal of dd assembly is to allow time from ordering to recieving clonal DNA within 3 days (3 day plasmids), regardless of the size or complexity.
 
+Here are the basic part definitions:
+
+1. TACA - AACT: Promoter
+2. AACT - AATG: RBS/kozak/ntag
+3. AATG - ATCC: CDS
+4. ATCC - CGCT: Terminator 
+
 ## Overhangs
 
 overhangs: `CGAG,GTCT,GGGG,AAAA,AACT,AATG,ATCC,CGCT,TTCT,AAGC,ATAG,ATTA,ATGT,ACTC,ACGA,TATC,TAGG,TACA,TTAC,TTGA,TGGA,GAAG,GACC,GCCG`
@@ -102,7 +109,7 @@ While we could construct a simple transcriptional unit of `["Promoter+RBS", "GFP
 NNN TGA AGAGC ACTT
 ```
 
-In dd assembly, CDSs have either their protein tags directly fused to them, or use SapI fusion. SapI fusions are enabled by the following observation: You can overlap SapI with a stop codon to specifically cut the last codon of a protein. By cutting the last codon, without cutting any other sequence, we can create seamless protein fusions for any protein. Proteins do not need to be specifically designed to have fusion tags - 
+In dd assembly, CDSs have either their protein tags directly fused to them, or use SapI fusion. SapI fusions are enabled by the following observation: You can overlap SapI with a stop codon to specifically cut the last codon of a protein. By cutting the last codon, without cutting any other sequence, we can create seamless protein fusions for any protein. Proteins do not need to be specifically designed to have fusion tags - any CDS can get a fusion tag added on at-build-time.
 
 # Vectors
 
