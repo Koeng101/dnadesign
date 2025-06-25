@@ -120,10 +120,46 @@ While we could construct a simple transcriptional unit of `["Promoter+RBS", "GFP
 
 ### CDS fusion using SapI
 ```
-NNN TGA AGAGC ACTT
+NNN TGA AGAGC ACTT <- clean C terminus, SapI compatible
+NNN GGA AGAGC ACTT <- GRAS C tag, SapI compatible
+NNN GG ACTT <- GS C tag, not SapI compatible
 ```
 
-In dd assembly, CDSs have either their protein tags directly fused to them, or use SapI fusion. SapI fusions are enabled by the following observation: You can overlap SapI with a stop codon to specifically cut the last codon of a protein. By cutting the last codon, without cutting any other sequence, we can create seamless protein fusions for any protein. Proteins do not need to be specifically designed to have fusion tags - 
+In dd assembly, there are three methods of creating proteins for protein fusion:
+1. Clean C terminus + SapI fusions
+2. GRAS C tag + SapI fusions
+3. GS C tag
+
+The first method is compatible with any protein and seamlessly adds a tag to the protein without any scar. However, it requires an extra step 
+
+In dd assembly, CDSs have either their protein tags directly fused to them, or use SapI fusion. SapI fusions are enabled by the following observation: You can overlap SapI with a stop codon to specifically cut the last codon of a protein. By cutting the last codon, without cutting any other sequence, we can create seamless protein fusions for any protein. Proteins do not need to be specifically designed to have fusion tags.
+
+Proteins which are commonly tagged may also use GGA instead of TGA. This creates a scar of `GRAS`, which should be innocous.
+
+```
+Lys	K	AAA
+Leu	L	TTA
+Arg	R	CGA
+Phe	F	TTT
+Gln	Q	CAA
+Trp	W	TGG
+His	H	CAC
+Pro	P	CCG
+Val	V	GTG
+Cys	C	TGC
+Thr	T	ACA
+Ser	S	TCC
+Tyr	Y	TAC
+Ile	I	ATA
+Gly	G	GGT
+Asn	N	AAC
+Ala	A	GCC
+Met	M	ATG
+Asp	D	GAC
+Glu	E	GAA
+```
+
+Terminators with ACTT should always be ACTTTAA, encoding a stop codon in case the protein has a GRAS C tag. 
 
 # Vectors
 
