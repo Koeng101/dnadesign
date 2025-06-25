@@ -2106,6 +2106,312 @@ end
 
 
 
+local orthoprimers = {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local ortho_primers = {
+   "AAACACGTGGCAAACATTCC",
+   "AAACCGGAGCCATACAGTAC",
+   "AAAGCACTCTTAGGCCTCTG",
+   "AAAGGGGCCGTCAATATCAG",
+   "AAATAAGACGACGACCCTCG",
+   "AACGATGATGCTCACTCTCG",
+   "AAGAATTACTGACCCCTCGG",
+   "AAGACGATCCGAGCCATTAC",
+   "AAGGAACTATGGCATCGAGC",
+   "AAGGACTGCATACCAGGTTG",
+   "AAGGATATGTAGACACCGCC",
+   "AAGGCCCAGAAGGATACAAC",
+   "AAGGCGCTCGGATAATACTC",
+   "AAGGTATGTATAGCGACCGC",
+   "AATAGGAACCTCTTACGCGG",
+   "AATATCACGCAAAAGCACCG",
+   "AATCAGTTTCTTTGGCAGCC",
+   "AATGCAAAGCTATTAGCGCG",
+   "AATGCGTCATTTTACACGGC",
+   "AATGTCCTTAGGCAGTCGTC",
+   "ACAACGAGCAGACCGAATAG",
+   "ACAAGGAGTCGGCATATCAC",
+   "ACAGAACGAACAGGCACTAC",
+   "ACAGGAAGCAAGGTATACGC",
+   "ACAGGGTATATTGAGTGCCC",
+   "ACATAAGCGATCCCAAGGTC",
+   "ACATCGCATACCAGAACAGG",
+   "ACATTAAATTTCGCCGTGGC",
+   "ACCACAGGTCAAGATTCACG",
+   "ACCCGTATCGCATAAGGATG",
+   "ACGAGATGATGCACCGATAG",
+   "ACGATGGGGACATAGAACAC",
+   "ACGGAGCCCTTATTGTAACC",
+   "ACGTATGGGGAACACTACAC",
+   "ACGTGAAACTGTATCGAGCC",
+   "ACGTTCAGTTTTCCAATGGC",
+   "ACTAGATTAGCAAGGCACCC",
+   "ACTGGACCCAATAAAAGGCC",
+   "ACTTCGATTGGCAAGGACTG",
+   "AGAACATAGCATTCACGGGG",
+   "AGACAACAATCTGAGGCTGG",
+   "AGACAAGCCTTAACCGTAGG",
+   "AGACACAAGGCTGATTCCAG",
+   "AGACATGGGATTGACCACAC",
+   "AGAGAGGCATGATTGACCTC",
+   "AGAGTTGCACCTAGAATCCG",
+   "AGATAGATGCTCCGTCAAGC",
+   "AGATAGTCACGCACAAGACC",
+   "AGATTAGCCGACTTTCCTGG",
+   "AGATTAGCTGCCGATACTGG",
+   "AGATTGTTACTCCGACGGAC",
+   "AGATTTCCGACGAGATTCCC",
+   "AGCATCCGTCTAAATCTCGG",
+   "AGCTATAAGAATTGCCGGGC",
+   "AGCTATGATCCCGGTGTAAC",
+   "AGCTCAATCTAACAGTGGGG",
+   "AGGACACCAGACCAATGAAG",
+   "AGGGCTAATTACCATCAGCG",
+   "AGGTGATCTGACGAATGTCC",
+   "AGTAAAGCATAGTGCCCAGC",
+   "AGTAGTATCCGAATCGCTGC",
+   "AGTATCTCAGCAAGGGCAAC",
+   "AGTATTAGGCGTCAAGGTCC",
+   "AGTATTCTTACAGCCAGCCG",
+   "AGTATTGCCGGACTAAACCC",
+   "AGTCCCAAGTTCAGACGTAC",
+   "AGTCCGACACAATGTGACAC",
+   "AGTGAACTGACCGAATCCTC",
+   "AGTGGTCTGTAAACCGTACC",
+   "AGTGTTTTCCATTTTCCGCG",
+   "AGTTATAAGGGTCCGATGCC",
+   "AGTTGCAGTATCTAACCCGC",
+   "AGTTGTAATATCACCCGCGC",
+   "ATACGTGGCTAGCATGAGAC",
+   "ATACTGTAAGAACCACGCGG",
+   "ATAGATCATGTCGGCAGTCG",
+   "ATAGATGGTGCCTACATGCG",
+   "ATCACAACAAAGGACGGGTC",
+   "ATCAGACAACACAGAGGCTG",
+   "ATCCAGGAGGTCTAGGAACC",
+   "ATCCTAGAAAAGGCGAAGGC",
+   "ATGCCATGACGACAACTAGC",
+   "ATGCTAGCTGGAACTATCGG",
+   "ATTAGGATTGCGAGCGACAC",
+   "ATTAGTACACTCCGTGAGCG",
+   "ATTCAAGGGTTGGACGACTC",
+   "ATTCTCACGACGCAAGATGG",
+   "ATTGACGGGAACTACACTCG",
+   "CACTCGATAGGTACAACCGG",
+   "CAGACCTACGGATCTTAGCG",
+   "CCACGAGATAAGAGGATGGC",
+   "CCAGAGCTTAGGGGACATAC",
+   "CCCGAGGGGAGAAATATACC",
+   "CCGAGGGAACCATGATACAG",
+   "CCGGGAGGAAGATATAGCAC",
+   "CCGGTTGTACCTATCGAGTG",
+   "CCGTGCGACAAGATTTCAAG",
+   "CCTTTAACAGGACATGCAGC",
+   "CGAACGCAAAAGTCCTCAAG",
+   "CGATAGAACGACCAGGTAGC",
+   "CGGATCGAACTTAGGTAGCC",
+   "CGGGAGGAAGTCTTTAGACC",
+   "CTAATATCCCTGAGCGACGG",
+   "CTAGGGAACCAGGCTTAACG",
+   "CTAGGGGATGGTCCAATACG",
+   "CTATAGAATCCGGGCTGGTC",
+   "CTGCTAGGGGCTACTTATCG",
+   "GAAAAGTCCCAATGAGTGCC",
+   "GAAGTGGTTTGCCTAAACGC",
+   "GACCATGCAAGGAGAGGTAC",
+   "GATACATAGACTTGGCCCCG",
+   "GCACGCAAAAGGACATAACC",
+   "GCAGCGTTTTAGCCTACAAG",
+   "GCATAAAGTTGACAGGCCAG",
+   "GCTAAATAGAGGGAAGCCCC",
+   "GGAAAACTAAGACAAGGCGC",
+   "GGAAACAATAACCATCGGCG",
+   "GGGCACCGATTAAGAAATGC",
+   "GGGTTGTCTCCTCTGATAGC",
+   "GTACTCAGAGATTGCCGGAG",
+   "GTATAAGATCAGCCGGACCC",
+   "GTATGTCGGCTCTCGTATCG",
+   "GTTCAGAGGTACGAACCCTC",
+   "GTTGCATCTAAGCCAAGTGC",
+   "TAAAGAGAGGGCGTCCAATC",
+   "TAACGACGTGCCGAACTTAG",
+   "TAAGATAGCACCACGGATGG",
+   "TAAGGATTCATCAGGTGCGC",
+   "TAAGGGACGATGCTTAACCC",
+   "TACCACGAAATGCACAGGAG",
+   "TACTGATAATTCGGACGCCC",
+   "TACTTGAATACCACGTGGCC",
+   "TAGCCAGGCAAAAGAGATCC",
+   "TAGCTCGATAATCAAGGGGC",
+   "TAGTGACCTAATGCCATGGG",
+   "TAGTTGAGAACACGAACCCG",
+   "TATAACAGGCTGCTGAGACC",
+   "TATACTGAAGAACGGCCCAG",
+   "TATCAATCCGGAACCAGTGC",
+   "TATCACGGAAGGACTCAACG",
+   "TCAAAGGAGCACGAACCTAC",
+   "TCAAGGTCCGTTATGGAACC",
+   "TCACATAGAAGGACATGGCG",
+   "TCACTTGGTATCGAGAACGG",
+   "TCAGCCTTTCATTGATTGCG",
+   "TCATCGACAAGATACAGGCG",
+   "TCCAATTATACGGAGCAGGC",
+   "TCGAATATGCTGTAACCCCG",
+   "TCGACCAGGTTATCATGAGC",
+   "TCGAGACAAGAACGATTCCC",
+   "TCTAGGACTATCACCGGAGG",
+   "TCTTCATAAGCCAGAGTGCC",
+   "TCTTGCGATAGACACAAGCC",
+   "TGAGCCATAAAAGCAAAGCG",
+   "TGAGCGCAGAACTATCAGAC",
+   "TGCATAGTATCCCAACAGGG",
+   "TGCCAAAGGGTAGAGACATC",
+   "TGCTGAATGAGAAACCTCGG",
+   "TGGGGACGACTTATAATGCC",
+   "TGTGGACCCTATCAAACGAG",
+   "TTAGCTCAGGTCCAAAGTCC",
+   "TTAGTAGGCAAGCATACCCG",
+   "TTCGGGAGCGGATTATACAC",
+   "TTCTGGGACTGGATAACACG",
+   "TTGACAGACAATCCGTAGGC",
+}
+
+local function new_primer_set(self)
+
+   local forward_primer = ""
+   local reverse_primer = ""
+
+
+   local least_used = 1000000
+   for i = #self.primers, 1, -1 do
+      if self.primer_use_quantity[self.primers[i]] <= least_used then
+         forward_primer = self.primers[i]
+         least_used = self.primer_use_quantity[self.primers[i]]
+      end
+   end
+
+
+
+   local possible_reverse_primers = {}
+   for _, primer in ipairs(self.primers) do
+      local pair_key = orthoprimers.make_primer_pair_key(forward_primer, primer)
+      if not self.primer_pairs[pair_key] and forward_primer ~= primer then
+         table.insert(possible_reverse_primers, primer)
+      end
+   end
+
+
+   least_used = 1000000
+   for i = #possible_reverse_primers, 1, -1 do
+      if self.primer_use_quantity[possible_reverse_primers[i]] <= least_used then
+         reverse_primer = possible_reverse_primers[i]
+         least_used = self.primer_use_quantity[possible_reverse_primers[i]]
+      end
+   end
+
+
+   if forward_primer == "" or reverse_primer == "" then
+      return "", "", "Not enough primers for genes in pool"
+   end
+
+
+   self.primer_use_quantity[forward_primer] = self.primer_use_quantity[forward_primer] + 1
+   self.primer_use_quantity[reverse_primer] = self.primer_use_quantity[reverse_primer] + 1
+   self.primer_pairs[orthoprimers.make_primer_pair_key(forward_primer, reverse_primer)] = true
+
+   return forward_primer, reverse_primer, nil
+end
+
+
+
+
+
+function orthoprimers.make_primer_pair_key(forward, reverse)
+   if forward > reverse then
+      return forward .. "|" .. reverse
+   end
+   return reverse .. "|" .. forward
+end
+
+
+
+function orthoprimers.new_orthogonal_primer_set(primers)
+   local quantity_map = {}
+   for _, primer in ipairs(primers) do
+      quantity_map[primer] = 0
+   end
+   local primer_pairs = {}
+   return { primers = primers, primer_use_quantity = quantity_map, primer_pairs = primer_pairs, new_primer_set = new_primer_set }
+end
+
+
+
+
+
+
+
+
+function orthoprimers.new_default_orthogonal_primer_set()
+   local first_96 = {}
+   for i = 1, 96 do
+      first_96[i] = ortho_primers[i]
+   end
+   return orthoprimers.new_orthogonal_primer_set(first_96)
+end
+
+orthoprimers.ortho_primers = ortho_primers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -10103,6 +10409,7 @@ return {
    mash = mash,
    seqhash = seqhash,
    primers = primers,
+   orthoprimers = orthoprimers,
    pcr = pcr,
    bio = bio,
    fasta = fasta,

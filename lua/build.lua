@@ -3,13 +3,14 @@
 
 -- Files in dependency order with their module names
 local files = {
-    { path = "../rng.tl", module = "rng"},
+    { path = "src/rng.tl", module = "rng"},
     { path = "src/hash.tl", module = "hash" },
     { path = "src/transform.tl", module = "transform" },
     { path = "src/align.tl", module = "align" },
     { path = "src/mash.tl", module = "mash" },
     { path = "src/seqhash.tl", module = "seqhash"},
     { path = "src/primers.tl", module = "primers"},
+	{ path = "src/orthoprimers.tl", module = "orthoprimers"},
     { path = "src/pcr.tl", module = "pcr"},
     { path = "src/bio/bio.tl", module = "bio"},
     { path = "src/bio/fasta.tl", module = "fasta"},

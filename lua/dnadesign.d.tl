@@ -363,6 +363,48 @@ local record Thermodynamics
     s: number  -- entropy (dS, cal/mol-K)
 end
 
+--[[ Module orthoprimers
+Package orthoprimers contains functions for working with dial-out primers.
+
+The idea of dial-out primers is that, given we have a set of mutually
+orthogonal primer binding sites, we can use a relatively small number of
+oligos to specify a certain amplicon or set of amplicons from a large mixed
+pool.
+
+While they identify 166 orthogonal primers, we only use 96 of them, mostly
+because it is physically easier to handle a single 96 well plate for index
+creation. It also lowers the quantity of oligos that needs to be synthesized.
+]]
+
+
+local record orthoprimers
+    -- Core functions for primer pair management
+    make_primer_pair_key: function(forward: string, reverse: string): string
+    new_orthogonal_primer_set: function(primers: {string}): OrthogonalPrimerSet
+    new_default_orthogonal_primer_set: function(): OrthogonalPrimerSet
+    
+    -- Types
+    PrimerPair: PrimerPair
+    OrthogonalPrimerSet: OrthogonalPrimerSet
+    
+    -- Data
+    ortho_primers: {string}
+end
+
+local record PrimerPair
+    forward: string
+    reverse: string
+end
+
+local record OrthogonalPrimerSet
+    primers: {string}
+    primer_use_quantity: {string:integer}
+    primer_pairs: {string:boolean}
+    
+    -- Method for generating new primer pairs
+    new_primer_set: function(self: OrthogonalPrimerSet): string, string, string
+end
+
 --[[ Module pcr
 Module pcr designs and simulates simple PCR reactions.
 
@@ -1353,6 +1395,7 @@ local record dnadesign
     mash: mash
     seqhash: seqhash
     primers: primers
+    orthoprimers: orthoprimers
     pcr: pcr
     bio: bio
     fasta: fasta
