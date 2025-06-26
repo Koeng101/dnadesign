@@ -13,12 +13,17 @@ Here are the basic part definitions:
 3. AATG - ATCC: CDS
 4. ATCC - CGCT: Terminator 
 
+Some additional useful definitions:
+
+1. AACT - [GG]AAGC: ntag1/ntag2
+
 ## Overhangs
 
 overhangs: `CGAG,GTCT,GGGG,AAAA,AACT,AATG,ATCC,CGCT,TTCT,AAGC,ATAG,ATTA,ATGT,ACTC,ACGA,TATC,TAGG,TACA,TTAC,TTGA,TGGA,GAAG,GACC,GCCG`
 overhangs with numbers:
 X. GTCT
 Y. CGAG
+
 2. TACA
 3. AACT
 4. AATG
@@ -52,7 +57,60 @@ This document is techincal reference material, not a how-to guide or tutorial. I
 4. Primers
 5. Cache blocks
 
+### Methylation redefinition
+
+A novel approach of dd assembly is that of modular redefinition connectors. While the yeast toolkit (YTK) has the concept of connectors, dd assembly goes a step further by defining these as synthesized duplexes that are methylated, therefore making BsaI reusable, while also giving the assembly the interesting property of being able to recurse onto itself. Here is an example of two connectors you could add to your build:
+
+```
+Build
+--------------
+promoter
+rbs
+cds
+terminator
+f158_GTCT_TACA
+f159_CGAG_AACT
+==
+f158_GTCT_TACA - promoter - rbs - cds - terminator - f159_CGAG_AACT
+```
+
+This would be considered a basic build. The connector sequences redefine what will be cut out next: in this case, you can cut this cassette out to be a `TACA`-`AACT` part - ie, taking the place of a promoter. This can become much more powerful when you do things like this:
+
+```
+Build
+--------------
+rbs
+cds
+terminator
+f158_AACT_AACT
+f159_CGCT_CGCT
+==
+f158_AACT_AACT - rbs - cds - terminator - f159_CGCT_CGCT
+```
+
+What you have done now is created a part, which to all other assemblies looks like a rbs-cds-terminator combination. This can then be directly used in another assembly with a promoter to do an efficient 2 part assembly.
+
 # Assembly
+
+Standard assemblies are with the following overhangs: `[GTCT] TACA AACT AATG ATCC CGCT [CGAG]`. A basic build is as follows:
+
+```
+GTCT    connector1  TACA
+TACA    promoter    AACT
+AACT    RBS         AATG
+AATG    CDS         ATCC
+ATCC    terminator  CGCT
+CGCT    connector2  CGAG
+```
+
+These sites are considered special and privileged. Each site has a connector which, after assembly, redefines the part. Connectors are defined as such:
+
+```
+direction/primer - new overhang - old overhang
+===
+f158.AACT.TACA
+r159.AATG.CGCT
+```
 
 ## Special overhangs: GTCT and CGAG
 
@@ -106,15 +164,100 @@ While we could construct a simple transcriptional unit of `["Promoter+RBS", "GFP
 
 ### CDS fusion using SapI
 ```
-NNN TGA AGAGC ACTT
+NNN TGA AGAGC ACTT <- clean C terminus, SapI compatible
+NNN GGA AGAGC ACTT <- GRAS C tag, SapI compatible
+NNN GG ACTT <- GS C tag, not SapI compatible
 ```
 
-In dd assembly, CDSs have either their protein tags directly fused to them, or use SapI fusion. SapI fusions are enabled by the following observation: You can overlap SapI with a stop codon to specifically cut the last codon of a protein. By cutting the last codon, without cutting any other sequence, we can create seamless protein fusions for any protein. Proteins do not need to be specifically designed to have fusion tags - any CDS can get a fusion tag added on at-build-time.
+In dd assembly, there are three methods of creating proteins for protein fusion:
+1. Clean C terminus + SapI fusions
+2. GRAS C tag + SapI fusions
+3. GS C tag
+
+In dd assembly, CDSs have either their protein tags directly fused to them, or use SapI fusion. SapI fusions are enabled by the following observation: You can overlap SapI with a stop codon to specifically cut the last codon of a protein. By cutting the last codon, without cutting any other sequence, we can create seamless protein fusions for any protein. Proteins do not need to be specifically designed to have fusion tags.
+
+Proteins which are commonly tagged may also use GGA instead of TGA. This creates a scar of `GRAS`, which should be innocous.
+
+```
+Lys	K	AAA
+Leu	L	TTA
+Arg	R	CGA
+Phe	F	TTT
+Gln	Q	CAA
+Trp	W	TGG
+His	H	CAC
+Pro	P	CCG
+Val	V	GTG
+Cys	C	TGC
+Thr	T	ACA
+Ser	S	TCC
+Tyr	Y	TAC
+Ile	I	ATA
+Gly	G	GGT
+Asn	N	AAC
+Ala	A	GCC
+Met	M	ATG
+Asp	D	GAC
+Glu	E	GAA
+```
+
+Terminators with ACTT should always be ACTTTAA, encoding a stop codon in case the protein has a GRAS C tag. 
 
 # Vectors
 
 ## Standard oriT
 dd assembly takes is opinionated in how transfer to non-cloning organisms should be done.
+
+## Backbones
+Canonically, the backbones look like this:
+```
+GTCT    connector1  TACA
+TACA    promoter    AACT
+AACT    RBS         AATG
+AATG    CDS         ATCC
+ATCC    terminator  CGCT
+CGCT    connector2  CGAG
+```
+With `AAGC` sometimes also being involved with ntags.
+
+This, obviously, does not leave room for building backbones. Oh no! This is where `ATTA` comes into play:
+
+```
+GTCT    connector1  TACA
+TACA    promoter    AACT
+AACT    ntag1       AAGC
+AAGC    ntag2       AATG
+AATG    CDS         ATCC
+ATCC    ctag        ATGT
+ATGT    Cterminator CGCT
+CGCT    connector2  CGAG
+
+TTCT - reserved for GS tag
+
+ATTA    Upstream homology
+ACTC    Selection
+ATGT    Downstream homology
+```
+
+So if we add these into the most complex assembly that one can do at one time, we get this:
+
+```
+GTCT    connector1  ATTA
+ATTA    upstream    TACA
+TACA    promoter    AACT
+AACT    ntag1       AAGC
+AAGC    ntag2       AATG
+AATG    CDS         ATCC
+ATCC    ctag        ATGT
+ATGT    Cterminator CGCT
+CGCT    selection   ACTC
+ACTC    downstream  ATGT
+ATGT    connector2  CGAG
+
++ vector = 12 part assembly
+```
+
+Due to the flexibility of redefinitions, you can theoretically fit a lot more into each spot - you could, for example, fit an entire operon + selection marker in the "selection" location.
 
 # Cache blocks
 
