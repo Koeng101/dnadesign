@@ -4,17 +4,16 @@
 ![Tests](https://github.com/koeng101/dnadesign/workflows/Test/badge.svg)
 ![Test Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/koeng101/e8462880f920d70b182d5df3617b30f5/raw/coverage.json)
 
-DnaDesign is a Go project creating tools for automated genetic design, spanning from the lowest levels of DNA sequence manipulation to higher level functionality.
+DnaDesign is a Go/Lua project creating tools for automated genetic design, spanning from the lowest levels of DNA sequence manipulation to higher level functionality.
 
 * **Practical:** DnaDesign tooling is meant to be used by practitioners of synthetic biology.
 
-* **Modern:** DnaDesign is at the bleeding edge of technology. We are happy to adopt the newest advancements in synthetic biology, wasm, LLMs, and more to get our tools in the hands of people who need it.
+* **Modern:** DnaDesign is at the bleeding edge of technology. We are happy to adopt the newest advancements in synthetic biology, LLMs, and more to get our tools in the hands of people who need it.
 
 * **Ambitious:** DnaDesign's goal is to be the most complete, open, and well used collection of computational synthetic biology tools ever assembled. If you like our dream and want to support us please star this repo, request a feature, or open a pull request.
 
 ## Documentation
 
-* **[Python Documentation](https://py.dnadesign.bio)**
 * **[Go Library Documentation](https://pkg.go.dev/github.com/koeng101/dnadesign)**
 
 ## Repo organization
