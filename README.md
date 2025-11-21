@@ -16,36 +16,38 @@ DnaDesign is a Go/Lua project creating tools for automated genetic design, spann
 
 * **[Go Library Documentation](https://pkg.go.dev/github.com/koeng101/dnadesign)**
 
+## Go/Lua
+
+DnaDesign is implemented with both lua and go versions. They should work identically, and anything that does not work identically is considered a bug. The original codebase was written in Go and we currently have production software running the Go version, but most development now is done in the lua version. This is because, most of the time, just a quick script needs to be written, and lua is fantastic for this. Unlike python, lua can be trivally embedded as a scripting language, allowing the DnaDesign library to be embedded anywhere and scripted by LLMs.
+
+DnaDesign is written in teal, a statically typed lua language, and compiled to lua. A lua amalgamation is provided to embed into any system.
+
 ## Repo organization
 
 On the highest level:
-* `lib` contains core functionality as a go library.
-* `external` contains functions to work with external bioinformatics command-line interfaces.
-* `py` contains code to use the dnadesign library in python using a C shared library.
+* `lua` contains core functionality as a lua library.
+* `go/lib` contains core functionality as a go library.
+* `go/external` contains functions to work with external bioinformatics command-line interfaces.
 
 ### Detailed repo organization
 
-* [lib](https://pkg.go.dev/github.com/koeng101/dnadesign/lib) contains the core DnaDesign library, with nearly all functionality, all in idiomatic Go with nearly no dependencies.
-    * [lib/bio](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/bio) contains biological parsers for file formats including [genbank](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/genbank/genbank.go), [fasta](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/fasta/fasta.go), [uniprot](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/uniprot/uniprot.go), [fastq](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/fastq/fastq.go), [slow5](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/slow5/slow5.go), [sam](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/sam/sam.go), and [pileup](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/pileup/pileup.go) files.
-    * [lib/align](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/align) contains [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) and [Smith-Waterman](https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm) alignment functions, as well as the [mash](https://doi.org/10.1186/s13059-016-0997-x) similarity algorithm.
-    * [lib/clone](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/clone) contains functions for simulating [DNA cloning](https://en.wikipedia.org/wiki/Molecular_cloning), including [restriction digestion](https://www.neb.com/en-us/applications/cloning-and-synthetic-biology/dna-preparation/restriction-enzyme-digestion), [ligation](https://en.wikipedia.org/wiki/Ligation_(molecular_biology)), and [GoldenGate assembly](https://en.wikipedia.org/wiki/Golden_Gate_Cloning).
-    * [lib/fold](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/fold) contains DNA and RNA folding simulation software, including the [Zuker](https://doi.org/10.1093/nar/9.1.133) and [LinearFold](https://doi.org/10.1093/bioinformatics/btz375) folding algorithms.
-    * [lib/primers](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/primers) contains [DNA primer](https://www.nature.com/scitable/definition/primer-305/) design functions.
-        * [lib/primers/pcr](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/primers/pcr) contains [PCR](https://www.ncbi.nlm.nih.gov/probe/docs/techpcr/) simulation functions.
-    * [lib/seqhash](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/seqhash) contains the Seqhash algorithm to create universal identifiers for DNA/RNA/protein.
-    * [lib/synthesis](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis) contains various functions for designing synthetic DNA.
-        * [lib/synthesis/codon](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis/codon) contains functions for working with [codon tables](https://en.wikipedia.org/wiki/DNA_and_RNA_codon_tables), [translating genes](https://en.wikipedia.org/wiki/Translation_(biology)), and [optimizing codons](https://doi.org/10.1073/pnas.0909910107) for expression.
-        * [lib/synthesis/fragment](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis/fragment) contains functions for [optimal GoldenGate fragmentation](https://doi.org/10.1371/journal.pone.0238592).
-        * [lib/synthesis/fix](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis/fix) contains functions for fixing proteins in preparation for synthesis.
-    * [lib/transform](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/transform) contains basic utility functions for transforming DNA, like reverse complementation.
+* [go/lib](https://pkg.go.dev/github.com/koeng101/dnadesign/lib) contains the core DnaDesign library, with nearly all functionality, all in idiomatic Go with nearly no dependencies.
+    * [go/lib/bio](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/bio) contains biological parsers for file formats including [genbank](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/genbank/genbank.go), [fasta](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/fasta/fasta.go), [uniprot](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/uniprot/uniprot.go), [fastq](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/fastq/fastq.go), [slow5](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/slow5/slow5.go), [sam](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/sam/sam.go), and [pileup](https://github.com/Koeng101/dnadesign/blob/main/lib/bio/pileup/pileup.go) files.
+    * [go/lib/align](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/align) contains [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) and [Smith-Waterman](https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm) alignment functions, as well as the [mash](https://doi.org/10.1186/s13059-016-0997-x) similarity algorithm.
+    * [go/lib/clone](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/clone) contains functions for simulating [DNA cloning](https://en.wikipedia.org/wiki/Molecular_cloning), including [restriction digestion](https://www.neb.com/en-us/applications/cloning-and-synthetic-biology/dna-preparation/restriction-enzyme-digestion), [ligation](https://en.wikipedia.org/wiki/Ligation_(molecular_biology)), and [GoldenGate assembly](https://en.wikipedia.org/wiki/Golden_Gate_Cloning).
+    * [go/lib/fold](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/fold) contains DNA and RNA folding simulation software, including the [Zuker](https://doi.org/10.1093/nar/9.1.133) and [LinearFold](https://doi.org/10.1093/bioinformatics/btz375) folding algorithms.
+    * [go/lib/primers](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/primers) contains [DNA primer](https://www.nature.com/scitable/definition/primer-305/) design functions.
+        * [go/lib/primers/pcr](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/primers/pcr) contains [PCR](https://www.ncbi.nlm.nih.gov/probe/docs/techpcr/) simulation functions.
+    * [go/lib/seqhash](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/seqhash) contains the Seqhash algorithm to create universal identifiers for DNA/RNA/protein.
+    * [go/lib/synthesis](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis) contains various functions for designing synthetic DNA.
+        * [go/lib/synthesis/codon](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis/codon) contains functions for working with [codon tables](https://en.wikipedia.org/wiki/DNA_and_RNA_codon_tables), [translating genes](https://en.wikipedia.org/wiki/Translation_(biology)), and [optimizing codons](https://doi.org/10.1073/pnas.0909910107) for expression.
+        * [go/lib/synthesis/fragment](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis/fragment) contains functions for [optimal GoldenGate fragmentation](https://doi.org/10.1371/journal.pone.0238592).
+        * [go/lib/synthesis/fix](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/synthesis/fix) contains functions for fixing proteins in preparation for synthesis.
+    * [go/lib/transform](https://pkg.go.dev/github.com/koeng101/dnadesign/lib/transform) contains basic utility functions for transforming DNA, like reverse complementation.
 * [external](https://pkg.go.dev/github.com/koeng101/dnadesign/external) contains integrations with external bioinformatics software, usually operating on the command line.
-    * [external/minimap2](https://pkg.go.dev/github.com/koeng101/dnadesign/external/minimap2) contains a function for working with [minimap2](https://github.com/lh3/minimap2) with Go.
-    * [external/samtools](https://pkg.go.dev/github.com/koeng101/dnadesign/external/samtools) contains a function for generating pileup files using [samtools](https://github.com/samtools/samtools) with Go.
-    * [external/bcftools](https://pkg.go.dev/github.com/koeng101/dnadesign/external/bcftools) contains GenerateVCF to generate a VCF file from sam alignments using [bcftools](https://samtools.github.io/bcftools/) with Go.
-
-## Python
-
-We have python package, `dnadesign`, which allows python users to use dnadesign. This is a work-in-progress: more documentation coming soon!
+    * [go/external/minimap2](https://pkg.go.dev/github.com/koeng101/dnadesign/external/minimap2) contains a function for working with [minimap2](https://github.com/lh3/minimap2) with Go.
+    * [go/external/samtools](https://pkg.go.dev/github.com/koeng101/dnadesign/external/samtools) contains a function for generating pileup files using [samtools](https://github.com/samtools/samtools) with Go.
+    * [go/external/bcftools](https://pkg.go.dev/github.com/koeng101/dnadesign/external/bcftools) contains GenerateVCF to generate a VCF file from sam alignments using [bcftools](https://samtools.github.io/bcftools/) with Go.
 
 ## Contributing
 
@@ -57,7 +59,9 @@ Write good, useful code. Open a pull request, and we'll see if it fits!
 
 ## Sources
 
-There are a few pieces of "complete" software that we have directly integrated into the source tree (with their associated licenses). These projects don't receive updates anymore (or just bug fixes with years between). In particular, `lib` has most of these, since we intend to have as few dependencies as possible in `lib`. The integrated projects include the following.
+The lua version of dnadesign is completely self-contained.
+
+There are a few pieces of "complete" Go software that we have directly integrated into the source tree (with their associated licenses). These projects don't receive updates anymore (or just bug fixes with years between). In particular, `lib` has most of these, since we intend to have as few dependencies as possible in `lib`. The integrated projects include the following.
 - [svb](https://github.com/rleiwang/svb) in `lib/bio/slow5/svb`
 - [intel-cpuid](https://github.com/aregm/cpuid) in `lib/bio/slow5/svb/intel-cpuid`
 - [wordwrap](https://github.com/mitchellh/go-wordwrap) in `lib/bio/genbank`
@@ -75,6 +79,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Removed python version of dnadesign (too hard to maintain)
 - Adds uniref parser [#107](https://github.com/Koeng101/dnadesign/pull/107)
 - Fixes iso-8859-1 error in reading uniref data dumps [#106](https://github.com/Koeng101/dnadesign/pull/106)
 - Updates uniprot parser to read IDs [#104](https://github.com/Koeng101/dnadesign/pull/104)
