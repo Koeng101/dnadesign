@@ -6,6 +6,8 @@ The bio package provides a consistent way to work with each of these file
 formats. The underlying data returned by each parser is as raw as we can return
 while still being easy to use for downstream applications, and should be
 immediately recognizable as the original format.
+
+TODO: new_file_reader would be convenient function
 ]]
 
 local record bio

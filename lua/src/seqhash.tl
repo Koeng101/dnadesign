@@ -34,6 +34,7 @@ local record seqhash
     decode_flag: function(flag: integer): (integer, string, boolean, boolean)
     booth_least_rotation: function(sequence: string): integer
     rotate_sequence: function(sequence: string): string
+	circular_equality: function(sequence1: string, sequence2: string): boolean
     hash2: function(sequence: string, sequence_type: string, circular: boolean, double_stranded: boolean): ({integer}, string)
     hash2_fragment: function(sequence: string, fwd_overhang_length: integer, rev_overhang_length: integer): ({integer}, string) 
     encode_hash2: function(hash: {integer}, err: string): (string, string)
@@ -248,46 +249,116 @@ end
 boothLeastRotation gets the least rotation of a circular string.
 https://en.wikipedia.org/wiki/Lexicographically_minimal_string_rotation
 ]]
-local function booth_least_rotation(sequence: string): integer
-    local doubled = sequence .. sequence
-    local n = #doubled
+--local function booth_least_rotation(sequence: string): integer
+--    local doubled = string.upper(sequence) .. string.upper(sequence)
+--    local n = #doubled
+--
+--    local k = 0
+--    
+--    local f: {integer} = {}
+--    for i = 0, n-1 do  -- Change to 0-based indexing
+--        f[i] = -1
+--    end
+--
+--    for j = 0, n-2 do  -- Change to 0-based indexing
+--        local char = doubled:byte(j+2)  -- Adjust for 1-based string indexing
+--        local failure = f[j-k]
+--
+--        while failure ~= -1 and char ~= doubled:byte(k+failure+2) do  -- Adjust for 1-based string indexing
+--            if char < doubled:byte(k+failure+2) then
+--                k = j - failure
+--            end
+--            failure = f[failure]
+--        end
+--
+--        if char ~= doubled:byte(k+failure+2) then
+--            if char < doubled:byte(k+2) then  -- Adjust for 1-based string indexing
+--                k = j
+--            end
+--            f[j-k] = -1
+--        else
+--            f[j-k] = failure + 1
+--        end
+--    end
+--
+--    return k
+--end
+local function booth_least_rotation(seq:string): integer
+    local s = string.upper(seq)
+    local doubled = s .. s           -- work on s + s
+    local n = #doubled               -- length of doubled string
 
-    local k = 0
-    
-    local f: {integer} = {}
-    for i = 0, n-1 do  -- Change to 0-based indexing
+    -- failure function f[0..n-1], 0-based
+    local f = {}
+    for i = 0, n - 1 do
         f[i] = -1
     end
 
-    for j = 0, n-2 do  -- Change to 0-based indexing
-        local char = doubled:byte(j+2)  -- Adjust for 1-based string indexing
-        local failure = f[j-k]
+    local k = 0   -- 0-based index of current best rotation in doubled
 
-        while failure ~= -1 and char ~= doubled:byte(k+failure+2) do  -- Adjust for 1-based string indexing
-            if char < doubled:byte(k+failure+2) then
-                k = j - failure
+    -- j corresponds to 0-based j in the textbook algorithm, but we loop from 1
+    -- because j = 0 case is trivial.
+    for j = 1, n - 1 do
+        -- s[j] in 0-based => doubled:byte(j+1) in Lua
+        local sj = doubled:byte(j + 1)
+
+        -- i = f[j - k - 1]  (this index is always >= 0 if invariant k < j holds)
+        local i = f[j - k - 1]
+
+        -- while i != -1 and s[j] != s[k + i + 1]
+        while i ~= -1 and sj ~= doubled:byte(k + i + 2) do
+            if sj < doubled:byte(k + i + 2) then
+                k = j - i - 1
             end
-            failure = f[failure]
+            i = f[i]
         end
 
-        if char ~= doubled:byte(k+failure+2) then
-            if char < doubled:byte(k+2) then  -- Adjust for 1-based string indexing
+        if sj ~= doubled:byte(k + i + 2) then
+            -- if s[j] < s[k]
+            if sj < doubled:byte(k + 1) then
                 k = j
             end
-            f[j-k] = -1
+            f[j - k] = -1
         else
-            f[j-k] = failure + 1
+            f[j - k] = i + 1
         end
     end
 
-    return k
+    -- k is an index into doubled; reduce to index in original seq (length m)
+    local m = #s
+    if k >= m then
+        k = k - m
+    end
+    return k  -- 0-based starting index of minimal rotation in original string
 end
 
---[[ RotateSequence rotates circular sequences to deterministic point ]]
+
+
+--[[ rotate_sequence rotates circular sequences to deterministic point ]]
 local function rotate_sequence(sequence: string): string
     local k = booth_least_rotation(sequence)
     -- Since k is now 0-based but string:sub is 1-based, add 1 to k+1
     return sequence:sub(k+2) .. sequence:sub(1, k+1)
+end
+
+--[[ circular_equality checks if two circular sequences are the same. We assume
+double stranded sequence.]]
+local function circular_equality(sequence1: string, sequence2: string): boolean
+	local sequence1U = string.upper(sequence1)
+	local sequence2U = string.upper(sequence2)
+	local deterministic_sequence1: string
+	local seq1 = rotate_sequence(sequence1U)
+    local rev_comp = transform.reverse_complement(sequence1U)
+    local seq2 = rotate_sequence(rev_comp)
+    deterministic_sequence1 = seq1 < seq2 and seq1 or seq2
+
+	local deterministic_sequence2: string
+    local seq2_1 = rotate_sequence(sequence2U)
+    local rev_comp_2 = transform.reverse_complement(sequence2U)
+    local seq2_2 = rotate_sequence(rev_comp_2)
+    deterministic_sequence2 = seq2_1 < seq2_2 and seq2_1 or seq2_2
+
+	return deterministic_sequence1 == deterministic_sequence2
 end
 
 --[[
@@ -482,6 +553,7 @@ seqhash.version2_flag = version2_flag
 seqhash.decode_flag = decode_flag
 seqhash.booth_least_rotation = booth_least_rotation
 seqhash.rotate_sequence = rotate_sequence
+seqhash.circular_equality = circular_equality
 seqhash.hash2 = hash2
 seqhash.hash2_fragment = hash2_fragment
 seqhash.encode_hash2 = encode_hash2

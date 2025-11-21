@@ -46,6 +46,7 @@ in multiple places (Type IIG enzymes) such as BcgI.
 -- Main interface
 local record clone
    -- Core cloning functions
+   -- TODO most of these should have keyword inputs so they are less confusing.
    cut_with_enzyme_by_name: function(part: Part, directional: boolean, name: string, methylated: boolean): ({Fragment}, string)
    cut_with_enzyme: function(part: Part, directional: boolean, enzyme: Enzyme, methylated: boolean): {Fragment}
    ligate: function(fragments: {Fragment}, circular: boolean): (string, {integer}, string)
@@ -56,6 +57,11 @@ local record clone
    -- Kmer analysis functions for analyzing ligation junctions
    find_kmer_overlaps: function(fragments: {Fragment}, ligation_product: string, ligation_pattern: {integer}, kmer_size: integer): ({KmerOverlap}, string)
    find_kmers: function(kmer_overlaps: {KmerOverlap}, sequence: string): {KmerOverlap}
+
+   -- Get the window surrounding a given fragment. Useful to call on a vector
+   -- to call transform.get_window on input sequences to see what sequence
+   -- has been inserted into a vector.
+   get_window_from_fragment: function(fragment: Fragment, left_flank_length: integer, right_flank_length: integer): string, string
 
    Overhang: Overhang
 end
@@ -534,6 +540,28 @@ function clone.find_kmers(kmer_overlaps: {KmerOverlap}, sequence: string): {Kmer
    end
 
    return output_kmer_overlaps
+end
+
+--[[
+get_window gets a window around a given fragment. This is used for getting an
+insert of a given fragment - and hence, the left and right flank switch so that
+they can be directly used in a transform.get_window. You would input a full
+sequence, and the window would retrieve the insert rather than the vector.
+
+The overhangs are not included, as these are great sequences to align against.
+--]]
+function clone.get_window_from_fragment(fragment: Fragment, left_flank_length: integer, right_flank_length: integer): string, string
+    -- Construct the full sequence including overhangs
+    local full_sequence = fragment.sequence
+    
+    -- Extract left flank (first left_flank_length bp)
+    local left_flank = full_sequence:sub(1, left_flank_length)
+    
+    -- Extract right flank (last right_flank_length bp)
+    local right_flank = full_sequence:sub(#full_sequence - right_flank_length + 1)
+    
+	-- Because we are looking at a vector and not an insert, we flip these two
+    return right_flank, left_flank
 end
 
 return clone

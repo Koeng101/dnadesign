@@ -611,6 +611,9 @@ local transform = {}
 
 
 
+
+
+
 local complement_table = {
    ['A'] = 'T', ['B'] = 'V', ['C'] = 'G', ['D'] = 'H',
    ['G'] = 'C', ['H'] = 'D', ['K'] = 'M', ['M'] = 'K',
@@ -789,6 +792,46 @@ end
 
 
 
+function transform.get_window(target_sequence, left_flank, right_flank, circular)
+   local search_sequence = target_sequence
+   if circular then
+      search_sequence = target_sequence .. target_sequence
+   end
+
+   local target_upper = search_sequence:upper()
+   local left_flank_upper = left_flank:upper()
+   local right_flank_upper = right_flank:upper()
+   local left_start, left_end = target_upper:find(left_flank_upper, 1, true)
+
+   if left_start then
+      local right_start, _ = target_upper:find(right_flank_upper, left_end + 1, true)
+      if right_start then
+         return search_sequence:sub(left_end + 1, right_start - 1)
+      end
+   end
+
+   local rev_comp = transform.reverse_complement(search_sequence)
+   local rev_comp_upper = rev_comp:upper()
+
+   left_start, left_end = rev_comp_upper:find(left_flank_upper, 1, true)
+
+   if left_start then
+      local right_start, _ = rev_comp_upper:find(right_flank_upper, left_end + 1, true)
+
+      if right_start then
+         return rev_comp:sub(left_end + 1, right_start - 1)
+      end
+   end
+
+
+   return nil
+end
+
+
+
+
+
+
 
 
 
@@ -873,6 +916,10 @@ local align = {}
 
 
 
+
+
+
+
 local default_matrix = {
    data = {
       A = { A = 1, C = -1, G = -1, T = -1, U = -1, ["-"] = -1 },
@@ -911,6 +958,15 @@ local function max(a, b)
    end
    return b
 end
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1041,6 +1097,47 @@ function align.smith_waterman(string_a, string_b, scoring)
    end
 
    return max_score, align_a, align_b
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+function align.align_many(func, target, candidates, scoring, ntop)
+   local results = {}
+   for i = 1, #candidates do
+      local alignment_score, align_a, align_b = func(target, candidates[i], scoring)
+      results[#results + 1] = { alignment_score, align_a, align_b, i }
+   end
+
+
+   table.sort(results, function(a, b)
+      return a[1] > b[1]
+   end)
+
+
+   if ntop < 0 then
+      ntop = 0
+   end
+   if ntop > #results then
+      ntop = #results
+   end
+
+
+   local out = {}
+   for i = 1, ntop do
+      out[i] = results[i]
+   end
+
+   return out
 end
 
 
@@ -1259,6 +1356,7 @@ local seqhash = {}
 
 
 
+
 local SEQ_TYPE_DNA = "DNA"
 local SEQ_TYPE_RNA = "RNA"
 local SEQ_TYPE_PROTEIN = "PROTEIN"
@@ -1458,46 +1556,116 @@ end
 
 
 
-local function booth_least_rotation(sequence)
-   local doubled = sequence .. sequence
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local function booth_least_rotation(seq)
+   local s = string.upper(seq)
+   local doubled = s .. s
    local n = #doubled
 
-   local k = 0
 
    local f = {}
    for i = 0, n - 1 do
       f[i] = -1
    end
 
-   for j = 0, n - 2 do
-      local char = doubled:byte(j + 2)
-      local failure = f[j - k]
+   local k = 0
 
-      while failure ~= -1 and char ~= doubled:byte(k + failure + 2) do
-         if char < doubled:byte(k + failure + 2) then
-            k = j - failure
+
+
+   for j = 1, n - 1 do
+
+      local sj = doubled:byte(j + 1)
+
+
+      local i = f[j - k - 1]
+
+
+      while i ~= -1 and sj ~= doubled:byte(k + i + 2) do
+         if sj < doubled:byte(k + i + 2) then
+            k = j - i - 1
          end
-         failure = f[failure]
+         i = f[i]
       end
 
-      if char ~= doubled:byte(k + failure + 2) then
-         if char < doubled:byte(k + 2) then
+      if sj ~= doubled:byte(k + i + 2) then
+
+         if sj < doubled:byte(k + 1) then
             k = j
          end
          f[j - k] = -1
       else
-         f[j - k] = failure + 1
+         f[j - k] = i + 1
       end
    end
 
+
+   local m = #s
+   if k >= m then
+      k = k - m
+   end
    return k
 end
+
+
 
 
 local function rotate_sequence(sequence)
    local k = booth_least_rotation(sequence)
 
    return sequence:sub(k + 2) .. sequence:sub(1, k + 1)
+end
+
+
+
+local function circular_equality(sequence1, sequence2)
+   local sequence1U = string.upper(sequence1)
+   local sequence2U = string.upper(sequence2)
+   local deterministic_sequence1
+   local seq1 = rotate_sequence(sequence1U)
+   local rev_comp = transform.reverse_complement(sequence1U)
+   local seq2 = rotate_sequence(rev_comp)
+   deterministic_sequence1 = seq1 < seq2 and seq1 or seq2
+
+   local deterministic_sequence2
+   local seq2_1 = rotate_sequence(sequence2U)
+   local rev_comp_2 = transform.reverse_complement(sequence2U)
+   local seq2_2 = rotate_sequence(rev_comp_2)
+   deterministic_sequence2 = seq2_1 < seq2_2 and seq2_1 or seq2_2
+
+   return deterministic_sequence1 == deterministic_sequence2
 end
 
 
@@ -1692,6 +1860,7 @@ seqhash.version2_flag = version2_flag
 seqhash.decode_flag = decode_flag
 seqhash.booth_least_rotation = booth_least_rotation
 seqhash.rotate_sequence = rotate_sequence
+seqhash.circular_equality = circular_equality
 seqhash.hash2 = hash2
 seqhash.hash2_fragment = hash2_fragment
 seqhash.encode_hash2 = encode_hash2
@@ -2369,13 +2538,13 @@ end
 
 
 
-function orthoprimers.new_orthogonal_primer_set(primers)
+function orthoprimers.new_orthogonal_primer_set(primer_set)
    local quantity_map = {}
-   for _, primer in ipairs(primers) do
+   for _, primer in ipairs(primer_set) do
       quantity_map[primer] = 0
    end
    local primer_pairs = {}
-   return { primers = primers, primer_use_quantity = quantity_map, primer_pairs = primer_pairs, new_primer_set = new_primer_set }
+   return { primers = primer_set, primer_use_quantity = quantity_map, primer_pairs = primer_pairs, new_primer_set = new_primer_set }
 end
 
 
@@ -8922,6 +9091,12 @@ local clone = {}
 
 
 
+
+
+
+
+
+
 local default_enzymes = {
    BsaI = {
       name = "BsaI",
@@ -9352,6 +9527,28 @@ function clone.find_kmers(kmer_overlaps, sequence)
    end
 
    return output_kmer_overlaps
+end
+
+
+
+
+
+
+
+
+
+function clone.get_window_from_fragment(fragment, left_flank_length, right_flank_length)
+
+   local full_sequence = fragment.sequence
+
+
+   local left_flank = full_sequence:sub(1, left_flank_length)
+
+
+   local right_flank = full_sequence:sub(#full_sequence - right_flank_length + 1)
+
+
+   return right_flank, left_flank
 end
 
 

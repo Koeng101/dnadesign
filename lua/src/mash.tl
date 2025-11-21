@@ -49,7 +49,7 @@ local record mash
 end
 
 local hash = require("hash")
-
+	
 -- Mash is a collection of hashes of kmers from a given sequence.
 local record Mash
     kmer_size: integer  -- The kmer size is the size of the sliding window that is used to generate the hashes.

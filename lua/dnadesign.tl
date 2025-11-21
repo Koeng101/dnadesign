@@ -608,6 +608,9 @@ local record transform
     reverse_complement_rna: function(sequence: string): string
     complement_rna: function(sequence: string): string 
     complement_base_rna: function(base_pair: string): string
+
+	-- Windowing functions
+	get_window: function(target_sequence: string, left_flank: string, right_flank: string, circular: boolean): string
 end
 
 --[[ complementTable provides 1:1 mapping between bases and their complements ]]
@@ -784,6 +787,46 @@ function transform.complement_base_rna(base_pair: string): string
   return complement
 end
 
+--[[
+get_window takes in a target sequence and two flanks, and if it exists, returns
+the window between that sequence. It checks both the given sequence and its
+reverse complement.
+--]]
+function transform.get_window(target_sequence: string, left_flank: string, right_flank: string, circular: boolean): string
+	local search_sequence = target_sequence
+    if circular then
+        search_sequence = target_sequence .. target_sequence
+    end
+
+	local target_upper = search_sequence:upper()
+	local left_flank_upper = left_flank:upper()
+	local right_flank_upper = right_flank:upper()
+	local left_start, left_end = target_upper:find(left_flank_upper, 1, true)
+
+	if left_start then
+		local right_start, _ = target_upper:find(right_flank_upper, left_end + 1, true)
+		if right_start then
+			return search_sequence:sub(left_end + 1, right_start - 1)
+		end
+	end
+
+	local rev_comp = transform.reverse_complement(search_sequence)
+    local rev_comp_upper = rev_comp:upper()
+    
+    left_start, left_end = rev_comp_upper:find(left_flank_upper, 1, true)
+    
+    if left_start then
+        local right_start, _ = rev_comp_upper:find(right_flank_upper, left_end + 1, true)
+        
+        if right_start then
+			return rev_comp:sub(left_end + 1, right_start - 1)
+        end
+    end
+    
+    -- Not found
+    return nil
+end
+
 
 
 
@@ -859,6 +902,10 @@ local record align
     new_scoring: function(substitution_matrix: SubstitutionMatrix | nil, gap_penalty: integer): Scoring
     needleman_wunsch: function(string_a: string, string_b: string, scoring: Scoring): (integer, string, string)
     smith_waterman: function(string_a: string, string_b: string, scoring: Scoring): (integer, string, string)
+
+	-- align_many compares one string against many, using a provided alignment function
+	align_many: function(func: function(string_a: string, string_b: string, scoring: Scoring): (integer, string, string), 
+		target: string, candidates: {string}, scoring: Scoring, ntop: integer): { {integer, string, string, integer} }
 end
 
 -- Define the substitution matrix record type
@@ -912,6 +959,15 @@ local function max(a: integer, b: integer): integer
    return b
 end
 
+--[[
+For developers:
+
+Needleman–Wunsch traceback stops too early and truncates alignments when sequences differ in length.
+
+So the algorithm computes the correct score, but returns a truncated alignment for unequal lengths.
+
+This should be fixed in later versions.
+--]]
 
 -- NeedlemanWunsch performs global alignment between two strings using the Needleman-Wunsch algorithm.
 -- It returns the final score and the optimal alignments of the two strings in O(nm) time and O(nm) space.
@@ -1043,6 +1099,47 @@ function align.smith_waterman(string_a: string, string_b: string, scoring: Scori
    return max_score, align_a, align_b
 end
 
+--[[
+align_many is a helper function for figuring out, given an insert, which
+candidate matches the very best. It is much slower than methods like minimap2,
+but it is also more accurate: it is deterministic, does not use heuristics, and
+will give the actual optimal alignment.
+
+More advanced algorithms would be needed for large sequences, but given
+sufficient computation, smith-waterman or needleman-wunsh will give optimal
+results.
+
+TODO: have {integer, string, string} be a type
+--]]
+function align.align_many(func: function(string_a: string, string_b: string, scoring: Scoring): (integer, string, string), target: string, candidates: {string}, scoring: Scoring, ntop: integer): { {integer, string, string, integer} }
+    local results: { {integer, string, string, integer} } = {}
+    for i = 1, #candidates do
+        local alignment_score, align_a, align_b = func(target, candidates[i], scoring)
+        results[#results + 1] = { alignment_score, align_a, align_b, i }  -- Add index here
+    end
+
+    -- sort by score descending
+    table.sort(results, function(a:{integer, string, string, integer}, b: {integer, string, string, integer}): boolean
+        return a[1] > b[1]
+    end)
+
+    -- clamp ntop to the number of results
+    if ntop < 0 then
+        ntop = 0
+    end
+    if ntop > #results then
+        ntop = #results
+    end
+
+    -- return only the top ntop entries
+    local out: { {integer, string, string, integer} } = {}
+    for i = 1, ntop do
+        out[i] = results[i]
+    end
+
+    return out
+end
+
 
 
 
@@ -1097,7 +1194,7 @@ local record mash
 end
 
 -- local hash = require("hash")
-
+	
 -- Mash is a collection of hashes of kmers from a given sequence.
 local record Mash
     kmer_size: integer  -- The kmer size is the size of the sliding window that is used to generate the hashes.
@@ -1244,6 +1341,7 @@ local record seqhash
     decode_flag: function(flag: integer): (integer, string, boolean, boolean)
     booth_least_rotation: function(sequence: string): integer
     rotate_sequence: function(sequence: string): string
+	circular_equality: function(sequence1: string, sequence2: string): boolean
     hash2: function(sequence: string, sequence_type: string, circular: boolean, double_stranded: boolean): ({integer}, string)
     hash2_fragment: function(sequence: string, fwd_overhang_length: integer, rev_overhang_length: integer): ({integer}, string) 
     encode_hash2: function(hash: {integer}, err: string): (string, string)
@@ -1458,46 +1556,116 @@ end
 boothLeastRotation gets the least rotation of a circular string.
 https://en.wikipedia.org/wiki/Lexicographically_minimal_string_rotation
 ]]
-local function booth_least_rotation(sequence: string): integer
-    local doubled = sequence .. sequence
-    local n = #doubled
+--local function booth_least_rotation(sequence: string): integer
+--    local doubled = string.upper(sequence) .. string.upper(sequence)
+--    local n = #doubled
+--
+--    local k = 0
+--    
+--    local f: {integer} = {}
+--    for i = 0, n-1 do  -- Change to 0-based indexing
+--        f[i] = -1
+--    end
+--
+--    for j = 0, n-2 do  -- Change to 0-based indexing
+--        local char = doubled:byte(j+2)  -- Adjust for 1-based string indexing
+--        local failure = f[j-k]
+--
+--        while failure ~= -1 and char ~= doubled:byte(k+failure+2) do  -- Adjust for 1-based string indexing
+--            if char < doubled:byte(k+failure+2) then
+--                k = j - failure
+--            end
+--            failure = f[failure]
+--        end
+--
+--        if char ~= doubled:byte(k+failure+2) then
+--            if char < doubled:byte(k+2) then  -- Adjust for 1-based string indexing
+--                k = j
+--            end
+--            f[j-k] = -1
+--        else
+--            f[j-k] = failure + 1
+--        end
+--    end
+--
+--    return k
+--end
+local function booth_least_rotation(seq:string): integer
+    local s = string.upper(seq)
+    local doubled = s .. s           -- work on s + s
+    local n = #doubled               -- length of doubled string
 
-    local k = 0
-    
-    local f: {integer} = {}
-    for i = 0, n-1 do  -- Change to 0-based indexing
+    -- failure function f[0..n-1], 0-based
+    local f = {}
+    for i = 0, n - 1 do
         f[i] = -1
     end
 
-    for j = 0, n-2 do  -- Change to 0-based indexing
-        local char = doubled:byte(j+2)  -- Adjust for 1-based string indexing
-        local failure = f[j-k]
+    local k = 0   -- 0-based index of current best rotation in doubled
 
-        while failure ~= -1 and char ~= doubled:byte(k+failure+2) do  -- Adjust for 1-based string indexing
-            if char < doubled:byte(k+failure+2) then
-                k = j - failure
+    -- j corresponds to 0-based j in the textbook algorithm, but we loop from 1
+    -- because j = 0 case is trivial.
+    for j = 1, n - 1 do
+        -- s[j] in 0-based => doubled:byte(j+1) in Lua
+        local sj = doubled:byte(j + 1)
+
+        -- i = f[j - k - 1]  (this index is always >= 0 if invariant k < j holds)
+        local i = f[j - k - 1]
+
+        -- while i != -1 and s[j] != s[k + i + 1]
+        while i ~= -1 and sj ~= doubled:byte(k + i + 2) do
+            if sj < doubled:byte(k + i + 2) then
+                k = j - i - 1
             end
-            failure = f[failure]
+            i = f[i]
         end
 
-        if char ~= doubled:byte(k+failure+2) then
-            if char < doubled:byte(k+2) then  -- Adjust for 1-based string indexing
+        if sj ~= doubled:byte(k + i + 2) then
+            -- if s[j] < s[k]
+            if sj < doubled:byte(k + 1) then
                 k = j
             end
-            f[j-k] = -1
+            f[j - k] = -1
         else
-            f[j-k] = failure + 1
+            f[j - k] = i + 1
         end
     end
 
-    return k
+    -- k is an index into doubled; reduce to index in original seq (length m)
+    local m = #s
+    if k >= m then
+        k = k - m
+    end
+    return k  -- 0-based starting index of minimal rotation in original string
 end
 
---[[ RotateSequence rotates circular sequences to deterministic point ]]
+
+
+--[[ rotate_sequence rotates circular sequences to deterministic point ]]
 local function rotate_sequence(sequence: string): string
     local k = booth_least_rotation(sequence)
     -- Since k is now 0-based but string:sub is 1-based, add 1 to k+1
     return sequence:sub(k+2) .. sequence:sub(1, k+1)
+end
+
+--[[ circular_equality checks if two circular sequences are the same. We assume
+double stranded sequence.]]
+local function circular_equality(sequence1: string, sequence2: string): boolean
+	local sequence1U = string.upper(sequence1)
+	local sequence2U = string.upper(sequence2)
+	local deterministic_sequence1: string
+	local seq1 = rotate_sequence(sequence1U)
+    local rev_comp = transform.reverse_complement(sequence1U)
+    local seq2 = rotate_sequence(rev_comp)
+    deterministic_sequence1 = seq1 < seq2 and seq1 or seq2
+
+	local deterministic_sequence2: string
+    local seq2_1 = rotate_sequence(sequence2U)
+    local rev_comp_2 = transform.reverse_complement(sequence2U)
+    local seq2_2 = rotate_sequence(rev_comp_2)
+    deterministic_sequence2 = seq2_1 < seq2_2 and seq2_1 or seq2_2
+
+	return deterministic_sequence1 == deterministic_sequence2
 end
 
 --[[
@@ -1692,6 +1860,7 @@ seqhash.version2_flag = version2_flag
 seqhash.decode_flag = decode_flag
 seqhash.booth_least_rotation = booth_least_rotation
 seqhash.rotate_sequence = rotate_sequence
+seqhash.circular_equality = circular_equality
 seqhash.hash2 = hash2
 seqhash.hash2_fragment = hash2_fragment
 seqhash.encode_hash2 = encode_hash2
@@ -2109,7 +2278,7 @@ creation. It also lowers the quantity of oligos that needs to be synthesized.
 local record orthoprimers
     -- Core functions for primer pair management
     make_primer_pair_key: function(forward: string, reverse: string): string
-    new_orthogonal_primer_set: function(primers: {string}): OrthogonalPrimerSet
+    new_orthogonal_primer_set: function(primer_set: {string}): OrthogonalPrimerSet
     new_default_orthogonal_primer_set: function(): OrthogonalPrimerSet
     
     -- Types
@@ -2369,13 +2538,13 @@ end
 
 -- NewOrthogonalPrimerSet generates a new primer set from a given set of
 -- orthogonal primers.
-function orthoprimers.new_orthogonal_primer_set(primers: {string}): OrthogonalPrimerSet
+function orthoprimers.new_orthogonal_primer_set(primer_set: {string}): OrthogonalPrimerSet
     local quantity_map: {string:integer} = {}
-    for _, primer in ipairs(primers) do
+    for _, primer in ipairs(primer_set) do
         quantity_map[primer] = 0
     end
     local primer_pairs: {string:boolean} = {}
-    return {primers = primers, primer_use_quantity = quantity_map, primer_pairs = primer_pairs, new_primer_set=new_primer_set}
+    return {primers = primer_set, primer_use_quantity = quantity_map, primer_pairs = primer_pairs, new_primer_set=new_primer_set}
 end
 
 -- NewDefaultOrthogonalPrimerSet generates a default set of primers. The
@@ -8864,6 +9033,7 @@ in multiple places (Type IIG enzymes) such as BcgI.
 -- Main interface
 local record clone
    -- Core cloning functions
+   -- TODO most of these should have keyword inputs so they are less confusing.
    cut_with_enzyme_by_name: function(part: Part, directional: boolean, name: string, methylated: boolean): ({Fragment}, string)
    cut_with_enzyme: function(part: Part, directional: boolean, enzyme: Enzyme, methylated: boolean): {Fragment}
    ligate: function(fragments: {Fragment}, circular: boolean): (string, {integer}, string)
@@ -8874,6 +9044,11 @@ local record clone
    -- Kmer analysis functions for analyzing ligation junctions
    find_kmer_overlaps: function(fragments: {Fragment}, ligation_product: string, ligation_pattern: {integer}, kmer_size: integer): ({KmerOverlap}, string)
    find_kmers: function(kmer_overlaps: {KmerOverlap}, sequence: string): {KmerOverlap}
+
+   -- Get the window surrounding a given fragment. Useful to call on a vector
+   -- to call transform.get_window on input sequences to see what sequence
+   -- has been inserted into a vector.
+   get_window_from_fragment: function(fragment: Fragment, left_flank_length: integer, right_flank_length: integer): string, string
 
    Overhang: Overhang
 end
@@ -9352,6 +9527,28 @@ function clone.find_kmers(kmer_overlaps: {KmerOverlap}, sequence: string): {Kmer
    end
 
    return output_kmer_overlaps
+end
+
+--[[
+get_window gets a window around a given fragment. This is used for getting an
+insert of a given fragment - and hence, the left and right flank switch so that
+they can be directly used in a transform.get_window. You would input a full
+sequence, and the window would retrieve the insert rather than the vector.
+
+The overhangs are not included, as these are great sequences to align against.
+--]]
+function clone.get_window_from_fragment(fragment: Fragment, left_flank_length: integer, right_flank_length: integer): string, string
+    -- Construct the full sequence including overhangs
+    local full_sequence = fragment.sequence
+    
+    -- Extract left flank (first left_flank_length bp)
+    local left_flank = full_sequence:sub(1, left_flank_length)
+    
+    -- Extract right flank (last right_flank_length bp)
+    local right_flank = full_sequence:sub(#full_sequence - right_flank_length + 1)
+    
+	-- Because we are looking at a vector and not an insert, we flip these two
+    return right_flank, left_flank
 end
 
 

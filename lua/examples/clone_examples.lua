@@ -61,4 +61,30 @@ describe("Clone Examples", function()
         assert.is_nil(err)
         assert.equals("GTTGAAAAAACTATTTTTTT", sequence)
     end)
+
+	it("demonstrates extracting window flanks from a fragment", function()
+	    -- Create a fragment (e.g., from cutting a vector)
+	    local vector_fragment = {
+	        sequence = "GCGCGCGCATATATATATAT",
+	        forward_overhang = "AAAA",
+	        reverse_overhang = "TTTT"
+	    }
+	    
+	    -- Extract 8bp flanks from each end to use as search sequences
+		-- The left and right are from the perspective of the insert,
+		-- not the vector. Hence, the reverse of the vector would be TTTT
+		-- but from the insert perspective's it is the forward.
+	    local left_flank, right_flank = clone.get_window_from_fragment(vector_fragment, 8, 8)
+	    
+	    assert.equals("ATATATAT", left_flank)
+		assert.equals("GCGCGCGC", right_flank)
+	    
+	    -- Now these flanks can be used with transform.get_window to find
+	    -- what sequence was inserted into the vector. Here, we insert GGTCTC
+		-- The true at the end is setting it to a circular sequence
+	    local assembled_sequence = "AAAAGCGCGCGCGCATGGCCTTAACGTATATATATTTTTGGTCTC"
+	    local insert = transform.get_window(assembled_sequence, left_flank, right_flank, true)
+	    
+	    assert.equals("TTTTGGTCTCAAAA", insert)
+	end)
 end)

@@ -131,4 +131,69 @@ describe("Sequence alignment", function()
       assert.equals("G", align_n)
     end)
   end)
+
+  describe("align_many", function()
+	  local scoring
+	
+	  setup(function()
+	    local substitution_matrix = {
+	      data = {
+	        ["-"] = {["-"] = 0, A = 0, C = 0, G = 0, T = 0},
+	        A = {["-"] = 0, A = 3, C = -3, G = -3, T = -3},
+	        C = {["-"] = 0, A = -3, C = 3, G = -3, T = -3},
+	        G = {["-"] = 0, A = -3, C = -3, G = 3, T = -3},
+	        T = {["-"] = 0, A = -3, C = -3, G = -3, T = 3}
+	      }
+	    }
+	    scoring = align.new_scoring(substitution_matrix, -2)
+	  end)
+	
+	  it("should return top N results sorted by score", function()
+	    local target = "GATTACA"
+	    local candidates = {"GATTACA", "GCATGCT", "ACGT", "TTTTTTT"}
+	    
+	    local results = align.align_many(align.smith_waterman, target, candidates, scoring, 3)
+	    
+	    -- Should return exactly 3 results
+	    assert.equals(3, #results)
+	    
+	    -- Results should be sorted by score (descending)
+	    assert.is_true(results[1][1] >= results[2][1])
+	    assert.is_true(results[2][1] >= results[3][1])
+	    
+	    -- Best match should be identical sequence
+	    assert.equals(21, results[1][1]) -- Perfect match: 7 chars * 3 points
+
+		-- Best match should be 1
+		assert.equals(1, results[1][4])
+	  end)
+	
+	  it("should handle ntop larger than number of candidates", function()
+	    local target = "GAT"
+	    local candidates = {"GAT", "GCT"}
+	    
+	    local results = align.align_many(align.smith_waterman, target, candidates, scoring, 10)
+	    
+	    -- Should return only 2 results even though ntop=10
+	    assert.equals(2, #results)
+	  end)
+	
+	  it("should handle ntop of 0", function()
+	    local target = "GAT"
+	    local candidates = {"GAT", "GCT", "ACG"}
+	    
+	    local results = align.align_many(align.smith_waterman, target, candidates, scoring, 0)
+	    
+	    assert.equals(0, #results)
+	  end)
+	
+	  it("should handle negative ntop", function()
+	    local target = "GAT"
+	    local candidates = {"GAT", "GCT"}
+	    
+	    local results = align.align_many(align.smith_waterman, target, candidates, scoring, -5)
+	    
+	    assert.equals(0, #results)
+	  end)
+	end)
 end)

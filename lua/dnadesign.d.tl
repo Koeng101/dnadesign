@@ -138,6 +138,9 @@ local record transform
     reverse_complement_rna: function(sequence: string): string
     complement_rna: function(sequence: string): string 
     complement_base_rna: function(base_pair: string): string
+
+	-- Windowing functions
+	get_window: function(target_sequence: string, left_flank: string, right_flank: string, circular: boolean): string
 end
 
 --[[ Module align
@@ -213,6 +216,10 @@ local record align
     new_scoring: function(substitution_matrix: SubstitutionMatrix | nil, gap_penalty: integer): Scoring
     needleman_wunsch: function(string_a: string, string_b: string, scoring: Scoring): (integer, string, string)
     smith_waterman: function(string_a: string, string_b: string, scoring: Scoring): (integer, string, string)
+
+	-- align_many compares one string against many, using a provided alignment function
+	align_many: function(func: function(string_a: string, string_b: string, scoring: Scoring): (integer, string, string), 
+		target: string, candidates: {string}, scoring: Scoring, ntop: integer): { {integer, string, string, integer} }
 end
 
 local record SubstitutionMatrix
@@ -319,6 +326,7 @@ local record seqhash
     decode_flag: function(flag: integer): (integer, string, boolean, boolean)
     booth_least_rotation: function(sequence: string): integer
     rotate_sequence: function(sequence: string): string
+	circular_equality: function(sequence1: string, sequence2: string): boolean
     hash2: function(sequence: string, sequence_type: string, circular: boolean, double_stranded: boolean): ({integer}, string)
     hash2_fragment: function(sequence: string, fwd_overhang_length: integer, rev_overhang_length: integer): ({integer}, string) 
     encode_hash2: function(hash: {integer}, err: string): (string, string)
@@ -380,7 +388,7 @@ creation. It also lowers the quantity of oligos that needs to be synthesized.
 local record orthoprimers
     -- Core functions for primer pair management
     make_primer_pair_key: function(forward: string, reverse: string): string
-    new_orthogonal_primer_set: function(primers: {string}): OrthogonalPrimerSet
+    new_orthogonal_primer_set: function(primer_set: {string}): OrthogonalPrimerSet
     new_default_orthogonal_primer_set: function(): OrthogonalPrimerSet
     
     -- Types
@@ -1217,6 +1225,7 @@ in multiple places (Type IIG enzymes) such as BcgI.
 
 local record clone
    -- Core cloning functions
+   -- TODO most of these should have keyword inputs so they are less confusing.
    cut_with_enzyme_by_name: function(part: Part, directional: boolean, name: string, methylated: boolean): ({Fragment}, string)
    cut_with_enzyme: function(part: Part, directional: boolean, enzyme: Enzyme, methylated: boolean): {Fragment}
    ligate: function(fragments: {Fragment}, circular: boolean): (string, {integer}, string)
@@ -1227,6 +1236,11 @@ local record clone
    -- Kmer analysis functions for analyzing ligation junctions
    find_kmer_overlaps: function(fragments: {Fragment}, ligation_product: string, ligation_pattern: {integer}, kmer_size: integer): ({KmerOverlap}, string)
    find_kmers: function(kmer_overlaps: {KmerOverlap}, sequence: string): {KmerOverlap}
+
+   -- Get the window surrounding a given fragment. Useful to call on a vector
+   -- to call transform.get_window on input sequences to see what sequence
+   -- has been inserted into a vector.
+   get_window_from_fragment: function(fragment: Fragment, left_flank_length: integer, right_flank_length: integer): string, string
 
    Overhang: Overhang
 end

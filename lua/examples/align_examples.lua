@@ -32,3 +32,38 @@ describe("Alignment Examples", function()
         assert.are.equal("AT", align_b)
     end)
 end)
+
+describe("align_many Example", function()
+    it("demonstrates finding best matches from multiple candidates", function()
+        local target = "GATTACA"
+        local candidates = {
+            "GATTACA",    -- Perfect match
+            "GCATGCT",    -- Some similarity
+            "ACGT",       -- Short partial match
+            "TTTTTTT"     -- Poor match
+        }
+
+        local substitution_matrix = {
+            data = {
+                ["-"] = {["-"] = 0, A = 0, C = 0, G = 0, T = 0},
+                A = {["-"] = 0, A = 3, C = -3, G = -3, T = -3},
+                C = {["-"] = 0, A = -3, C = 3, G = -3, T = -3},
+                G = {["-"] = 0, A = -3, C = -3, G = 3, T = -3},
+                T = {["-"] = 0, A = -3, C = -3, G = -3, T = 3}
+            }
+        }
+        local scoring = align.new_scoring(substitution_matrix, -2)
+        
+        -- Get top 2 matches using Smith-Waterman local alignment
+        local results = align.align_many(align.smith_waterman, target, candidates, scoring, 2)
+        
+        -- First result should be the perfect match
+        assert.are.equal(21, results[1][1])  -- score: 7 chars * 3 points
+        assert.are.equal("GATTACA", results[1][2])
+        assert.are.equal("GATTACA", results[1][3])
+		assert.are.equal(1, results[1][4]) -- The index in the candidates list are in [4]
+        
+        -- Second result should have lower score
+        assert.is_true(results[2][1] < results[1][1])
+    end)
+end)

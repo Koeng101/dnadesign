@@ -14,7 +14,7 @@ creation. It also lowers the quantity of oligos that needs to be synthesized.
 local record orthoprimers
     -- Core functions for primer pair management
     make_primer_pair_key: function(forward: string, reverse: string): string
-    new_orthogonal_primer_set: function(primers: {string}): OrthogonalPrimerSet
+    new_orthogonal_primer_set: function(primer_set: {string}): OrthogonalPrimerSet
     new_default_orthogonal_primer_set: function(): OrthogonalPrimerSet
     
     -- Types
@@ -274,13 +274,13 @@ end
 
 -- NewOrthogonalPrimerSet generates a new primer set from a given set of
 -- orthogonal primers.
-function orthoprimers.new_orthogonal_primer_set(primers: {string}): OrthogonalPrimerSet
+function orthoprimers.new_orthogonal_primer_set(primer_set: {string}): OrthogonalPrimerSet
     local quantity_map: {string:integer} = {}
-    for _, primer in ipairs(primers) do
+    for _, primer in ipairs(primer_set) do
         quantity_map[primer] = 0
     end
     local primer_pairs: {string:boolean} = {}
-    return {primers = primers, primer_use_quantity = quantity_map, primer_pairs = primer_pairs, new_primer_set=new_primer_set}
+    return {primers = primer_set, primer_use_quantity = quantity_map, primer_pairs = primer_pairs, new_primer_set=new_primer_set}
 end
 
 -- NewDefaultOrthogonalPrimerSet generates a default set of primers. The

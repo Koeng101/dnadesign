@@ -137,4 +137,21 @@ describe("transform", function()
       end
     end)
   end)
+
+  describe("get_window", function()
+    it("should extract window between flanks", function()
+        local window = transform.get_window("ATGCGATTACAGCTAGC", "CGAT", "GCTA", false)
+        assert.are.equal("TACA", window)
+    end)
+    
+    it("should extract window in circular sequence", function()
+        local window = transform.get_window("GCTAGCATGC", "TAGC", "ATGC", true)
+        assert.are.equal("", window)
+    end)
+    
+    it("should return nil when not found", function()
+        local window = transform.get_window("ATGCTAGC", "AAAA", "TTTT", false)
+        assert.is_nil(window)
+    end)
+end)
 end)

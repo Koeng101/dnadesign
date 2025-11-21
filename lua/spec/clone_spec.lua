@@ -2,6 +2,7 @@
 local dnadesign = require("dnadesign")
 local clone = dnadesign.clone
 local transform = dnadesign.transform
+local seqhash = dnadesign.seqhash
 
 -- Define pOpen plasmid (keeping original comment)
 -- pOpen plasmid series (https://stanford.freegenes.org/collections/open-genes/products/open-plasmids#description). I use it for essentially all my cloning. -Keoni
@@ -213,4 +214,47 @@ describe("clone package", function()
          assert.equals("need at least a kmer of 12", err)
       end)
    end)
+
+   describe("get_window_from_fragment", function()
+	   it("should extract left and right flanks from a simple fragment", function()
+	      local fragment = {
+	         sequence = "ATCGATCGATCG",
+	         forward_overhang = "AAAA",
+	         reverse_overhang = "TTTT"
+	      }
+	      
+		  -- left and right as assuming the fragment is the vector
+		  -- and we are considering from the perspective of an insert
+	      local left_flank, right_flank = clone.get_window_from_fragment(fragment, 4, 4)
+	      
+	      assert.equals("ATCG", left_flank)
+		  assert.equals("ATCG", right_flank)
+	   end)
+	   
+	   it("should handle different flank lengths", function()
+	      local fragment = {
+	         sequence = "GCGCGCGCGCGCGC",
+	         forward_overhang = "ATAT",
+	         reverse_overhang = "CGCG"
+	      }
+	      
+	      local left_flank, right_flank = clone.get_window_from_fragment(fragment, 6, 10)
+	      
+	      assert.equals("GCGCGCGCGC", left_flank)
+		  assert.equals("GCGCGC", right_flank)
+	   end)
+	   
+	   it("should handle minimal flank lengths", function()
+	      local fragment = {
+	         sequence = "AAAA",
+	         forward_overhang = "GG",
+	         reverse_overhang = "CC"
+	      }
+	      
+	      local left_flank, right_flank = clone.get_window_from_fragment(fragment, 4, 4)
+	      
+	      assert.equals("AAAA", left_flank)
+		  assert.equals("AAAA", right_flank)
+	   end)
+	end)
 end)

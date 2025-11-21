@@ -12,6 +12,9 @@ local record transform
     reverse_complement_rna: function(sequence: string): string
     complement_rna: function(sequence: string): string 
     complement_base_rna: function(base_pair: string): string
+
+	-- Windowing functions
+	get_window: function(target_sequence: string, left_flank: string, right_flank: string, circular: boolean): string
 end
 
 --[[ complementTable provides 1:1 mapping between bases and their complements ]]
@@ -186,6 +189,46 @@ function transform.complement_base_rna(base_pair: string): string
     return " "
   end
   return complement
+end
+
+--[[
+get_window takes in a target sequence and two flanks, and if it exists, returns
+the window between that sequence. It checks both the given sequence and its
+reverse complement.
+--]]
+function transform.get_window(target_sequence: string, left_flank: string, right_flank: string, circular: boolean): string
+	local search_sequence = target_sequence
+    if circular then
+        search_sequence = target_sequence .. target_sequence
+    end
+
+	local target_upper = search_sequence:upper()
+	local left_flank_upper = left_flank:upper()
+	local right_flank_upper = right_flank:upper()
+	local left_start, left_end = target_upper:find(left_flank_upper, 1, true)
+
+	if left_start then
+		local right_start, _ = target_upper:find(right_flank_upper, left_end + 1, true)
+		if right_start then
+			return search_sequence:sub(left_end + 1, right_start - 1)
+		end
+	end
+
+	local rev_comp = transform.reverse_complement(search_sequence)
+    local rev_comp_upper = rev_comp:upper()
+    
+    left_start, left_end = rev_comp_upper:find(left_flank_upper, 1, true)
+    
+    if left_start then
+        local right_start, _ = rev_comp_upper:find(right_flank_upper, left_end + 1, true)
+        
+        if right_start then
+			return rev_comp:sub(left_end + 1, right_start - 1)
+        end
+    end
+    
+    -- Not found
+    return nil
 end
 
 return transform

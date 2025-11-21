@@ -70,6 +70,10 @@ local record align
     new_scoring: function(substitution_matrix: SubstitutionMatrix | nil, gap_penalty: integer): Scoring
     needleman_wunsch: function(string_a: string, string_b: string, scoring: Scoring): (integer, string, string)
     smith_waterman: function(string_a: string, string_b: string, scoring: Scoring): (integer, string, string)
+
+	-- align_many compares one string against many, using a provided alignment function
+	align_many: function(func: function(string_a: string, string_b: string, scoring: Scoring): (integer, string, string), 
+		target: string, candidates: {string}, scoring: Scoring, ntop: integer): { {integer, string, string, integer} }
 end
 
 -- Define the substitution matrix record type
@@ -123,6 +127,15 @@ local function max(a: integer, b: integer): integer
    return b
 end
 
+--[[
+For developers:
+
+Needleman–Wunsch traceback stops too early and truncates alignments when sequences differ in length.
+
+So the algorithm computes the correct score, but returns a truncated alignment for unequal lengths.
+
+This should be fixed in later versions.
+--]]
 
 -- NeedlemanWunsch performs global alignment between two strings using the Needleman-Wunsch algorithm.
 -- It returns the final score and the optimal alignments of the two strings in O(nm) time and O(nm) space.
@@ -252,6 +265,47 @@ function align.smith_waterman(string_a: string, string_b: string, scoring: Scori
    end
 
    return max_score, align_a, align_b
+end
+
+--[[
+align_many is a helper function for figuring out, given an insert, which
+candidate matches the very best. It is much slower than methods like minimap2,
+but it is also more accurate: it is deterministic, does not use heuristics, and
+will give the actual optimal alignment.
+
+More advanced algorithms would be needed for large sequences, but given
+sufficient computation, smith-waterman or needleman-wunsh will give optimal
+results.
+
+TODO: have {integer, string, string} be a type
+--]]
+function align.align_many(func: function(string_a: string, string_b: string, scoring: Scoring): (integer, string, string), target: string, candidates: {string}, scoring: Scoring, ntop: integer): { {integer, string, string, integer} }
+    local results: { {integer, string, string, integer} } = {}
+    for i = 1, #candidates do
+        local alignment_score, align_a, align_b = func(target, candidates[i], scoring)
+        results[#results + 1] = { alignment_score, align_a, align_b, i }  -- Add index here
+    end
+
+    -- sort by score descending
+    table.sort(results, function(a:{integer, string, string, integer}, b: {integer, string, string, integer}): boolean
+        return a[1] > b[1]
+    end)
+
+    -- clamp ntop to the number of results
+    if ntop < 0 then
+        ntop = 0
+    end
+    if ntop > #results then
+        ntop = #results
+    end
+
+    -- return only the top ntop entries
+    local out: { {integer, string, string, integer} } = {}
+    for i = 1, ntop do
+        out[i] = results[i]
+    end
+
+    return out
 end
 
 return align

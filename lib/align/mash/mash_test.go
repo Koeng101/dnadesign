@@ -7,6 +7,19 @@ import (
 	"github.com/koeng101/dnadesign/lib/align/mash"
 )
 
+func TestQuick(t *testing.T) {
+	fingerprint1 := mash.New(17, 10, crc32.NewIEEE())
+	fingerprint1.Sketch("ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGA")
+
+	fingerprint2 := mash.New(17, 5, crc32.NewIEEE())
+	fingerprint2.Sketch("ATCGATCGATCGATCGATCGATCGATCGATCGATCGAATGCGATCGATCGATCGATCGATCG")
+
+	distance := fingerprint1.Distance(fingerprint2)
+	if !(distance > 0.19 && distance < 0.21) {
+		t.Errorf("Expected distance to be 0.19999999999999996, got %f", distance)
+	}
+}
+
 func TestMash(t *testing.T) {
 	fingerprint1 := mash.New(17, 10, crc32.NewIEEE())
 	fingerprint1.Sketch("ATGCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGA")

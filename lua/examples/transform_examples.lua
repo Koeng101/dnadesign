@@ -37,4 +37,17 @@ describe("Transform Examples", function()
         
         assert.are.equal("UGUAAUC", reverse_complement)
     end)
+
+	describe("Get Window Examples", function()
+	    it("demonstrates basic window extraction", function()
+	        local window = transform.get_window("ATGCGATTACAGCTAGC", "CGAT", "GCTA", false)
+	        assert.are.equal("TACA", window)
+	    end)
+	    
+	    it("demonstrates circular sequence", function()
+	        local window = transform.get_window("ATGCTAGCA", "TAGC", "ATGC", true)
+	        -- In circular: ATGCTAGCAATGCTAGCA, window wraps around
+	        assert.are.equal("A", window)
+	    end)
+	end)
 end)
