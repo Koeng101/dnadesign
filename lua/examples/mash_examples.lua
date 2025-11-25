@@ -42,4 +42,25 @@ describe("Mash Examples", function()
         -- But they should still be recognized as very similar
         assert.is_true(distance < 0.2)
     end)
+
+	it("demonstrates screening multiple features against one plasmid", function()
+        local featureA = "ATGCGATCGATCGATC"   -- present
+        local featureB = "GGGAAACCCGGGAAAC"   -- absent
+        local plasmid  = featureA .. "TTTTTT" -- only featureA is present
+
+        local hasher = hash.new_crc32()
+
+        local sketchA = mash.new_containment_sketch(6, featureA, hasher)
+        local sketchB = mash.new_containment_sketch(6, featureB, hasher)
+        local plasmid_sketch = mash.new_containment_sketch(6, plasmid, hasher)
+
+        local cA = mash.containment(sketchA, plasmid_sketch)
+        local cB = mash.containment(sketchB, plasmid_sketch)
+
+        -- Feature A should be strongly contained
+        assert.is_true(cA > 0.9)
+
+        -- Feature B should not be contained
+        assert.are.equal(0, cB)
+    end)
 end)

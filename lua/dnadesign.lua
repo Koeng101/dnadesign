@@ -1186,7 +1186,14 @@ end
 
 
 
+
+
+
+
 local mash = {}
+
+
+
 
 
 
@@ -1249,6 +1256,47 @@ local function sketch(sketch_mash, sequence)
    end
 end
 
+
+
+
+local function new_containment_sketch(kmer_size, sequence, hash_algorithm)
+
+   local seq_len = #sequence
+   local max_kmers = seq_len - kmer_size + 1
+   if max_kmers < 1 then
+      return {
+         kmer_size = kmer_size,
+         sketch_size = 0,
+         sketches = {},
+         hash_algorithm = hash_algorithm,
+      }
+   end
+
+
+   local mash_obj = new(kmer_size, max_kmers, hash_algorithm)
+   sketch(mash_obj, sequence)
+
+
+   local sketches = mash_obj.sketches
+   local effective = {}
+
+   for i = 1, mash_obj.sketch_size do
+      local h = sketches[i]
+      if h ~= 0xFFFFFFFF then
+         effective[#effective + 1] = h
+      else
+
+
+         break
+      end
+   end
+
+
+   mash_obj.sketches = effective
+   mash_obj.sketch_size = #effective
+   return mash_obj
+end
+
 local function similarity(a, b)
 
    if not a.sketches[1] or not b.sketches[1] or
@@ -1297,10 +1345,43 @@ local function distance(a, b)
    return 1 - similarity(a, b)
 end
 
+
+
+
+local function containment(a, b)
+
+   if not a.sketches[1] or not b.sketches[1] or
+      a.sketches[1] == 0xFFFFFFFF or b.sketches[1] == 0xFFFFFFFF then
+      return 0
+   end
+
+
+   local i, j = 1, 1
+   local same_hashes = 0
+
+
+
+
+   while i <= a.sketch_size and j <= b.sketch_size do
+      if a.sketches[i] == b.sketches[j] then
+         same_hashes = same_hashes + 1
+         i = i + 1
+         j = j + 1
+      elseif a.sketches[i] < b.sketches[j] then
+         i = i + 1
+      else
+         j = j + 1
+      end
+   end
+   return same_hashes / a.sketch_size
+end
+
 mash.new = new
 mash.sketch = sketch
 mash.similarity = similarity
 mash.distance = distance
+mash.new_containment_sketch = new_containment_sketch
+mash.containment = containment
 
 
 
@@ -2838,6 +2919,8 @@ function pcr.simulate(sequences, target_tm, circular, primer_list)
 
    return initial_amplification, ""
 end
+
+
 
 
 

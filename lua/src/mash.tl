@@ -39,13 +39,20 @@ The larger the sketch size the more accurate the distance calculation will be bu
 
 TTFN,
 Tim
+
+Containment is a slightly different algorithm from similarity. It returns the
+amount of kmers from a which are contained in b. This is useful for doing
+things like plasmid auto-annotation: features are checked for containment in b.
 ]]
 
 local record mash
-	new: function(kmer_size: integer, sketch_size: integer, hash: hash.Hash32): Mash
+	new: function(kmer_size: integer, sketch_size: integer, hash_algorithm: hash.Hash32): Mash
 	sketch: function(sketch_mash: Mash, sequence: string)
 	similarity: function(a: Mash, b: Mash): number
 	distance: function(a: Mash, b: Mash): number
+
+	new_containment_sketch: function(kmer_size: integer, sequence: string, hash: hash.Hash32): Mash
+	containment: function(a: Mash, b: Mash): number
 end
 
 local hash = require("hash")
@@ -104,6 +111,47 @@ local function sketch(sketch_mash: Mash, sequence: string)
     end
 end
 
+-- new_containment_sketch combines new and sketch to generate a containment
+-- sketch. These sketches are basically of max size.
+-- all unique k-mer hashes for this sequence, sorted, no sentinels.
+local function new_containment_sketch(kmer_size: integer, sequence: string, hash_algorithm: hash.Hash32): Mash
+	-- get max_kmer size
+	local seq_len = #sequence
+	local max_kmers = seq_len - kmer_size + 1
+	if max_kmers < 1 then
+		return {
+			kmer_size = kmer_size,
+			sketch_size = 0,
+			sketches = {},
+			hash_algorithm = hash_algorithm
+		}
+	end
+
+	-- create and fill new mash
+	local mash_obj: Mash = new(kmer_size, max_kmers, hash_algorithm)
+	sketch(mash_obj, sequence)
+
+	-- Now shrink away sentinel values (0xFFFFFFFF) at the end
+    local sketches = mash_obj.sketches
+    local effective = {}
+
+	for i = 1, mash_obj.sketch_size do
+		local h = sketches[i]
+		if h ~= 0xFFFFFFFF then
+			effective[#effective + 1] = h
+		else
+			-- Because sketches are sorted, once we hit a sentinel,
+			-- all remaining are sentinels too.
+			break
+		end
+	end
+
+	-- set new mash
+	mash_obj.sketches = effective
+    mash_obj.sketch_size = #effective
+	return mash_obj
+end
+
 local function similarity(a: Mash, b: Mash): number
 	-- Handle empty or uninitialized sketches
     if not a.sketches[1] or not b.sketches[1] or
@@ -133,7 +181,7 @@ local function similarity(a: Mash, b: Mash): number
 
     local small_idx, large_idx = 1, 1
     while small_idx <= smaller_size and large_idx <= larger_size do
-        if smaller_sketches[small_idx] == larger_sketches[large_idx] then
+		if smaller_sketches[small_idx] == larger_sketches[large_idx] then
             same_hashes = same_hashes + 1
             small_idx = small_idx + 1
             large_idx = large_idx + 1
@@ -152,9 +200,42 @@ local function distance(a: Mash, b: Mash): number
     return 1 - similarity(a, b)
 end
 
+-- containment returns the fraction of hashes in a that are present in b.
+-- This approximates k-mer containment of a in b when the sketches are full
+-- ie, sketch_size >= number of distinct k-mers.
+local function containment(a: Mash, b: Mash): number
+	-- Handle empty or uninitialized sketches
+    if not a.sketches[1] or not b.sketches[1] or
+       a.sketches[1] == 0xFFFFFFFF or b.sketches[1] == 0xFFFFFFFF then
+        return 0
+    end
+	
+	-- init i,j,
+	local i, j = 1, 1
+	local same_hashes = 0
+
+	-- iterate over sketches
+	-- since they are sorted you can just iterate over one
+	-- or the other, depending on the lexigraphic ordering
+	while i <= a.sketch_size and j <= b.sketch_size do
+		if a.sketches[i] == b.sketches[j] then
+			same_hashes = same_hashes + 1
+			i = i + 1
+            j = j + 1
+		elseif a.sketches[i] < b.sketches[j] then
+			i = i + 1
+		else
+			j = j + 1
+		end
+	end
+	return same_hashes / a.sketch_size
+end
+
 mash.new = new
 mash.sketch = sketch
 mash.similarity = similarity
 mash.distance = distance
+mash.new_containment_sketch = new_containment_sketch
+mash.containment = containment
 
 return mash

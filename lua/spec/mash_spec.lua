@@ -52,4 +52,53 @@ describe("Mash", function()
         
         assert.are.equal(1, mash.distance(fp1, fp2))
     end)
+
+	it("should build a containment sketch with unique kmers only", function()
+        -- Sequence "AAAAAA" with k=3 has 4 k-mers (AAA, AAA, AAA, AAA)
+        -- but only 1 unique k-mer.
+        local seq = "AAAAAA"
+        local fp = mash.new_containment_sketch(3, seq, hash.new_crc32())
+
+        -- Sketch size should equal number of unique k-mers, not total windows
+        assert.are.equal(1, fp.sketch_size)
+    end)
+
+    it("should report full containment for identical sequences", function()
+        local seq = "ATGCGATCGATCGATC"
+        local fp1 = mash.new_containment_sketch(5, seq, hash.new_crc32())
+        local fp2 = mash.new_containment_sketch(5, seq, hash.new_crc32())
+
+        -- containment(a, b) with identical sequences should be 1 in both directions
+        assert.are.equal(1, mash.containment(fp1, fp2))
+        assert.are.equal(1, mash.containment(fp2, fp1))
+    end)
+
+    it("should detect feature contained in a larger plasmid", function()
+        local feature_seq = "ATGCGATCGATCGATC"
+        local plasmid_seq = feature_seq .. "TTTTTT"  -- plasmid strictly contains the feature
+
+        local feature_fp = mash.new_containment_sketch(5, feature_seq, hash.new_crc32())
+        local plasmid_fp = mash.new_containment_sketch(5, plasmid_seq, hash.new_crc32())
+
+        local feature_in_plasmid = mash.containment(feature_fp, plasmid_fp)
+        local plasmid_in_feature = mash.containment(plasmid_fp, feature_fp)
+
+        -- Feature should be fully contained in plasmid
+        assert.are.equal(1, feature_in_plasmid)
+
+        -- But plasmid is larger, so its containment in the feature must be < 1
+        assert.is_true(plasmid_in_feature < 1)
+    end)
+
+    it("should report zero containment when there are no shared kmers", function()
+        -- Choose sequences with disjoint k-mers for k=3
+        local seq1 = "AAAAAA"
+        local seq2 = "CCCCCC"
+
+        local fp1 = mash.new_containment_sketch(3, seq1, hash.new_crc32())
+        local fp2 = mash.new_containment_sketch(3, seq2, hash.new_crc32())
+
+        assert.are.equal(0, mash.containment(fp1, fp2))
+        assert.are.equal(0, mash.containment(fp2, fp1))
+    end)
 end)

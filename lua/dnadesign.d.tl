@@ -272,14 +272,21 @@ The larger the sketch size the more accurate the distance calculation will be bu
 
 TTFN,
 Tim
+
+Containment is a slightly different algorithm from similarity. It returns the
+amount of kmers from a which are contained in b. This is useful for doing
+things like plasmid auto-annotation: features are checked for containment in b.
 ]]
 
 
 local record mash
-	new: function(kmer_size: integer, sketch_size: integer, hash: hash.Hash32): Mash
+	new: function(kmer_size: integer, sketch_size: integer, hash_algorithm: hash.Hash32): Mash
 	sketch: function(sketch_mash: Mash, sequence: string)
 	similarity: function(a: Mash, b: Mash): number
 	distance: function(a: Mash, b: Mash): number
+
+	new_containment_sketch: function(kmer_size: integer, sequence: string, hash: hash.Hash32): Mash
+	containment: function(a: Mash, b: Mash): number
 end
 
 local record Mash
@@ -452,6 +459,8 @@ The bio package provides a consistent way to work with each of these file
 formats. The underlying data returned by each parser is as raw as we can return
 while still being easy to use for downstream applications, and should be
 immediately recognizable as the original format.
+
+TODO: new_file_reader would be convenient function
 ]]
 
 
