@@ -3,7 +3,7 @@ run:
 issues:
   exclude-dirs:
     - data
-    - lib/bio/slow5/svb
+    - bio/slow5/svb
 linters:
   enable:
     - bodyclose

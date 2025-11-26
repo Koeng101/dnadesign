@@ -160,24 +160,15 @@ func TestSequenceData(t *testing.T) {
 	}
 
 	sequence := entry.RepMember.Sequence
-	if sequence == nil {
-		t.Fatal("Expected sequence to be present")
-	}
 
-	expectedTests := []struct {
-		name     string
-		got      interface{}
-		expected interface{}
-	}{
-		{"Length", sequence.Length, 49499},
-		{"Checksum", sequence.Checksum, "428270C7C0D6A56C"},
-		{"Value", sequence.Value, "MGR"},
+	if sequence.Length != 49499 {
+		t.Errorf("Length: expected 49499, got %d", sequence.Length)
 	}
-
-	for _, tt := range expectedTests {
-		if tt.got != tt.expected {
-			t.Errorf("%s: expected %v, got %v", tt.name, tt.expected, tt.got)
-		}
+	if sequence.Checksum != "428270C7C0D6A56C" {
+		t.Errorf("Checksum: expected 428270C7C0D6A56C, got %s", sequence.Checksum)
+	}
+	if sequence.Value != "MGR" {
+		t.Errorf("Value: expected MGR, got %s", sequence.Value)
 	}
 }
 

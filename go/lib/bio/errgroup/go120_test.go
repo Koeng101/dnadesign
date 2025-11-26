@@ -31,7 +31,7 @@ func TestCancelCause(t *testing.T) {
 		g, ctx := errgroup.WithContext(context.Background())
 
 		for _, err := range tc.errs {
-			err := err
+			err := err //nolint:copyloopvar
 			g.TryGo(func() error { return err })
 		}
 

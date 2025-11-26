@@ -10,7 +10,7 @@ jobs:
   test-lib:
     strategy:
       matrix:
-        go-version: [1.21.x,]
+        go-version: [1.22.x,]
         platform: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.platform }}
     steps:
@@ -26,7 +26,7 @@ jobs:
   test-external:
     strategy:
       matrix:
-        go-version: [1.21.x,]
+        go-version: [1.22.x,]
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
@@ -66,7 +66,7 @@ jobs:
       working-directory: go/external
   openbsd-test:
     runs-on: ubuntu-latest
-    name: 1.21.5 openbsd
+    name: 1.22.5 openbsd
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -75,8 +75,8 @@ jobs:
       with:
         prepare: |
           pkg_add curl
-          curl -L https://dl.google.com/go/go1.21.5.openbsd-amd64.tar.gz -o go1.21.5.openbsd-amd64.tar.gz
-          tar -C /usr/local -xzf go1.21.5.openbsd-amd64.tar.gz
+          curl -L https://dl.google.com/go/go1.22.5.openbsd-amd64.tar.gz -o go1.22.5.openbsd-amd64.tar.gz
+          tar -C /usr/local -xzf go1.22.5.openbsd-amd64.tar.gz
           export PATH=$PATH:/usr/local/go/bin
           go install golang.org/x/tools/cmd/goimports@latest
         run: |
