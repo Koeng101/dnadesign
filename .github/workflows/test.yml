@@ -64,6 +64,23 @@ jobs:
     - name: Test external
       run: go test -v ./...
       working-directory: go/external
+  test-lua:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install LuaJIT and LuaRocks
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y luajit luarocks
+    - name: Install Teal and Busted
+      run: |
+        sudo luarocks install tl
+        sudo luarocks install busted
+    - name: Build and test
+      run: luajit build.lua
+      working-directory: lua
+
   openbsd-test:
     runs-on: ubuntu-latest
     name: 1.22.5 openbsd
