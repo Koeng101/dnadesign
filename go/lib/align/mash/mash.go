@@ -44,7 +44,6 @@ package mash
 
 import (
 	"encoding/binary"
-	"fmt"
 	"hash"
 	"sort"
 )
@@ -136,10 +135,6 @@ func (mash *Mash) Similarity(other *Mash) float64 {
 			largeSketchIndex++
 		}
 	}
-
-	fmt.Println(sameHashes)
-	fmt.Println(smallerSketch.SketchSize)
-
 	return float64(sameHashes) / float64(smallerSketch.SketchSize)
 }
 
