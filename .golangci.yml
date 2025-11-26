@@ -8,7 +8,7 @@ linters:
   enable:
     - bodyclose
     - dupl
-    - exportloopref
+    - copyloopvar
     - gochecknoinits
     # - goconst # TODO: Enable this and fix the errors.
     - gofmt
