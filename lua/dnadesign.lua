@@ -165,6 +165,8 @@ end
 
 
 
+
+
 local hash = {}
 
 
@@ -250,6 +252,7 @@ end
 
 
 
+
 local CRC32_TABLE = {}
 
 
@@ -290,6 +293,9 @@ local function new_crc32()
             bit32.band(bit32.rshift(value, 8), 0xFF),
             bit32.band(value, 0xFF),
          }
+      end,
+      sum32 = function(self)
+         return bit32.bxor(self.value, 0xFFFFFFFF)
       end,
    }
 end
@@ -1226,7 +1232,8 @@ local function new(kmer_size, sketch_size, hash_algorithm)
 end
 
 
-local function sketch(sketch_mash, sequence)
+
+local function sketch_sort(sketch_mash, sequence, sort_after)
 
    for i = 1, sketch_mash.sketch_size do
       sketch_mash.sketches[i] = 0xFFFFFFFF
@@ -1240,20 +1247,32 @@ local function sketch(sketch_mash, sequence)
       local kmer = sequence:sub(kmer_start, kmer_start + sketch_mash.kmer_size - 1)
       sketch_mash.hash_algorithm:reset()
       sketch_mash.hash_algorithm:write(kmer)
-      local hash_value = sketch_mash.hash_algorithm:sum()[1]
+      local hash_value = sketch_mash.hash_algorithm:sum32()
 
 
       if not seen_hashes[hash_value] then
          seen_hashes[hash_value] = true
 
+         if not sort_after then
 
 
-         if hash_value < sketch_mash.sketches[sketch_mash.sketch_size] then
-            sketch_mash.sketches[sketch_mash.sketch_size] = hash_value
-            table.sort(sketch_mash.sketches)
+            if hash_value < sketch_mash.sketches[sketch_mash.sketch_size] then
+               sketch_mash.sketches[sketch_mash.sketch_size] = hash_value
+               table.sort(sketch_mash.sketches)
+            end
+         else
+            table.insert(sketch_mash.sketches, hash_value)
          end
       end
    end
+   if sort_after then
+      table.sort(sketch_mash.sketches)
+   end
+end
+
+
+local function sketch(sketch_mash, sequence)
+   sketch_sort(sketch_mash, sequence, false)
 end
 
 
@@ -1274,7 +1293,7 @@ local function new_containment_sketch(kmer_size, sequence, hash_algorithm)
 
 
    local mash_obj = new(kmer_size, max_kmers, hash_algorithm)
-   sketch(mash_obj, sequence)
+   sketch_sort(mash_obj, sequence, true)
 
 
    local sketches = mash_obj.sketches

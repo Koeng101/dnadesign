@@ -77,6 +77,8 @@ end
 Module hash contains implementations of common hash algorithms. While normally
 these would be imported from the system (and would be much faster there), these
 are to ensure cross-platform compatibility.
+
+TODO: sha256 should be able to return more than 32 bits
 ]]
 
 
@@ -84,6 +86,7 @@ local interface Hash32
     reset: function(Hash32)
     write: function(Hash32, string)
     sum: function(Hash32): {integer}
+	sum32: function(Hash32): integer
 end
 
 local record hash

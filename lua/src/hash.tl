@@ -2,6 +2,8 @@
 Module hash contains implementations of common hash algorithms. While normally
 these would be imported from the system (and would be much faster there), these
 are to ensure cross-platform compatibility.
+
+TODO: sha256 should be able to return more than 32 bits
 ]]
 
 local record hash
@@ -82,6 +84,7 @@ local interface Hash32
     reset: function(Hash32)
     write: function(Hash32, string)
     sum: function(Hash32): {integer}
+	sum32: function(Hash32): integer
 end
 
 -- CRC32 implementation
@@ -129,6 +132,9 @@ local function new_crc32(): CRC32
 		        bit32.band(bit32.rshift(value, 8), 0xFF),
 		        bit32.band(value, 0xFF)
 		    }
+		end,
+		sum32 = function(self: CRC32): integer
+			return bit32.bxor(self.value, 0xFFFFFFFF)
 		end
     }
 end
