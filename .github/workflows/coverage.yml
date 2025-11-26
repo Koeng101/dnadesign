@@ -17,9 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Generate coverage report
-        run: go test -v  -coverprofile=profile.cov ./go/lib/...
+        run: go test -v -coverprofile=profile.cov ./...
+        working-directory: go/lib
       - name: Parse overall coverage
-        run: coverage=$(go tool cover -func profile.cov | tail -1 | rev | cut -f 1 | rev) && echo "COVERAGE=$coverage" >> $GITHUB_ENV 
+        run: coverage=$(go tool cover -func profile.cov | tail -1 | rev | cut -f 1 | rev) && echo "COVERAGE=$coverage" >> $GITHUB_ENV
+        working-directory: go/lib 
       - name: Create the Badge
         uses: schneegans/dynamic-badges-action@master
         with:
