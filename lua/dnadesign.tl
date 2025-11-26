@@ -1232,7 +1232,11 @@ local function new(kmer_size: integer, sketch_size: integer, hash_algorithm: has
 end
 
 -- sketch_sort allows you to optionally sort after rather than between each
--- hash. Dramatically speeds up creating containment sketches.
+-- hash. In tests with basic plasmids (6kbp), speeds up 173x faster. The reason
+-- you don't normally do this with a larger mash is that you may have a
+-- sequence which is only 1000 sketches but is much larger (mbp, not kbp), so
+-- the constant sorting makes sense. But if you just want to do containment,
+-- sketching after is much better.
 local function sketch_sort(sketch_mash: Mash, sequence: string, sort_after: boolean)
     -- Initialize all sketches to maximum value
     for i = 1, sketch_mash.sketch_size do

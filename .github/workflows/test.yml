@@ -21,7 +21,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Test
-      run: go test -v ./lib/...
+      run: go test -v ./go/lib/...
   test-external:
     strategy:
       matrix:
@@ -61,7 +61,7 @@ jobs:
         make
         sudo make install
     - name: Test external
-      run: go test -v ./external/...
+      run: go test -v ./go/external/...
   openbsd-test:
     runs-on: ubuntu-latest
     name: 1.21.5 openbsd
@@ -79,4 +79,4 @@ jobs:
           go install golang.org/x/tools/cmd/goimports@latest
         run: |
           export PATH=$PATH:/usr/local/go/bin
-          go test -v ./lib/...
+          go test -v ./go/lib/...
