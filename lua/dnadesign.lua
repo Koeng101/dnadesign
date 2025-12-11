@@ -1217,6 +1217,7 @@ local mash = {}
 
 
 
+
 local function new(kmer_size, sketch_size, hash_algorithm)
    local sketches = {}
    for i = 1, sketch_size do
@@ -1249,6 +1250,8 @@ local function sketch_sort(sketch_mash, sequence, sort_after)
 
    for kmer_start = 1, #sequence - sketch_mash.kmer_size + 1 do
       local kmer = sequence:sub(kmer_start, kmer_start + sketch_mash.kmer_size - 1)
+      local kmer_reverse = transform.reverse_complement(kmer)
+      if kmer_reverse < kmer then kmer = kmer_reverse end
       sketch_mash.hash_algorithm:reset()
       sketch_mash.hash_algorithm:write(kmer)
       local hash_value = sketch_mash.hash_algorithm:sum32()
@@ -9643,9 +9646,9 @@ end
 
 
 
-function clone.get_window_from_fragment(fragment, left_flank_length, right_flank_length)
+function clone.get_window_from_fragment(target_fragment, left_flank_length, right_flank_length)
 
-   local full_sequence = fragment.sequence
+   local full_sequence = target_fragment.sequence
 
 
    local left_flank = full_sequence:sub(1, left_flank_length)

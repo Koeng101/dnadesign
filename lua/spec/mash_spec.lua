@@ -27,7 +27,7 @@ describe("Mash", function()
         mash.sketch(fp2, seq2)
         
         local distance = mash.distance(fp1, fp2)
-        assert.is_true(distance > 0.19 and distance < 0.21)
+        assert.is_true(distance > 0.39 and distance < 0.41)
     end)
     
     it("should detect completely different sequences", function()

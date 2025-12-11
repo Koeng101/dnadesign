@@ -1207,6 +1207,7 @@ local record mash
 end
 
 -- local hash = require("hash")
+-- local transform = require("transform")
 	
 -- Mash is a collection of hashes of kmers from a given sequence.
 local record Mash
@@ -1249,6 +1250,8 @@ local function sketch_sort(sketch_mash: Mash, sequence: string, sort_after: bool
     -- slide a window of size k along the sequence
     for kmer_start = 1, #sequence - sketch_mash.kmer_size + 1 do
         local kmer = sequence:sub(kmer_start, kmer_start + sketch_mash.kmer_size - 1)
+		local kmer_reverse = transform.reverse_complement(kmer)
+		if kmer_reverse < kmer then kmer = kmer_reverse end
         sketch_mash.hash_algorithm:reset()
         sketch_mash.hash_algorithm:write(kmer)
         local hash_value = sketch_mash.hash_algorithm:sum32()
@@ -9154,7 +9157,7 @@ local record clone
    -- Get the window surrounding a given fragment. Useful to call on a vector
    -- to call transform.get_window on input sequences to see what sequence
    -- has been inserted into a vector.
-   get_window_from_fragment: function(fragment: Fragment, left_flank_length: integer, right_flank_length: integer): string, string
+   get_window_from_fragment: function(target_fragment: Fragment, left_flank_length: integer, right_flank_length: integer): string, string
 
    Overhang: Overhang
 end
@@ -9643,9 +9646,9 @@ sequence, and the window would retrieve the insert rather than the vector.
 
 The overhangs are not included, as these are great sequences to align against.
 --]]
-function clone.get_window_from_fragment(fragment: Fragment, left_flank_length: integer, right_flank_length: integer): string, string
+function clone.get_window_from_fragment(target_fragment: Fragment, left_flank_length: integer, right_flank_length: integer): string, string
     -- Construct the full sequence including overhangs
-    local full_sequence = fragment.sequence
+    local full_sequence = target_fragment.sequence
     
     -- Extract left flank (first left_flank_length bp)
     local left_flank = full_sequence:sub(1, left_flank_length)

@@ -1252,7 +1252,7 @@ local record clone
    -- Get the window surrounding a given fragment. Useful to call on a vector
    -- to call transform.get_window on input sequences to see what sequence
    -- has been inserted into a vector.
-   get_window_from_fragment: function(fragment: Fragment, left_flank_length: integer, right_flank_length: integer): string, string
+   get_window_from_fragment: function(target_fragment: Fragment, left_flank_length: integer, right_flank_length: integer): string, string
 
    Overhang: Overhang
 end
