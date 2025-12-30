@@ -1302,11 +1302,10 @@ local function new_containment_sketch(kmer_size, sequence, hash_algorithm)
    local mash_obj = new(kmer_size, max_kmers, hash_algorithm)
    sketch_sort(mash_obj, sequence, true)
 
-
    local sketches = mash_obj.sketches
    local effective = {}
 
-   for i = 1, mash_obj.sketch_size do
+   for i = 1, #sketches do
       local h = sketches[i]
       if h ~= 0xFFFFFFFF then
          effective[#effective + 1] = h

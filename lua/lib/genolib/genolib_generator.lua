@@ -3,6 +3,12 @@ local bio = dnadesign.bio
 local fasta = dnadesign.fasta
 local mash = dnadesign.mash
 local hash = dnadesign.hash
+--
+-- This is AI generated, but is one of those things that AI is quite good at.
+-- Basically, it is just a script to parse the genolib library so that it can
+-- be directly integrated into a lua file, genolib.lua. By running containment
+-- hashes, you can assert if a feature is within a given file
+--
 
 -- Parse CSV file
 local function parse_csv(filename)

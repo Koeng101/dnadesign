@@ -1301,12 +1301,11 @@ local function new_containment_sketch(kmer_size: integer, sequence: string, hash
 	-- create and fill new mash
 	local mash_obj: Mash = new(kmer_size, max_kmers, hash_algorithm)
 	sketch_sort(mash_obj, sequence, true)
-
 	-- Now shrink away sentinel values (0xFFFFFFFF) at the end
     local sketches = mash_obj.sketches
     local effective = {}
 
-	for i = 1, mash_obj.sketch_size do
+	for i = 1, #sketches do
 		local h = sketches[i]
 		if h ~= 0xFFFFFFFF then
 			effective[#effective + 1] = h
