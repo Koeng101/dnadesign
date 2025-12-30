@@ -1,0 +1,12 @@
+return {
+  default = {
+    ROOT = {
+      "spec",      -- Look for specs here
+      "examples"   -- Look for examples here
+    },
+    pattern = {
+      "_spec%.lua$",    -- Matches files in spec/ ending with _spec.lua
+      "_examples%.lua$"  -- Matches files ending with _example.lua
+    }
+  }
+}

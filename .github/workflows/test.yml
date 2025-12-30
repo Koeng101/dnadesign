@@ -10,7 +10,7 @@ jobs:
   test-lib:
     strategy:
       matrix:
-        go-version: [1.21.x,]
+        go-version: [1.22.x,]
         platform: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.platform }}
     steps:
@@ -21,11 +21,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Test
-      run: go test -v ./lib/...
+      run: go test -v ./...
+      working-directory: go/lib
   test-external:
     strategy:
       matrix:
-        go-version: [1.21.x,]
+        go-version: [1.22.x,]
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
@@ -61,10 +62,28 @@ jobs:
         make
         sudo make install
     - name: Test external
-      run: go test -v ./external/...
+      run: go test -v ./...
+      working-directory: go/external
+  test-lua:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install LuaJIT and LuaRocks
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y luajit luarocks
+    - name: Install Teal and Busted
+      run: |
+        sudo luarocks install tl
+        sudo luarocks install busted
+    - name: Build and test
+      run: luajit build.lua
+      working-directory: lua
+
   openbsd-test:
     runs-on: ubuntu-latest
-    name: 1.21.5 openbsd
+    name: 1.22.5 openbsd
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -73,10 +92,10 @@ jobs:
       with:
         prepare: |
           pkg_add curl
-          curl -L https://dl.google.com/go/go1.21.5.openbsd-amd64.tar.gz -o go1.21.5.openbsd-amd64.tar.gz
-          tar -C /usr/local -xzf go1.21.5.openbsd-amd64.tar.gz
+          curl -L https://dl.google.com/go/go1.22.5.openbsd-amd64.tar.gz -o go1.22.5.openbsd-amd64.tar.gz
+          tar -C /usr/local -xzf go1.22.5.openbsd-amd64.tar.gz
           export PATH=$PATH:/usr/local/go/bin
           go install golang.org/x/tools/cmd/goimports@latest
         run: |
           export PATH=$PATH:/usr/local/go/bin
-          go test -v ./lib/...
+          cd go/lib && go test -v ./...
