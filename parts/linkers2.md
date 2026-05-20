@@ -164,9 +164,9 @@ While we could construct a simple transcriptional unit of `["Promoter+RBS", "GFP
 
 ### CDS fusion using SapI
 ```
-NNN TGA AGAGC ACTT <- clean C terminus, SapI compatible
-NNN GGA AGAGC ACTT <- GRAS C tag, SapI compatible
-NNN GG ACTT <- GS C tag, not SapI compatible
+NNN TGA AGAGC ATCC <- clean C terminus, SapI compatible
+NNN GGA AGAGC ATCC <- GRAS C tag, SapI compatible
+NNN GG ATCC <- GS C tag, not SapI compatible
 ```
 
 In dd assembly, there are three methods of creating proteins for protein fusion:
