@@ -79,6 +79,19 @@ type AminoAcid struct {
 }
 
 func GetStochasticCodon(aa AminoAcid, seed int64) string {
+	return getStochasticCodon(aa, rand.New(rand.NewSource(seed)))
+}
+
+// getStochasticCodon draws a single weighted codon from the provided RNG,
+// advancing its stream. Optimize uses one RNG for the whole sequence and calls
+// this per position, so each codon gets an independent draw. (GetStochasticCodon
+// is the seed-based wrapper, preserved for callers that pick one codon.)
+//
+// Previously Optimize re-seeded a fresh RNG from the same randomState at every
+// position, so every instance of a given amino acid in a sequence received the
+// identical codon — no per-position synonymous variation. Sharing one stream
+// fixes that while keeping the result deterministic for a given seed.
+func getStochasticCodon(aa AminoAcid, rng *rand.Rand) string {
 	var totalWeight int
 	cumulativeWeights := make([]int, len(aa.Codons))
 
@@ -89,8 +102,7 @@ func GetStochasticCodon(aa AminoAcid, seed int64) string {
 	}
 
 	// Generate a random number in the range of totalWeight
-	seededRand := rand.New(rand.NewSource(seed))
-	r := seededRand.Intn(totalWeight)
+	r := rng.Intn(totalWeight)
 
 	// Find the first element where r is less than or equal to its cumulative weight
 	for i, codon := range aa.Codons {
@@ -166,12 +178,16 @@ func (table *TranslationTable) Optimize(aminoAcids string, randomState int64) (s
 		return "", errEmptyAminoAcidString
 	}
 
+	// One RNG stream for the whole sequence so each codon position draws
+	// independently; otherwise every instance of an amino acid would get the
+	// same codon. Deterministic for a given randomState.
+	rng := rand.New(rand.NewSource(randomState))
 	var codons strings.Builder
 	for _, aminoAcid := range aminoAcids {
 		found := false
 		for _, aminoAcidWithWeights := range table.AminoAcids {
 			if string(aminoAcid) == aminoAcidWithWeights.Letter {
-				codons.WriteString(GetStochasticCodon(aminoAcidWithWeights, randomState))
+				codons.WriteString(getStochasticCodon(aminoAcidWithWeights, rng))
 				found = true
 				break
 			}
