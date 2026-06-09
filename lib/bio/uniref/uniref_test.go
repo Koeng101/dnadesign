@@ -162,6 +162,7 @@ func TestSequenceData(t *testing.T) {
 	sequence := entry.RepMember.Sequence
 	if sequence == nil {
 		t.Fatal("Expected sequence to be present")
+		return
 	}
 
 	expectedTests := []struct {
