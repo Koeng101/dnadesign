@@ -48,6 +48,7 @@ Y. CGAG
 23. GCCG
 24. AAAA
 25. GGGG
+26. TCTG (used for backbone construction when there is no negative selection)
 
 This document is techincal reference material, not a how-to guide or tutorial. It contains the following sections:
 
