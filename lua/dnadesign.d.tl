@@ -1177,6 +1177,7 @@ local record fragment
     next_overhang: function({string}): string
     fragment: function(string, integer, integer, {string}): ({string}, number, string)
     fragment_with_overhangs: function(string, integer, integer, {string}, {string}): ({string}, number, string)
+    fragment_with_break: function(string, integer, integer, integer, integer, {string}): ({string}, {string}, number, string)
 
     -- Recursive Assembly
     record Assembly

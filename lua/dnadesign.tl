@@ -8707,6 +8707,7 @@ local record fragment
     next_overhang: function({string}): string
     fragment: function(string, integer, integer, {string}): ({string}, number, string)
     fragment_with_overhangs: function(string, integer, integer, {string}, {string}): ({string}, number, string)
+    fragment_with_break: function(string, integer, integer, integer, integer, {string}): ({string}, {string}, number, string)
 
     -- Recursive Assembly
     record Assembly
@@ -8941,6 +8942,107 @@ function fragment.fragment_with_overhangs(sequence: string, min_fragment_size: i
         table.insert(initial_overhangs, o)
     end
     return optimize_overhang_iteration(sequence, min_fragment_size, max_fragment_size, {}, initial_overhangs, include_overhangs)
+end
+
+-- FragmentWithBreak fragments a sequence such that exactly one fragment junction
+-- is forced to fall within a given window, [break_start, break_end]. This is
+-- useful for deliberately interrupting a gene across two separate assemblies.
+-- For example, in full plasmid synthesis the first assembly is ampR-selected
+-- while a kanR marker is split in two so it is non-functional; the fragments
+-- before and after the break only come together in a later GoldenGate reaction,
+-- reconstituting full-length kanR for selection.
+--
+-- The break overhang is the most efficient non-palindromic 4bp overhang within
+-- the window. The two halves are then fragmented independently, and the
+-- after-break fragmentation excludes every overhang used before the break, so
+-- the two halves never share an overhang when they are finally assembled
+-- together.
+--
+-- It returns the fragments before the break, the fragments after the break, the
+-- efficiency of the combined overhang set, and an error string (nil on success).
+function fragment.fragment_with_break(sequence: string, break_start: integer, break_end: integer, min_fragment_size: integer, max_fragment_size: integer, exclude_overhangs: {string}): ({string}, {string}, number, string)
+    sequence = string.upper(sequence)
+
+    -- The seed overhang set used while choosing the break: the vector-junction
+    -- overhangs (first and last 4bp) plus any caller-excluded overhangs.
+    local seed_overhangs = {sequence:sub(1, 4), sequence:sub(#sequence-3)}
+    for _, o in ipairs(exclude_overhangs) do
+        table.insert(seed_overhangs, o)
+    end
+
+    -- Choose the most efficient non-palindromic overhang within the window. A
+    -- position p uses the 4bp overhang sequence:sub(p-3, p).
+    local best_position = 0
+    local best_efficiency = 0.0
+    for position = break_start, break_end do
+        if position >= 4 and position <= #sequence then
+            local overhang = sequence:sub(position-3, position)
+
+            local already_exists = false
+            for _, o in ipairs(seed_overhangs) do
+                if o == overhang or transform.reverse_complement(o) == overhang then
+                    already_exists = true
+                    break
+                end
+            end
+
+            if not already_exists and not is_palindromic(overhang) then
+                local candidate = {}
+                for _, o in ipairs(seed_overhangs) do table.insert(candidate, o) end
+                table.insert(candidate, overhang)
+                local efficiency = fragment.set_efficiency(candidate)
+                if efficiency > best_efficiency then
+                    best_efficiency = efficiency
+                    best_position = position
+                end
+            end
+        end
+    end
+    if best_position == 0 then
+        return {}, {}, 0, "could not find a valid break overhang within the given window"
+    end
+
+    -- Split at the break, overlapping by the 4bp break overhang. This matches
+    -- the overlap convention used between consecutive fragments: the region
+    -- before ends with the break overhang and the region after begins with it.
+    local before = sequence:sub(1, best_position)
+    local after = sequence:sub(best_position-3)
+
+    -- Fragment the region before the break.
+    local fragments_before, _, err_before = fragment.fragment(before, min_fragment_size, max_fragment_size, exclude_overhangs)
+    if err_before ~= nil then
+        return {}, {}, 0, err_before
+    end
+
+    -- Collect every overhang used before the break (the vector start plus each
+    -- fragment's trailing 4bp, which includes the break overhang) so the
+    -- after-break fragmentation avoids reusing any of them.
+    local exclude_after = {}
+    for _, o in ipairs(exclude_overhangs) do table.insert(exclude_after, o) end
+    table.insert(exclude_after, before:sub(1, 4))
+    for _, frag in ipairs(fragments_before) do
+        table.insert(exclude_after, frag:sub(#frag-3))
+    end
+
+    -- Fragment the region after the break, excluding the before-break overhangs.
+    local fragments_after, _, err_after = fragment.fragment(after, min_fragment_size, max_fragment_size, exclude_after)
+    if err_after ~= nil then
+        return {}, {}, 0, err_after
+    end
+
+    -- Score the full set of junction overhangs: vector start, every before-break
+    -- trailing overhang (incl. the break), and every after-break trailing
+    -- overhang (incl. the vector end).
+    local all_overhangs = {before:sub(1, 4)}
+    for _, frag in ipairs(fragments_before) do
+        table.insert(all_overhangs, frag:sub(#frag-3))
+    end
+    for _, frag in ipairs(fragments_after) do
+        table.insert(all_overhangs, frag:sub(#frag-3))
+    end
+    local efficiency = fragment.set_efficiency(all_overhangs)
+
+    return fragments_before, fragments_after, efficiency, nil
 end
 
 --[[

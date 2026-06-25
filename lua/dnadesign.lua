@@ -8723,6 +8723,7 @@ local fragment = { Assembly = {} }
 
 
 
+
 local function is_palindromic(sequence)
    return sequence == transform.reverse_complement(sequence)
 end
@@ -8941,6 +8942,107 @@ function fragment.fragment_with_overhangs(sequence, min_fragment_size, max_fragm
       table.insert(initial_overhangs, o)
    end
    return optimize_overhang_iteration(sequence, min_fragment_size, max_fragment_size, {}, initial_overhangs, include_overhangs)
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function fragment.fragment_with_break(sequence, break_start, break_end, min_fragment_size, max_fragment_size, exclude_overhangs)
+   sequence = string.upper(sequence)
+
+
+
+   local seed_overhangs = { sequence:sub(1, 4), sequence:sub(#sequence - 3) }
+   for _, o in ipairs(exclude_overhangs) do
+      table.insert(seed_overhangs, o)
+   end
+
+
+
+   local best_position = 0
+   local best_efficiency = 0.0
+   for position = break_start, break_end do
+      if position >= 4 and position <= #sequence then
+         local overhang = sequence:sub(position - 3, position)
+
+         local already_exists = false
+         for _, o in ipairs(seed_overhangs) do
+            if o == overhang or transform.reverse_complement(o) == overhang then
+               already_exists = true
+               break
+            end
+         end
+
+         if not already_exists and not is_palindromic(overhang) then
+            local candidate = {}
+            for _, o in ipairs(seed_overhangs) do table.insert(candidate, o) end
+            table.insert(candidate, overhang)
+            local efficiency = fragment.set_efficiency(candidate)
+            if efficiency > best_efficiency then
+               best_efficiency = efficiency
+               best_position = position
+            end
+         end
+      end
+   end
+   if best_position == 0 then
+      return {}, {}, 0, "could not find a valid break overhang within the given window"
+   end
+
+
+
+
+   local before = sequence:sub(1, best_position)
+   local after = sequence:sub(best_position - 3)
+
+
+   local fragments_before, _, err_before = fragment.fragment(before, min_fragment_size, max_fragment_size, exclude_overhangs)
+   if err_before ~= nil then
+      return {}, {}, 0, err_before
+   end
+
+
+
+
+   local exclude_after = {}
+   for _, o in ipairs(exclude_overhangs) do table.insert(exclude_after, o) end
+   table.insert(exclude_after, before:sub(1, 4))
+   for _, frag in ipairs(fragments_before) do
+      table.insert(exclude_after, frag:sub(#frag - 3))
+   end
+
+
+   local fragments_after, _, err_after = fragment.fragment(after, min_fragment_size, max_fragment_size, exclude_after)
+   if err_after ~= nil then
+      return {}, {}, 0, err_after
+   end
+
+
+
+
+   local all_overhangs = { before:sub(1, 4) }
+   for _, frag in ipairs(fragments_before) do
+      table.insert(all_overhangs, frag:sub(#frag - 3))
+   end
+   for _, frag in ipairs(fragments_after) do
+      table.insert(all_overhangs, frag:sub(#frag - 3))
+   end
+   local efficiency = fragment.set_efficiency(all_overhangs)
+
+   return fragments_before, fragments_after, efficiency, nil
 end
 
 
