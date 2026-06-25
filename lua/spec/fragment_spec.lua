@@ -106,5 +106,61 @@ describe("fragment", function()
             assert.are.equal(expected_fragment, result.fragments[i])
         end
     end)
+
+    it("should fragment with a break inside a window", function()
+        -- A plasmid where a kanR marker spans the window [1962, 2485]. The break
+        -- forces a fragment junction into that window so the marker is split
+        -- across two assemblies (see the FASTA header fragment_between_1962_and_2485).
+        local plasmid = "TTTCGGGAGCGGATTATACACAAGCTTctagcataaccccttggggcctctaaacgggtcttgaggggttttttgGTCGTGGTTTGTCTGGTCAACCACCGCGGGCTCAGTGGTGTACGGTACAAACCCCGACTTTTAAATTTatgacacacattaacaaatttcgtgaggagtctccagaagaatgccattaaCGGGTATGCTTGCCTACTAATTAGGGATAACAGGGTAATCTCTCTTAAGGTAGCTTGAGGAGGTTTCTCTGTAAATAATAACTATAACGGTCCTAAGGTAGCGAggattttaacattttgcgttgttccaaaagttatcaacagcctagaacgtcataggaagcgattacagacactttatagctatcagcatgggaacataagggcaggatgaaatatgggtcttaaaacgcaaatggtgaggttttagaggtattttttgaagatgattaaggcggtttgtttttaaaatttttggcggctctcaggctgcttacattttaaccagttcagtgaaaagttctttttcagcaaatttctgtttagcaccatagctaaaacttgcgtggaacatattaagaattgaccgaaatgacacaatctcaattatattttttttgaaaagttttctttatcaaatattttaaatcattgatttatatataagtatgcattcattttaataattaatctttatttaacaatgatttatctatattcaattgtttaattattcttactaatattatctctatatcaatattttttatttaaaaacatatgtttagtagtgcttttgattaaagtaccagagggagggagcagagctgaatgggaaatactcaccctagagcgattcttaaaaatcaccctaaagtattcccattcgatgtaccgtcggtcggtcgctttcgcatcagggatgacatcactgtatcaagctgccactgttatgattacgattgatagcaccgcctgaacacgctcataaccgccaattaaatgactactcattgcgtccgctactctgttcagttcccctagtaatagcgtttttccgatgtgtgctagcgtcactgtacctcatcacccacacatggacagattgagttacagacattggctaaatttttggggtctatgcttgacaaagcgagttaaaaccttagaatttaagacaggtacattaagcccctgtggtgaaatcattagcggtcgtcaaaccttaatgctttcgattgccgatatgtcagtatcgaagatctgtaccccataaattacggtaaagccccaagcaattgcaaggggcttttatcttttttaacaaaaaaaatttataaatcaggattttataacactaaataatccaaagtacatgagtaagtcatgaccactcctgcgatgtgtgtagcactctgagtatccgtattatatcagtgatgtcatatacaaccacataatgcggatgtatcactaactccctagtatctttctgtctgcctgtgcgccccatcagtcgattatcaacaagtaaatctgtcttttcttcaattaaatcatcaatttcaatagctgctatagggttgcgttcttcaagataatcatagatatttctacgatcttggcTCTGCCCGGGattctcaccaataaaaaacgcccggcggcaaccgagcgttctgaacaaatccagatggagttctgaggtcattactggatctatcaacgggagtccaagcgagctcggtactaaaacaattcatccagtaaaatataatattttattttctcccaatcaggcttgatccccagtaagtcaaaaaatagctcgacatactgttcttccccgatatcctccctgatcgaccggacgcagaaggcaatgtcataccacttgtccgccctgccgcttctcccaagatcaataaagccacttactttgccatctttcacaaagatgttgctgtctcccaggtcgccgtgggaaaagacaagttcctcttcgggcttttccgtctttaaaaaatcatacagctcgcgcggatctttaaatggagtatcttcttcccagttttcgcaatccacatcggccagatcgttattcagtaagtaatccaattcggctaagcggccgtctaagctattcgtatagggacaatccgatatgtcgatggagtgaaagagcctgatgcactccgcatacagctcgatagtcttttcagggctttgttcatcttcatacccttccgagcaaaggacgccatcggcctcactcatgagcagattgctccagccatcatgccgttcaaagtgcaggacctttggaacaggcagctttccttccagccatagcatcatgtccttttcccgttccacatcataggtggtccctttataccggctgtccgtcatttttaaatataggatttcattttctcccaccagcttatataccttagcaggagacattccttccgtatcttttacgcagcggtattcttcgatcagttttttcaattccggtgatattctcattttagccatttattatttccttcctcttttctacagtatttaaagataccccaagaagctaattataacaagacgaactccaattcactgttccttgcattctaaaaccttaaatacagaaaacagccttttcaaagttgttttcaaagttggcgtataacatagtatcgacggagccgattttgaaaccacaattatgatagaatttgacgtccttttccgctgcataaccctgcttcggggtcattatagcgattttttcggtatatccatcctttttcgcacgatatacaggattttgccaaagggttcgtgtagactttccttggtgtatccaacggcgtcagccgggcaggataggtgaagtaggcccacccgcgagcgggtgttccttcttcactgtcccttattcgcacctggcggtgctcaacgggaatcctgctctgcgaggctggccgtaTTGACAGACAATCCGTAGGCACAATTTTCGAAAAAACCCGCTTCGGCGGGTTTTTTTATAGCTAAAAATGTTCCAGCGCTGGCACGCAACCTCTCATGCGCTACTTATCACGCCGCGCCAATTTATTACCGCTATGGCCAATTGATCGGCCGGCTTGTCGACGACGGCGGACTCCGTCGTCAGGATCATCCGGGCGAATTCCGTGTTATCCAGTCCCAGAA"
+        local break_start = 1962
+        local break_end = 2485
+
+        local before, after, efficiency, err = fragment.fragment_with_break(plasmid, break_start, break_end, 800, 1000, {})
+        assert.is_nil(err)
+        assert.is_true(#before > 0)
+        assert.is_true(#after > 0)
+
+        -- Helper: reassemble a fragment list, dropping the 4bp overhang each
+        -- consecutive fragment shares with the previous one.
+        local function reassemble(frags)
+            local seq = frags[1]
+            for i = 2, #frags do
+                seq = seq .. frags[i]:sub(5)
+            end
+            return seq
+        end
+
+        -- The break overhang is the junction shared by the last before-fragment
+        -- and the first after-fragment.
+        local break_overhang = before[#before]:sub(-4)
+        assert.are.equal(break_overhang, after[1]:sub(1, 4))
+
+        -- That junction must sit within the requested window. The before region
+        -- is plasmid[1..break_position], so its length is the break position.
+        local break_position = #reassemble(before)
+        assert.is_true(break_position >= break_start)
+        assert.is_true(break_position <= break_end)
+
+        -- No two junction overhangs may be identical or reverse complements,
+        -- otherwise the two halves would mis-assemble when combined.
+        local all_frags = {}
+        for _, f in ipairs(before) do table.insert(all_frags, f) end
+        for _, f in ipairs(after) do table.insert(all_frags, f) end
+        local overhangs = {before[1]:sub(1, 4)}
+        for _, f in ipairs(all_frags) do table.insert(overhangs, f:sub(-4)) end
+        for i = 1, #overhangs do
+            for j = i + 1, #overhangs do
+                assert.are_not.equal(overhangs[i], overhangs[j])
+                assert.are_not.equal(transform.reverse_complement(overhangs[i]), overhangs[j])
+            end
+        end
+
+        -- The combined overhang set should assemble efficiently.
+        assert.is_true(efficiency > 0.85)
+
+        -- Round trip: concatenating all fragments (before then after) while
+        -- dropping each shared overhang must reproduce the original sequence.
+        assert.are.equal(string.upper(plasmid), reassemble(all_frags))
+    end)
 end)
 

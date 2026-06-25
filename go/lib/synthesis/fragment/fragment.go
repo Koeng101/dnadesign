@@ -203,6 +203,100 @@ func FragmentWithOverhangs(sequence string, minFragmentSize int, maxFragmentSize
 	return optimizeOverhangIteration(sequence, minFragmentSize, maxFragmentSize, []string{}, append([]string{sequence[:4], sequence[len(sequence)-4:]}, excludeOverhangs...), includeOverhangs)
 }
 
+// FragmentWithBreak fragments a sequence such that exactly one fragment junction
+// is forced to fall within a given window, [breakStart, breakEnd]. This is
+// useful for deliberately interrupting a gene across two separate assemblies.
+// For example, in full plasmid synthesis the first assembly is ampR-selected
+// while a kanR marker is split in two so it is non-functional; the fragments
+// before and after the break only come together in a later GoldenGate reaction,
+// reconstituting full-length kanR for selection.
+//
+// The break overhang is the most efficient non-palindromic 4bp overhang within
+// the window. The two halves are then fragmented independently, and the
+// after-break fragmentation excludes every overhang used before the break, so
+// the two halves never share an overhang when they are finally assembled
+// together.
+//
+// It returns the fragments before the break, the fragments after the break, the
+// efficiency of the combined overhang set, and an error.
+func FragmentWithBreak(sequence string, breakStart int, breakEnd int, minFragmentSize int, maxFragmentSize int, excludeOverhangs []string) ([]string, []string, float64, error) {
+	sequence = strings.ToUpper(sequence)
+
+	// The seed overhang set used while choosing the break: the vector-junction
+	// overhangs (first and last 4bp) plus any caller-excluded overhangs.
+	seedOverhangs := append([]string{sequence[:4], sequence[len(sequence)-4:]}, excludeOverhangs...)
+
+	// Choose the most efficient non-palindromic overhang within the window. A
+	// position p uses the 4bp overhang sequence[p-4:p].
+	bestPosition := 0
+	var bestEfficiency float64
+	for position := breakStart; position <= breakEnd; position++ {
+		if position >= 4 && position <= len(sequence) {
+			overhang := sequence[position-4 : position]
+
+			alreadyExists := false
+			for _, existingOverhang := range seedOverhangs {
+				if existingOverhang == overhang || transform.ReverseComplement(existingOverhang) == overhang {
+					alreadyExists = true
+					break
+				}
+			}
+
+			if !alreadyExists && !checks.IsPalindromic(overhang) {
+				efficiency := SetEfficiency(append(seedOverhangs, overhang))
+				if efficiency > bestEfficiency {
+					bestEfficiency = efficiency
+					bestPosition = position
+				}
+			}
+		}
+	}
+	if bestPosition == 0 {
+		return []string{}, []string{}, 0, errors.New("could not find a valid break overhang within the given window")
+	}
+
+	// Split at the break, overlapping by the 4bp break overhang. This matches
+	// the overlap convention used between consecutive fragments: the region
+	// before ends with the break overhang and the region after begins with it.
+	before := sequence[:bestPosition]
+	after := sequence[bestPosition-4:]
+
+	// Fragment the region before the break.
+	fragmentsBefore, _, errBefore := Fragment(before, minFragmentSize, maxFragmentSize, excludeOverhangs)
+	if errBefore != nil {
+		return []string{}, []string{}, 0, errBefore
+	}
+
+	// Collect every overhang used before the break (the vector start plus each
+	// fragment's trailing 4bp, which includes the break overhang) so the
+	// after-break fragmentation avoids reusing any of them.
+	excludeAfter := append([]string{}, excludeOverhangs...)
+	excludeAfter = append(excludeAfter, before[:4])
+	for _, frag := range fragmentsBefore {
+		excludeAfter = append(excludeAfter, frag[len(frag)-4:])
+	}
+
+	// Fragment the region after the break, excluding the before-break overhangs.
+	fragmentsAfter, _, errAfter := Fragment(after, minFragmentSize, maxFragmentSize, excludeAfter)
+	if errAfter != nil {
+		return []string{}, []string{}, 0, errAfter
+	}
+
+	// Score the full set of junction overhangs: vector start, every before-break
+	// trailing overhang (incl. the break), and every after-break trailing
+	// overhang (incl. the vector end).
+	allOverhangs := []string{before[:4]}
+	for _, frag := range fragmentsBefore {
+		allOverhangs = append(allOverhangs, frag[len(frag)-4:])
+	}
+	for _, frag := range fragmentsAfter {
+		allOverhangs = append(allOverhangs, frag[len(frag)-4:])
+	}
+	efficiency := SetEfficiency(allOverhangs)
+
+	return fragmentsBefore, fragmentsAfter, efficiency, nil
+}
+
 /******************************************************************************
 
                             Higher level assembly

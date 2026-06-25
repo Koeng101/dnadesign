@@ -8,7 +8,23 @@ import (
 
 	"github.com/koeng101/dnadesign/lib/bio"
 	"github.com/koeng101/dnadesign/lib/synthesis/fragment"
+	"github.com/koeng101/dnadesign/lib/transform"
 )
+
+// breakPlasmid is a plasmid where a kanR marker spans the window [1962, 2485]
+// (see the FASTA header fragment_between_1962_and_2485). It is shared by the
+// FragmentWithBreak tests and example.
+const breakPlasmid = "TTTCGGGAGCGGATTATACACAAGCTTctagcataaccccttggggcctctaaacgggtcttgaggggttttttgGTCGTGGTTTGTCTGGTCAACCACCGCGGGCTCAGTGGTGTACGGTACAAACCCCGACTTTTAAATTTatgacacacattaacaaatttcgtgaggagtctccagaagaatgccattaaCGGGTATGCTTGCCTACTAATTAGGGATAACAGGGTAATCTCTCTTAAGGTAGCTTGAGGAGGTTTCTCTGTAAATAATAACTATAACGGTCCTAAGGTAGCGAggattttaacattttgcgttgttccaaaagttatcaacagcctagaacgtcataggaagcgattacagacactttatagctatcagcatgggaacataagggcaggatgaaatatgggtcttaaaacgcaaatggtgaggttttagaggtattttttgaagatgattaaggcggtttgtttttaaaatttttggcggctctcaggctgcttacattttaaccagttcagtgaaaagttctttttcagcaaatttctgtttagcaccatagctaaaacttgcgtggaacatattaagaattgaccgaaatgacacaatctcaattatattttttttgaaaagttttctttatcaaatattttaaatcattgatttatatataagtatgcattcattttaataattaatctttatttaacaatgatttatctatattcaattgtttaattattcttactaatattatctctatatcaatattttttatttaaaaacatatgtttagtagtgcttttgattaaagtaccagagggagggagcagagctgaatgggaaatactcaccctagagcgattcttaaaaatcaccctaaagtattcccattcgatgtaccgtcggtcggtcgctttcgcatcagggatgacatcactgtatcaagctgccactgttatgattacgattgatagcaccgcctgaacacgctcataaccgccaattaaatgactactcattgcgtccgctactctgttcagttcccctagtaatagcgtttttccgatgtgtgctagcgtcactgtacctcatcacccacacatggacagattgagttacagacattggctaaatttttggggtctatgcttgacaaagcgagttaaaaccttagaatttaagacaggtacattaagcccctgtggtgaaatcattagcggtcgtcaaaccttaatgctttcgattgccgatatgtcagtatcgaagatctgtaccccataaattacggtaaagccccaagcaattgcaaggggcttttatcttttttaacaaaaaaaatttataaatcaggattttataacactaaataatccaaagtacatgagtaagtcatgaccactcctgcgatgtgtgtagcactctgagtatccgtattatatcagtgatgtcatatacaaccacataatgcggatgtatcactaactccctagtatctttctgtctgcctgtgcgccccatcagtcgattatcaacaagtaaatctgtcttttcttcaattaaatcatcaatttcaatagctgctatagggttgcgttcttcaagataatcatagatatttctacgatcttggcTCTGCCCGGGattctcaccaataaaaaacgcccggcggcaaccgagcgttctgaacaaatccagatggagttctgaggtcattactggatctatcaacgggagtccaagcgagctcggtactaaaacaattcatccagtaaaatataatattttattttctcccaatcaggcttgatccccagtaagtcaaaaaatagctcgacatactgttcttccccgatatcctccctgatcgaccggacgcagaaggcaatgtcataccacttgtccgccctgccgcttctcccaagatcaataaagccacttactttgccatctttcacaaagatgttgctgtctcccaggtcgccgtgggaaaagacaagttcctcttcgggcttttccgtctttaaaaaatcatacagctcgcgcggatctttaaatggagtatcttcttcccagttttcgcaatccacatcggccagatcgttattcagtaagtaatccaattcggctaagcggccgtctaagctattcgtatagggacaatccgatatgtcgatggagtgaaagagcctgatgcactccgcatacagctcgatagtcttttcagggctttgttcatcttcatacccttccgagcaaaggacgccatcggcctcactcatgagcagattgctccagccatcatgccgttcaaagtgcaggacctttggaacaggcagctttccttccagccatagcatcatgtccttttcccgttccacatcataggtggtccctttataccggctgtccgtcatttttaaatataggatttcattttctcccaccagcttatataccttagcaggagacattccttccgtatcttttacgcagcggtattcttcgatcagttttttcaattccggtgatattctcattttagccatttattatttccttcctcttttctacagtatttaaagataccccaagaagctaattataacaagacgaactccaattcactgttccttgcattctaaaaccttaaatacagaaaacagccttttcaaagttgttttcaaagttggcgtataacatagtatcgacggagccgattttgaaaccacaattatgatagaatttgacgtccttttccgctgcataaccctgcttcggggtcattatagcgattttttcggtatatccatcctttttcgcacgatatacaggattttgccaaagggttcgtgtagactttccttggtgtatccaacggcgtcagccgggcaggataggtgaagtaggcccacccgcgagcgggtgttccttcttcactgtcccttattcgcacctggcggtgctcaacgggaatcctgctctgcgaggctggccgtaTTGACAGACAATCCGTAGGCACAATTTTCGAAAAAACCCGCTTCGGCGGGTTTTTTTATAGCTAAAAATGTTCCAGCGCTGGCACGCAACCTCTCATGCGCTACTTATCACGCCGCGCCAATTTATTACCGCTATGGCCAATTGATCGGCCGGCTTGTCGACGACGGCGGACTCCGTCGTCAGGATCATCCGGGCGAATTCCGTGTTATCCAGTCCCAGAA"
+
+// reassembleFragments concatenates a fragment list, dropping the 4bp overhang
+// each consecutive fragment shares with the previous one.
+func reassembleFragments(frags []string) string {
+	seq := frags[0]
+	for i := 1; i < len(frags); i++ {
+		seq += frags[i][4:]
+	}
+	return seq
+}
 
 //go:embed data/blue1.fasta
 var blue1 string
@@ -139,5 +155,80 @@ func TestRecursiveFragmentPy(t *testing.T) {
 
 	if !reflect.DeepEqual(result.Fragments, expectedFragments) {
 		t.Errorf("Unexpected fragments. Got %v, want %v", result.Fragments, expectedFragments)
+	}
+}
+
+func TestFragmentWithBreak(t *testing.T) {
+	breakStart := 1962
+	breakEnd := 2485
+	before, after, efficiency, err := fragment.FragmentWithBreak(breakPlasmid, breakStart, breakEnd, 800, 1000, []string{})
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	if len(before) == 0 || len(after) == 0 {
+		t.Fatalf("Expected non-empty halves, got before=%d after=%d", len(before), len(after))
+	}
+
+	// The break overhang is the junction shared by the last before-fragment and
+	// the first after-fragment.
+	lastBefore := before[len(before)-1]
+	breakOverhang := lastBefore[len(lastBefore)-4:]
+	if breakOverhang != after[0][:4] {
+		t.Errorf("Break overhang mismatch: before ends %s, after starts %s", breakOverhang, after[0][:4])
+	}
+
+	// That junction must sit within the requested window. The before region is
+	// plasmid[:breakPosition], so its length is the break position.
+	breakPosition := len(reassembleFragments(before))
+	if breakPosition < breakStart || breakPosition > breakEnd {
+		t.Errorf("Break position %d outside window [%d, %d]", breakPosition, breakStart, breakEnd)
+	}
+
+	// No two junction overhangs may be identical or reverse complements,
+	// otherwise the two halves would mis-assemble when combined.
+	allFrags := append(append([]string{}, before...), after...)
+	overhangs := []string{before[0][:4]}
+	for _, frag := range allFrags {
+		overhangs = append(overhangs, frag[len(frag)-4:])
+	}
+	for i := 0; i < len(overhangs); i++ {
+		for j := i + 1; j < len(overhangs); j++ {
+			if overhangs[i] == overhangs[j] || transform.ReverseComplement(overhangs[i]) == overhangs[j] {
+				t.Errorf("Overhang collision between %s and %s", overhangs[i], overhangs[j])
+			}
+		}
+	}
+
+	// The combined overhang set should assemble efficiently.
+	if efficiency <= 0.85 {
+		t.Errorf("Expected efficiency > 0.85, got %g", efficiency)
+	}
+
+	// Round trip: concatenating all fragments (before then after) while dropping
+	// each shared overhang must reproduce the original sequence.
+	if got := reassembleFragments(allFrags); got != strings.ToUpper(breakPlasmid) {
+		t.Errorf("Round trip did not reproduce the original sequence")
+	}
+}
+
+func TestFragmentWithBreakRecursion(t *testing.T) {
+	// Two-level synthesis. The top level breaks the plasmid into ~1kbp chunks
+	// (800-1000bp) with a break in the kanR window. Each of those chunks is
+	// itself assembled from smaller 151-176bp pieces, so we recurse down by
+	// fragmenting each chunk again.
+	before, after, _, err := fragment.FragmentWithBreak(breakPlasmid, 1962, 2485, 800, 1000, []string{})
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	chunks := append(append([]string{}, before...), after...)
+	for _, chunk := range chunks {
+		pieces, _, pieceErr := fragment.Fragment(chunk, 151, 176, []string{})
+		if pieceErr != nil {
+			t.Errorf("Failed to fragment chunk into pieces: %s", pieceErr)
+		}
+		if len(pieces) == 0 {
+			t.Errorf("Expected at least one piece per chunk")
+		}
 	}
 }
