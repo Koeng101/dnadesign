@@ -1,6 +1,7 @@
 package clone
 
 import (
+	"regexp"
 	"testing"
 )
 
@@ -225,6 +226,55 @@ func TestMethylatedGoldenGate(t *testing.T) {
 	_, _, err := GoldenGate([]Part{pOpenV3Methylated, frag1, frag2, frag3}, DefaultEnzymes["BsaI"], true)
 	if err != nil {
 		t.Errorf("Should have gotten a single clone")
+	}
+}
+
+func TestApplyMethylation(t *testing.T) {
+	// A methyltransferase whose recognition site is the BsaI site (GGTCTC).
+	// It marks the two internal bases (offsets 2 and 3), so a methylated site
+	// reads "GGtcTC". Feeding that back into CutWithEnzyme with methylated=true
+	// makes BsaI (regex GGTCTC, uppercase-only) skip over the site, reproducing
+	// the in-vitro methylation block.
+	bsaI := Methyltransferase{"BsaImeth", regexp.MustCompile("GGTCTC"), []int{2, 3}}
+
+	// test(1)
+	// A single BsaI site on a linear sequence. Only the two internal bases of
+	// the site should be lowercased; everything else keeps its case.
+	linear := Part{"AAAAAGGTCTCAAAAACCA", false}
+	got := ApplyMethylation(linear, []Methyltransferase{bsaI})
+	if got.Sequence != "AAAAAGGtcTCAAAAACCA" {
+		t.Errorf("test(1): expected AAAAAGGtcTCAAAAACCA, got: %s", got.Sequence)
+	}
+	if got.Circular != false {
+		t.Errorf("test(1): expected circularity to be preserved as false, got: %t", got.Circular)
+	}
+
+	// test(2)
+	// A circular sequence whose BsaI site sits at the origin and is fully
+	// contained in the first copy. The doubled scan finds a duplicate site at
+	// the start of the second copy, which must be ignored so we only mark the
+	// real site once.
+	circular := Part{"GGTCTCAAAAAAAAACCA", true}
+	got = ApplyMethylation(circular, []Methyltransferase{bsaI})
+	if got.Sequence != "GGtcTCAAAAAAAAACCA" {
+		t.Errorf("test(2): expected GGtcTCAAAAAAAAACCA, got: %s", got.Sequence)
+	}
+	if got.Circular != true {
+		t.Errorf("test(2): expected circularity to be preserved as true, got: %t", got.Circular)
+	}
+
+	// test(3)
+	// A circular sequence whose BsaI site spans the origin: the trailing ...CCAG
+	// joins the leading GTCTC... to form GGTCTC across the junction. The match is
+	// only visible in the doubled scan, and its marked offsets land past the end
+	// of the real sequence, so they must be folded back onto the first copy.
+	spanning := Part{"GTCTCAAAAAAAAACCAG", true}
+	got = ApplyMethylation(spanning, []Methyltransferase{bsaI})
+	if got.Sequence != "GtcTCAAAAAAAAACCAG" {
+		t.Errorf("test(3): expected GtcTCAAAAAAAAACCAG, got: %s", got.Sequence)
+	}
+	if got.Circular != true {
+		t.Errorf("test(3): expected circularity to be preserved as true, got: %t", got.Circular)
 	}
 }
 

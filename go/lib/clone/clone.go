@@ -90,6 +90,29 @@ type Enzyme struct {
 	RecognitionSite string
 }
 
+// Methyltransferase represents a methylation enzyme. RegexpFor matches the
+// recognition site on the forward strand; the sites here are their own reverse
+// complement, so a single forward scan finds every occurrence on both strands.
+// MethIndex lists every offset within the match to lowercase: the base(s)
+// methylated on the forward strand, plus the forward base paired to each
+// reverse-strand methylated base. Note this means some lowercased positions are
+// the pairing partner (a G or T), not a methyl-C/A themselves — the lowercase
+// annotation marks "this site is methylated," not "this base is a methyl-base."
+type Methyltransferase struct {
+	Name      string
+	RegexpFor *regexp.Regexp
+	MethIndex []int
+}
+
+var DefaultMethyltransferases = map[string]Methyltransferase{
+	// Dcm:   CCWGG, internal C on both strands  -> fwd C at 1, rev C pairs fwd G at 3  => CcWgG
+	"Dcm": {"Dcm", regexp.MustCompile("CC[AT]GG"), []int{1, 3}},
+	// Dam:   GATC,  A on both strands           -> fwd A at 1, rev A pairs fwd T at 2  => gAtC
+	"Dam": {"Dam", regexp.MustCompile("GATC"), []int{1, 2}},
+	// HpaII: CCGG,  internal C on both strands  -> fwd C at 1, rev C pairs fwd G at 2  => CcgG
+	"HpaII": {"HpaII", regexp.MustCompile("CCGG"), []int{1, 2}},
+}
+
 var DefaultEnzymes = map[string]Enzyme{
 	"BsaI":  {"BsaI", regexp.MustCompile("GGTCTC"), regexp.MustCompile("GAGACC"), 1, 4, "GGTCTC"},
 	"BbsI":  {"BbsI", regexp.MustCompile("GAAGAC"), regexp.MustCompile("GTCTTC"), 2, 4, "GAAGAC"},
@@ -309,6 +332,63 @@ func Ligate(fragments []Fragment, circular bool) (string, []int, error) {
 		return finalFragment.ForwardOverhang + finalFragment.Sequence, ligationPattern, nil
 	}
 	return finalFragment.ForwardOverhang + finalFragment.Sequence + finalFragment.ReverseOverhang, ligationPattern, nil
+}
+
+/******************************************************************************
+
+Methylation specific functions here
+
+******************************************************************************/
+
+// ApplyMethylation lowercases every base that the given methyltransferases would
+// mark, so the result can be fed into CutWithEnzyme/GoldenGate with
+// methylated=true and a methylation-blocked Type IIS site will fail to cut in
+// simulation — reproducing the in-vitro failure.
+//
+// For each methyltransferase, every occurrence of its recognition site (found on
+// an uppercased copy, so sites are located regardless of pre-existing case) has
+// the bases at its MethIndex offsets lowercased. These sites are their own
+// reverse complement, so a single forward scan covers both strands; the
+// MethIndex offsets already include the forward base paired to each
+// reverse-strand methylated base. Bases not marked by any methyltransferase keep
+// their original case, so unrelated lowercase input is preserved.
+//
+// If the Part is circular, the sequence is scanned doubled (mirroring
+// CutWithEnzyme) so a site spanning the origin is still marked, and marks from
+// the second copy are folded back onto the first. The returned string is the
+// methylated single-copy sequence; wrap it back into a Part{..., Circular: true}
+// for downstream cutting.
+func ApplyMethylation(part Part, methyltransferases []Methyltransferase) Part {
+	n := len(part.Sequence)
+	out := []byte(part.Sequence)
+
+	scan := part.Sequence
+	if part.Circular {
+		scan = part.Sequence + part.Sequence
+	}
+	upper := strings.ToUpper(scan)
+
+	for _, mt := range methyltransferases {
+		for _, match := range mt.RegexpFor.FindAllStringIndex(upper, -1) {
+			for _, offset := range mt.MethIndex {
+				pos := match[0] + offset
+				// Fold origin-spanning hits from the doubled copy back onto
+				// the real sequence; skip anything fully in the second copy
+				// (already covered by its first-copy occurrence).
+				if pos >= n {
+					if match[0] >= n {
+						continue // whole match is in the second copy; dup
+					}
+					pos -= n
+				}
+				c := out[pos]
+				if c >= 'A' && c <= 'Z' {
+					out[pos] = c + ('a' - 'A')
+				}
+			}
+		}
+	}
+	return Part{Sequence: string(out), Circular: part.Circular}
 }
 
 /******************************************************************************
