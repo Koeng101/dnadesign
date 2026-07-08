@@ -1,7 +1,6 @@
 package clone
 
 import (
-	"regexp"
 	"testing"
 )
 
@@ -230,48 +229,49 @@ func TestMethylatedGoldenGate(t *testing.T) {
 }
 
 func TestApplyMethylation(t *testing.T) {
-	// A methyltransferase whose recognition site is the BsaI site (GGTCTC).
-	// It marks the two internal bases (offsets 2 and 3), so a methylated site
-	// reads "GGtcTC". Feeding that back into CutWithEnzyme with methylated=true
-	// makes BsaI (regex GGTCTC, uppercase-only) skip over the site, reproducing
-	// the in-vitro methylation block.
-	bsaI := Methyltransferase{"BsaImeth", regexp.MustCompile("GGTCTC"), []int{2, 3}}
+	// Dcm methylates CCWGG, lowercasing the internal C on the forward strand
+	// (offset 1) and the G that pairs the reverse-strand methyl-C (offset 3), so
+	// a methylated CCAGG site reads "CcAgG". These sequences also carry a BsaI
+	// site (GGTCTC), the practical case where dcm+ host methylation blocks a
+	// GoldenGate cut; feeding the lowercased result into CutWithEnzyme with
+	// methylated=true reproduces that block.
+	dcm := DefaultMethyltransferases["Dcm"]
 
 	// test(1)
-	// A single BsaI site on a linear sequence. Only the two internal bases of
-	// the site should be lowercased; everything else keeps its case.
-	linear := Part{"AAAAAGGTCTCAAAAACCA", false}
-	got := ApplyMethylation(linear, []Methyltransferase{bsaI})
-	if got.Sequence != "AAAAAGGtcTCAAAAACCA" {
-		t.Errorf("test(1): expected AAAAAGGtcTCAAAAACCA, got: %s", got.Sequence)
+	// A single Dcm site on a linear sequence. Only the two marked bases of the
+	// CCAGG site are lowercased; everything else keeps its case.
+	linear := Part{"GGTCTCAAAAAAAAACCAGG", false}
+	got := ApplyMethylation(linear, []Methyltransferase{dcm})
+	if got.Sequence != "GGTCTCAAAAAAAAACcAgG" {
+		t.Errorf("test(1): expected GGTCTCAAAAAAAAACcAgG, got: %s", got.Sequence)
 	}
 	if got.Circular != false {
 		t.Errorf("test(1): expected circularity to be preserved as false, got: %t", got.Circular)
 	}
 
 	// test(2)
-	// A circular sequence whose BsaI site sits at the origin and is fully
-	// contained in the first copy. The doubled scan finds a duplicate site at
-	// the start of the second copy, which must be ignored so we only mark the
-	// real site once.
+	// A circular sequence whose Dcm site spans the origin: the trailing CCA joins
+	// the GG of the leading GGTCTC to form CCAGG across the junction. The marked
+	// G (offset 3) lands past the end of the real sequence in the doubled scan,
+	// so it must be folded back onto index 0 of the first copy.
 	circular := Part{"GGTCTCAAAAAAAAACCA", true}
-	got = ApplyMethylation(circular, []Methyltransferase{bsaI})
-	if got.Sequence != "GGtcTCAAAAAAAAACCA" {
-		t.Errorf("test(2): expected GGtcTCAAAAAAAAACCA, got: %s", got.Sequence)
+	got = ApplyMethylation(circular, []Methyltransferase{dcm})
+	if got.Sequence != "gGTCTCAAAAAAAAACcA" {
+		t.Errorf("test(2): expected gGTCTCAAAAAAAAACcA, got: %s", got.Sequence)
 	}
 	if got.Circular != true {
 		t.Errorf("test(2): expected circularity to be preserved as true, got: %t", got.Circular)
 	}
 
 	// test(3)
-	// A circular sequence whose BsaI site spans the origin: the trailing ...CCAG
-	// joins the leading GTCTC... to form GGTCTC across the junction. The match is
-	// only visible in the doubled scan, and its marked offsets land past the end
-	// of the real sequence, so they must be folded back onto the first copy.
+	// A circular sequence whose Dcm site (CCAGG) also spans the origin, but here
+	// both marked bases sit within the sequence — only the site's trailing G
+	// wraps past the end, and that base is not one Dcm marks. This checks that an
+	// origin-spanning match is still found and marked without any fold-back.
 	spanning := Part{"GTCTCAAAAAAAAACCAG", true}
-	got = ApplyMethylation(spanning, []Methyltransferase{bsaI})
-	if got.Sequence != "GtcTCAAAAAAAAACCAG" {
-		t.Errorf("test(3): expected GtcTCAAAAAAAAACCAG, got: %s", got.Sequence)
+	got = ApplyMethylation(spanning, []Methyltransferase{dcm})
+	if got.Sequence != "GTCTCAAAAAAAAACcAg" {
+		t.Errorf("test(3): expected GTCTCAAAAAAAAACcAg, got: %s", got.Sequence)
 	}
 	if got.Circular != true {
 		t.Errorf("test(3): expected circularity to be preserved as true, got: %t", got.Circular)
