@@ -131,10 +131,19 @@ func TestRecursiveFragmentPy(t *testing.T) {
 		t.Errorf("Failed to RecursiveFragment blue1. Got error: %s", err)
 	}
 
-	// Add more specific assertions based on the expected structure of the result
+	// Add more specific assertions based on the expected structure of the result.
+	//
+	// This was two fragments, splitting on CCAG, until SetEfficiency was fixed
+	// to score overhangs stored under their reverse complement -- among them
+	// CGAG and GTCT, the recursive BsaI overhangs excluded just above, which are
+	// in this reaction and were previously scored as free. Counting them, the
+	// old two-fragment set is only 0.976746 fidelity; this three-fragment one is
+	// 1.000000. The extra fragment is the price of the overhang set actually
+	// being clean.
 	expectedFragments := []string{
-		"ATGACCATGATTACGCCAAGCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAG",
-		"CCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCCTGATGCGGTATTTTCTCCTTACGCATCTGTGCGGTATTTCACACCGCATATGGTGCACTCTCAGTACAATCTGCTCTGATGCCGCATAG",
+		"ATGACCATGATTACGCCAAGCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCC",
+		"CCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATG",
+		"AATGGCGCCTGATGCGGTATTTTCTCCTTACGCATCTGTGCGGTATTTCACACCGCATATGGTGCACTCTCAGTACAATCTGCTCTGATGCCGCATAG",
 	}
 
 	if !reflect.DeepEqual(result.Fragments, expectedFragments) {
