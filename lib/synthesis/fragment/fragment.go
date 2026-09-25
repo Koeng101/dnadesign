@@ -20,9 +20,44 @@ import (
 	"github.com/koeng101/dnadesign/lib/transform"
 )
 
+// canonicalOverhang returns the member of an overhang's reverse-complement pair
+// that the mismatches table actually stores.
+//
+// The NEB ligation data is reverse-complement canonicalised: it is a 120x120
+// table holding one member of each RC pair (palindromes, which are never valid
+// overhangs anyway, are absent). An overhang and its reverse complement are the
+// two strands of the same junction, so they are the same measurement, and only
+// one of the two is a key.
+//
+// Without this, a lookup for the unstored member of a pair misses, and because
+// a missing key in a Go map reads as 0, every count for that overhang comes back
+// 0 -- which the nTotal != nCorrect guard in SetEfficiency then treats as "no
+// mismatches", i.e. a perfect score. Half of all overhangs were silently scored
+// as flawless, and since 1.0 is the top of the scale, optimizeOverhangIteration
+// preferred exactly those it had no data for.
+func canonicalOverhang(overhang string) string {
+	if _, ok := mismatches[key{overhang, overhang}]; ok {
+		return overhang
+	}
+	reverseComplement := transform.ReverseComplement(overhang)
+	if _, ok := mismatches[key{reverseComplement, reverseComplement}]; ok {
+		return reverseComplement
+	}
+	return overhang
+}
+
 // SetEfficiency gets the estimated fidelity rate of a given set of
 // GoldenGate overhangs.
-func SetEfficiency(overhangs []string) float64 {
+//
+// The result does not depend on which strand each overhang is written as: an
+// overhang and its reverse complement describe the same junction, so
+// SetEfficiency is invariant under reverse-complementing any subset of its
+// input. See TestSetEfficiencyStrandInvariance.
+func SetEfficiency(overhangsIn []string) float64 {
+	overhangs := make([]string, len(overhangsIn))
+	for index, overhang := range overhangsIn {
+		overhangs[index] = canonicalOverhang(overhang)
+	}
 	var efficiency = float64(1.0)
 	for _, overhang := range overhangs {
 		nCorrect := mismatches[key{overhang, overhang}]
