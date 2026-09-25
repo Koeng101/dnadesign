@@ -1,0 +1,17 @@
+# golangci-lint configuration for the lib module.
+#
+# The Go toolchain and the golangci-lint version are pinned together in
+# .github/workflows/lint.yml: golangci-lint type-checks against whatever Go it
+# finds, and a linter built with an older Go cannot read a newer standard
+# library.
+
+run:
+  timeout: 5m
+
+issues:
+  exclude-dirs:
+    # Vendored third-party SIMD stream-vbyte and cpuid code, carrying its own
+    # README and Apache-2.0 LICENSE. Its 16 findings are all naming, gofmt and
+    # unused-symbol style; reformatting it would only diverge our copy from
+    # upstream.
+    - bio/slow5/svb

@@ -10,31 +10,36 @@ jobs:
   test-lib:
     strategy:
       matrix:
-        go-version: [1.21.x,]
+        # 1.24 is the first Go whose darwin linker emits LC_UUID, which the
+        # macos-latest image (now macOS 26) requires: under 1.23 every test
+        # binary aborts at launch with "missing LC_UUID load command". Note
+        # this is the toolchain, not the language version -- lib/go.mod still
+        # declares go 1.22.0 and that is what the code is compiled against.
+        go-version: [1.24.x,]
         platform: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Install Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go-version }}
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Test
       run: go test -v ./lib/...
   test-external:
     strategy:
       matrix:
-        go-version: [1.21.x,]
+        go-version: [1.24.x,]
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Install Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go-version }}
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Download minimap2
       run: |
         curl -L https://github.com/lh3/minimap2/releases/download/v2.26/minimap2-2.26_x64-linux.tar.bz2 | tar -jxvf -
@@ -67,7 +72,7 @@ jobs:
     name: 1.21.5 openbsd
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Run OpenBSD tests
       uses: vmactions/openbsd-vm@v1
       with:
