@@ -212,12 +212,13 @@ sequencing data to see if there any mutations in the DNA.
 type MutationType string
 
 const (
-	NoMutation MutationType = "no_mutation"
-	Point      MutationType = "point"
-	PointIndel MutationType = "point_indel"
-	Indel      MutationType = "indel"
-	Insertion  MutationType = "insertion"
-	Noisy      MutationType = "noisy"
+	NanoporeError MutationType = "nanopore_error"
+	NoMutation    MutationType = "no_mutation"
+	Point         MutationType = "point"
+	PointIndel    MutationType = "point_indel"
+	Indel         MutationType = "indel"
+	Insertion     MutationType = "insertion"
+	Noisy         MutationType = "noisy"
 )
 
 type Mutation struct {
@@ -228,6 +229,14 @@ type Mutation struct {
 	TotalCorrect int
 	TotalMutated int
 	TotalAligned int
+}
+
+type SequencingResult struct {
+	Confirmed     bool
+	MixedTemplate bool
+	MixedColony   bool
+	Notes         string
+	Mutations     []Mutation
 }
 
 func CallMutations(readResults []string, referenceBase string, minimalRatio float64) Mutation {
@@ -262,7 +271,7 @@ func CallMutations(readResults []string, referenceBase string, minimalRatio floa
 		if len(readResults) == 0 {
 			return false
 		}
-		return float64(float64(mutation)/float64(len(readResults))) >= minimalRatio
+		return float64(mutation)/float64(len(readResults)) >= minimalRatio
 	}
 
 	// Next, let's check for point mutations.
@@ -273,19 +282,69 @@ func CallMutations(readResults []string, referenceBase string, minimalRatio floa
 	pointIndel := reads["*"]
 
 	// First, let's check if the mutation is a point mutation
+	// Define constants for nanopore error detection
+	const (
+		nanoporeStrandRatio = 4
+		oppositeStrandReads = 5
+	)
+
+	// First, let's check if the mutation is a point mutation
 	switch {
 	case ratioFunction(aMutation):
+		// Check if a nanopore mutation
+		switch {
+		case reads["A"] > nanoporeStrandRatio*reads["a"]:
+			if reads[","] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "A", TotalCorrect: noMutation, TotalMutated: aMutation, TotalAligned: len(readResults)}
+			}
+		case reads["a"] > nanoporeStrandRatio*reads["A"]:
+			if reads["."] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "a", TotalCorrect: noMutation, TotalMutated: aMutation, TotalAligned: len(readResults)}
+			}
+		}
 		return Mutation{Type: Point, From: referenceBase, To: "A", TotalCorrect: noMutation, TotalMutated: aMutation, TotalAligned: len(readResults)}
 	case ratioFunction(tMutation):
+		// Check if a nanopore mutation
+		switch {
+		case reads["T"] > nanoporeStrandRatio*reads["t"]:
+			if reads[","] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "T", TotalCorrect: noMutation, TotalMutated: tMutation, TotalAligned: len(readResults)}
+			}
+		case reads["t"] > nanoporeStrandRatio*reads["T"]:
+			if reads["."] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "t", TotalCorrect: noMutation, TotalMutated: tMutation, TotalAligned: len(readResults)}
+			}
+		}
 		return Mutation{Type: Point, From: referenceBase, To: "T", TotalCorrect: noMutation, TotalMutated: tMutation, TotalAligned: len(readResults)}
 	case ratioFunction(gMutation):
+		// Check if a nanopore mutation
+		switch {
+		case reads["G"] > nanoporeStrandRatio*reads["g"]:
+			if reads[","] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "G", TotalCorrect: noMutation, TotalMutated: gMutation, TotalAligned: len(readResults)}
+			}
+		case reads["g"] > nanoporeStrandRatio*reads["G"]:
+			if reads["."] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "g", TotalCorrect: noMutation, TotalMutated: gMutation, TotalAligned: len(readResults)}
+			}
+		}
 		return Mutation{Type: Point, From: referenceBase, To: "G", TotalCorrect: noMutation, TotalMutated: gMutation, TotalAligned: len(readResults)}
 	case ratioFunction(cMutation):
+		// Check if a nanopore mutation
+		switch {
+		case reads["C"] > nanoporeStrandRatio*reads["c"]:
+			if reads[","] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "C", TotalCorrect: noMutation, TotalMutated: cMutation, TotalAligned: len(readResults)}
+			}
+		case reads["c"] > nanoporeStrandRatio*reads["C"]:
+			if reads["."] > oppositeStrandReads {
+				return Mutation{Type: NanoporeError, From: referenceBase, To: "c", TotalCorrect: noMutation, TotalMutated: cMutation, TotalAligned: len(readResults)}
+			}
+		}
 		return Mutation{Type: Point, From: referenceBase, To: "C", TotalCorrect: noMutation, TotalMutated: cMutation, TotalAligned: len(readResults)}
 	case ratioFunction(pointIndel):
 		return Mutation{Type: PointIndel, From: referenceBase, To: "*", TotalCorrect: noMutation, TotalMutated: pointIndel, TotalAligned: len(readResults)}
 	}
-
 	// Ok, we know there is no point mutation. That means there is an insertion or indel. Let's call it.
 	for key, value := range reads {
 		if len(key) > 1 {
@@ -298,7 +357,7 @@ func CallMutations(readResults []string, referenceBase string, minimalRatio floa
 			default:
 				panic(fmt.Sprintf("Unknown readResult! got: %s", key))
 			}
-			indelModification := float64(float64(value) / float64(len(readResults)))
+			indelModification := float64(value) / float64(len(readResults))
 			if indelModification >= minimalRatio {
 				// Let's get the length of the insertion / indel
 				re := regexp.MustCompile(`-?\d+`)
